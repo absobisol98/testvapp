@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Filament\Pages\VolunteerRegistrationPage;
+
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +25,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('custom.main-landing');
 })->name('home');
+
+Route::get('volunteer-registration-page', VolunteerRegistrationPage::class);
