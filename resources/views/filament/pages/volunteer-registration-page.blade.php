@@ -13,12 +13,7 @@
                                         <img src="{{ $this->project->logo }}" alt="" width="50" height="50"
                                             class="rounded-full mx-auto"/>
                                     @endif --}}
-                        Project: Project Name
-                    </div>
-                </x-slot>
-                <x-slot name="description">
-                    <div id="description" class="mx-auto max-w-2xl text-sm text-gray-500 dark:text-gray-400">
-                        This is all the information we hold about the Project Name.
+                        Ayala Foundation
                     </div>
                 </x-slot>
 
