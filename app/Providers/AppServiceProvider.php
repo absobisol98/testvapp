@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Settings\GeneralSettings;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Table;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -48,5 +50,9 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::USER_MENU_BEFORE,
             fn (): View => view('filament.components.button-website'),
         );
+
+        FilamentColor::register(function (GeneralSettings $settings) {
+            return $settings->site_theme;
+        });
     }
 }
