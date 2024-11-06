@@ -78,7 +78,7 @@ final class VolunteerFields
             Fieldset::make('School')
                 ->visible(fn (Get $get) => !$get('is_company'))
                 ->schema([
-                    TextInput::make('school')->label('School name')->columnSpanFull(),
+                    TextInput::make('school')->label('School name')->required()->columnSpanFull(),
 
                     TextInput::make('school_address')->label('Address')->columnSpanFull(),
                 ]),
@@ -86,7 +86,7 @@ final class VolunteerFields
             Fieldset::make('Company')
                 ->visible(fn (Get $get) => $get('is_company'))
                 ->schema([
-                    TextInput::make('company_name')->columnSpanFull(),
+                    TextInput::make('company_name')->required()->columnSpanFull(),
 
                     TextInput::make('company_address')->label('Address')->columnSpanFull(),
 
@@ -119,7 +119,7 @@ final class VolunteerFields
             Select::make('company_id')
                 ->required()
                 ->prefixIcon('heroicon-o-building-office')
-                ->prefixIconColor('secondary')
+                ->prefixIconColor('primary')
                 ->visible(fn (Get $get) => $get('affiliate_type_id') == 1)
                 ->columnSpanFull()
                 ->label('')
