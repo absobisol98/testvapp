@@ -54,7 +54,7 @@ final class VolunteerFields
                                 : ['unique:users,email'];
                         }),
 
-                    DatePicker::make('birthdate')
+                    DatePicker::make('birthday')
                         ->required(),
                 ]),
 
