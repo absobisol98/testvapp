@@ -33,26 +33,26 @@
 </style>
 
 <div id="navBar" class="w-full flex items-center justify-between z-50">
-    <a href="{{ route('home') }}" id="logoWhite" class="h-full">
-        <img class="w-[341px]" src="{{ asset('img/logo-white.png') }}" alt="">
+    <a href="{{ route('home') }}" id="logoWhite" class="h-full max-w-[273px]">
+        <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
     </a>
 
-    <a href="{{ route('home') }}" id="logoColored" class="none h-full">
-        <img class="w-[341px]" src="{{ asset('img/logo-colored.png') }}" alt="">
+    <a href="{{ route('home') }}" id="logoColored" class="none h-full max-w-[273px]">
+        <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
     </a>
 
     <div class="h-full flex items-center justify-between gap-4">
         <a href="">
-            <div class="h-[70px] w-[230px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                <p class="font-[400] text-[20px] text-white">DONATE</p>
+            <div class="h-[56px] w-[184px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                <p class="font-medium text-base text-white">DONATE</p>
             </div>
         </a>
 
         @guest
             <a href="">
                 <div
-                    class="h-[70px] w-[305px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                    <p class="font-[400] text-[20px] text-white">BECOME A VOLUNTEER</p>
+                    class="h-[56px] w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                    <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
                 </div>
             </a>
         @endguest
@@ -63,10 +63,11 @@
                 <div class="relative inline-block text-left">
                     <div>
                         <button id="userDropdownBtn" type="button"
-                            class="inline-flex w-full items-center justify-center gap-x-1.5 px-3 py-2 text-[20px] font-[400] hover:underline"
-                            id="menu-button" aria-expanded="false" aria-haspopup="true">
-                            <div id="avatarContainer" class="w-[42px] h-[42px] inline-flex items-center justify-center rounded-full overflow-hidden">
-                                <div class="w-[40px] h-[40px] inline-flex items-center justify-center">
+                            class="inline-flex w-full items-center justify-center gap-x-1.5 px-3 py-2 text-base font-medium hover:underline"
+                            aria-expanded="false" aria-haspopup="true">
+                            <div id="avatarContainer"
+                                class="w-[36px] h-[36px] inline-flex items-center justify-center rounded-full overflow-hidden">
+                                <div class="w-[34px] h-[34px] inline-flex items-center justify-center">
                                     @include('custom.icons.navbar-icons', [
                                         'icon' => 'avatar',
                                     ])
@@ -76,112 +77,104 @@
                         </button>
                     </div>
 
-
                     <div id="userDropdownItems"
-                        class="absolute right-0 z-10 mt-2 pt-5 pb-10 w-[363px] origin-top-right divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        class="absolute right-0 z-10 mt-2 pt-3 pb-8 w-[290px] origin-top-right divide-y divide-gray-100 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         style="display: none;" role="menu" aria-orientation="vertical" aria-labelledby="menu-button"
                         tabindex="-1">
-                        <div class="w-full px-3 text-[20px] font-[400]" role="none">
+                        <div class="w-full px-3 text-base font-medium" role="none">
                             <a href="{{ route('filament.admin.pages.dashboard') }}"
-                                class="w-full block px-3 py-4 hover:bg-gray-100" role="menuitem" tabindex="-1"
+                                class="w-full block px-3 py-3 hover:bg-gray-100" role="menuitem" tabindex="-1"
                                 id="menu-item-0">
                                 <div class="w-full flex items-center justify-start gap-2">
-                                    <div class="w-[32px] h-[32px] flex items-center justify-center">
+                                    <div class="w-[28px] h-[28px] flex items-center justify-center">
                                         @include('custom.icons.navbar-icons', [
                                             'icon' => 'gear',
                                         ])
                                     </div>
-
                                     <p>Dashboard</p>
                                 </div>
                             </a>
                         </div>
 
-                        <div class="w-full px-3 text-[20px] font-[400]" role="none">
-                            <a href="#" class="w-full block px-3 py-4 hover:bg-gray-100" role="menuitem"
+                        <div class="w-full px-3 text-base font-medium" role="none">
+                            <a href="#" class="w-full block px-3 py-3 hover:bg-gray-100" role="menuitem"
                                 tabindex="-1" id="menu-item-0">
                                 <div class="w-full flex items-center justify-start gap-2">
-                                    <div class="w-[32px] h-[32px] flex items-center justify-center">
+                                    <div class="w-[28px] h-[28px] flex items-center justify-center">
                                         @include('custom.icons.navbar-icons', [
                                             'icon' => 'bell',
                                         ])
                                     </div>
-
                                     <p>Notifications</p>
                                 </div>
                             </a>
                         </div>
 
-                        <div class="w-full px-3 text-[20px] font-[400]" role="none">
-                            <a href="#" class="w-full block px-3 py-4 hover:bg-gray-100" role="menuitem"
+                        <div class="w-full px-3 text-base font-medium" role="none">
+                            <a href="#" class="w-full block px-3 py-3 hover:bg-gray-100" role="menuitem"
                                 tabindex="-1" id="menu-item-0">
                                 <div class="w-full flex items-center justify-start gap-2">
-                                    <div class="w-[32px] h-[32px] flex items-center justify-center">
+                                    <div class="w-[28px] h-[28px] flex items-center justify-center">
                                         @include('custom.icons.navbar-icons', [
                                             'icon' => 'heart',
                                         ])
                                     </div>
-
                                     <p>Opportunities</p>
                                 </div>
                             </a>
                         </div>
 
-                        <div class="w-full px-3 text-[20px] font-[400]" role="none">
-                            <a href="#" class="w-full block px-3 py-4 hover:bg-gray-100" role="menuitem"
+                        <div class="w-full px-3 text-base font-medium" role="none">
+                            <a href="#" class="w-full block px-3 py-3 hover:bg-gray-100" role="menuitem"
                                 tabindex="-1" id="menu-item-0">
                                 <div class="w-full flex items-center justify-start gap-2">
-                                    <div class="w-[32px] h-[32px] flex items-center justify-center">
+                                    <div class="w-[28px] h-[28px] flex items-center justify-center">
                                         @include('custom.icons.navbar-icons', [
                                             'icon' => 'message',
                                         ])
                                     </div>
-
                                     <p>My Messages</p>
                                 </div>
                             </a>
                         </div>
 
-                        <div class="w-full px-3 text-[20px] font-[400]" role="none">
-                            <a href="#" class="w-full block px-3 py-4 hover:bg-gray-100" role="menuitem"
+                        <div class="w-full px-3 text-base font-medium" role="none">
+                            <a href="#" class="w-full block px-3 py-3 hover:bg-gray-100" role="menuitem"
                                 tabindex="-1" id="menu-item-0">
                                 <div class="w-full flex items-center justify-start gap-2">
-                                    <div class="w-[32px] h-[32px] flex items-center justify-center">
+                                    <div class="w-[28px] h-[28px] flex items-center justify-center">
                                         @include('custom.icons.navbar-icons', [
                                             'icon' => 'award',
                                         ])
                                     </div>
-
                                     <p>Certificates</p>
                                 </div>
                             </a>
                         </div>
 
-                        <div class="w-full px-3 text-[20px] font-[400]" role="none">
-                            <a href="#" class="w-full block px-3 py-4 hover:bg-gray-100" role="menuitem"
+                        <div class="w-full px-3 text-base font-medium" role="none">
+                            <a href="#" class="w-full block px-3 py-3 hover:bg-gray-100" role="menuitem"
                                 tabindex="-1" id="menu-item-0">
                                 <div class="w-full flex items-center justify-start gap-2">
-                                    <div class="w-[32px] h-[32px] flex items-center justify-center">
+                                    <div class="w-[28px] h-[28px] flex items-center justify-center">
                                         @include('custom.icons.navbar-icons', [
                                             'icon' => 'user',
                                         ])
                                     </div>
-
                                     <p>Account Settings</p>
                                 </div>
                             </a>
                         </div>
 
-                        <div class="w-full px-3 text-[20px] font-[400]" role="none">
-                            <a href="#" class="w-full block px-3 py-4 hover:bg-gray-100" role="menuitem"
+                        <div class="w-full px-3 text-base font-medium" role="none">
+                            <a href="#" class="w-full block px-3 py-3 hover:bg-gray-100" role="menuitem"
                                 tabindex="-1" id="menu-item-0">
                                 <div class="w-full flex items-center justify-start gap-2">
-                                    <div class="w-[32px] h-[32px] flex items-center justify-center">
+                                    <div class="w-[28px] h-[28px] flex items-center justify-center">
                                         @include('custom.icons.navbar-icons', [
                                             'icon' => 'log-out',
                                         ])
                                     </div>
-
                                     <p>Logout</p>
                                 </div>
                             </a>
@@ -228,10 +221,10 @@
                         });
                     </script>
                 </div>
-
             </div>
         @endauth
     </div>
+
 </div>
 
 <script>
@@ -246,15 +239,27 @@
             navBar.classList.add("scrolled");
             logoWhite.style.display = "none";
             logoColored.style.display = "block";
-            userDropdownBtn.style.color = 'black';
-            avatarContainer.style.background = '#005096';
+
+            if (userDropdownBtn) {
+                userDropdownBtn.style.color = 'black';
+            }
+
+            if (avatarContainer) {
+                avatarContainer.style.background = '#005096';
+            }
 
         } else {
             navBar.classList.remove("scrolled");
             logoWhite.style.display = "block";
             logoColored.style.display = "none";
-            userDropdownBtn.style.color = 'white';
-            avatarContainer.style.background = 'transparent';
+
+            if (userDropdownBtn) {
+                userDropdownBtn.style.color = 'white';
+            }
+
+            if (avatarContainer) {
+                avatarContainer.style.background = 'transparent';
+            }
         }
     });
 </script>
