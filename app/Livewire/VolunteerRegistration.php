@@ -20,9 +20,12 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class VolunteerRegistration extends Component implements HasForms
@@ -93,7 +96,21 @@ class VolunteerRegistration extends Component implements HasForms
         $data = $this->form->getState();
         $data['volunteer'] = 1;
 
-        User::create($data);
+
+        $user = User::create($data);
+
+        //Temporary
+        DB::table('users')
+            ->where('id', $user->id)
+        ->update(['email_verified_at' => now()]);
+
+        $role = Role::where('name','volunteer')->first();
+
+        DB::table('model_has_roles')->insert([
+            'role_id' => $role->id,
+            'model_id' => $user->id,
+            'model_type' => 'App\Models\User',
+        ]);
 
         Notification::make()
             ->title('Saved successfully')

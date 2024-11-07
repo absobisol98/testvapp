@@ -5,7 +5,9 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EmailVerification;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
+use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\MenuResource;
+use App\Filament\Widgets\Welcome;
 use App\Livewire\MyProfileExtended;
 use App\Settings\GeneralSettings;
 use Filament\Http\Middleware\Authenticate;
@@ -74,11 +76,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\FilamentInfoWidget::class,
+                Welcome::class,
             ])
             ->middleware([
                 EncryptCookies::class,
