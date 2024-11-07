@@ -2,15 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Actions\VolunteerFields;
 use App\Filament\Resources\VolunteerResource\Pages;
-use App\Filament\Resources\VolunteerResource\RelationManagers;
-use App\Models\AffiliateType;
 use App\Models\User;
 use App\Models\Volunteer;
 use App\Settings\MailSettings;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,7 +19,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class VolunteerResource extends Resource
 {
@@ -92,81 +89,8 @@ class VolunteerResource extends Resource
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Details')
                             ->icon('heroicon-o-information-circle')
-                            ->schema([
-                                Forms\Components\Grid::make(3)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('firstname')
-                                            ->required()
-                                            ->maxLength(255),
-
-                                        Forms\Components\TextInput::make('middle_name')
-                                            ->maxLength(255),
-
-                                        Forms\Components\TextInput::make('lastname')
-                                            ->required()
-                                            ->maxLength(255),
-
-                                        Forms\Components\TextInput::make('username')
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->live()
-                                            ->rules(function ($record) {
-                                                $userId = $record?->id;
-                                                return $userId
-                                                    ? ['unique:users,username,' . $userId]
-                                                    : ['unique:users,username'];
-                                            }),
-
-                                        Forms\Components\TextInput::make('email')
-                                            ->email()
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->rules(function ($record) {
-                                                $userId = $record?->id;
-                                                return $userId
-                                                    ? ['unique:users,email,' . $userId]
-                                                    : ['unique:users,email'];
-                                            }),
-
-                                        Forms\Components\DatePicker::make('birthdate')
-                                            ->required(),
-                                    ]),
-
-                                Forms\Components\TextInput::make('school')->placeholder('(Optional)')->columnSpanFull(),
-
-                                Forms\Components\Fieldset::make('Company')
-                                    ->schema([
-                                        Forms\Components\TextInput::make('company_name')->columnSpanFull(),
-
-                                        Forms\Components\TextInput::make('company_address')->label('Address')->columnSpanFull(),
-
-                                        Forms\Components\TextInput::make('company_representative')->label('Representative')->columnSpanFull(),
-
-                                        PhoneInput::make('company_contact_number')
-                                            ->label('Contact number'),
-
-                                        Forms\Components\TextInput::make('company_email')
-                                            ->email()
-                                            ->maxLength(255),
-                                    ]),
-
-                                Forms\Components\Fieldset::make('In Case of Emergency')
-                                    ->schema([
-                                        Forms\Components\TextInput::make('emergency_contact_name')->label('Contact name'),
-
-                                        PhoneInput::make('emergency_contact_number')
-                                            ->label('Contact number'),
-                                    ]),
-
-
-                                Forms\Components\Select::make('affiliate_type_id')
-                                    ->columnSpanFull()
-                                    ->default(1)
-                                    ->label('')
-                                    ->options(AffiliateType::all()->pluck('name', 'id')->toArray()),
-
-                            ])
-                            ->columns(2),
+                            ->schema((new VolunteerFields())->execute())
+                            ->columns(),
 
                     ])
                     ->columnSpan([

@@ -38,15 +38,19 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'volunteer',
         'middle_name',
         'birthday',
+        'is_company',
         'company_name',
         'company_address',
         'company_contact_number',
         'company_representative',
         'company_email',
         'school',
+        'school_address',
         'emergency_contact_name',
         'emergency_contact_number',
         'affiliate_type_id',
+        'company_id',
+        'program_id'
     ];
 
     /**
@@ -104,5 +108,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         $this->addMediaConversion('thumb')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }
