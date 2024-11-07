@@ -19,7 +19,7 @@ class ClusterResource extends Resource
 {
     protected static ?string $model = Cluster::class;
 
-    protected static ?string $navigationIcon = 'fas-network-wired';
+    protected static ?string $navigationIcon = 'fas-circle-nodes';
 
     public static function form(Form $form): Form
     {
