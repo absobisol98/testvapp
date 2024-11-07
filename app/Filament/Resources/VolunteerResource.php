@@ -46,7 +46,7 @@ class VolunteerResource extends Resource
                                 ->action(fn(MailSettings $settings, Model $record) => static::doResendEmailVerification($settings, $record)),
                         ])
                             // ->hidden(fn (User $user) => $user->email_verified_at != null)
-                            ->hiddenOn('create')
+                            ->visibleOn('edit')
                             ->fullWidth(),
 
                         Forms\Components\Section::make()
@@ -66,7 +66,7 @@ class VolunteerResource extends Resource
                                     ->required(),
                             ])
                             ->compact()
-                            ->hidden(fn(string $operation): bool => $operation === 'edit'),
+                            ->visibleOn('edit'),
 
                         Forms\Components\Section::make()
                             ->schema([
@@ -133,7 +133,14 @@ class VolunteerResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(function (Volunteer $record) {
+                        if($record->id == auth()->user()->id){
+                            return true;
+                        }
+                        return false;
+                    }),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
