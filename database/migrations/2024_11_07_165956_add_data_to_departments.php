@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         $data = [
-            ['name' => 'Ayala Foundation, Inc.'],
-            ['name' => 'LeadCom Alumni'],
+            ['name' => 'Ayala Foundation, Inc.','created_at' => now()],
+            ['name' => 'LeadCom Alumni','created_at' => now()],
         ];
 
         DB::table('departments')->insert($data);

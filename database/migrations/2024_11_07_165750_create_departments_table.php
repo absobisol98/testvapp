@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('departments', function (Blueprint $table) {
             $table->integer('id', true);
             $table->string('name', 100);
+            $table->dateTime('created_at');
+            $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
         });
     }
