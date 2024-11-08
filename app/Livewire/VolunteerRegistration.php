@@ -113,12 +113,14 @@ class VolunteerRegistration extends Component implements HasForms
         ]);
 
         Notification::make()
-            ->title('Saved successfully')
+            ->title('You have successfully registered.')
             ->success()
             ->send();
 
         // Reset form
         $this->form->fill();
+
+        return redirect()->route('filament.admin.auth.login');
     }
 
     public function render()
