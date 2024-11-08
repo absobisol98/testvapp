@@ -1,7 +1,7 @@
 <?php
 
+use App\Livewire\VolunteerRegistration;
 use Illuminate\Support\Facades\Route;
-use App\Filament\Pages\VolunteerRegistrationPage;
 
 
 
@@ -26,4 +26,4 @@ Route::get('/', function () {
     return view('custom.main-landing');
 })->name('home');
 
-Route::get('volunteer-registration-page', VolunteerRegistrationPage::class);
+Route::get('volunteer-registration', VolunteerRegistration::class);
