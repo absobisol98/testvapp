@@ -1,41 +1,57 @@
 @extends('custom.layouts.app')
 
 @section('content')
+    <style>
+    .clip-path-custom {
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
+	}
+    </style>
+
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
 
+        {{-- Desktop: Hero Banner Section --}}
+        <section class="hidden lg:block h-[100vh] w-full bg-[#03498D]">
+            <div class="grid grid-cols-5">
+                <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
+                    <div class="container whitespace-pre-line text-white">
+                        <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
+                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
+                    </div>
+                </div>
 
-        {{-- Hero Banner Section --}}
-        <div class="h-[90vh] w-full flex flex-col items-start justify-center px-[80px] py-12 text-white"
-            style="background: url('{{ asset('img/background-img.png') }}') no-repeat center center; background-size: cover;">
-
-            <div class="max-w-[671px]">
-                <p class="font-[700] text-[60px]">Your involvement is important to us!</p>
+                <div class="h-[100vh] col-span-3 clip-path-custom" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+                </div>
             </div>
-
-            <div class="max-w-[735px] pb-[100px]">
+        </section>
+        {{-- Tablet & mobile: Hero Banner Section --}}
+        <section class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+            <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
+            <div class="flex flex-col items-center justify-center relative text-center z-10">
+                <p class="font-[700] text-[70px] leading-none">Your involvement is important to us!</p>
                 <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
             </div>
-        </div>
+        </section>
+
 
 
         {{-- Opportunity Section --}}
-        <div class="w-[98%] bg-[#FFFFFFE5] m-[-25vh] px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%]">
+        <div class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
             {{-- Featured Opportunity --}}
-            <div class="flex items-center justify-center gap-4">
-                <div class="flex items-center justify-between h-[400px] w-[40%] gap-4"
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                <div class="flex items-center justify-between h-[400px] w-[100%] md:w-[40%]  gap-4"
                     style="background: url('{{ asset('img/ayala-foundation-bg.jpg') }}') no-repeat center center; background-size: cover;">
                     <div class="h-full w-full flex items-end justify-start p-4"
                         style="background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));">
                         <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="">
                     </div>
                 </div>
-        
-                <div class="w-[60%]">
+
+                <div class="w-[100%] md:w-[60%]">
                     <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                    <p class="text-[40px] font-[700] text-[#03498D] mt-3">Lorem ipsum sit dolorem ipsum sit dolor met.</p>
-        
+                    <p class="text-[40px] font-[700] text-[#03498D] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit dolor met.</p>
+
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
-        
+
                     <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
                     <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
                         <div class="w-fit flex flex-col items-start justify-between gap-1">
@@ -50,7 +66,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
                         <button onclick="openModal()" class="w-full">
                             <div
@@ -58,7 +74,7 @@
                                 <p class="font-[400] text-[18px] text-white">VIEW DETAILS</p>
                             </div>
                         </button>
-        
+
                         <a href="" class="w-full">
                             <div
                                 class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
@@ -68,19 +84,19 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-        
+
             {{-- OPPORTUNITIES --}}
             <div class="w-full">
                 <div class="flex items-center justify-between gap-4 font-[400]">
                     <div class="w-fit">
-                        <p class="text-[40px]">OPPORTUNITIES</p>
+                        <p class="text-[32px] md:text-[40px]">OPPORTUNITIES</p>
                     </div>
-        
-                    <div class="flex items-center justify-between gap-8">
+
+                    <div class="flex items-center justify-between gap-4 md:gap-8">
                         <a class="text-[20px] font-[400] hover:underline" href="">VIEW</a>
-        
+
                         {{-- Style for the tabs --}}
                         <style>
                             /* Default stroke color */
@@ -89,45 +105,45 @@
                                 stroke: #000000; /* Default stroke color */
                                 transition: stroke 0.3s ease; /* Smooth transition for stroke color change */
                             }
-                        
+
                             /* Stroke color on hover */
                             #icon:hover svg path,
                             #icon-calendar:hover svg path {
                                 stroke: #FF781E; /* Change this to your desired hover color */
                             }
-                        
+
                             /* Stroke color on click (active state) */
                             #icon.active svg path,
                             #icon-calendar.active svg path {
                                 stroke: #FF9141; /* Change this to your desired active color */
                             }
-                        </style>                        
+                        </style>
 
                         <button id="icon" class="w-[32px] h-[32px] active" onclick="changeTab('list')">
                             @include('custom.icons.landing-page-icons', ['icon' => 'list-32'])
                         </button>
-        
+
                         <button id="icon-calendar" class="w-[32px] h-[32px]" onclick="changeTab('calendar')">
                             @include('custom.icons.landing-page-icons', ['icon' => 'calendar-32'])
                         </button>
                     </div>
                 </div>
-        
+
                 <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-        
+
                 {{-- OPPORTUNITIES List --}}
                 <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300">
                     {{-- List 1 --}}
-                    <div class="w-full flex items-center justify-between gap-8">
-                        <div class="w-[200px] h-[140px] flex items-center justify-center overflow-hidden">
+                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                             <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
                         </div>
-        
+
                         <div class="w-full">
                             <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span class="font-[700]">BASA</span>dors Storytelling Webinar</p>
-        
+
                             <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-        
+
                             <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
                                     <p class="font-[600]">DATE: Aug-27-2024</p>
@@ -142,45 +158,7 @@
                                 </div>
                             </div>
                         </div>
-        
-                        <div class="w-[200px]">
-                            <a href="">
-                                <div
-                                    class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                    <p class="font-[400] text-[18px] text-white">JOIN</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-        
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-        
-                    {{-- List 2 --}}
-                    <div class="w-full flex items-center justify-between gap-8">
-                        <div class="w-[200px] h-[140px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
-                        </div>
-        
-                        <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span class="font-[700]">BASA</span>dors Storytelling Webinar</p>
-        
-                            <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-        
-                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p class="font-[600]">DATE: Aug-27-2024</p>
-                                    <p class="font-[600]">2:00 PM - 6:00 PM</p>
-                                </div>
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
-                                    <div class="flex items-center justify-start gap-4">
-                                        <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                        <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-        
+
                         <div class="w-[200px]">
                             <a href="">
                                 <div
@@ -192,18 +170,18 @@
                     </div>
 
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-        
-                    {{-- List 3 --}}
-                    <div class="w-full flex items-center justify-between gap-8">
-                        <div class="w-[200px] h-[140px] flex items-center justify-center overflow-hidden">
+
+                    {{-- List 2 --}}
+                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                             <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
                         </div>
-        
+
                         <div class="w-full">
                             <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span class="font-[700]">BASA</span>dors Storytelling Webinar</p>
-        
+
                             <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-        
+
                             <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
                                     <p class="font-[600]">DATE: Aug-27-2024</p>
@@ -218,7 +196,45 @@
                                 </div>
                             </div>
                         </div>
-        
+
+                        <div class="w-[200px]">
+                            <a href="">
+                                <div
+                                    class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                    <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+
+                    {{-- List 3 --}}
+                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                        </div>
+
+                        <div class="w-full">
+                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span class="font-[700]">BASA</span>dors Storytelling Webinar</p>
+
+                            <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
+
+                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                    <p class="font-[600]">DATE: Aug-27-2024</p>
+                                    <p class="font-[600]">2:00 PM - 6:00 PM</p>
+                                </div>
+                                <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
+                                    <div class="flex items-center justify-start gap-4">
+                                        <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
+                                        <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="w-[200px]">
                             <a href="">
                                 <div
@@ -279,7 +295,7 @@
                         <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">30</div>
                         <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">31</div>
                     </div>
-                </div>                             
+                </div>
 
                 {{-- Tab Scripts --}}
                 <script>
@@ -287,28 +303,28 @@
                     const opportunityCalendar = document.getElementById("opportunityCalendar");
                     const iconList = document.getElementById("icon");
                     const iconCalendar = document.getElementById("icon-calendar");
-                
+
                     function changeTab(type) {
                         if (type === "list") {
                             opportunityList.classList.remove("hidden");
                             opportunityCalendar.classList.add("hidden");
-                
+
                             // Set the list icon to active
                             iconList.classList.add("active");
                             iconCalendar.classList.remove("active");
                         } else if (type === "calendar") {
                             opportunityList.classList.add("hidden");
                             opportunityCalendar.classList.remove("hidden");
-                
+
                             // Set the calendar icon to active
                             iconCalendar.classList.add("active");
                             iconList.classList.remove("active");
                         }
                     }
-                </script>                
+                </script>
             </div>
         </div>
-    
+
 
         {{--  --}}
         <div class="relative w-full">
@@ -316,10 +332,10 @@
                 <div class="h-[33px] w-full max-w-[535px] bg-[#005096]"></div>
                 <div class="h-[33px] w-full max-w-[535px] bg-[#FF781E]"></div>
             </div>
-        
-            <div class="h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('img/background-img-2.png') }}')">
+
+            <div class="h-[100vh] md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('img/background-img-2.png') }}')">
                 <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
-                    <div class="flex items-center justify-center gap-12">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-12">
                         <!-- Statistics Item -->
                         @foreach ([
                             ['number' => '1269', 'label' => 'VOLUNTEERS'],
@@ -336,17 +352,17 @@
                 </div>
             </div>
         </div>
-        
+
 
         {{-- For Not Logged In Users Only --}}
         @guest
             {{-- Our Program Section --}}
-            <div class="w-full grid grid-cols-2">
+            <div class="w-full grid grid-cols-1 lg:grid-cols-2">
                 <!-- Our Program Section -->
                 <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#03498D]">
                     <div class="w-full min-h-[450px] flex flex-col items-start">
                         <p class="text-[36px] font-semibold">Our Program</p>
-                        <p class="text-[48px] font-bold">Corporate Citizenship and Volunteerism</p>
+                        <p class="text-[48px] font-bold leading-none">Corporate Citizenship and Volunteerism</p>
                         <p class="text-[20px] font-light">
                             We believe in contributing to the nation’s development goals by adapting to the evolving needs of
                             stakeholders to remain relevant and responsive. Through our programs, we affirm our commitment to
@@ -362,14 +378,14 @@
                         </a>
                     </div>
                 </div>
-            
+
                 <!-- Become a Volunteer Section -->
                 <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
                      style="background-image: url('{{ asset('img/ayala-foundation-bg-1.jpg') }}')">
                     <!-- Diagonal Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-tr from-[#03498D4D] to-[#03498D4D] z-0"
                          style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
-                    
+
                     <div class="w-full min-h-[450px] flex flex-col items-start z-10">
                         <p class="text-[36px] font-semibold">Become a</p>
                         <p class="text-[48px] font-bold">Volunteer</p>
@@ -390,7 +406,7 @@
         {{-- For Logged In Users Only --}}
         @auth
             {{-- Our Program Section --}}
-            <div class="w-full grid grid-cols-2">
+            <div class="w-full grid grid-cols-1 lg:grid-cols-2">
                 <!-- Program Section with Swiper -->
                 <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D]">
                     <div class="program-swiper-container w-full overflow-hidden">
@@ -419,7 +435,7 @@
                                     </div>
                                 </div>
                             </div>
-            
+
                             <!-- Slide 2 -->
                             <div class="swiper-slide">
                                 <div class="flex flex-col items-center gap-8">
@@ -446,7 +462,7 @@
                             </div>
                         </div>
                     </div>
-            
+
                     <div class="w-full flex items-center justify-start gap-4">
                         <div class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
                             @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
@@ -455,7 +471,7 @@
                             @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
                         </div>
                     </div>
-            
+
                     <!-- Swiper Script -->
                     <script>
                         const programSwiper = new Swiper('.program-swiper-container', {
@@ -468,7 +484,7 @@
                         });
                     </script>
                 </div>
-            
+
                 <!-- Right Section with Background and Overlay -->
                 <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
                      style="background-image: url('{{ asset('img/ayala-foundation-bg-2.png') }}')">
@@ -480,37 +496,37 @@
         @endauth
 
         {{-- Stories Section --}}
-        <div class="w-full h-fit relative flex items-center justify-center text-[24px] font-medium">
-            <div class="grid grid-cols-2 gap-12 w-full z-10 px-20 py-12">
+        <div class="w-full h-fit relative flex flex-col md:flex-row items-center justify-center text-[24px] font-medium">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-12 w-full z-10 px-[5%] py-12">
                 <!-- Left Section: Stories -->
                 <div class="col-span-1 h-full">
                     <p class="mb-10">STORIES</p>
-        
+
                     <div class="flex items-center justify-between h-[509px] gap-4 bg-cover bg-center"
                         style="background-image: url('{{ asset('img/ayala-foundation-bg-3.jpg') }}');">
                         <div class="h-full w-full flex items-end p-4 bg-gradient-to-t from-[#03498D] to-transparent"></div>
                     </div>
-        
+
                     <style>
                         .swiper-slide {
                             flex-grow: 1;
                             min-width: 50%;
                         }
                     </style>
-        
-                    <div class="w-[80%] p-2 flex items-start justify-between gap-4 bg-white">
+
+                    <div class="w-[80%] p-2 flex flex-col-reverse md:flex-row items-end md:items-start justify-between gap-4 bg-white">
                         <div class="stories-swiper-container w-full overflow-hidden">
                             <div class="swiper-wrapper w-full">
                                 <!-- Slide 1 -->
                                 <div class="swiper-slide">
-                                    <div class="w-full flex items-start justify-between gap-4">
+                                    <div class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white shadow-sm flex flex-col items-center">
                                             <p>AUG</p>
                                             <p>21</p>
                                         </div>
-                                        <div class="w-full text-[#03498D]">
-                                            <p class="text-[32px] font-semibold">Opportunity Story 1 goes here</p>
-                                            <p class="text-[14px] mb-8">Lorem Ipsum is simply dummy text of the printing and
+                                        <div class="w-full text-[#03498D] flex flex-col gap-4">
+                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 1 goes here</p>
+                                            <p class="text-[14px]">Lorem Ipsum is simply dummy text of the printing and
                                                 typesetting industry.</p>
                                             <a href="">
                                                 <div
@@ -521,17 +537,17 @@
                                         </div>
                                     </div>
                                 </div>
-        
+
                                 <!-- Slide 2 -->
                                 <div class="swiper-slide">
-                                    <div class="w-full flex items-start justify-between gap-4">
+                                    <div class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white shadow-sm flex flex-col items-center">
                                             <p>AUG</p>
                                             <p>25</p>
                                         </div>
-                                        <div class="w-full text-[#03498D]">
-                                            <p class="text-[32px] font-semibold">Opportunity Story 2 goes here</p>
-                                            <p class="text-[14px] mb-8">Lorem Ipsum is simply dummy text of the printing and
+                                        <div class="w-full text-[#03498D] flex flex-col gap-4">
+                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 2 goes here</p>
+                                            <p class="text-[14px] ">Lorem Ipsum is simply dummy text of the printing and
                                                 typesetting industry.</p>
                                             <a href="">
                                                 <div
@@ -544,7 +560,7 @@
                                 </div>
                             </div>
                         </div>
-        
+
                         <!-- Carousel Navigation Buttons -->
                         <div class="stories-button-24-prev w-fit flex items-center justify-between gap-4">
                             <div class="w-[24px] h-[24px] flex items-center justify-center bg-[#f3f2f2] hover:bg-gray-200">
@@ -556,7 +572,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <!-- Swiper Script -->
                     <script>
                         const storiesSwiper = new Swiper('.stories-swiper-container', {
@@ -569,28 +585,28 @@
                         });
                     </script>
                 </div>
-        
+
                 <!-- Right Section: Testimonials -->
-                <div class="col-span-1 h-full flex flex-col items-center justify-between gap-16 text-white p-16 bg-[#03498DB2]">
+                <div class="col-span-1 h-full flex flex-col items-center justify-between gap-8 md:gap-16 text-white p-8 md:p-16 bg-[#03498DB2]">
                     <p>VOLUNTEER TESTIMONIALS</p>
-        
+
                     <div class="flex items-center gap-4 h-fit">
-                        <div class="w-16 h-full flex items-start">
+                        <div class="w-8 md:w-16 h-full flex items-start">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
-                        <p class="px-2 py-4 text-[36px]">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
-                        <div class="w-16 h-full flex items-end">
+                        <p class="px-0 md:px-2 py-4 text-[28px] md:text-[36px]">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
+                        <div class="w-8 md:w-16 h-full flex items-end">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
                     </div>
-        
-                    <div class="w-full px-16">
+
+                    <div class="w-full px-8 md:px-16">
                         <p>JUAN DELA CRUZ</p>
                         <p class="text-[#817B7B]">Business Associate, Company Name</p>
                     </div>
                 </div>
             </div>
-        
+
             <!-- Background with Overlay -->
             <div class="absolute inset-0 flex items-center justify-between z-0">
                 <div class="w-[40%] h-full"></div>
@@ -599,7 +615,7 @@
                 </div>
             </div>
         </div>
-        
+
 
         {{-- Featured Opportunity Modal --}}
         <div class="w-full h-fit">
@@ -611,42 +627,42 @@
                             @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
                         </button>
                     </div>
-        
+
                     <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
-                        <div class="flex flex-col items-center justify-center">
+                        <div class="flex flex-col  items-center justify-center">
                             <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center" style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
                                 <div class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
                                     <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
                                 </div>
                             </div>
-        
+
                             <div class="w-full p-4">
                                 <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
                                     <p class="text-lg font-normal text-white">EDUCATION</p>
                                 </div>
-        
+
                                 <p class="text-4xl font-normal text-[#03498D]">Ayala Reading Am<span class="font-bold">BASA</span>dors Storytelling Webinar</p>
-        
+
                                 <p class="text-2xl font-normal">Zoom Webinar Online, National Capital Region</p>
-        
+
                                 <p class="text-lg font-normal my-16 text-justify">
                                     &emsp; &emsp;Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                                 </p>
-        
+
                                 <div class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 my-16">
                                     <p class="font-semibold">DATE: Aug-27-2024 | 2:00 PM - 6:00 PM</p>
                                     <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage actively in the session</p>
                                     <p><span class="font-semibold">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
                                     <p><span class="font-semibold">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
                                 </div>
-        
-                                <div class="flex items-center justify-start gap-4 mt-8">
+
+                                <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                     <a href="">
                                         <div class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                             <p class="font-normal text-lg text-white">SIGN UP</p>
                                         </div>
                                     </a>
-        
+
                                     <a href="">
                                         <div class="h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                                             <p class="font-normal text-lg text-white">FAVORITE</p>
@@ -658,37 +674,37 @@
                     </div>
                 </div>
             </div>
-        
+
             {{-- Modal Scripts --}}
             <script>
                 // Function to open the modal
                 function openModal() {
                     const modal = document.getElementById('featuredImageModal');
                     const modalContent = modal.querySelector('.modal-content');
-        
+
                     modal.classList.remove('hidden');
                     setTimeout(() => {
                         modal.classList.remove('opacity-0');
                         modalContent.classList.remove('scale-95', 'opacity-0');
                     }, 10); // small delay to trigger the transition
                 }
-        
+
                 // Function to close the modal
                 function closeModal(event) {
                     const modal = document.getElementById('featuredImageModal');
                     const modalContent = modal.querySelector('.modal-content');
-        
+
                     // Check if the clicked element is the modal background or the close button
                     if (event.target === modal || event.target.closest('#closeModal')) {
                         modalContent.classList.add('scale-95', 'opacity-0');
                         modal.classList.add('opacity-0');
-        
+
                         setTimeout(() => {
                             modal.classList.add('hidden');
                         }, 300); // delay for the transition to complete
                     }
                 }
-        
+
                 // Example: Open modal on page load (or use your own trigger)
                 // window.onload = openModal; // You might want to change this to a specific trigger
             </script>

@@ -33,17 +33,17 @@
 </style>
 
 <div id="navBar" class="w-full flex items-center justify-between z-50">
-    <a href="{{ route('home') }}" id="logoWhite" class="h-full max-w-[273px]">
+    <a href="{{ route('home') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
         <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
     </a>
 
-    <a href="{{ route('home') }}" id="logoColored" class="none h-full max-w-[273px]">
+    <a href="{{ route('home') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
         <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
     </a>
 
     <div class="h-full flex items-center justify-between gap-4">
         <a href="">
-            <div class="h-[56px] w-[184px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+            <div class="h-[36px] md:h-[56px] w-[120px] md:w-[184px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                 <p class="font-medium text-base text-white">DONATE</p>
             </div>
         </a>
@@ -51,7 +51,7 @@
         @guest
             <a href="">
                 <div
-                    class="h-[56px] w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                    class="h-[36px] md:h-[56px] w-[200px] md:w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                     <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
                 </div>
             </a>
