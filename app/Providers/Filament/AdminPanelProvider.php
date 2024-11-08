@@ -96,9 +96,9 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                EmailTemplatesPlugin::make(),
-                \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
-                    ->allowSubFolders(),
+//                EmailTemplatesPlugin::make(),
+//                \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
+//                    ->allowSubFolders(),
                 \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
                     ->gridColumns([
