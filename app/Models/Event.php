@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * Created by Reliese Model.
+ */
+
+namespace App\Models;
+
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * Class Event
+ *
+ * @property int $id
+ * @property string $title
+ * @property string|null $description
+ * @property int|null $event_type_id
+ * @property int|null $recurrence_type_id
+ * @property Carbon|null $start_date
+ * @property Carbon|null $end_date
+ * @property string|null $point_of_contact_id
+ * @property int|null $program_id
+ * @property string|null $tags
+ * @property string|null $location
+ * @property int|null $approval_status_id
+ * @property bool|null $sign_up_approval_required
+ * @property bool|null $attachment_required
+ *
+ * @property EventType|null $event_type
+ * @property EventApprovalStatus|null $event_approval_status
+ * @property User|null $user
+ * @property Program|null $program
+ * @property EventRecurrenceType|null $event_recurrence_type
+ * @property Collection|EventAttendee[] $event_attendees
+ * @property Collection|EventChat[] $event_chats
+ * @property Collection|EventFacilitator[] $event_facilitators
+ * @property Collection|EventRegistration[] $event_registrations
+ * @property Collection|EventSlot[] $event_slots
+ *
+ * @package App\Models
+ */
+class Event extends Model
+{
+	protected $table = 'events';
+	public $timestamps = false;
+
+	protected $casts = [
+		'event_type_id' => 'int',
+		'recurrence_type_id' => 'int',
+		'start_date' => 'datetime',
+		'end_date' => 'datetime',
+		'program_id' => 'int',
+		'approval_status_id' => 'int',
+		'sign_up_approval_required' => 'bool',
+		'attachment_required' => 'bool'
+	];
+
+	protected $fillable = [
+		'title',
+		'description',
+		'event_type_id',
+		'recurrence_type_id',
+		'start_date',
+		'end_date',
+		'point_of_contact_id',
+		'program_id',
+		'tags',
+		'location',
+		'approval_status_id',
+		'sign_up_approval_required',
+		'attachment_required'
+	];
+
+	public function event_type()
+	{
+		return $this->belongsTo(EventType::class);
+	}
+
+	public function event_approval_status()
+	{
+		return $this->belongsTo(EventApprovalStatus::class, 'approval_status_id');
+	}
+
+	public function point_of_contact()
+	{
+		return $this->belongsTo(User::class, 'point_of_contact_id');
+	}
+
+	public function program()
+	{
+		return $this->belongsTo(Program::class);
+	}
+
+	public function event_recurrence_type()
+	{
+		return $this->belongsTo(EventRecurrenceType::class, 'recurrence_type_id');
+	}
+
+	public function event_attendees()
+	{
+		return $this->hasMany(EventAttendee::class);
+	}
+
+	public function event_chats()
+	{
+		return $this->hasMany(EventChat::class);
+	}
+
+	public function event_facilitators()
+	{
+		return $this->hasMany(EventFacilitator::class);
+	}
+
+	public function event_registrations()
+	{
+		return $this->hasMany(EventRegistration::class);
+	}
+
+	public function event_slots()
+	{
+		return $this->hasMany(EventSlot::class);
+	}
+
+    public function created_by_user(): BelongsTo
+    {
+        return $this->BelongsTo(User::class, 'created_by');
+    }
+
+    public function updated_by_user(): BelongsTo
+    {
+        return $this->BelongsTo(User::class, 'updated_by');
+    }
+}
