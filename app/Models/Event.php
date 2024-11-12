@@ -109,9 +109,9 @@ class Event extends Model
 		return $this->hasMany(EventChat::class);
 	}
 
-	public function event_facilitators()
+	public function facilitators()
 	{
-		return $this->hasMany(EventFacilitator::class);
+		return $this->hasMany(User::class);
 	}
 
 	public function event_registrations()
@@ -119,7 +119,7 @@ class Event extends Model
 		return $this->hasMany(EventRegistration::class);
 	}
 
-	public function event_slots()
+	public function slots()
 	{
 		return $this->hasMany(EventSlot::class);
 	}
