@@ -124,6 +124,13 @@ class Event extends Model
 		return $this->hasMany(EventSlot::class);
 	}
 
+    public function slot_type()
+    {
+        return $this->belongsTo(EventSlotType::class);
+    }
+
+
+
     public function created_by_user(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'created_by');
@@ -133,4 +140,14 @@ class Event extends Model
     {
         return $this->BelongsTo(User::class, 'updated_by');
     }
+    public function parent()
+    {
+        return $this->belongsTo(Event::class, 'event_parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Event::class, 'event_parent_id');
+    }
+
 }
