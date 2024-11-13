@@ -17,9 +17,10 @@ return new class extends Migration
         });
 
         $data = [
-            ['name' => "Exclusive"],
+            ['name' => "Exclusive to Ayala Employees"],
+            ['name' => "Exclusive to Business Unit"],
             ['name' => "Hybrid"],
-            ['name' => "Public"],
+            ['name' => "Public Event"],
         ];
 
         DB::table('event_types')->insert($data);

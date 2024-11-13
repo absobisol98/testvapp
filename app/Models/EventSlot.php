@@ -11,12 +11,12 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class EventSlot
- * 
+ *
  * @property int $id
  * @property int $event_id
  * @property int $slot_type_id
  * @property int $total_slots
- * 
+ *
  * @property Event $event
  * @property EventSlotType $event_slot_type
  * @property Collection|EventRegistration[] $event_registrations
@@ -37,6 +37,8 @@ class EventSlot extends Model
 	protected $fillable = [
 		'event_id',
 		'slot_type_id',
+        'start_time',
+        'end_time',
 		'total_slots'
 	];
 
