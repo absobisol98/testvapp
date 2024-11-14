@@ -10,6 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Event
@@ -42,8 +45,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @package App\Models
  */
-class Event extends Model
+class Event extends Model implements HasMedia
 {
+    use InteractsWithMedia;
 	protected $table = 'events';
 	public $timestamps = false;
 
@@ -59,7 +63,8 @@ class Event extends Model
 	];
 
 	protected $fillable = [
-		'title',
+        'event_recurring_id',
+        'title',
 		'description',
 		'event_type_id',
 		'recurrence_type_id',
@@ -71,7 +76,16 @@ class Event extends Model
 		'location',
 		'approval_status_id',
 		'sign_up_approval_required',
-		'attachment_required'
+		'attachment_required',
+        'frequency',
+        'repeat_until',
+        'selected_days',
+        'monthly_days',
+        'monthly_days',
+        'created_by',
+        'updated_by',
+        'created_at',
+        'updated_at',
 	];
 
 	public function event_type()
@@ -111,7 +125,7 @@ class Event extends Model
 
 	public function facilitators()
 	{
-		return $this->hasMany(User::class);
+        return $this->BelongsToMany(User::class, 'event_facilitators', 'event_id', 'facilitator_id');
 	}
 
 	public function event_registrations()
@@ -140,14 +154,14 @@ class Event extends Model
     {
         return $this->BelongsTo(User::class, 'updated_by');
     }
-    public function parent()
-    {
-        return $this->belongsTo(Event::class, 'event_parent_id');
-    }
 
-    public function children()
+    // This gets the parent event
+    public function event_recurring()
     {
-        return $this->hasMany(Event::class, 'event_parent_id');
+        return $this->belongsTo(EventRecurring::class, 'event_recurring_id');
     }
-
+    public function companies(): BelongsToMany
+    {
+        return $this->BelongsToMany(Company::class, 'event_companies', 'event_id', 'company_id');
+    }
 }
