@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->unsignedInteger('event_parent_id')->nullable();
-            $table->foreign('event_parent_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign(['event_recurring_id'], 'event_recurring_id_ibfk_1')->references(['id'])->on('event_recurring')->onUpdate('cascade')->onDelete('cascade');
+
         });
     }
 
