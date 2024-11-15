@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Event;
+use App\Models\EventTag;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -26,101 +28,204 @@ class EventResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Forms\Components\TextInput::make('title')
+                    ->required()
+                    ->columnSpanFull()
+                    ->maxLength(255),
+
+                Forms\Components\RichEditor::make('description')
+                    ->columnSpanFull()
+                    ->required(),
+
+                Forms\Components\Grid::make()
                     ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->required()
-                            ->maxLength(255),
-
-                        Forms\Components\RichEditor::make('description')
-                            ->required(),
-
                         Forms\Components\Select::make('program_id')
                             ->relationship('program', 'name')
                             ->required(),
-
-                        Forms\Components\Select::make('access_type')
-                            ->options([
-                                'exclusive_employees' => 'Exclusive to Ayala Employees',
-                                'exclusive_business_unit' => 'Exclusive to Business Unit',
-                                'hybrid' => 'Hybrid (By Selection)',
-                                'public' => 'Public Event',
-                            ])
+                        Forms\Components\Select::make('point_of_contact_id')
+                            ->label('Point-of-Contact')
                             ->required()
-                            ->reactive(),
+                            ->preload()
+                            ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
+                            ->relationship(
+                                name: 'point_of_contact',
+                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
+                            )
+                            ->searchable(['firstname','middle_name', 'lastname']),
+                    ]),
 
-                        Forms\Components\Select::make('business_units')
-                            ->multiple()
-                            ->relationship('businessUnits', 'name')
-                            ->visible(fn ($get) => $get('access_type') === 'hybrid'),
+                Forms\Components\Select::make('event_type_id')
+                    ->relationship('event_type', 'name')
+                    ->required()
+                    ->reactive(),
 
-                        Forms\Components\Select::make('event_type')
-                            ->options([
-                                'one_time' => 'One-time Event',
-                                'recurring' => 'Recurring Event',
-                            ])
-                            ->required()
-                            ->reactive(),
+                Forms\Components\Select::make('business_units')
+                    ->multiple()
+                    ->relationship('companies', 'name')
+                    ->visible(fn ($get) => $get('event_type_id') == 3), // Hybrid
 
-                        Forms\Components\DateTimePicker::make('start_date')
-                            ->required(),
-
-                        Forms\Components\DateTimePicker::make('end_date')
-                            ->required()
-                            ->after('start_date'),
-
-                        Forms\Components\Repeater::make('recurring_pattern')
+                Forms\Components\Fieldset::make('Schedule')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
                             ->schema([
+                                Forms\Components\DatePicker::make('date')
+                                    ->label('Date')
+                                    ->required()
+                                    ->live()
+                                    ->minDate(now()->startOfDay())
+                                    ->default(now()),
+                                Forms\Components\TimePicker::make('start_time')
+
+                                    ->label('Start')
+                                    ->default('08:00')
+                                    ->seconds(false),
+                                Forms\Components\TimePicker::make('end_time')
+                                    ->label('End')
+                                    ->default('17:00')
+                                    ->seconds(false),
+                            ]),
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\Select::make('recurrence_type_id')
+                                    ->label('Recurrence type')
+                                    ->options([
+                                        1 => 'One Time',
+                                        2 => 'Recurring',
+                                    ])
+                                    ->required()
+                                    ->live()
+                                    ->default(1),
+
                                 Forms\Components\Select::make('frequency')
+                                    ->label('Frequency')
                                     ->options([
                                         'daily' => 'Daily',
                                         'weekly' => 'Weekly',
                                         'monthly' => 'Monthly',
-                                    ]),
-                                Forms\Components\DatePicker::make('until'),
-                            ])
-                            ->visible(fn ($get) => $get('event_type') === 'recurring'),
+                                        'yearly' => 'Yearly',
+                                    ])
+                                    ->required()
+                                    ->live()
+                                    ->visible(fn ($get) =>
+                                        $get('recurrence_type_id') == 2
+                                    ),
 
-                        Forms\Components\TextInput::make('location')
-                            ->required(),
+                                Forms\Components\DatePicker::make('repeat_until')
+                                    ->label('Repeat Until')
+                                    ->minDate(fn ($get) => $get('date'))
+                                    ->maxDate(now()->addYears(5))
+                                    ->default(now())
+                                    ->required()
+                                    ->visible(fn ($get) =>
+                                        $get('recurrence_type_id') == 2
+                                    ),
 
-                        Forms\Components\TagsInput::make('tags'),
-
-                        Forms\Components\Select::make('approval_type')
-                            ->options([
-                                'automatic' => 'Automatic',
-                                'facilitator_approval' => 'Requires Facilitator Approval',
-                                'with_attachment' => 'Requires Additional Documents',
-                            ])
-                            ->required(),
-
-                        Forms\Components\Repeater::make('slots')
-                            ->relationship('slots')
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->required(),
-                                Forms\Components\TextInput::make('capacity')
-                                    ->numeric()
-                                    ->required(),
-                                Forms\Components\TimePicker::make('start_time'),
-                                Forms\Components\TimePicker::make('end_time'),
+//                                        Forms\Components\CheckboxList::make('selected_days')
+//                                            ->label('On These Days')
+//                                            ->default([\Carbon\Carbon::now()->dayOfWeek]) // Get current day index
+//                                            ->options([
+//                                                0 => 'Sunday',
+//                                                1 => 'Monday',
+//                                                2 => 'Tuesday',
+//                                                3 => 'Wednesday',
+//                                                4 => 'Thursday',
+//                                                5 => 'Friday',
+//                                                6 => 'Saturday',
+//                                            ])
+//                                            ->columnSpanFull()
+//                                            ->columns(7)
+//                                            ->visible(fn ($get) =>
+//                                                $get('recurrence_type_id') == 2 &&
+//                                                $get('frequency') == 'weekly'
+//                                            ),
+//
+//                                        Forms\Components\Select::make('monthly_days')
+//                                            ->label('On These Days')
+//                                            ->multiple()
+//                                            ->options(array_combine(
+//                                                range(1, 31),
+//                                                range(1, 31)
+//                                            ))
+//                                            ->visible(fn ($get) =>
+//                                                $get('recurrence_type_id') == 2 &&
+//                                                $get('frequency') == 'monthly'
+//                                            ),
                             ]),
-
-                        Forms\Components\Select::make('facilitators')
-                            ->multiple()
-                            ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
-                            ->relationship(
-                                name: 'facilitators',
-                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
-                            )
-                            ->searchable(['firstname','middle_name', 'lastname']),
-
-                        Forms\Components\Toggle::make('requires_documents')
-                            ->reactive(),
-
-                        Forms\Components\TagsInput::make('required_document_types')
-                            ->visible(fn ($get) => $get('requires_documents')),
                     ]),
+
+
+                Forms\Components\TextInput::make('location')
+                    ->required(),
+
+                Forms\Components\TagsInput::make('tags')
+                    ->suggestions(fn() => EventTag::orderBy('id')->pluck('name')->toArray()),
+
+                Forms\Components\Section::make('Slots')
+                    ->schema([
+                        Forms\Components\Fieldset::make('AM')
+                            ->schema([
+                                Forms\Components\TextInput::make('am_slot_number')
+                                    ->label('Slot')
+                                    ->numeric(),
+                                Forms\Components\TimePicker::make('am_start_time')
+                                    ->label('Start time')
+                                    ->default('8:00')
+                                    ->seconds(false),
+                                Forms\Components\TimePicker::make('am_end_time')
+                                    ->label('End time')
+                                    ->default('11:00')
+                                    ->seconds(false),
+                            ])->columns(3),
+                        Forms\Components\Fieldset::make('PM')
+                            ->schema([
+                                Forms\Components\TextInput::make('pm_slot_number')
+                                    ->label('Slot')
+                                    ->numeric(),
+                                Forms\Components\TimePicker::make('pm_start_time')
+                                    ->label('Start time')
+                                    ->default('13:00')
+                                    ->seconds(false),
+                                Forms\Components\TimePicker::make('pm_end_time')
+                                    ->label('End time')
+                                    ->default('18:00')
+                                    ->seconds(false),
+                            ])->columns(3),
+                    ]),
+
+                Forms\Components\Select::make('facilitators')
+                    ->preload()
+                    ->multiple()
+                    ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
+                    ->relationship(
+                        name: 'facilitators',
+                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
+                    )
+                    ->searchable(['firstname','middle_name', 'lastname']),
+
+                Forms\Components\Toggle::make('attachment_required')
+                    ->columnSpanFull()
+                    ->reactive(),
+
+                Forms\Components\Radio::make('approval_type')
+                    ->options([
+                        1 => 'Automatic',
+                        2 => 'Requires Facilitator Approval',
+                    ])
+                    ->default(2)
+                    ->required(),
+                Forms\Components\Section::make('Attachments')
+                    ->schema([
+                        Forms\Components\FileUpload::make('media')
+                            ->directory('event-attachments')
+                            ->multiple()
+                            ->maxFiles(5)
+                            ->label('')
+                            ->openable()
+                            ->downloadable(),
+                    ])
+                    ->collapsible(),
+//                        Forms\Components\TagsInput::make('required_document_types')
+//                            ->visible(fn ($get) => $get('requires_documents')),
             ]);
     }
 
@@ -130,21 +235,31 @@ class EventResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('event_type_id')
-                    ->numeric()
-                    ->sortable(),
+//                Tables\Columns\TextColumn::make('event_type_id')
+//                    ->numeric()
+//                    ->sortable(),
                 Tables\Columns\TextColumn::make('recurrence_type_id')
-                    ->numeric()
+                    ->label('Recurrence type')
+                    ->formatStateUsing(function (Event $record,string $state){
+                        if($state == 2){
+                            return ucfirst($record->frequency);
+
+                        }
+                        return $record->event_recurrence_type->name;
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('end_date')
-                    ->dateTime()
+                    ->label('Date')
+                    ->date('M d, Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('point_of_contact_id')
+                    ->label('Point-of-Contact')
+                    ->formatStateUsing(function (Event $record,string $state){
+                        $user = User::find($state);
+                        return $user->firstname.''.$user->lastname;
+                    })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('program_id')
+                Tables\Columns\TextColumn::make('program.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('approval_status_id')
@@ -154,24 +269,46 @@ class EventResource extends Resource
                     ->boolean(),
                 Tables\Columns\IconColumn::make('attachment_required')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_by')
+                Tables\Columns\TextColumn::make('created_by_user.firstname')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('updated_by')
+                Tables\Columns\TextColumn::make('updated_by_user.firstname')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('M d, Y h:i A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('M d, Y h:i A')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->mountUsing(function (Event $record,ComponentContainer $form){
+                        $media = [];
+                        foreach ($record->getMedia('event-attachments') as $media_item) {
+                            $index = strlen(storage_path('app/public/'));
+                            $media[] = substr($media_item->getPath(), $index);
+                        }
+                        $data['media'] = $media;
+
+                        $form->fill($data);
+
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->mountUsing(function (Event $record,ComponentContainer $form){
+                        $media = [];
+                        foreach ($record->getMedia('event-attachments') as $media_item) {
+                            $index = strlen(storage_path('app/public/'));
+                            $media[] = substr($media_item->getPath(), $index);
+                        }
+                        $data['media'] = $media;
+
+                        $form->fill($data);
+
+                    }),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
@@ -182,21 +319,25 @@ class EventResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('start_date','asc');
+    }
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageEvents::route('/'),
+            'index' => Pages\ListEvents::route('/'),
+            'calendar' => Pages\Calendar::route('/calendar'),
+            'thumbnail' => Pages\Thumbnail::route('/thumbnail'),
+            'create' => Pages\CreateEvent::route('/create'),
+            'view' => Pages\ViewEvent::route('/{record}'),
+            'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }
