@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\EventResource\Pages;
 
-use App\Actions\EventCreateAndUpdateAction;
 use App\Actions\EventFillFormAction;
 use App\Actions\EventUpdateAction;
 use App\Filament\Resources\EventResource;
