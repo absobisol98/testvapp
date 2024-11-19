@@ -7,6 +7,7 @@ use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Cluster;
 use App\Models\Event;
 use App\Models\EventTag;
+use App\Models\TagsEvent;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
@@ -173,7 +174,7 @@ class EventResource extends Resource
                     ->required(),
 
                 Forms\Components\TagsInput::make('tags')
-                    ->suggestions(fn() => EventTag::orderBy('id')->pluck('name')->toArray()),
+                    ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray()),
 
                 Forms\Components\Section::make('Slots')
                     ->schema([
