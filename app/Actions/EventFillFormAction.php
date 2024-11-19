@@ -25,6 +25,9 @@ final class EventFillFormAction
         // Tags
         $data['tags'] = json_decode($data['tags']);
 
+        // Companies
+        $data['companies'] = $record->companies->pluck('id')->toArray();
+
         // Slots
         $am_slot = $record->slots->where('slot_type_id',1)->first();
         $pm_slot = $record->slots->where('slot_type_id',2)->first();

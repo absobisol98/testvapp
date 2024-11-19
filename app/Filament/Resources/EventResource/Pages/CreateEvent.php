@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EventResource\Pages;
 
 use App\Filament\Resources\EventResource;
 use App\Models\Event;
+use App\Models\EventCompany;
 use App\Models\EventRecurring;
 use App\Models\EventSlot;
 use App\Models\EventTag;
@@ -24,7 +25,6 @@ class CreateEvent extends CreateRecord
         $data['start_date'] = $data['date'].' '.$data['start_time'].':00';
         $data['end_date'] = $data['date'].' '.$data['end_time'].':00';
 
-
         if(isset($data['tags']) && $data['tags']){ // If a new tag exists, insert the new tag into the event_tags table
 
             $tags = EventTag::get()->pluck('name')->toArray();
@@ -41,7 +41,6 @@ class CreateEvent extends CreateRecord
         }else{
             $data['tags'] = null;
         }
-
 
         if($data['recurrence_type_id'] == 2){ // Recurring
 
@@ -107,6 +106,17 @@ class CreateEvent extends CreateRecord
                             'end_time' => $data['pm_end_time'],
                         ]);
                     }
+
+                    // Insert Event companies
+                    if(isset($data['companies']) && $data['companies']){ // If company exists, insert companies into event_companies table
+
+                        foreach ($data['companies'] as $company) {
+                            EventCompany::create([
+                                'event_id' => $event->id,
+                                'company_id' => $company,
+                            ]);
+                        }
+                    }
                 }
                 while ($start->format('Y-m-d') < $repeat_until->format('Y-m-d'))
                 {
@@ -142,6 +152,16 @@ class CreateEvent extends CreateRecord
                             'end_time' => $data['pm_end_time'],
                         ]);
                     }
+                    // Insert Event companies
+                    if(isset($data['companies']) && $data['companies']){ // If company exists, insert companies into event_companies table
+
+                        foreach ($data['companies'] as $company) {
+                            EventCompany::create([
+                                'event_id' => $event->id,
+                                'company_id' => $company,
+                            ]);
+                        }
+                    }
                 }
             }
         }else{ // One time event
@@ -152,6 +172,17 @@ class CreateEvent extends CreateRecord
                     $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
                         'event-attachments'
                     );
+                }
+            }
+
+            // Insert Event companies
+            if(isset($data['companies']) && $data['companies']){ // If company exists, insert companies into event_companies table
+
+                foreach ($data['companies'] as $company) {
+                    EventCompany::create([
+                        'event_id' => $event->id,
+                        'company_id' => $company,
+                    ]);
                 }
             }
         }

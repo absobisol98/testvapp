@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
+use App\Models\Cluster;
 use App\Models\Event;
 use App\Models\EventTag;
 use App\Models\User;
@@ -59,9 +60,23 @@ class EventResource extends Resource
                     ->required()
                     ->reactive(),
 
-                Forms\Components\Select::make('business_units')
+                Forms\Components\Select::make('companies')
+                    ->label('Companies')
+                    ->required()
                     ->multiple()
-                    ->relationship('companies', 'name')
+                    ->options(function (){
+                        $options = [];
+
+                        $clusters = Cluster::with(['companies'])->get();
+
+                        foreach ($clusters as $cluster) {
+                            $options[$cluster->name] = collect($cluster->companies)->mapWithKeys(function ($company) {
+                                return [$company->id => $company->name];
+                            })->toArray();
+                        }
+
+                        return $options;
+                    })
                     ->visible(fn ($get) => $get('event_type_id') == 3), // Hybrid
 
                 Forms\Components\Fieldset::make('Schedule')
