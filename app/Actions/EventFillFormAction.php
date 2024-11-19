@@ -23,7 +23,7 @@ final class EventFillFormAction
         $data['end_time'] = $record->end_date;
 
         // Tags
-        $data['tags'] = json_decode($data['tags']);
+        $data['tags'] = $record->tags->pluck('name')->toArray();
 
         // Companies
         $data['companies'] = $record->companies->pluck('id')->toArray();
