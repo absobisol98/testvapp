@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\AffiliateType;
 use App\Models\Cluster;
+use App\Models\EventCompany;
 use App\Models\EventTag;
 use App\Models\Program;
 use App\Models\TagsEvent;
@@ -18,8 +19,12 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 final class SaveEventTagsAction
 {
-    public function execute($tag_arr,$event,$data)
+    public function execute($event,$tag_arr,$edit)
     {
+        if($edit){
+            EventTag::where('event_id',$event->id)->delete();
+        }
+
         if($tag_arr){ // If a new tag exists, insert the new tag into the tags_event table
 
             $tags = TagsEvent::get()->pluck('name')->toArray();

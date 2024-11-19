@@ -20,8 +20,12 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 final class SaveEventSlotsAction
 {
-    public function execute($event,$data)
+    public function execute($event,$data,$edit)
     {
+        if($edit){
+            EventSlot::where('event_id',$event->id)->delete();
+        }
+
         if($data['am_slot_number']){
             EventSlot::create([
                 'slot_type_id' => 1, // AM
