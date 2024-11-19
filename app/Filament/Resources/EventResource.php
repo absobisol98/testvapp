@@ -181,13 +181,18 @@ class EventResource extends Resource
                         Forms\Components\Fieldset::make('AM')
                             ->schema([
                                 Forms\Components\TextInput::make('am_slot_number')
+                                    ->minValue(0)
                                     ->label('Slot')
                                     ->numeric(),
                                 Forms\Components\TimePicker::make('am_start_time')
+                                    ->minDate(now()->startOfDay())
+                                    ->maxDate(now()->startOfDay()->addHours(12)->subMicroseconds(1))
                                     ->label('Start time')
                                     ->default('8:00')
                                     ->seconds(false),
                                 Forms\Components\TimePicker::make('am_end_time')
+                                    ->minDate(now()->startOfDay())
+                                    ->maxDate(now()->startOfDay()->addHours(12)->subMicroseconds(1))
                                     ->label('End time')
                                     ->default('11:00')
                                     ->seconds(false),
@@ -195,13 +200,18 @@ class EventResource extends Resource
                         Forms\Components\Fieldset::make('PM')
                             ->schema([
                                 Forms\Components\TextInput::make('pm_slot_number')
+                                    ->minValue(0)
                                     ->label('Slot')
                                     ->numeric(),
                                 Forms\Components\TimePicker::make('pm_start_time')
+                                    ->minDate(now()->startOfDay()->addHours(12))
+                                    ->maxDate(now()->startOfDay()->addHours(24))
                                     ->label('Start time')
                                     ->default('13:00')
                                     ->seconds(false),
                                 Forms\Components\TimePicker::make('pm_end_time')
+                                    ->minDate(now()->startOfDay()->addHours(12))
+                                    ->maxDate(now()->startOfDay()->addHours(24))
                                     ->label('End time')
                                     ->default('18:00')
                                     ->seconds(false),
@@ -224,12 +234,13 @@ class EventResource extends Resource
 
                 Forms\Components\Radio::make('approval_type')
                     ->options([
-                        1 => 'Automatic',
-                        2 => 'Requires Facilitator Approval',
+                        'Automatic' => 'Automatic',
+                        'Requires Approval' => 'Requires Facilitator Approval',
                     ])
                     ->default(2)
                     ->required(),
                 Forms\Components\Section::make('Attachments')
+                    ->hiddenOn('edit')
                     ->schema([
                         Forms\Components\FileUpload::make('media')
                             ->directory('event-attachments')
