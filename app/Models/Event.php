@@ -164,4 +164,8 @@ class Event extends Model implements HasMedia
     {
         return $this->BelongsToMany(Company::class, 'event_companies', 'event_id', 'company_id');
     }
+    public function tags(): BelongsToMany
+    {
+        return $this->BelongsToMany(TagsEvent::class, 'event_tags', 'event_id', 'tag_id');
+    }
 }

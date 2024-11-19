@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class EventTag
- * 
+ *
  * @property int $id
  * @property string $name
  * @property Carbon $created_at
@@ -23,10 +23,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class EventTag extends Model
 {
-	use SoftDeletes;
-	protected $table = 'event_tags';
+    protected $table = 'event_tags';
+    public $timestamps = false;
 
-	protected $fillable = [
-		'name'
-	];
+    protected $casts = [
+        'event_id' => 'int',
+        'tag_id' => 'int'
+    ];
+
+    protected $fillable = [
+        'event_id',
+        'tag_id'
+    ];
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function tag()
+    {
+        return $this->belongsTo(TagsEvent::class);
+    }
 }
