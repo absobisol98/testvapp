@@ -74,6 +74,7 @@ class Event extends Model implements HasMedia
 		'program_id',
 		'tags',
 		'location',
+		'approval_type',
 		'approval_status_id',
 		'sign_up_approval_required',
 		'attachment_required',
