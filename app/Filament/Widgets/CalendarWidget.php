@@ -10,6 +10,11 @@ use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
 {
+    protected function headerActions(): array
+    {
+        return [
+        ];
+    }
     public function fetchEvents(array $fetchInfo): array
     {
         return Event::query()
