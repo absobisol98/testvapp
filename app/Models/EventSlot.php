@@ -47,7 +47,7 @@ class EventSlot extends Model
 		return $this->belongsTo(Event::class);
 	}
 
-	public function event_slot_type()
+	public function type()
 	{
 		return $this->belongsTo(EventSlotType::class, 'slot_type_id');
 	}

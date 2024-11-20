@@ -114,7 +114,7 @@ class Event extends Model implements HasMedia
 		return $this->belongsTo(EventRecurrenceType::class, 'recurrence_type_id');
 	}
 
-	public function event_attendees()
+	public function attendees()
 	{
 		return $this->hasMany(EventAttendee::class);
 	}
@@ -129,7 +129,7 @@ class Event extends Model implements HasMedia
         return $this->BelongsToMany(User::class, 'event_facilitators', 'event_id', 'facilitator_id');
 	}
 
-	public function event_registrations()
+	public function registrations()
 	{
 		return $this->hasMany(EventRegistration::class);
 	}

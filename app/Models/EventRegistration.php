@@ -8,10 +8,12 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class EventRegistration
- * 
+ *
  * @property int $id
  * @property int $event_id
  * @property string $volunteer_id
@@ -19,28 +21,28 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool|null $is_approved
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Event $event
  * @property EventSlot $event_slot
  * @property User $user
  *
  * @package App\Models
  */
-class EventRegistration extends Model
+class EventRegistration extends Model implements HasMedia
 {
-	protected $table = 'event_registrations';
+    use InteractsWithMedia;
+    protected $table = 'event_registrations';
 
 	protected $casts = [
 		'event_id' => 'int',
 		'slot_type_id' => 'int',
-		'is_approved' => 'bool'
 	];
 
 	protected $fillable = [
 		'event_id',
 		'volunteer_id',
 		'slot_type_id',
-		'is_approved'
+		'status_id'
 	];
 
 	public function event()
