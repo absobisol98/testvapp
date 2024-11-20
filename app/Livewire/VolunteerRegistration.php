@@ -56,6 +56,7 @@ class VolunteerRegistration extends Component implements HasForms
     public $program_id;
     public $password;
     public $passwordConfirmation;
+    public $emergency_contact_relationship;
 
     public static function form(Form $form): Form
     {
