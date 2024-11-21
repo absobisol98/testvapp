@@ -55,8 +55,13 @@ class EventRegistration extends Model implements HasMedia
 		return $this->belongsTo(EventSlot::class, 'slot_type_id');
 	}
 
-	public function user()
+	public function volunteer()
 	{
 		return $this->belongsTo(User::class, 'volunteer_id');
 	}
+    
+    public function status()
+    {
+        return $this->belongsTo(EventApprovalStatus::class, 'status_id');
+    }
 }
