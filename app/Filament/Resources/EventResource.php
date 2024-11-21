@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Actions\EventRegistrationButtonVisibilityAction;
+use App\Actions\EventRegistrationTableAction;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Cluster;
@@ -311,35 +313,7 @@ class EventResource extends Resource
             ])
             ->filters([
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->mountUsing(function (Event $record,ComponentContainer $form){
-                        $media = [];
-                        foreach ($record->getMedia('event-attachments') as $media_item) {
-                            $index = strlen(storage_path('app/public/'));
-                            $media[] = substr($media_item->getPath(), $index);
-                        }
-                        $data['media'] = $media;
-
-                        $form->fill($data);
-
-                    }),
-                Tables\Actions\EditAction::make()
-                    ->mountUsing(function (Event $record,ComponentContainer $form){
-                        $media = [];
-                        foreach ($record->getMedia('event-attachments') as $media_item) {
-                            $index = strlen(storage_path('app/public/'));
-                            $media[] = substr($media_item->getPath(), $index);
-                        }
-                        $data['media'] = $media;
-
-                        $form->fill($data);
-
-                    }),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
-            ])
+            ->actions((new EventRegistrationTableAction())->execute())
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -347,12 +321,12 @@ class EventResource extends Resource
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('start_date','asc');
+            ->defaultSort('start_date');
     }
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\RegistrationsRelationManager::class,
         ];
     }
 

@@ -2,9 +2,21 @@
 
 namespace App\Filament\Resources\EventResource\Pages;
 
+use App\Actions\EventRegistrationButtonVisibilityAction;
+use App\Actions\EventRegistrationTableAction;
 use App\Filament\Resources\EventResource;
+use App\Models\Event;
+use App\Models\EventAttendee;
+use App\Models\EventRegistration;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\View;
 
@@ -25,16 +37,15 @@ class Thumbnail extends ListRecords
             ->filters([
 
             ])
-            ->actions([
-            ])
+            ->actions((new EventRegistrationTableAction())->execute())
             ->bulkActions([
             ])
             ->contentGrid([
                 'md' => 2,
                 'xl' => 3,
             ])
-            ->defaultSort('id', 'desc')
-            ->paginated([12, 24, 48, 120, 'all']);
+            ->paginated([12, 24, 48, 120, 'all'])
+            ->defaultSort('start_date');
     }
 
     protected function getHeaderActions(): array
