@@ -2,6 +2,7 @@
 
 use App\Livewire\VolunteerRegistration;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\VolunteerRegistrationController;
 
 
 
@@ -26,4 +27,11 @@ Route::get('/', function () {
     return view('custom.main-landing');
 })->name('home');
 
-Route::get('volunteer-registration', VolunteerRegistration::class);
+// Route::get('volunteer-registration', VolunteerRegistration::class);
+
+
+
+
+
+Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'create'])->name('volunteer.form.create');
+Route::post('/volunteer-registration', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');

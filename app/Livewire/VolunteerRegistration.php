@@ -28,11 +28,13 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
-class VolunteerRegistration extends Component implements HasForms
+class VolunteerRegistration extends Component
 {
-    use InteractsWithForms;
+    // use InteractsWithForms;
 
-    public ?array $data = [];
+    public $text;
+
+    public $data = [];
 
     public $username;
     public $email;
@@ -58,70 +60,79 @@ class VolunteerRegistration extends Component implements HasForms
     public $passwordConfirmation;
     public $emergency_contact_relationship;
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-            Section::make()->schema((new VolunteerFields())->execute()),
-            Section::make()
-                ->schema([
-                    TextInput::make('password')
-                        ->password()
-                        ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                        ->dehydrated(fn(?string $state): bool => filled($state))
-                        ->revealable()
-                        ->required(),
-                    TextInput::make('passwordConfirmation')
-                        ->password()
-                        ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                        ->dehydrated(fn(?string $state): bool => filled($state))
-                        ->revealable()
-                        ->same('password')
-                        ->required(),
-                ])
-                ->compact(),
-        ]);
-    }
+    // public static function form(Form $form): Form
+    // {
+    //     return $form
+    //         ->schema([
+    //         Section::make()->schema((new VolunteerFields())->execute()),
+    //         Section::make()
+    //             ->schema([
+    //                 TextInput::make('password')
+    //                     ->password()
+    //                     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+    //                     ->dehydrated(fn(?string $state): bool => filled($state))
+    //                     ->revealable()
+    //                     ->required(),
+    //                 TextInput::make('passwordConfirmation')
+    //                     ->password()
+    //                     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+    //                     ->dehydrated(fn(?string $state): bool => filled($state))
+    //                     ->revealable()
+    //                     ->same('password')
+    //                     ->required(),
+    //             ])
+    //             ->compact(),
+    //     ]);
+    // }
 
-    protected function getFormModel(): Model|string|null
-    {
-        return Volunteer::class;
-    }
+    // protected function getFormModel(): Model|string|null
+    // {
+    //     return Volunteer::class;
+    // }
 
-    public function mount()
-    {
-        $this->form->fill();
-    }
+    // public function mount()
+    // {
+    //     $this->form->fill();
+    // }
+
     public function submit()
     {
-        $data = $this->form->getState();
-        $data['volunteer'] = 1;
-
-
-        $user = User::create($data);
-
-        //Temporary
-        DB::table('users')
-            ->where('id', $user->id)
-        ->update(['email_verified_at' => now()]);
-
-        $role = Role::where('name','volunteer')->first();
-
-        DB::table('model_has_roles')->insert([
-            'role_id' => $role->id,
-            'model_id' => $user->id,
-            'model_type' => 'App\Models\User',
+         // Validate input data
+        $validatedData = $this->validate([
+            'username'              => 'required|min:3|unique:users,username',
+            'firstname'             => 'required|string|max:255',
+            'lastname'              => 'required|string|max:255',
+            'email'                 => 'required|email',
+            'password'              => 'required|min:8'
         ]);
+        dd($validatedData);
+        // Create the user
+        User::create($validatedData);
 
-        Notification::make()
-            ->title('You have successfully registered.')
-            ->success()
-            ->send();
+        // //Temporary
+        // DB::table('users')
+        //     ->where('id', $user->id)
+        // ->update(['email_verified_at' => now()]);
 
-        // Reset form
-        $this->form->fill();
+        // $role = Role::where('name','volunteer')->first();
 
-        return redirect()->route('filament.admin.auth.login');
+        // DB::table('model_has_roles')->insert([
+        //     'role_id' => $role->id,
+        //     'model_id' => $user->id,
+        //     'model_type' => 'App\Models\User',
+        // ]);
+
+        // Notification::make()
+        //     ->title('You have successfully registered.')
+        //     ->success()
+        //     ->send();
+
+        // // Reset form
+        // $this->form->fill();
+
+        // return redirect()->route('filament.admin.auth.login');
+        // $this->reset();
+        session()->flash('success', 'User registered successfully!');
     }
 
     public function render()
