@@ -2,23 +2,15 @@
 
 namespace App\Filament\Resources\EventResource\Pages;
 
-use App\Actions\EventRegistrationButtonVisibilityAction;
 use App\Actions\EventRegistrationTableAction;
 use App\Filament\Resources\EventResource;
-use App\Models\Event;
-use App\Models\EventAttendee;
-use App\Models\EventRegistration;
-use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\View;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 class Thumbnail extends ListRecords
@@ -36,6 +28,7 @@ class Thumbnail extends ListRecords
         return $events;
     }
 
+
     public function table(\Filament\Tables\Table $table): \Filament\Tables\Table
     {
         return $table
@@ -43,8 +36,29 @@ class Thumbnail extends ListRecords
                 View::make('filament.tables.columns.event-thumbnail'),
             ])
             ->filters([
+                Filter::make('status')
+                    ->label('')
+                    ->form([
+                        Select::make('status')
+                            ->label('')
+                            ->selectablePlaceholder(false)
+                            ->default('all')
+                            ->options([
+                                'all' => 'All Events',
+                                'joined' => 'Joined Events',
+                            ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
 
-            ])
+                        if($data['status'] === 'joined') {
+                            $query->whereHas('attendees', function (Builder $query) {
+                                $query->where('attendee_id', auth()->id());
+                            });
+                        }
+
+                        return $query;
+                    }),
+            ],layout: FiltersLayout::AboveContent)
             ->actions((new EventRegistrationTableAction())->execute())
             ->bulkActions([
             ])
