@@ -113,11 +113,14 @@ class EventRegistrationTableAction
                 })
                 ->visible(function (Event $record){
 
-                    if($record->registrations->where('volunteer_id',auth()->user()->id)->first()){
+                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
+
+                    if($registration && $registration->status_id == 1){
                         return true;
                     }
 
-                    return (new EventRegistrationButtonVisibilityAction())->execute($record);
+                    return false;
+
 
                 }),
             \Filament\Tables\Actions\ViewAction::make()
