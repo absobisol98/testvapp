@@ -115,8 +115,6 @@ class EventRegistrationTableAction
 
                     if($record->registrations->where('volunteer_id',auth()->user()->id)->first()){
                         return true;
-                    }else{
-                        return false;
                     }
 
                     return (new EventRegistrationButtonVisibilityAction())->execute($record);
