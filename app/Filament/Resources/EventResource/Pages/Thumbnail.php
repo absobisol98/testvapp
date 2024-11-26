@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\Layout\View;
+use Illuminate\Database\Eloquent\Builder;
 
 class Thumbnail extends ListRecords
 {
@@ -27,6 +28,13 @@ class Thumbnail extends ListRecords
     protected static ?string $title = 'Thumbnail';
 
     protected static string $view = 'filament.resources.event-resource.pages.thumbnail';
+
+    protected function getTableQuery(): ?Builder
+    {
+        $events = (new (static::$resource::getModel()))->where('start_date', '>', now()->subDay());
+
+        return $events;
+    }
 
     public function table(\Filament\Tables\Table $table): \Filament\Tables\Table
     {
