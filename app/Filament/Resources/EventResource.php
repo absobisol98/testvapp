@@ -285,14 +285,13 @@ class EventResource extends Resource
                     ->label('Point-of-Contact')
                     ->formatStateUsing(function (Event $record,string $state){
                         $user = User::find($state);
-                        return $user->firstname.''.$user->lastname;
+                        return $user->firstname.' '.$user->lastname;
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('program.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('approval_status_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('status.name')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('sign_up_approval_required')
                     ->boolean(),
