@@ -54,5 +54,15 @@ class AppServiceProvider extends ServiceProvider
         FilamentColor::register(function (GeneralSettings $settings) {
             return $settings->site_theme;
         });
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::SIDEBAR_NAV_START,
+            fn (): View => view('filament.components.sidebar.user-details'),
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::SIDEBAR_NAV_END,
+            fn (): View => view('filament.components.sidebar.ad-content'),
+        );
     }
 }
