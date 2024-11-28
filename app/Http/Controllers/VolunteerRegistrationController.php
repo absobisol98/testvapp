@@ -3,65 +3,89 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Company;
-use App\Models\Volunteer;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Company;
+use App\Models\Program;
+use Illuminate\Support\Facades\Validator;
 
 class VolunteerRegistrationController extends Controller
 {
     /**
      * Show the registration form.
      */
-    public function create()
+    public function view()
     {
-        $companies = Company::all(); // Fetch companies from the database
-        return view('livewire.volunteer-registration', compact('companies'));
+        // Fetch companies and programs from the database
+        $companies = Company::all();
+        $programs = Program::all();
+
+        // Pass both companies and programs to the view
+        return view('custom.volunteer-registration', compact('companies', 'programs'));
     }
 
+
     /**
-     * Handle the form submission.
+     * Handle AJAX form submission with validation.
      */
     public function store(Request $request)
     {
-        // dd($reuq['username'],
-        //    $request['firstname'],
-        //    $request['lastname'],
-        //    $request['email'],
-        //    Hash::make($request['password']),);
-        // Validation
-        $request = $request->validate([
+        // Define validation rules
+        $rules = [
             'username' => 'required|string|max:255',
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'birthday' => 'required|date',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_number' => 'nullable|string|max:15',
+            'company_name' => 'nullable|string|max:255',
+            'company_address' => 'nullable|string|max:255',
+            'company_contact_number' => 'nullable|string|max:15',
+            'school' => 'nullable|string|max:255',
+            'school_address' => 'nullable|string|max:255',
+            'affiliate_type_id' => 'nullable|integer',
+            'company_id' => 'nullable|integer',
+            'program_id' => 'nullable|integer',
+        ];
 
-            // 'birthday' => 'required|date',
-            // 'organization' => 'required|string',
-            // 'program_interest' => 'required|string',
-            // 'emergency_contact_name' => 'required|string|max:255',
-            // 'emergency_contact_number' => 'required|string|max:15',
-            'password' => 'required|min:8|confirmed',
-            // 'company_name' => 'nullable|string|required_if:toggle_type,company|max:255',
-            // 'company_address' => 'nullable|string|required_if:toggle_type,company|max:255',
-            // 'company_contact_number' => 'nullable|string|required_if:toggle_type,company|max:15',
-            // 'company_representative' => 'nullable|string|required_if:toggle_type,company|max:255',
-            // 'school_name' => 'nullable|string|required_if:toggle_type,school|max:255',
-            // 'school_address' => 'nullable|string|required_if:toggle_type,school|max:255',
-        ]);
+        // Perform validation
+        $validator = Validator::make($request->all(), $rules);
 
-        // Store volunteer data
-        //$request['password'] = Hash::make($request['password']);
-
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()]);
+        }else
+        {
+            $input = $request->all();
+            // Save data if validation passes
         User::create([
-            'username' => $request['username'],
-            'firstname' => $request['firstname'],
-            'lastname' => $request['lastname'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
+            'username' => $input['username'],
+            'email' => $input['email'],
+            'firstname' => $input['firstname'],
+            'lastname' => $input['lastname'],
+            'password' => Hash::make($input['password']),
+            'middle_name' => $input['middle_name'],
+            'birthday' => $input['birthday'],
+            'is_company' => $input['is_company'],
+            'company_name' => $input['company_name'],
+            'company_address' => $input['company_address'],
+            'company_contact_number' => $input['company_contact_number'],
+            'school' => $input['school'],
+            'school_address' => $input['school_address'],
+            'emergency_contact_name' => $input['emergency_contact_name'],
+            'emergency_contact_number' => $input['emergency_contact_number'],
+            'affiliate_type_id' => $input['affiliate_type_id'],
+            'company_id' => $input['company_id'],
+            'program_id' =>  $input['program_id'],
         ]);
+            // Return success response
+            return response()->json(['success' => 'Volunteer registration completed successfully.']);
+        }
 
-        return redirect()->route('volunteer.registration.success');
+
+
+
     }
 
     /**

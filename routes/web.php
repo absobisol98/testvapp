@@ -33,5 +33,5 @@ Route::get('/', function () {
 
 
 
-Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'create'])->name('volunteer.form.create');
-Route::post('/volunteer-registration', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
+Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'view'])->name('volunteer.form.view');
+Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');

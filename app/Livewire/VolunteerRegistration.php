@@ -27,10 +27,11 @@ use Livewire\Component;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Illuminate\Validation\ValidationException;
 
-class VolunteerRegistration extends Component
+class VolunteerRegistration extends Component implements HasForms
 {
-    // use InteractsWithForms;
+    use InteractsWithForms;
 
     public $text;
 
@@ -58,81 +59,122 @@ class VolunteerRegistration extends Component
     public $program_id;
     public $password;
     public $passwordConfirmation;
-    public $emergency_contact_relationship;
 
-    // public static function form(Form $form): Form
-    // {
-    //     return $form
-    //         ->schema([
-    //         Section::make()->schema((new VolunteerFields())->execute()),
-    //         Section::make()
-    //             ->schema([
-    //                 TextInput::make('password')
-    //                     ->password()
-    //                     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-    //                     ->dehydrated(fn(?string $state): bool => filled($state))
-    //                     ->revealable()
-    //                     ->required(),
-    //                 TextInput::make('passwordConfirmation')
-    //                     ->password()
-    //                     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-    //                     ->dehydrated(fn(?string $state): bool => filled($state))
-    //                     ->revealable()
-    //                     ->same('password')
-    //                     ->required(),
-    //             ])
-    //             ->compact(),
-    //     ]);
-    // }
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+            Section::make()->schema((new VolunteerFields())->execute()),
+            Section::make()
+                ->schema([
+                    TextInput::make('password')
+                        ->password()
+                        ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+                        ->dehydrated(fn(?string $state): bool => filled($state))
+                        ->revealable()
+                        ->required(),
+                    TextInput::make('passwordConfirmation')
+                        ->password()
+                        ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+                        ->dehydrated(fn(?string $state): bool => filled($state))
+                        ->revealable()
+                        ->same('password')
+                        ->required(),
+                ])
+                ->compact(),
+        ]);
+    }
 
-    // protected function getFormModel(): Model|string|null
-    // {
-    //     return Volunteer::class;
-    // }
+    protected function getFormModel(): Model|string|null
+    {
+        return Volunteer::class;
+    }
 
-    // public function mount()
-    // {
-    //     $this->form->fill();
-    // }
-
+    public function mount()
+    {
+        $this->form->fill();
+    }
     public function submit()
     {
-         // Validate input data
-        $validatedData = $this->validate([
-            'username'              => 'required|min:3|unique:users,username',
-            'firstname'             => 'required|string|max:255',
-            'lastname'              => 'required|string|max:255',
-            'email'                 => 'required|email',
-            'password'              => 'required|min:8'
+        // $data = $this->form->getState();
+        // $data['volunteer'] = 1;
+
+
+        // $user = User::create($data);
+
+    // Define validation rules
+    $this->validate([
+        'username'                  => 'required|unique:users,username|max:255',
+        'email'                     => 'required|email|unique:users,email|max:255',
+        'firstname'                 => 'required|max:255',
+        'lastname'                  => 'required|max:255',
+        'middle_name'               => 'nullable|max:255',
+        'volunteer'                 => 'required|boolean',
+        'birthday'                  => 'required|date',
+        'is_company'                => 'required|boolean',
+        'company_name'              => 'nullable|max:255',
+        'company_address'           => 'nullable|max:255',
+        'company_contact_number'    => 'nullable|phone:AUTO',
+        'company_representative'    => 'nullable|max:255',
+        'company_email'             => 'nullable|email|max:255',
+        'school'                    => 'nullable|max:255',
+        'school_address'            => 'nullable|max:255',
+        'emergency_contact_name'    => 'nullable|max:255',
+        'emergency_contact_number'  => 'nullable|phone:AUTO',
+        'affiliate_type_id'         => 'required|exists:affiliate_types,id',
+        'company_id'                => 'nullable|exists:companies,id',
+        'program_id'                => 'nullable|exists:programs,id',
+        'password'                  => 'required|confirmed|min:8', // Ensure password confirmation
+    ]);
+        $user = User::create([
+            'username'                  => $this->username,
+            'email'                     => $this->email,
+            'firstname'                 => $this->firstname,
+            'lastname'                  => $this->lastname,
+            'middle_name'               => $this->middle_name,
+            'volunteer'                 => $this->volunteer,
+            'birthday'                  => $this->birthday,
+            'is_company'                => $this->is_company,
+            'company_name'              => $this->company_name,
+            'company_address'           => $this->company_address,
+            'company_contact_number'    => $this->company_contact_number,
+            'company_representative'    => $this->company_representative,
+            'company_email'             => $this->company_email,
+            'school'                    => $this->school,
+            'school_address'            => $this->school_address,
+            'emergency_contact_name'    => $this->emergency_contact_name,
+            'emergency_contact_number'  => $this->emergency_contact_number,
+            'affiliate_type_id'         => $this->affiliate_type_id,
+            'company_id'                => $this->company_id,
+            'program_id'                => $this->program_id,
+            'password'                  => bcrypt($this->password), // Secure the password
         ]);
-        dd($validatedData);
-        // Create the user
-        User::create($validatedData);
+
+
+        //dd($user);
 
         // //Temporary
-        // DB::table('users')
-        //     ->where('id', $user->id)
-        // ->update(['email_verified_at' => now()]);
+        DB::table('users')
+            ->where('id', $user->id)
+        ->update(['email_verified_at' => now()]);
 
-        // $role = Role::where('name','volunteer')->first();
+        $role = Role::where('name','volunteer')->first();
 
-        // DB::table('model_has_roles')->insert([
-        //     'role_id' => $role->id,
-        //     'model_id' => $user->id,
-        //     'model_type' => 'App\Models\User',
-        // ]);
+        DB::table('model_has_roles')->insert([
+            'role_id' => $role->id,
+            'model_id' => $user->id,
+            'model_type' => 'App\Models\User',
+        ]);
 
-        // Notification::make()
-        //     ->title('You have successfully registered.')
-        //     ->success()
-        //     ->send();
+        Notification::make()
+            ->title('You have successfully registered.')
+            ->success()
+            ->send();
 
-        // // Reset form
-        // $this->form->fill();
+        // Reset form
+        $this->form->fill();
 
-        // return redirect()->route('filament.admin.auth.login');
-        // $this->reset();
-        session()->flash('success', 'User registered successfully!');
+        return redirect()->route('filament.admin.auth.login');
     }
 
     public function render()
@@ -140,3 +182,4 @@ class VolunteerRegistration extends Component
         return view('livewire.volunteer-registration');
     }
 }
+
