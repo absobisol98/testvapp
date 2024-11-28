@@ -19,6 +19,9 @@
         .clip-path-custom {
             clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
         } */
+        .clip-path-custom {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
+        }
     </style>
 
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
@@ -46,10 +49,10 @@
             </div>
         </section>
 
-        <div class=" bg-[#FFFFFFE5] m-[-40vh] mb-8 xl:w-[55%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10 ">
+        <div class=" bg-[#FFFFFFE5] m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] sm:w-[95%] z-10 ">
             <form  action="{{ route('volunteer.form.store') }}" method="POST">
                 @csrf
-                <div class="flex flex-col md:flex-row items-center justify-center " style="background-image: url('http://ayala-workflow.test/images/VR.jpg'); background-position: center; background-repeat: no-repeat; background-size: cover;">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[3fr_3fr_2fr]  items-start justify-center bg-[#F55E1D] bg-cover lg:bg-right md:bg-no-repeat" style="background: url('{{ asset('img/registration-bg.png') }}');">
                     <!-- Left Side -->
                     <div class=" text-white p-8 lg:p-12">
                         <h1 class="text-4xl font-bold mb-4">Become a Volunteer</h1>
@@ -102,9 +105,9 @@
                     </div>
 
                     <!-- Right Side (Multi-Step Form) -->
-                    <div class="relative pr-[35%]">
-                        <div class=" p-8 text-white">
-                            <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+                    <div class="p-8 lg:p-12 flex items-start justify-start">
+                        <div class="text-white w-full">
+                            <h2 class="text-2xl font-normal mb-4">Personal Information</h2>
 
                             <!-- Multi-Step Form Structure -->
 
@@ -113,7 +116,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold">Username*</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="username"/>
-                                    <span class="text-danger text-red-400 text-sm text-red-400 text-sm username_err"></span>
+                                    <span class="text-danger text-red-400 text-sm username_err"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold">First Name*</label>
@@ -145,7 +148,7 @@
                             </div>
 
                             <!-- Step 2 -->
-                            <div id="step-2" class="hidden">
+                            <div id="step-2" class="hidden w-full">
                                 <!-- Toggle between Company and School -->
                                 <div class="mt-4">
                                     <label class="block text-sm font-semibold mb-2">Select Type*</label>
@@ -199,8 +202,7 @@
                             </div>
 
                             <!-- Step 3 -->
-                            <div id="step-3" class="hidden">
-
+                            <div id="step-3" class="hidden w-full">
                                 <h3 class="text-lg font-semibold mt-6">In Case of Emergency Contact Details</h3>
                                 <div>
                                     <label class="block text-sm font-semibold">Emergency Contact Name*</label>
@@ -232,156 +234,156 @@
                                     </button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
+
                 </div>
             </form>
-
-            <script src="https://cdn.tailwindcss.com"></script>
-            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-            <script>
-                function nextStep(step) {
-                    // Hide all steps
-                    for (let i = 1; i <= 3; i++) {
-                        document.getElementById('step-' + i).classList.add('hidden');
-                    }
-                    // Show the desired step
-                    document.getElementById('step-' + step).classList.remove('hidden');
-                }
-
-                function toggleFields() {
-                    const toggleSwitch = document.getElementById('toggle_type');
-                    const companyFields = document.getElementById('company_fields');
-                    const schoolFields = document.getElementById('school_fields');
-                    const toggleLabel = document.getElementById('toggle_label');
-
-                    if (toggleSwitch.checked) {
-                        toggleLabel.textContent = 'School';
-                        companyFields.classList.add('hidden');
-                        schoolFields.classList.remove('hidden');
-                    } else {
-                        toggleLabel.textContent = 'Company';
-                        schoolFields.classList.add('hidden');
-                        companyFields.classList.remove('hidden');
-                    }
-
-                }
-
-                function updateCompanies() {
-                    const selectedOrganization = document.querySelector('input[name="affiliate_type_id"]:checked')?.id;
-                    const companySelect = document.getElementById('companySelect');
-                    const companySelectWrapper = document.getElementById('companySelectWrapper');
-
-                    // If "Non-Ayala Group" is selected, hide the company select dropdown
-                    if (selectedOrganization === 'non_ayala') {
-                        companySelectWrapper.style.display = 'none';
-                    } else {
-                        companySelectWrapper.style.display = 'block';
-
-                        // Filter and show companies based on the selected organization
-                        const allOptions = companySelect.querySelectorAll('option');
-                        allOptions.forEach(option => {
-                            const clusterId = option.getAttribute('data-cluster');
-
-                            if (selectedOrganization === 'ayala_employee' && clusterId == 1) {
-                                option.style.display = 'block'; // Show only cluster_id 1
-                            } else if (selectedOrganization === 'external_partner' && clusterId >= 2 && clusterId <= 8) {
-                                option.style.display = 'block'; // Show cluster_id between 2 and 8
-                            } else {
-                                option.style.display = 'none'; // Hide all other options
-                            }
-                        });
-                    }
-                }
-
-                $(document).ready(function() {
-                    $("#btn-register").click(function(e) {
-                        e.preventDefault();
-                            var _token = $("input[name='_token']").val();
-                            var username = $("input[name='username']").val();
-                            var email = $("input[name='email']").val();
-                            var firstname = $("input[name='firstname']").val();
-                            var lastname = $("input[name='lastname']").val();
-                            var password = $("input[name='password']").val();
-                            var volunteer = $("input[name='volunteer']").val();
-                            var middle_name = $("input[name='middle_name']").val();
-                            var birthday = $("input[name='birthday']").val();
-                            var is_company = $("input[name='is_company']").prop("checked") ? 1 : 0;
-                            var company_name = $("input[name='company_name']").val();
-                            var company_address = $("input[name='company_address']").val();
-                            var company_contact_number = $("input[name='company_contact_number']").val();
-                            var company_representative = $("input[name='company_representative']").val();
-                            var company_email = $("input[name='company_email']").val();
-                            var school = $("input[name='school']").val();
-                            var school_address = $("input[name='school_address']").val();
-                            var emergency_contact_name = $("input[name='emergency_contact_name']").val();
-                            var emergency_contact_number = $("input[name='emergency_contact_number']").val();
-                            var affiliate_type_id = $("input[name='affiliate_type_id']").val();
-                            var company_id = $("select[name='company_id']").val();
-                            var program_id = $("select[name='program_id']").val();
-
-                        $.ajax({
-                            url: "{{ route('volunteer.form.store') }}",
-                            type: 'POST',
-                            data: {
-                                _token: _token,
-                                username: username,
-                                email: email,
-                                firstname: firstname,
-                                lastname: lastname,
-                                password: password,
-                                volunteer: volunteer,
-                                middle_name: middle_name,
-                                birthday: birthday,
-                                is_company: is_company,
-                                company_name: company_name,
-                                company_address: company_address,
-                                company_contact_number: company_contact_number,
-                                company_representative: company_representative,
-                                company_email: company_email,
-                                school: school,
-                                school_address: school_address,
-                                emergency_contact_name: emergency_contact_name,
-                                emergency_contact_number: emergency_contact_number,
-                                affiliate_type_id: $("input[type=radio][name=affiliate_type_id]:checked").val(),
-                                company_id: company_id,
-                                program_id: program_id
-                            },
-                            success: function (data) {
-                                if ($.isEmptyObject(data.error)) {
-                                    window.location.href = '{{route("filament.admin.auth.login")}}';
-
-                                } else {
-                                    // Handling errors in the `else` block
-                                    var formErr = data.error;
-                                    for (var err in formErr) {
-                                        $('.' + err + '_err').html(formErr[err][0]); // Display errors dynamically
-                                    }
-                                }
-                            },
-                            error: function (error) {
-                                console.log(error); // Debugging
-                                var formErr = error.responseJSON.errors;
-                                for (var err in formErr) {
-                                    $('.' + err + '_err').html(formErr[err][0]); // Handle server-side errors
-                                }
-                            }
-                        });
-                    });
-
-
-                    function printErrorMsg(msg) {
-                            $(".print-error-msg").find("ul").html('');
-                            $(".print-error-msg").css('display', 'block');
-                            $.each(msg, function(key, value) {
-                                $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
-                        });
-                    }
-                });
-            </script>
         </div>
     </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script>
+        function nextStep(step) {
+            // Hide all steps
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById('step-' + i).classList.add('hidden');
+            }
+            // Show the desired step
+            document.getElementById('step-' + step).classList.remove('hidden');
+        }
+
+        function toggleFields() {
+            const toggleSwitch = document.getElementById('toggle_type');
+            const companyFields = document.getElementById('company_fields');
+            const schoolFields = document.getElementById('school_fields');
+            const toggleLabel = document.getElementById('toggle_label');
+
+            if (toggleSwitch.checked) {
+                toggleLabel.textContent = 'School';
+                companyFields.classList.add('hidden');
+                schoolFields.classList.remove('hidden');
+            } else {
+                toggleLabel.textContent = 'Company';
+                schoolFields.classList.add('hidden');
+                companyFields.classList.remove('hidden');
+            }
+
+        }
+
+        function updateCompanies() {
+            const selectedOrganization = document.querySelector('input[name="affiliate_type_id"]:checked')?.id;
+            const companySelect = document.getElementById('companySelect');
+            const companySelectWrapper = document.getElementById('companySelectWrapper');
+
+            // If "Non-Ayala Group" is selected, hide the company select dropdown
+            if (selectedOrganization === 'non_ayala') {
+                companySelectWrapper.style.display = 'none';
+            } else {
+                companySelectWrapper.style.display = 'block';
+
+                // Filter and show companies based on the selected organization
+                const allOptions = companySelect.querySelectorAll('option');
+                allOptions.forEach(option => {
+                    const clusterId = option.getAttribute('data-cluster');
+
+                    if (selectedOrganization === 'ayala_employee' && clusterId == 1) {
+                        option.style.display = 'block'; // Show only cluster_id 1
+                    } else if (selectedOrganization === 'external_partner' && clusterId >= 2 && clusterId <= 8) {
+                        option.style.display = 'block'; // Show cluster_id between 2 and 8
+                    } else {
+                        option.style.display = 'none'; // Hide all other options
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function() {
+            $("#btn-register").click(function(e) {
+                e.preventDefault();
+                    var _token = $("input[name='_token']").val();
+                    var username = $("input[name='username']").val();
+                    var email = $("input[name='email']").val();
+                    var firstname = $("input[name='firstname']").val();
+                    var lastname = $("input[name='lastname']").val();
+                    var password = $("input[name='password']").val();
+                    var volunteer = $("input[name='volunteer']").val();
+                    var middle_name = $("input[name='middle_name']").val();
+                    var birthday = $("input[name='birthday']").val();
+                    var is_company = $("input[name='is_company']").prop("checked") ? 1 : 0;
+                    var company_name = $("input[name='company_name']").val();
+                    var company_address = $("input[name='company_address']").val();
+                    var company_contact_number = $("input[name='company_contact_number']").val();
+                    var company_representative = $("input[name='company_representative']").val();
+                    var company_email = $("input[name='company_email']").val();
+                    var school = $("input[name='school']").val();
+                    var school_address = $("input[name='school_address']").val();
+                    var emergency_contact_name = $("input[name='emergency_contact_name']").val();
+                    var emergency_contact_number = $("input[name='emergency_contact_number']").val();
+                    var affiliate_type_id = $("input[name='affiliate_type_id']").val();
+                    var company_id = $("select[name='company_id']").val();
+                    var program_id = $("select[name='program_id']").val();
+
+                $.ajax({
+                    url: "{{ route('volunteer.form.store') }}",
+                    type: 'POST',
+                    data: {
+                        _token: _token,
+                        username: username,
+                        email: email,
+                        firstname: firstname,
+                        lastname: lastname,
+                        password: password,
+                        volunteer: volunteer,
+                        middle_name: middle_name,
+                        birthday: birthday,
+                        is_company: is_company,
+                        company_name: company_name,
+                        company_address: company_address,
+                        company_contact_number: company_contact_number,
+                        company_representative: company_representative,
+                        company_email: company_email,
+                        school: school,
+                        school_address: school_address,
+                        emergency_contact_name: emergency_contact_name,
+                        emergency_contact_number: emergency_contact_number,
+                        affiliate_type_id: $("input[type=radio][name=affiliate_type_id]:checked").val(),
+                        company_id: company_id,
+                        program_id: program_id
+                    },
+                    success: function (data) {
+                        if ($.isEmptyObject(data.error)) {
+                            window.location.href = '{{route("filament.admin.auth.login")}}';
+
+                        } else {
+                            // Handling errors in the `else` block
+                            var formErr = data.error;
+                            for (var err in formErr) {
+                                $('.' + err + '_err').html(formErr[err][0]); // Display errors dynamically
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error); // Debugging
+                        var formErr = error.responseJSON.errors;
+                        for (var err in formErr) {
+                            $('.' + err + '_err').html(formErr[err][0]); // Handle server-side errors
+                        }
+                    }
+                });
+            });
+
+
+            function printErrorMsg(msg) {
+                    $(".print-error-msg").find("ul").html('');
+                    $(".print-error-msg").css('display', 'block');
+                    $.each(msg, function(key, value) {
+                        $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                });
+            }
+        });
+    </script>
 @endsection
 
