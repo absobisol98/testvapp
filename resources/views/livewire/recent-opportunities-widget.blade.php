@@ -1,5 +1,6 @@
 <x-filament-widgets::widget>
     <div class="w-full">
+        {{--  --}}
         <div class="w-full flex items-center justify-start gap-8 mb-4">
             <div class="w-fit">
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Recent Opportunities</p>
@@ -77,7 +78,7 @@
             @endforeach
         </div>
 
-        {{-- Featured Opportunity Modal --}}
+        {{-- Recent Opportunity Modal --}}
         @foreach ($opportunities as $opportunity)
             <div class="w-full h-fit">
                 <div id="featuredImageModal{{ $opportunity->id }}"
