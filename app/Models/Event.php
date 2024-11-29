@@ -26,7 +26,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property Carbon|null $end_date
  * @property string|null $point_of_contact_id
  * @property int|null $program_id
- * @property string|null $tags
  * @property string|null $location
  * @property int|null $approval_status_id
  * @property bool|null $sign_up_approval_required
@@ -72,7 +71,6 @@ class Event extends Model implements HasMedia
 		'end_date',
 		'point_of_contact_id',
 		'program_id',
-		'tags',
 		'location',
 		'approval_type',
 		'approval_status_id',
@@ -94,7 +92,7 @@ class Event extends Model implements HasMedia
 		return $this->belongsTo(EventType::class);
 	}
 
-	public function event_approval_status()
+	public function status()
 	{
 		return $this->belongsTo(EventApprovalStatus::class, 'approval_status_id');
 	}

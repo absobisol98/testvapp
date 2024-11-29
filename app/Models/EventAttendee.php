@@ -11,14 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class EventAttendee
- * 
+ *
  * @property int $id
  * @property int $event_id
  * @property string $attendee_id
  * @property string|null $facilitator_id
  * @property Carbon|null $time_in
  * @property Carbon|null $time_out
- * 
+ *
  * @property User|null $user
  * @property Event $event
  *
@@ -43,7 +43,11 @@ class EventAttendee extends Model
 		'time_out'
 	];
 
-	public function user()
+	public function attendee()
+	{
+		return $this->belongsTo(User::class, 'attendee_id');
+	}
+	public function facilitator()
 	{
 		return $this->belongsTo(User::class, 'facilitator_id');
 	}

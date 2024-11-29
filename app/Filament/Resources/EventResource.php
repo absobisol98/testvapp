@@ -2,23 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Actions\EventRegistrationButtonVisibilityAction;
 use App\Actions\EventRegistrationTableAction;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Cluster;
 use App\Models\Event;
-use App\Models\EventTag;
 use App\Models\TagsEvent;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EventResource extends Resource
 {
@@ -285,14 +284,13 @@ class EventResource extends Resource
                     ->label('Point-of-Contact')
                     ->formatStateUsing(function (Event $record,string $state){
                         $user = User::find($state);
-                        return $user->firstname.''.$user->lastname;
+                        return $user->firstname.' '.$user->lastname;
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('program.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('approval_status_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('status.name')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('sign_up_approval_required')
                     ->boolean(),
@@ -304,15 +302,35 @@ class EventResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('M d, Y h:i A')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime('M d, Y h:i A')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
             ->filters([
-            ])
+                Filter::make('status')
+                    ->label('')
+                    ->form([
+                        Select::make('status')
+                            ->selectablePlaceholder(false)
+                            ->label('')
+                            ->default('all')
+                            ->options([
+                                'all' => 'All Events',
+                                'joined' => 'Joined Events',
+                            ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+
+                        if($data['status'] === 'joined') {
+                            $query->whereHas('attendees', function (Builder $query) {
+                                $query->where('attendee_id', auth()->id());
+                            });
+                        }
+
+                        return $query;
+                    }),
+            ],layout: FiltersLayout::AboveContent)
             ->actions((new EventRegistrationTableAction())->execute())
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
