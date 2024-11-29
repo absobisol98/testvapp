@@ -35,11 +35,13 @@ class EventSlot extends Model
 	];
 
 	protected $fillable = [
+        'shift_name',
 		'event_id',
 		'slot_type_id',
         'start_time',
         'end_time',
-		'total_slots'
+		'total_slots',
+        'responsibilities'
 	];
 
 	public function event()
