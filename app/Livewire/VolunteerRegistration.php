@@ -27,12 +27,15 @@ use Livewire\Component;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Illuminate\Validation\ValidationException;
 
 class VolunteerRegistration extends Component implements HasForms
 {
     use InteractsWithForms;
 
-    public ?array $data = [];
+    public $text;
+
+    public $data = [];
 
     public $username;
     public $email;
@@ -56,7 +59,6 @@ class VolunteerRegistration extends Component implements HasForms
     public $program_id;
     public $password;
     public $passwordConfirmation;
-    public $emergency_contact_relationship;
 
     public static function form(Form $form): Form
     {
@@ -94,13 +96,64 @@ class VolunteerRegistration extends Component implements HasForms
     }
     public function submit()
     {
-        $data = $this->form->getState();
-        $data['volunteer'] = 1;
+        // $data = $this->form->getState();
+        // $data['volunteer'] = 1;
 
 
-        $user = User::create($data);
+        // $user = User::create($data);
 
-        //Temporary
+    // Define validation rules
+    $this->validate([
+        'username'                  => 'required|unique:users,username|max:255',
+        'email'                     => 'required|email|unique:users,email|max:255',
+        'firstname'                 => 'required|max:255',
+        'lastname'                  => 'required|max:255',
+        'middle_name'               => 'nullable|max:255',
+        'volunteer'                 => 'required|boolean',
+        'birthday'                  => 'required|date',
+        'is_company'                => 'required|boolean',
+        'company_name'              => 'nullable|max:255',
+        'company_address'           => 'nullable|max:255',
+        'company_contact_number'    => 'nullable|phone:AUTO',
+        'company_representative'    => 'nullable|max:255',
+        'company_email'             => 'nullable|email|max:255',
+        'school'                    => 'nullable|max:255',
+        'school_address'            => 'nullable|max:255',
+        'emergency_contact_name'    => 'nullable|max:255',
+        'emergency_contact_number'  => 'nullable|phone:AUTO',
+        'affiliate_type_id'         => 'required|exists:affiliate_types,id',
+        'company_id'                => 'nullable|exists:companies,id',
+        'program_id'                => 'nullable|exists:programs,id',
+        'password'                  => 'required|confirmed|min:8', // Ensure password confirmation
+    ]);
+        $user = User::create([
+            'username'                  => $this->username,
+            'email'                     => $this->email,
+            'firstname'                 => $this->firstname,
+            'lastname'                  => $this->lastname,
+            'middle_name'               => $this->middle_name,
+            'volunteer'                 => $this->volunteer,
+            'birthday'                  => $this->birthday,
+            'is_company'                => $this->is_company,
+            'company_name'              => $this->company_name,
+            'company_address'           => $this->company_address,
+            'company_contact_number'    => $this->company_contact_number,
+            'company_representative'    => $this->company_representative,
+            'company_email'             => $this->company_email,
+            'school'                    => $this->school,
+            'school_address'            => $this->school_address,
+            'emergency_contact_name'    => $this->emergency_contact_name,
+            'emergency_contact_number'  => $this->emergency_contact_number,
+            'affiliate_type_id'         => $this->affiliate_type_id,
+            'company_id'                => $this->company_id,
+            'program_id'                => $this->program_id,
+            'password'                  => bcrypt($this->password), // Secure the password
+        ]);
+
+
+        //dd($user);
+
+        // //Temporary
         DB::table('users')
             ->where('id', $user->id)
         ->update(['email_verified_at' => now()]);
@@ -129,3 +182,4 @@ class VolunteerRegistration extends Component implements HasForms
         return view('livewire.volunteer-registration');
     }
 }
+
