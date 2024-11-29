@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EventResource\Pages;
 
 use App\Actions\EventRegistrationTableAction;
 use App\Filament\Resources\EventResource;
+use App\Models\Event;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
@@ -12,6 +13,7 @@ use Filament\Tables\Columns\Layout\View;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class Thumbnail extends ListRecords
 {
@@ -23,7 +25,18 @@ class Thumbnail extends ListRecords
 
     protected function getTableQuery(): ?Builder
     {
-        $events = (new (static::$resource::getModel()))->where('start_date', '>', now()->subDay());
+        if(auth()->user()->company?->cluster->name == "Ayala Corporation Group"){ // Ayala
+            $events = Event::query()
+                ->leftJoin('event_companies','event_companies.event_id','=','events.id')
+                ->where('start_date', '>', now()->subDay()->endOfDay())
+                ->where(function ($query) {
+                    $query->where('event_type_id', 1)
+                        ->orWhere('event_companies.company_id', 1);
+                })->select('events.*');
+        }else{
+            $events = (new (static::$resource::getModel()))->where('start_date', '>', now()->subDay());
+
+        }
 
         return $events;
     }
