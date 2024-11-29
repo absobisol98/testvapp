@@ -7,6 +7,8 @@ use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Cluster;
 use App\Models\Event;
+use App\Models\EventSlotType;
+use App\Models\EventType;
 use App\Models\TagsEvent;
 use App\Models\User;
 use Filament\Forms;
@@ -46,7 +48,7 @@ class EventResource extends Resource
                             ->relationship('program', 'name')
                             ->required(),
                         Forms\Components\Select::make('point_of_contact_id')
-                            ->label('Point-of-Contact')
+                            ->label('HR Representative (Point-of-contact)')
                             ->required()
                             ->preload()
                             ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
@@ -177,47 +179,43 @@ class EventResource extends Resource
                 Forms\Components\TagsInput::make('tags')
                     ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray()),
 
-                Forms\Components\Section::make('Slots')
+                Forms\Components\Repeater::make('slots')
+                    ->required()
                     ->schema([
-                        Forms\Components\Fieldset::make('AM')
+                        Forms\Components\Grid::make()
                             ->schema([
-                                Forms\Components\TextInput::make('am_slot_number')
+
+                                Forms\Components\TextInput::make('shift_name')
+                                    ->required()
                                     ->minValue(0)
-                                    ->label('Slot')
-                                    ->numeric(),
-                                Forms\Components\TimePicker::make('am_start_time')
-                                    ->minDate(now()->startOfDay())
-                                    ->maxDate(now()->startOfDay()->addHours(12)->subMicroseconds(1))
-                                    ->label('Start time')
-                                    ->default('8:00')
-                                    ->seconds(false),
-                                Forms\Components\TimePicker::make('am_end_time')
-                                    ->minDate(now()->startOfDay())
-                                    ->maxDate(now()->startOfDay()->addHours(12)->subMicroseconds(1))
-                                    ->label('End time')
-                                    ->default('11:00')
-                                    ->seconds(false),
-                            ])->columns(3),
-                        Forms\Components\Fieldset::make('PM')
-                            ->schema([
-                                Forms\Components\TextInput::make('pm_slot_number')
+                                    ->label('Shift name'),
+                                Forms\Components\TextInput::make('total_slots')
+                                    ->required()
+                                    ->label('Number of Volunteer')
                                     ->minValue(0)
-                                    ->label('Slot')
                                     ->numeric(),
-                                Forms\Components\TimePicker::make('pm_start_time')
-                                    ->minDate(now()->startOfDay()->addHours(12))
-                                    ->maxDate(now()->startOfDay()->addHours(24))
-                                    ->label('Start time')
-                                    ->default('13:00')
-                                    ->seconds(false),
-                                Forms\Components\TimePicker::make('pm_end_time')
-                                    ->minDate(now()->startOfDay()->addHours(12))
-                                    ->maxDate(now()->startOfDay()->addHours(24))
-                                    ->label('End time')
-                                    ->default('18:00')
-                                    ->seconds(false),
-                            ])->columns(3),
-                    ]),
+                            ]),
+                        Forms\Components\Select::make('slot_type_id')
+                            ->label('Type')
+                            ->default(1)
+                            ->required()
+                            ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray()),
+                        Forms\Components\TimePicker::make('start_time')
+                            ->required()
+                            ->label('Start time')
+                            ->default('8:00')
+                            ->seconds(false),
+                        Forms\Components\TimePicker::make('end_time')
+                            ->required()
+                            ->label('End time')
+                            ->default('11:00')
+                            ->seconds(false),
+                        Forms\Components\Textarea::make('responsibilities')
+                            ->required()
+                            ->columnSpanFull(),
+                    ])
+                    ->columnSpanFull()
+                    ->columns(3),
 
                 Forms\Components\Select::make('facilitators')
                     ->preload()
@@ -281,7 +279,7 @@ class EventResource extends Resource
                     ->date('M d, Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('point_of_contact_id')
-                    ->label('Point-of-Contact')
+                    ->label('HR Representative (Point-of-contact)')
                     ->formatStateUsing(function (Event $record,string $state){
                         $user = User::find($state);
                         return $user->firstname.' '.$user->lastname;
@@ -311,7 +309,7 @@ class EventResource extends Resource
                 Filter::make('status')
                     ->label('')
                     ->form([
-                        Select::make('status')
+                        Forms\Components\Select::make('status')
                             ->selectablePlaceholder(false)
                             ->label('')
                             ->default('all')
