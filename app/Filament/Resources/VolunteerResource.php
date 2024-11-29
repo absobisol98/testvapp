@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Actions\VolunteerFields;
 use App\Filament\Resources\VolunteerResource\Pages;
+use App\Filament\Resources\VolunteerResource\RelationManagers\EventsRelationManager;
 use App\Models\User;
 use App\Models\Volunteer;
 use App\Settings\MailSettings;
@@ -153,7 +154,7 @@ class VolunteerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            EventsRelationManager::class
         ];
     }
 

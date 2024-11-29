@@ -36,7 +36,7 @@ class EventRegistrationTableAction
                     return [
                         Radio::make('slot_type_id')
                             ->label('')
-                            ->required()
+                            ->required(fn(Event $record) => $record->slots->first())
                             ->options(function (Event $record){
                                 $option = [];
                                 foreach($record->slots as $slot) {
@@ -113,13 +113,14 @@ class EventRegistrationTableAction
                 })
                 ->visible(function (Event $record){
 
-                    if($record->registrations->where('volunteer_id',auth()->user()->id)->first()){
+                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
+
+                    if($registration && $registration->status_id == 1){
                         return true;
-                    }else{
-                        return false;
                     }
 
-                    return (new EventRegistrationButtonVisibilityAction())->execute($record);
+                    return false;
+
 
                 }),
             \Filament\Tables\Actions\ViewAction::make()
