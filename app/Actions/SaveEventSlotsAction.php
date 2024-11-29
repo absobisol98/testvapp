@@ -26,23 +26,17 @@ final class SaveEventSlotsAction
             EventSlot::where('event_id',$event->id)->delete();
         }
 
-        if($data['am_slot_number']){
+        foreach ($data['slots'] as $slot)
+
             EventSlot::create([
-                'slot_type_id' => 1, // AM
+                'shift_name' => $slot['shift_name'],
+                'slot_type_id' => $slot['slot_type_id'], // AM
                 'event_id' => $event->id,
-                'total_slots' => $data['am_slot_number'],
-                'start_time' => $data['am_start_time'],
-                'end_time' => $data['am_end_time'],
+                'total_slots' => $slot['total_slots'],
+                'start_time' => $slot['start_time'],
+                'end_time' => $slot['end_time'],
+                'responsibilities' => $slot['responsibilities'],
             ]);
-        }
-        if($data['pm_slot_number']){
-            EventSlot::create([
-                'slot_type_id' => 2, // PM
-                'event_id' => $event->id,
-                'total_slots' => $data['pm_slot_number'],
-                'start_time' => $data['pm_start_time'],
-                'end_time' => $data['pm_end_time'],
-            ]);
-        }
+
     }
 }
