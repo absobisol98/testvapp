@@ -17,7 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/public
 public/css/filament/filament/app.css
 public/css/filament/forms/forms.css
 public/css/ysfkaya/filament-phone-input/filament-phone-input.css
