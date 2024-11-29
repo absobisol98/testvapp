@@ -73,9 +73,6 @@ class GenerateEventQRCode
 
         $result = $writer->write($qrCode, $logo, null);
 
-        // Validate the result
-        $writer->validateResult($result,route('qr.scan', ['event_id' => $attendee->event_id,'attendee_id' => $attendee->id]));
-
         $result->saveToFile(storage_path('app/public/'.$attendee->id.'-qr-code.png'));
     }
 }
