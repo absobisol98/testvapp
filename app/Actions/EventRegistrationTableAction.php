@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\Event;
+use App\Models\EventAttendee;
 use App\Models\EventRegistration;
 use Carbon\Carbon;
 use Filament\Forms\ComponentContainer;
@@ -66,12 +67,31 @@ class EventRegistrationTableAction
                 })
                 ->action(function (Event $record,array $data){
 
+                    if($record->approval_type == "Automatic"){ // Automatic approved status for registration
+
+                        $attendee = EventAttendee::create([
+                            'event_id' => $record->id,
+                            'attendee_id' => auth()->user()->id,
+                            'facilitator_id' => auth()->id(),
+                        ]);
+
+                        // Generate QR code for attendee
+                        (new GenerateEventQRCode())->execute($attendee);
+
+                        $status = 2; // Approve - (Automatic)
+
+                    }else{
+                        $status = 1; // Pending
+                    }
+
                     $event_registration = EventRegistration::create([
                         'event_id' => $record->id,
                         'volunteer_id' => auth()->user()->id,
                         'slot_type_id' => $data['slot_type_id'],
                         'created_at' => now(),
+                        'status_id' => $status,
                     ]);
+
 
                     if (isset($data['media']) && $data['media']) {
                         foreach ($data['media'] as $media) {
