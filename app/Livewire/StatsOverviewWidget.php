@@ -7,7 +7,7 @@ use Filament\Widgets\Widget;
 
 class StatsOverviewWidget extends Widget
 {
-    protected static string $view = 'livewire.stats-overview-widget';
+    protected static string $view = 'filament.widgets.stats-overview-widget';
 
     protected function getViewData(): array
     {

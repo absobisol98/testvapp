@@ -96,9 +96,14 @@
 
 
 .fi-sidebar-header, .fi-topbar nav {
-    @apply min-h-[120px] bg-[#F55E1D];
+    @apply min-h-[100px] bg-[#F55E1D];
 }
 
 .fi-sidebar-header img {
     height: 4rem !important;
+}
+
+.fi-topbar .ms-auto
+{
+    @apply hidden;
 }

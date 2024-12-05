@@ -1,6 +1,6 @@
 <x-filament-widgets::widget>
     {{-- OPPORTUNITIES --}}
-    <div class="w-full">
+    <div class="w-full px-8">
         <div class="flex items-center justify-between gap-4 font-[400]">
             <div class="w-fit">
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Upcoming Opportunity</p>
@@ -52,20 +52,18 @@
             {{-- List --}}
             @foreach ($opportunities as $index => $opportunity)
                 <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                        <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
-                            alt="">
+                    <div class="h-fit md:w-[200px] flex items-center justify-center overflow-hidden" style="width: max-content">
+                        <img class="w-[auto] md:w-[200px] h-[220px] md:h-[140px] object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
                     </div>
 
                     <div class="w-full">
-                        <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+                        <p class="text-2xl font-[700] text-[#03498D] mr-[12px] mb-[4px] cursor-pointer capitalize leading-none">{{ $opportunity->title }}</p>
+                        <p class="text-lg font-[400] mb-[12px]">Zoom Webinar Online, {{ $opportunity->location }}</p>
 
-                        <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, {{ $opportunity->location }}</p>
-
-                        <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                        <div class="w-full flex items-center justify-start text-[14px] font-[400] gap-4">
                             <div class="w-fit flex flex-col items-start justify-between gap-1">
                                 <p class="font-[600]">DATE: {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
-                                <p class="font-[600]">{{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} - 
+                                <p class="font-[600]">{{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
                                     {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
                             </div>
                             <div class="w-fit flex flex-col items-start justify-between gap-1">
@@ -74,8 +72,8 @@
                                 <div class="flex items-center justify-start gap-4">
                                     @foreach ($opportunity->slots as $index => $slot)
                                         <p>
-                                            <span class="font-[600]">BATCH {{ $index + 1 }}:</span> 
-                                            {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} - 
+                                            <span class="font-[600]">BATCH {{ $index + 1 }}:</span>
+                                            {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} -
                                             {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                         </p>
                                     @endforeach
@@ -84,11 +82,11 @@
                         </div>
                     </div>
 
-                    <div class="w-[200px]">
+                    <div style="width:200px">
                         <a href="">
                             <div
-                                class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-[400] text-[18px] text-white">CHECK-IN</p>
+                                class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                <p class="font-400 text-lg text-white">CHECK-IN</p>
                             </div>
                         </a>
                     </div>
