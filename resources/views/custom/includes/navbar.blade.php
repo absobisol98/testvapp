@@ -49,7 +49,7 @@
         </a>
 
         @guest
-            <a href="">
+            <a href="{{ route('volunteer.form.view') }}">
                 <div
                     class="h-[36px] md:h-[56px] w-[200px] md:w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                     <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
