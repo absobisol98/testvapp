@@ -43,7 +43,7 @@ class EventRegistrationTableAction
                                     $registion_count = $record->registrations->where('slot_type_id',$slot->id)->where('status_id','!=',3)->count();
 
                                     if($slot->total_slots - $registion_count){
-                                        $option[$slot->id] = $slot->type->name.': '.Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('h:i').' - '.Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('h:i');
+                                        $option[$slot->id] = $slot->shift_name.' ('.Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('g:i A').' - '.Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('g:i A').')';
                                     }
                                 }
 

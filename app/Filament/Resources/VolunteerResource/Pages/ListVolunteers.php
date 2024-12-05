@@ -14,17 +14,10 @@ class ListVolunteers extends ListRecords
 
     protected function getTableQuery(): ?Builder
     {
-        if(auth()->user()->company?->cluster->name == "Ayala Corporation Group"){ // Ayala
-            $events = Event::query()
-                ->leftJoin('event_companies','event_companies.event_id','=','events.id')
-                ->where('start_date', '>', now()->subDay()->endOfDay())
-                ->where(function ($query) {
-                    $query->where('event_type_id', 1)
-                        ->orWhere('event_companies.company_id', 1);
-                })->select('events.*');
+        if(auth()->user()->hasRole(['super_admin'])){ // Super admin
+            $events = (new (static::$resource::getModel()));
         }else{
-            $events = (new (static::$resource::getModel()))->where('start_date', '>', now()->subDay());
-
+            $events = (new (static::$resource::getModel()))->where('id',auth()->id());
         }
 
         return $events;

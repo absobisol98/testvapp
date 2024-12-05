@@ -33,6 +33,17 @@ class EventResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Event Banner')
+                    ->schema([
+                        Forms\Components\FileUpload::make('media_banner')
+                            ->directory('event-banner-attachments')
+                            ->multiple()
+                            ->maxFiles(1)
+                            ->label('')
+                            ->openable()
+                            ->downloadable(),
+                    ])
+                    ->collapsible(),
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->columnSpanFull()
@@ -239,7 +250,6 @@ class EventResource extends Resource
                     ->default(2)
                     ->required(),
                 Forms\Components\Section::make('Attachments')
-                    ->hiddenOn('edit')
                     ->schema([
                         Forms\Components\FileUpload::make('media')
                             ->directory('event-attachments')
@@ -312,9 +322,10 @@ class EventResource extends Resource
                         Forms\Components\Select::make('status')
                             ->selectablePlaceholder(false)
                             ->label('')
-                            ->default('all')
+                            ->default('upcoming_events')
                             ->options([
                                 'all' => 'All Events',
+                                'upcoming_events' => 'Upcoming Events',
                                 'joined' => 'Joined Events',
                             ]),
                     ])
@@ -324,6 +335,8 @@ class EventResource extends Resource
                             $query->whereHas('attendees', function (Builder $query) {
                                 $query->where('attendee_id', auth()->id());
                             });
+                        }elseif($data['status'] == 'upcoming_events'){
+                            $query->where('start_date', '>', now()->subDay());
                         }
 
                         return $query;
