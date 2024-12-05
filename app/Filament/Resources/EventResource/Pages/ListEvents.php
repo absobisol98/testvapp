@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\EventResource\Pages;
 
+use App\Actions\EventsGetTableQueryAction;
 use App\Filament\Resources\EventResource;
+use App\Models\Company;
+use App\Models\Event;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +16,7 @@ class ListEvents extends ListRecords
 
     protected function getTableQuery(): ?Builder
     {
-        $events = (new (static::$resource::getModel()))->where('start_date', '>', now()->subDay());
+        $events = (new EventsGetTableQueryAction())->execute();
 
         return $events;
     }

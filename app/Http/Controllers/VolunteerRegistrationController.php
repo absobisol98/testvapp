@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Program;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class VolunteerRegistrationController extends Controller
 {
@@ -59,7 +61,9 @@ class VolunteerRegistrationController extends Controller
         {
             $input = $request->all();
             // Save data if validation passes
-        User::create([
+        $user = User::create([
+            'email_verified_at' => now(), // Temporary;for testing only
+            'volunteer' => 1, // Volunteer
             'username' => $input['username'],
             'email' => $input['email'],
             'firstname' => $input['firstname'],
@@ -79,6 +83,14 @@ class VolunteerRegistrationController extends Controller
             'company_id' => $input['company_id'],
             'program_id' =>  $input['program_id'],
         ]);
+
+            $role = Role::where('name','volunteer')->first();
+
+            DB::table('model_has_roles')->insert([
+                'role_id' => $role->id,
+                'model_id' => $user->id,
+                'model_type' => 'App\Models\User',
+            ]);
             // Return success response
             return response()->json(['success' => 'Volunteer registration completed successfully.']);
         }

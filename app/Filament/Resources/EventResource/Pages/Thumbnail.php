@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\EventResource\Pages;
 
 use App\Actions\EventRegistrationTableAction;
+use App\Actions\EventsGetTableQueryAction;
 use App\Filament\Resources\EventResource;
+use App\Models\Company;
 use App\Models\Event;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -25,18 +27,7 @@ class Thumbnail extends ListRecords
 
     protected function getTableQuery(): ?Builder
     {
-        if(auth()->user()->company?->cluster->name == "Ayala Corporation Group"){ // Ayala
-            $events = Event::query()
-                ->leftJoin('event_companies','event_companies.event_id','=','events.id')
-                ->where('start_date', '>', now()->subDay()->endOfDay())
-                ->where(function ($query) {
-                    $query->where('event_type_id', 1)
-                        ->orWhere('event_companies.company_id', 1);
-                })->select('events.*');
-        }else{
-            $events = (new (static::$resource::getModel()))->where('start_date', '>', now()->subDay());
-
-        }
+        $events = (new EventsGetTableQueryAction())->execute();
 
         return $events;
     }
@@ -55,9 +46,10 @@ class Thumbnail extends ListRecords
                         Select::make('status')
                             ->label('')
                             ->selectablePlaceholder(false)
-                            ->default('all')
+                            ->default('upcoming_events')
                             ->options([
                                 'all' => 'All Events',
+                                'upcoming_events' => 'Upcoming Events',
                                 'joined' => 'Joined Events',
                             ]),
                     ])
@@ -67,6 +59,8 @@ class Thumbnail extends ListRecords
                             $query->whereHas('attendees', function (Builder $query) {
                                 $query->where('attendee_id', auth()->id());
                             });
+                        }elseif($data['status'] == 'upcoming_events'){
+                            $query->where('start_date', '>', now()->subDay());
                         }
 
                         return $query;

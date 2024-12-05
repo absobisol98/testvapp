@@ -12,7 +12,6 @@ final class EventCreateAction
 {
     public function execute($data)
     {
-
         $tag_arr = array();
 
         if(isset($data['tags']) && $data['tags']){
@@ -63,6 +62,14 @@ final class EventCreateAction
 
                     $event = Event::create($data);
 
+                    if ($data['media_banner']) {
+                        foreach ($data['media_banner'] as $media) {
+                            $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
+                                'event-banner-attachments'
+                            );
+                        }
+                    }
+
                     if ($data['media']) {
                         foreach ($data['media'] as $media) {
                             $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
@@ -70,6 +77,7 @@ final class EventCreateAction
                             );
                         }
                     }
+
                     // Insert Slots
                     (new SaveEventSlotsAction())->execute($event,$data,false);
 
@@ -86,6 +94,14 @@ final class EventCreateAction
                     $data['end_date'] = $end->{$recurrence['function']}()->format('Y-m-d H:i:s');
 
                     $event = Event::create($data);
+
+                    if ($data['media_banner']) {
+                        foreach ($data['media_banner'] as $media) {
+                            $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
+                                'event-banner-attachments'
+                            );
+                        }
+                    }
 
                     if ($data['media']) {
                         foreach ($data['media'] as $media) {
@@ -107,6 +123,14 @@ final class EventCreateAction
             }
         }else{ // One time event
             $event = Event::create($data);
+
+            if ($data['media_banner']) {
+                foreach ($data['media_banner'] as $media) {
+                    $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
+                        'event-banner-attachments'
+                    );
+                }
+            }
 
             if ($data['media']) {
                 foreach ($data['media'] as $media) {

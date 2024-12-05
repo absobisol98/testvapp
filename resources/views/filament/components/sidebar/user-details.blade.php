@@ -79,7 +79,7 @@
     <div class="profileContainer">
         <div class="profileImageWrapper">
             <img class="profileImage"
-                src="https://cms.imgworlds.com/assets/a5366382-0c26-4726-9873-45d69d24f819.jpg?key=home-gallery"
+                 src="{{\Filament\Facades\Filament::getUserAvatarUrl(auth()->user())}}"
                 alt="User Profile Image">
         </div>
         <div class="profileText">

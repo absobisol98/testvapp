@@ -29,27 +29,23 @@ final class EventFillFormAction
         $data['companies'] = $record->companies->pluck('id')->toArray();
 
         // Slots
-        $am_slot = $record->slots->where('slot_type_id',1)->first();
-        $pm_slot = $record->slots->where('slot_type_id',2)->first();
-
-        if($am_slot){
-            $data['am_slot_number'] = $am_slot->total_slots;
-            $data['am_start_time'] = $am_slot->start_time;
-            $data['am_end_time'] = $am_slot->end_time;
-        }
-        if($pm_slot){
-            $data['pm_slot_number'] = $pm_slot->total_slots;
-            $data['pm_start_time'] = $pm_slot->start_time;
-            $data['pm_end_time'] = $pm_slot->end_time;
-        }
+        $data['slots'] = $record->slots->toArray();
 
         // attachments
         $media = [];
+        $media_banner = [];
+
         foreach ($record->getMedia('event-attachments') as $media_item) {
             $index = strlen(storage_path('app/public/'));
             $media[] = substr($media_item->getPath(), $index);
         }
+        foreach ($record->getMedia('event-banner-attachments') as $media_item) {
+            $index = strlen(storage_path('app/public/'));
+            $media_banner[] = substr($media_item->getPath(), $index);
+        }
+
         $data['media'] = $media;
+        $data['media_banner'] = $media_banner;
 
         return $data;
     }

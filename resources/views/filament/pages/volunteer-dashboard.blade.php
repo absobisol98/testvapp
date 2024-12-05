@@ -839,7 +839,6 @@
 
         /* For Recent Opportunity(End) */
     </style>
-
     <div class="w-full flex flex-col items-center justify-between gap-8">
         {{-- STATS OVERVIEW --}}
         <div class="w-full">
@@ -855,7 +854,7 @@
 
                             <div id="stat-image-container">
                                 <div id="stat-image">
-                                    <img src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt=""
+                                    <img src="{{ $opportunity->getMedia('event-banner-attachments')->first()?->getURL() }}" alt=""
                                         style="width: 100%; height: 100%; object-fit: cover;">
                                 </div>
 
@@ -970,7 +969,7 @@
                     @foreach ($upcomingOpportunities as $index => $opportunity)
                         <div class="opportunityItem">
                             <div class="opportunityImage">
-                                <img src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                                <img src="{{$opportunity->getMedia('event-banner-attachments')->first()?->getURL()}}" alt="">
                             </div>
 
                             <div class="opportunityDetails">
@@ -1059,7 +1058,7 @@
                         @foreach ($tags as $tag)
                             <div class="tag">
                                 <p>{{ \Illuminate\Support\Str::upper($tag->name) }}
-                                    <span class="tagRemove">X</span>
+{{--                                    <span class="tagRemove">X</span>--}}
                                 </p>
                             </div>
                         @endforeach
@@ -1071,7 +1070,7 @@
                         <div id="opportunityCard-{{ $opportunity->id }}" class="opportunityCard">
                             <!-- Card Header -->
                             <div class="cardHeader"
-                                style="background: url('{{ asset('img/ayala-foundation-bg.jpg') }}') no-repeat center center; background-size: cover;">
+                                style="background: url('{{ $opportunity->getMedia('event-banner-attachments')->first()?->getURL() }}') no-repeat center center; background-size: cover;">
                                 <div class="logoOverlay">
                                     <img class="logoImage" src="{{ asset('img/logo-colored.png') }}" alt="">
                                 </div>
@@ -1141,7 +1140,7 @@
                                 <div class="modal-content-container">
                                     <div class="flex-column">
                                         <div class="image-container"
-                                            style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
+                                            style="background-image: url('{{ $opportunity->getMedia('event-banner-attachments')->first()?->getURL() }}');">
                                             <div class="gradient-overlay">
                                                 <img class="logo" src="{{ asset('img/logo-colored.png') }}"
                                                     alt="Logo">
@@ -1173,7 +1172,7 @@
                                                         </p>
                                                         <p><span class="info-title">SHIFTS:</span> Listen attentively and
                                                             engage actively in the session</p>
-        
+
                                                         @foreach ($opportunity->slots as $index => $slot)
                                                             <p><span class="info-title">BATCH {{ $index + 1 }}:</span>
                                                                 {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }}
@@ -1181,14 +1180,14 @@
                                                             </p>
                                                         @endforeach
                                                     </div>
-        
+
                                                     <div class="buttons">
                                                         <a href="">
                                                             <div class="button signup">
                                                                 <p>SIGN UP</p>
                                                             </div>
                                                         </a>
-        
+
                                                         <a href="">
                                                             <div class="button favorite">
                                                                 <p>FAVORITE</p>
@@ -1196,7 +1195,7 @@
                                                         </a>
                                                     </div>
                                                 </div>
-    
+
                                                 <div class="qr-code">
                                                     <img src="{{ asset('img/qr.png') }}" alt="">
                                                 </div>
@@ -1214,14 +1213,14 @@
                     document.addEventListener("DOMContentLoaded", function () {
                         // Parse opportunities from Laravel
                         const opportunities = @json($recentOpportunities);
-                
+
                         // Loop through each opportunity
                         opportunities.forEach(opportunity => {
                             const viewDetailsBtn = document.getElementById(`viewDetailsBtn-${opportunity.id}`);
                             const modal = document.getElementById(`featuredImageModal${opportunity.id}`);
                             const modalContent = modal.querySelector('.modal-content');
                             const closeModal = document.getElementById(`closeModal${opportunity.id}`);
-                
+
                             if (viewDetailsBtn && modal && closeModal) {
                                 // Open modal
                                 viewDetailsBtn.addEventListener('click', function () {
@@ -1232,21 +1231,21 @@
                                         modalContent.style.opacity = "1"; // Ensure full opacity
                                     }, 10); // Small delay for smooth transition
                                 });
-                
+
                                 // Close modal when clicking background or close button
                                 modal.addEventListener('click', function (event) {
                                     if (event.target === modal || event.target.closest(`#closeModal${opportunity.id}`)) {
                                         closeModalFunction(modal, modalContent);
                                     }
                                 });
-                
+
                                 // Close modal directly when clicking the close button
                                 closeModal.addEventListener('click', function () {
                                     closeModalFunction(modal, modalContent);
                                 });
                             }
                         });
-                
+
                         // Function to close the modal
                         function closeModalFunction(modal, modalContent) {
                             modalContent.classList.add('scale-95', 'opacity-0'); // Fade out content
@@ -1257,8 +1256,8 @@
                             }, 300); // Delay matches CSS transition duration
                         }
                     });
-                </script>                
-                
+                </script>
+
 
             </div>
         </div>
