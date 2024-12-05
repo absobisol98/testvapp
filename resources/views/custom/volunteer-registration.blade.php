@@ -1,26 +1,25 @@
 @extends('custom.layouts.app')
+@section('title', 'Volunteer Registration')
 
 @section('content')
-
     <style>
-        /* body {
-            font-family: 'Roboto', sans-serif;
-        }
-        .hidden {
-            display: none;
-        } */
         .text-danger {
-        color: red;
-        font-size: 0.875rem; /* Equivalent to Tailwind's `text-sm` */
-    }
-        /* .clip-path-custom {
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
+            color: #ffffff; /* White text */
+            background-color: red; /* Bright red-orange background */
+            font-size: 0.975rem; /* Equivalent to Tailwind's `text-sm` */
+            border-radius: 5px; /* Optional: Slightly rounded corners */
         }
         .clip-path-custom {
             clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
-        } */
-        .clip-path-custom {
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
+        }
+        input:checked ~ .radio {
+            color:white;
+            background-color:  #2563eb;
+        }
+        .required:after{
+            content:'*';
+            color:whitesmoke;
+            padding-left:5px;
         }
     </style>
 
@@ -49,77 +48,24 @@
             </div>
         </section>
 
-        <div class=" bg-[#FFFFFFE5] m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] sm:w-[95%] z-10 ">
-            <form  action="{{ route('volunteer.form.store') }}" method="POST">
-                @csrf
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[3fr_3fr_2fr]  items-start justify-center bg-[#F55E1D] bg-cover lg:bg-right md:bg-no-repeat" style="background: url('{{ asset('img/registration-bg.png') }}');">
+        <div class=" bg-[#FFFFFFE5] m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] sm:w-[95%] z-10 bg-[#F55E1D] bg-cover lg:bg-right"  style="background: url('{{ asset('img/registration-bg.png') }}');">
+                <div class="items-start justify-center min-h-[756px]">
                     <!-- Left Side -->
-                    <div class=" text-white p-8 lg:p-12">
-                        <h1 class="text-4xl font-bold mb-4">Become a Volunteer</h1>
-                        <p class="text-lg mb-6">Ayala Corporate Citizenship and Volunteer Program</p>
-                        <p class="text-md mb-8">Start your registration here.</p>
+                    <form  action="{{ route('volunteer.form.store') }}" method="POST">
+                        @csrf
+                        <div id="step-1" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[3fr_3fr_2fr]  ">
+                            <div class=" text-white p-8 lg:p-12">
+                                <h1 class="text-4xl font-bold mb-4">Become a Volunteer</h1>
+                                <p class="text-2xl  mb-4">Ayala Corporate Citizenship and Volunteer Program</p>
+                                <p class="text-2xl mb-4">Start your registration here.</p>
 
-                        <!-- Organization Radio Buttons -->
-                            <div class="mb-6">
-                                <label class="block mb-2 text-white font-semibold">Please select your organization*</label>
-                                <div class="flex items-center mb-2">
-                                    <input type="radio" id="ayala_employee" name="affiliate_type_id" checked value="1" class="mr-2" onchange="updateCompanies()" />
-                                    <label for="ayala_employee" class="text-white">Ayala Employee</label>
-                                </div>
-                                <div class="flex items-center mb-2">
-                                    <input type="radio" id="external_partner" name="affiliate_type_id" value="2" class="mr-2" onchange="updateCompanies()" />
-                                    <label for="external_partner" class="text-white">Accredited External Partner</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="radio" id="non_ayala" name="affiliate_type_id" value="3" class="mr-2" onchange="updateCompanies()" />
-                                    <label for="non_ayala" class="text-white">Non-Ayala Group</label>
-                                </div>
-                            </div>
-
-                            <!-- Company Select Dropdown -->
-                            <div class="mb-6" id="companySelectWrapper">
-                                <select required class="w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect" class="form-select">
-                                    <option value="" disabled selected></option>
-                                    @foreach ($companies as $company)
-                                        <option value="{{ $company->id }}" data-cluster="{{ $company->cluster_id }}">{{ $company->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                        <!-- Program Interest Dropdown -->
-                        <div class="mb-6">
-                            <label class="block mb-2 text-white font-semibold">What programs are you interested in?</label>
-                            <select class="w-full p-2 bg-white text-gray-900 rounded" name="program_id">
-                                @foreach($programs as $program)
-                                    <option value="{{ $program->id }}">{{ $program->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Privacy and Terms Notice -->
-                        <p class="text-sm mt-8 text-white">
-                            We will not share your information without your permission. By signing up you agree to our
-                            <a href="#" class="underline">Terms and Conditions</a>. Learn how we use your data in our
-                            <a href="#" class="underline">Privacy Policy</a>.
-                        </p>
-                    </div>
-
-                    <!-- Right Side (Multi-Step Form) -->
-                    <div class="p-8 lg:p-12 flex items-start justify-start">
-                        <div class="text-white w-full">
-                            <h2 class="text-2xl font-normal mb-4">Personal Information</h2>
-
-                            <!-- Multi-Step Form Structure -->
-
-                            <!-- Step 1 -->
-                            <div id="step-1" class="w-full">
                                 <div>
-                                    <label class="block text-sm font-semibold">Username*</label>
+                                    <label class="block text-sm font-semibold required">Username</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="username"/>
                                     <span class="text-danger text-red-400 text-sm username_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">First Name*</label>
+                                    <label class="block text-sm font-semibold required">First Name</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="firstname"/>
                                     <span class="text-danger text-red-400 text-sm firstname_err"></span>
                                 </div>
@@ -128,117 +74,167 @@
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="middle_name"/>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">Last Name*</label>
+                                    <label class="block text-sm font-semibold required">Last Name</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="lastname"/>
                                     <span class="text-danger text-red-400 text-sm lastname_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">Email*</label>
+                                    <label class="block text-sm font-semibold required">Email</label>
                                     <input type="email" class="w-full p-2 border border-gray-300 rounded text-black" name="email"/>
                                     <span class="text-danger text-red-400 text-sm email_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">Birthday*</label>
+                                    <label class="block text-sm font-semibold required">Birthday</label>
                                     <input type="date" class="w-full p-2 border border-gray-300 rounded text-black" name="birthday"/>
                                     <span class="text-danger text-red-400 text-sm birthday_err"></span>
                                 </div>
-                                <button type="button" onclick="nextStep(2)" class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">
-                                    Next
-                                </button>
+
+                                <!-- Program Interest Dropdown -->
+                                <div class="mb-8">
+                                    <label class="block mb-2 text-white font-semibold">What programs are you interested in?</label>
+                                    <select class="w-full p-2 bg-white text-gray-900 rounded" name="program_id">
+                                        @foreach($programs as $program)
+                                            <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Privacy and Terms Notice -->
+                                <p class="text-sm mt-8 text-white">
+                                    We will not share your information without your permission. By signing up you agree to our
+                                    <a href="#"  style="color: blue;" class="underline">Terms and Conditions</a>. Learn how we use your data in our
+                                    <a href="#"  style="color: blue;" class="underline">Privacy Policy</a>.
+                                </p>
                             </div>
 
-                            <!-- Step 2 -->
-                            <div id="step-2" class="hidden w-full">
-                                <!-- Toggle between Company and School -->
-                                <div class="mt-4">
-                                    <label class="block text-sm font-semibold mb-2">Select Type*</label>
-                                    <div class="flex items-center">
-                                        <label class="relative inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" id="toggle_type" class="sr-only peer" onclick="toggleFields()" />
-                                            <div class="w-20 h-10 bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-500 peer dark:bg-gray-700 peer-checked:bg-blue-600 peer-checked:after:translate-x-10 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border after:border-gray-300 after:h-8 after:w-8 after:transition-all dark:border-gray-600"></div>
-                                            <span class="ml-3 text-sm font-semibold text-gray-900 dark:text-gray-300" id="toggle_label"></span>
-                                        </label>
-                                    </div>
-                                </div>
+                            <!-- Right Side (Multi-Step Form) -->
+                            <div class="p-8 lg:p-12 flex items-start justify-start">
+                                <div class="text-white w-full">
+                                    <h2 class="text-3xl font-normal mb-12">Personal Information</h2>
 
-                                <!-- Company Fields -->
-                                <div id="company_fields" class="hidden">
-                                    <div>
-                                        <label class="block text-sm font-semibold">Company Name*</label>
-                                        <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_name" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold">Company Address*</label>
-                                        <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold">Company Contact Number*</label>
-                                        <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_contact_number" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold">Company Representative*</label>
-                                        <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_representative" />
-                                    </div>
-                                </div>
+                                    <!-- Multi-Step Form Structure -->
 
-                                <!-- School Fields -->
-                                <div id="school_fields" class="hidden">
-                                    <div>
-                                        <label class="block text-sm font-semibold">School Name*</label>
-                                        <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold">School Address*</label>
-                                        <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school_address" />
-                                    </div>
-                                </div>
+                                    <!-- Step 1 -->
+                                    <div id="step-1" class="w-full">
 
-                                <div class="flex justify-between">
-                                    <button type="button" onclick="nextStep(1)" class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Previous</button>
-                                </div>
-                                <div class="flex justify-between">
-                                    <button type="button" onclick="nextStep(3)" class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Next</button>
-                                </div>
-                            </div>
+                                        <!-- Toggle between Company and School -->
+                                        <div class="inline-flex rounded-lg">
+                                            <input type="radio" name="toggle_type" id="company_toggle" checked hidden onclick="toggleFields('company')" />
+                                            <label for="company_toggle" class="radio text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75">Company</label>
+                                        </div>
+                                        <div class="inline-flex rounded-lg">
+                                            <input type="radio" name="toggle_type" id="school_toggle" hidden onclick="toggleFields('school')" />
+                                            <label for="school_toggle" class="radio text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75">School</label>
+                                        </div>
 
-                            <!-- Step 3 -->
-                            <div id="step-3" class="hidden w-full">
-                                <h3 class="text-lg font-semibold mt-6">In Case of Emergency Contact Details</h3>
-                                <div>
-                                    <label class="block text-sm font-semibold">Emergency Contact Name*</label>
-                                    <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
-                                    <span class="text-danger text-red-400 text-sm text-sm emergency_contact_name_err"></span>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold">Emergency Contact Number*</label>
-                                    <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_number"/>
-                                    <span class="text-danger text-red-400 text-sm emergency_contact_number_err"></span>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold">Password*</label>
-                                    <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="password"/>
-                                    <span class="text-danger text-red-400 text-sm password_err"></span>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold">Confirm Password*</label>
-                                    <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="passwordConfirmation"/>
-                                    <span class="text-danger text-red-400 text-sm passwordConfirmation_err"></span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <button type="button" onclick="nextStep(2)" class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Previous</button>
-                                </div>
-                                <div class="flex justify-between">
-                                    <button id="btn-register"
-                                            wire:confirm="Are you sure you want to save this form?"
-                                            class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Register
-                                    </button>
+                                        <!-- Company Fields -->
+                                            <div id="company_fields" >
+
+                                        <!-- Organization Radio Buttons -->
+                                            <div class="mb-4">
+                                                <label class="block mb-2 text-white font-semibold required">Please select your organization</label>
+                                                <div class="flex items-center mb-2">
+                                                    <input type="radio" id="ayala_employee" name="affiliate_type_id" checked value="1" class="mr-2" onchange="updateCompanies()" />
+                                                    <label for="ayala_employee" class="text-white">Ayala Employee</label>
+                                                </div>
+                                                <div class="flex items-center mb-2">
+                                                    <input type="radio" id="external_partner" name="affiliate_type_id" value="2" class="mr-2" onchange="updateCompanies()" />
+                                                    <label for="external_partner" class="text-white">Accredited External Partner</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input type="radio" id="non_ayala" name="affiliate_type_id" value="3" class="mr-2" onchange="updateCompanies()" />
+                                                    <label for="non_ayala" class="text-white">Non-Ayala Group</label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Company Select Dropdown -->
+                                            <div class="" id="companySelectWrapper">
+                                                <select required class="w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect" class="form-select">
+                                                    <option value="" disabled selected></option>
+                                                    @foreach ($companies as $company)
+                                                        <option value="{{ $company->id }}" data-cluster="{{ $company->cluster_id }}">{{ $company->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold required">Company Name</label>
+                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_name" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold required">Company Address</label>
+                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold required">Company Contact Number</label>
+                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_contact_number" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold required">Company Representative</label>
+                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_representative" />
+                                            </div>
+                                        </div>
+
+                                        <!-- School Fields -->
+                                        <div id="school_fields" class="hidden">
+                                            <div>
+                                                <label class="block text-sm font-semibold required">School Name</label>
+                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school" />
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold required">School Address</label>
+                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school_address" />
+                                            </div>
+                                        </div>
+                                        <button type="button" onclick="nextStep(2)" class="w-full mt-8 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">
+                                            Next
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                        <div id="step-2" class="hidden">
+                            <div   class="p-8 lg:p-12 flex items-start justify-start">
+                                <div class="text-white w-full">
+                                    <!-- Step 2 -->
+                                    <div class="w-1/2">
+                                        <h3 class="text-4xl font-bold mb-4">In Case of Emergency Contact Details</h3>
+                                        <div>
+                                            <label class="block text-sm font-semibold required">Emergency Contact Name</label>
+                                            <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
+                                            <span class="text-danger text-red-400 text-sm text-sm emergency_contact_name_err"></span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold required">Emergency Contact Number</label>
+                                            <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_number"/>
+                                            <span class="text-danger text-red-400 text-sm emergency_contact_number_err"></span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold required">Password</label>
+                                            <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="password"/>
+                                            <span class="text-danger text-red-400 text-sm password_err"></span>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold required">Confirm Password</label>
+                                            <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="passwordConfirmation"/>
+                                            <span class="text-danger text-red-400 text-sm password_err"></span>
+                                        </div>
+
+                                        <div class="flex justify-between">
+                                            <button type="button" onclick="nextStep(1)" class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Previous</button>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <button id="btn-register"
+                                                    wire:confirm="Are you sure you want to save this form?"
+                                                    class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Register
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
         </div>
     </div>
 
@@ -248,29 +244,32 @@
     <script>
         function nextStep(step) {
             // Hide all steps
-            for (let i = 1; i <= 3; i++) {
-                document.getElementById('step-' + i).classList.add('hidden');
+            if(step == 2){
+                $('#step-1').addClass('hidden')
+                $('#step-2').removeClass('hidden')
             }
-            // Show the desired step
-            document.getElementById('step-' + step).classList.remove('hidden');
+            else{
+                $('#step-2').addClass('hidden')
+                $('#step-1').removeClass('hidden')
+            }
+            // for (let i = 1; i <= 2; i++) {
+            //     document.getElementById('step-' + i).classList.add('hidden');
+            // }
+            // // Show the desired step
+            // document.getElementById('step-' + step).classList.remove('hidden');
         }
 
-        function toggleFields() {
-            const toggleSwitch = document.getElementById('toggle_type');
+        function toggleFields(type) {
             const companyFields = document.getElementById('company_fields');
             const schoolFields = document.getElementById('school_fields');
-            const toggleLabel = document.getElementById('toggle_label');
 
-            if (toggleSwitch.checked) {
-                toggleLabel.textContent = 'School';
+            if (type === 'school') {
                 companyFields.classList.add('hidden');
                 schoolFields.classList.remove('hidden');
             } else {
-                toggleLabel.textContent = 'Company';
                 schoolFields.classList.add('hidden');
                 companyFields.classList.remove('hidden');
             }
-
         }
 
         function updateCompanies() {
