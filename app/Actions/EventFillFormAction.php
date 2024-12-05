@@ -33,11 +33,19 @@ final class EventFillFormAction
 
         // attachments
         $media = [];
+        $media_banner = [];
+
         foreach ($record->getMedia('event-attachments') as $media_item) {
             $index = strlen(storage_path('app/public/'));
             $media[] = substr($media_item->getPath(), $index);
         }
+        foreach ($record->getMedia('event-banner-attachments') as $media_item) {
+            $index = strlen(storage_path('app/public/'));
+            $media_banner[] = substr($media_item->getPath(), $index);
+        }
+
         $data['media'] = $media;
+        $data['media_banner'] = $media_banner;
 
         return $data;
     }
