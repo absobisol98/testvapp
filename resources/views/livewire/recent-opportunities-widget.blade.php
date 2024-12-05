@@ -121,7 +121,7 @@
                                         <div class="w-full">
                                             <div
                                                 class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 mb-16">
-                                                <p class="font-semibold">DATE: {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} - 
+                                                <p class="font-semibold">DATE: {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
                                                     {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
                                                 <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage
                                                     actively in the session</p>
