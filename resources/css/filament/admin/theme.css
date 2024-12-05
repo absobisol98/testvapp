@@ -9,7 +9,7 @@
 
 /* SIDEBAR */
 .fi-sidebar.fi-sidebar-open {
-    @apply !w-1/5;
+    /*@apply !w-1/5;*/
 }
 
 .fi-sidebar-nav-groups {
@@ -92,4 +92,13 @@
 }
 .fi-dropdown-trigger button.fi-btn {
     @apply !p-1;
+}
+
+
+.fi-sidebar-header, .fi-topbar nav {
+    @apply min-h-[120px] bg-[#F55E1D];
+}
+
+.fi-sidebar-header img {
+    height: 4rem !important;
 }

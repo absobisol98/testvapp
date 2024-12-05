@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laravel</title>
 
     {{-- Tailwind --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,6 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     {{-- Swiper JS --}}
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <title>@yield('title') - Ayala Foundation</title>
 </head>
 
 <body>

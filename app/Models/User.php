@@ -114,4 +114,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function getFullNameAttribute()
+    {
+        $middlename = ($this->middle_name) ? $this->middle_name.' ' : '';
+
+        return $this->first_name.' '.$middlename.$this->last_name;
+
+    }
 }
