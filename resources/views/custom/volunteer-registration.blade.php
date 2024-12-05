@@ -1,7 +1,7 @@
 @extends('custom.layouts.app')
+@section('title', 'Volunteer Registration')
 
 @section('content')
-
     <style>
         .text-danger {
             color: #ffffff; /* White text */
@@ -15,6 +15,11 @@
         input:checked ~ .radio {
             color:white;
             background-color:  #2563eb;
+        }
+        .required:after{
+            content:'*';
+            color:whitesmoke;
+            padding-left:5px;
         }
     </style>
 
@@ -55,12 +60,12 @@
                                 <p class="text-2xl mb-4">Start your registration here.</p>
 
                                 <div>
-                                    <label class="block text-sm font-semibold">Username*</label>
+                                    <label class="block text-sm font-semibold required">Username</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="username"/>
                                     <span class="text-danger text-red-400 text-sm username_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">First Name*</label>
+                                    <label class="block text-sm font-semibold required">First Name</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="firstname"/>
                                     <span class="text-danger text-red-400 text-sm firstname_err"></span>
                                 </div>
@@ -69,17 +74,17 @@
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="middle_name"/>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">Last Name*</label>
+                                    <label class="block text-sm font-semibold required">Last Name</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="lastname"/>
                                     <span class="text-danger text-red-400 text-sm lastname_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">Email*</label>
+                                    <label class="block text-sm font-semibold required">Email</label>
                                     <input type="email" class="w-full p-2 border border-gray-300 rounded text-black" name="email"/>
                                     <span class="text-danger text-red-400 text-sm email_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">Birthday*</label>
+                                    <label class="block text-sm font-semibold required">Birthday</label>
                                     <input type="date" class="w-full p-2 border border-gray-300 rounded text-black" name="birthday"/>
                                     <span class="text-danger text-red-400 text-sm birthday_err"></span>
                                 </div>
@@ -127,7 +132,7 @@
 
                                         <!-- Organization Radio Buttons -->
                                             <div class="mb-4">
-                                                <label class="block mb-2 text-white font-semibold">Please select your organization*</label>
+                                                <label class="block mb-2 text-white font-semibold required">Please select your organization</label>
                                                 <div class="flex items-center mb-2">
                                                     <input type="radio" id="ayala_employee" name="affiliate_type_id" checked value="1" class="mr-2" onchange="updateCompanies()" />
                                                     <label for="ayala_employee" class="text-white">Ayala Employee</label>
@@ -152,19 +157,19 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-semibold">Company Name*</label>
+                                                <label class="block text-sm font-semibold required">Company Name</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_name" />
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-semibold">Company Address*</label>
+                                                <label class="block text-sm font-semibold required">Company Address</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-semibold">Company Contact Number*</label>
+                                                <label class="block text-sm font-semibold required">Company Contact Number</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_contact_number" />
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-semibold">Company Representative*</label>
+                                                <label class="block text-sm font-semibold required">Company Representative</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_representative" />
                                             </div>
                                         </div>
@@ -172,11 +177,11 @@
                                         <!-- School Fields -->
                                         <div id="school_fields" class="hidden">
                                             <div>
-                                                <label class="block text-sm font-semibold">School Name*</label>
+                                                <label class="block text-sm font-semibold required">School Name</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school" />
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-semibold">School Address*</label>
+                                                <label class="block text-sm font-semibold required">School Address</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school_address" />
                                             </div>
                                         </div>
@@ -195,22 +200,22 @@
                                     <div class="w-1/2">
                                         <h3 class="text-4xl font-bold mb-4">In Case of Emergency Contact Details</h3>
                                         <div>
-                                            <label class="block text-sm font-semibold ">Emergency Contact Name*</label>
+                                            <label class="block text-sm font-semibold required">Emergency Contact Name</label>
                                             <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
                                             <span class="text-danger text-red-400 text-sm text-sm emergency_contact_name_err"></span>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-semibold">Emergency Contact Number*</label>
+                                            <label class="block text-sm font-semibold required">Emergency Contact Number</label>
                                             <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_number"/>
                                             <span class="text-danger text-red-400 text-sm emergency_contact_number_err"></span>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-semibold">Password*</label>
+                                            <label class="block text-sm font-semibold required">Password</label>
                                             <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="password"/>
                                             <span class="text-danger text-red-400 text-sm password_err"></span>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-semibold">Confirm Password*</label>
+                                            <label class="block text-sm font-semibold required">Confirm Password</label>
                                             <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="passwordConfirmation"/>
                                             <span class="text-danger text-red-400 text-sm password_err"></span>
                                         </div>
