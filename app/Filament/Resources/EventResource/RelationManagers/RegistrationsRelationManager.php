@@ -74,7 +74,11 @@ class RegistrationsRelationManager extends RelationManager
                     ->formatStateUsing(function ($record){
                         $slot = $record->event_slot;
                         return $slot->type->name." (".Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('h:i').' - '.Carbon::parse(now()->format('Y-m-d').$slot->end_time)->format('h:i').")";
-                    })
+                    }),
+
+                Tables\Columns\TextColumn::make('message')
+                    ->label('Notification'),
+
             ])
             ->filters([
                 //
@@ -110,16 +114,18 @@ class RegistrationsRelationManager extends RelationManager
                         // Generate QR code for attendee
                         (new GenerateEventQRCode())->execute($attendee);
 
+                        // Notify the registrant
+                        $message = 'Your registration for '.$record->event->title.' on '.Carbon::parse($record->event->start_date)->format('M d, Y').' has been approved.';
+
+
                         $record->status_id = 2;
+                        $record->message = $message;
                         $record->save();
 
                         Notification::make()
                             ->title('Registration Approved')
                             ->success()
                             ->send();
-
-                        // Notify the registrant
-                        $message = 'Your registration for '.$record->event->title.' on '.Carbon::parse($record->event->start_date)->format('M d, Y').' has been approved.';
 
                         Notification::make()
                             ->title($message)
@@ -146,6 +152,7 @@ class RegistrationsRelationManager extends RelationManager
                     ->action(function ($record, array $data){
 
                         $record->status_id = 3; // Status Reject
+                        $record->message = $data['message'];
                         $record->save();
 
                         // Notify the registrant

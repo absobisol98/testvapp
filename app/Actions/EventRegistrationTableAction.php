@@ -80,8 +80,14 @@ class EventRegistrationTableAction
 
                         $status = 2; // Approve - (Automatic)
 
+                        // Notify the registrant
+                        $message = 'Your registration for '.$record->title.' on '.Carbon::parse($record->start_date)->format('M d, Y').' has been approved.';
+
                     }else{
+
                         $status = 1; // Pending
+                        $message = null;
+
                     }
 
                     $event_registration = EventRegistration::create([
@@ -90,8 +96,8 @@ class EventRegistrationTableAction
                         'slot_type_id' => $data['slot_type_id'],
                         'created_at' => now(),
                         'status_id' => $status,
+                        'message' => $message
                     ]);
-
 
                     if (isset($data['media']) && $data['media']) {
                         foreach ($data['media'] as $media) {
@@ -101,10 +107,23 @@ class EventRegistrationTableAction
                         }
                     }
 
-                    Notification::make()
-                        ->title('You have successfully registered.')
-                        ->success()
-                        ->send();
+                    if($record->approval_type == "Automatic"){ // Automatic approved status for registration
+                        Notification::make()
+                            ->title($message)
+                            ->icon('far-bell')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('view')
+                                    ->button()
+                                    ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
+                            ])
+                            ->sendToDatabase($event_registration->volunteer);
+                    }else{
+                        Notification::make()
+                            ->title('You have successfully registered.')
+                            ->success()
+                            ->send();
+                    }
+
                 })
                 ->visible(function (Event $record){
 
@@ -143,6 +162,174 @@ class EventRegistrationTableAction
 
 
                 }),
+            \Filament\Tables\Actions\Action::make('Edit')
+                ->icon('heroicon-o-pencil-square')
+                ->tooltip('Edit registration')
+                ->color('secondary')
+                ->button()
+                ->modalContent(fn ($record) => view('custom.event-modal', ['record' => $record]))
+                ->form(function ($record) {
+
+                 if(auth()->user()->birthday && Carbon::parse(auth()->user()->birthday)->age < 18) { // MINOR
+                     $description = 'Please upload parental consent';
+                     $visible = true;
+                 }elseif($record->attachment_required){
+                     $description = 'Please upload required files';
+                     $visible = true;
+                 }else{
+                     $description = '';
+                     $visible = false;
+                 }
+
+                 return [
+                     Radio::make('slot_type_id')
+                         ->label('')
+                         ->required(fn(Event $record) => $record->slots->first())
+                         ->options(function (Event $record){
+                             $option = [];
+                             foreach($record->slots as $slot) {
+                                 $registion_count = $record->registrations->where('slot_type_id',$slot->id)->where('status_id','!=',3)->count();
+
+                                 if($slot->total_slots - $registion_count){
+                                     $option[$slot->id] = $slot->shift_name.' ('.Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('g:i A').' - '.Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('g:i A').')';
+                                 }
+                             }
+
+                             return $option;
+                         }),
+                     Section::make('Attachments')
+                         ->description($description)
+                         ->visible($visible)
+                         ->schema([
+                             FileUpload::make('media')
+                                 ->directory('event-registration-attachments')
+                                 ->multiple()
+                                 ->maxFiles(5)
+                                 ->label('')
+                                 ->openable()
+                                 ->downloadable(),
+                         ])
+                         ->collapsible(),
+                 ];
+                })
+                ->action(function (Event $record,array $data){
+
+                    $registration = EventRegistration::where('event_id', $record->id)->where('volunteer_id',auth()->user()->id)->first();
+
+                    if($registration){
+                        if($record->approval_type == "Automatic"){ // Automatic approved status for registration
+
+                            $attendee = EventAttendee::create([
+                                'event_id' => $record->id,
+                                'attendee_id' => auth()->user()->id,
+                                'facilitator_id' => auth()->id(),
+                            ]);
+
+                            // Generate QR code for attendee
+                            (new GenerateEventQRCode())->execute($attendee);
+
+                            $status = 2; // Approve - (Automatic)
+
+                            // Notify the registrant
+                            $message = 'Your registration for '.$record->title.' on '.Carbon::parse($record->start_date)->format('M d, Y').' has been approved.';
+
+                        }else{
+
+                            $status = 1; // Pending
+                            $message = null;
+
+                        }
+
+                        $registration->update([
+                            'event_id' => $record->id,
+                            'volunteer_id' => auth()->user()->id,
+                            'slot_type_id' => $data['slot_type_id'],
+                            'created_at' => now(),
+                            'status_id' => $status,
+                            'message' => $message
+                        ]);
+
+                        $registration->save();
+
+                        // Registration Attachment - Update media  - Start
+                        $existing_media_array = $registration->getMedia('event-registration-attachments')->pluck('file_name')->toArray();
+                        $new_media_array = array();
+
+                        if (isset($data['media']) && $data['media']) {
+                            foreach ($data['media'] as $media) {
+                                $new_media_array[] = $this->remove_folder_number($media);
+                            }
+                        }
+
+                        // Delete existing file
+                        foreach ($registration->getMedia('event-registration-attachments') as $media) {
+                            if(!in_array($media->file_name, $new_media_array)){ // If not in the uploaded file
+                                $media->delete();
+                            }
+                        }
+
+                        if (isset($data['media']) && $data['media']) {
+
+                            foreach ($data['media'] as $media) {
+                                $sourcePath = storage_path('app/public/' . $media);
+
+                                if(!in_array($this->remove_folder_number($media), $existing_media_array)){ // If not in the existing file
+                                    $registration->addMedia($sourcePath)->toMediaCollection('event-registration-attachments');
+                                }
+                            }
+                        }
+                        // Registration Attachment - Update media - End
+
+                        if($record->approval_type == "Automatic"){ // Automatic approved status for registration
+                            Notification::make()
+                                ->title($message)
+                                ->icon('far-bell')
+                                ->actions([
+                                    \Filament\Notifications\Actions\Action::make('view')
+                                        ->button()
+                                        ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
+                                ])
+                                ->sendToDatabase($registration->volunteer);
+                        }else{
+                            Notification::make()
+                                ->title('Saved.')
+                                ->success()
+                                ->send();
+                        }
+                    }
+
+                })
+                ->visible(function (Event $record){
+
+                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
+
+                    if($registration && $registration->status_id == 1){
+                        return true;
+                    }
+
+                    return false;
+
+
+                })
+                ->mountUsing(function (Event $record,ComponentContainer $form){
+
+
+                    $registration = $record->registrations()->where('volunteer_id',auth()->id())->first();
+
+                    if($registration){
+                        $data['slot_type_id'] = $registration->slot_type_id;
+
+                        $media = [];
+                        foreach ($registration->getMedia('event-registration-attachments') as $media_item) {
+                            $index = strlen(storage_path('app/public/'));
+                            $media[] = substr($media_item->getPath(), $index);
+                        }
+                        $data['media'] = $media;
+                    }
+                    $form->fill($data);
+
+                }),
+
             \Filament\Tables\Actions\ViewAction::make()
                 ->mountUsing(function (Event $record,ComponentContainer $form){
                     $media = [];
@@ -172,5 +359,16 @@ class EventRegistrationTableAction
             \Filament\Tables\Actions\RestoreAction::make(),
 
         ];
+    }
+
+    public function remove_folder_number($media_file)
+    {
+        // Find the position of the first '/'
+        $pos = strpos($media_file, '/');
+
+        // Extract the substring from the position of the first '/' to the end
+        $result = substr($media_file, $pos + 1);
+
+        return $result;
     }
 }

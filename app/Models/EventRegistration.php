@@ -42,7 +42,8 @@ class EventRegistration extends Model implements HasMedia
 		'event_id',
 		'volunteer_id',
 		'slot_type_id',
-		'status_id'
+		'status_id',
+        'message'
 	];
 
 	public function event()
@@ -59,7 +60,7 @@ class EventRegistration extends Model implements HasMedia
 	{
 		return $this->belongsTo(User::class, 'volunteer_id');
 	}
-    
+
     public function status()
     {
         return $this->belongsTo(EventApprovalStatus::class, 'status_id');
