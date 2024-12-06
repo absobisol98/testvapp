@@ -96,7 +96,7 @@
 
 
 .fi-sidebar-header, .fi-topbar nav {
-    @apply min-h-[120px] bg-[#F55E1D];
+    @apply min-h-[95px] bg-[#F55E1D];
 }
 
 .fi-sidebar-header img {

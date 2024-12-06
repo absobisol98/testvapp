@@ -46,10 +46,11 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::FOOTER,
             fn (): View => view('filament.components.panel-footer'),
         );
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::USER_MENU_BEFORE,
-            fn (): View => view('filament.components.button-website'),
-        );
+        
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::USER_MENU_BEFORE,
+        //     fn (): View => view('filament.components.button-website'),
+        // );
 
         FilamentColor::register(function (GeneralSettings $settings) {
             return $settings->site_theme;
@@ -61,7 +62,12 @@ class AppServiceProvider extends ServiceProvider
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::SIDEBAR_NAV_END,
+            PanelsRenderHook::SIDEBAR_NAV_START,
+            fn (): View => view('filament.components.sidebar.sidebar-items'),
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::SIDEBAR_NAV_START,
             fn (): View => view('filament.components.sidebar.ad-content'),
         );
     }
