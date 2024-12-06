@@ -1,15 +1,15 @@
 <x-filament-widgets::widget>
-    <div class="w-full">
+    <div class="w-full px-8">
         {{--  --}}
-        <div class="w-full flex items-center justify-start gap-8 mb-4">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-start gap-4 mb-4">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Recent Opportunities</p>
+                <p class="text-[28px] md:text-[32px] text-[#03498D] font-bold whitespace-nowrap">Recent Opportunities</p>
             </div>
 
             <div
-                class="w-full max-w-[30%] flex items-center justify-start gap-2 px-4 py-2 text-black text-[12px] font-[400] bg-[#F5F5F5] rounded-[20px]">
+                class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[30%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-[#F5F5F5]">
                 @foreach ($tags as $tag)
-                    <div class="w-fit px-2 py-1 bg-[#DADADA] rounded-[10px]">
+                    <div class="w-fit px-2 py-1" style="background:#DADADA; border-radius: 10px;">
                         <p>{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center justify-center cursor-pointer hover:font-[700]">X</span></p>
                     </div>
                 @endforeach
@@ -17,21 +17,21 @@
         </div>
 
         {{-- Cards --}}
-        <div class="grid grid-cols-3 gap-8 text-[#000000]">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 text-black">
             @foreach ($opportunities as $opportunity)
-                <div class="col-span-1 h-full flex flex-col items-center justify-between shadow-md">
-                    <div class="flex items-center justify-between w-full h-[350px] gap-4"
-                        style="background: url('{{ asset('img/ayala-foundation-bg.jpg') }}') no-repeat center center; background-size: cover;">
+                <div class="col-span-1 flex flex-col justify-between shadow-md h-full">
+                    <div class="flex items-center justify-between w-full gap-4"
+                        style="height: 350px;  background: url('{{ asset('img/ayala-foundation-bg.jpg') }}') no-repeat center center; background-size: cover;">
                         <div class="h-full w-full flex items-end justify-start p-4"
                             style="background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));">
-                            <img class="w-[40%]" src="{{ asset('img/logo-colored.png') }}" alt="">
+                            <img style="width:40%" src="{{ asset('img/logo-colored.png') }}" alt="">
                         </div>
                     </div>
 
                     <div class="w-full text-[14px] p-4">
                         <div class="w-full flex items-center justify-between gap-4 text-[14px] font-[400]">
                             <div class="w-fit py-1 px-2 flex items-center justify-center bg-[#F55E1D]">
-                                <p class="font-normal text-[#FFFFFF]">
+                                <p class="font-normal text-white">
                                     {{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                             </div>
 
@@ -41,7 +41,7 @@
                             </div>
                         </div>
 
-                        <p class="text-[25px] font-[700] text-[#03498D] mt-3 mb-1 leading-none">
+                        <p class="text-2xl font-[700] text-[#03498D] mt-3 mb-1 leading-none capitalize">
                             {{ \Illuminate\Support\Str::limit($opportunity->title, 22) }}</p>
 
                         <p class="font-[400] mb-3">Zoom Webinar Online, {{ $opportunity->location }}</p>
@@ -61,7 +61,7 @@
                         <div class="flex items-center justify-start gap-4 mt-4 max-w-[416px] text-[16px] font-[400]">
                             <button id="recent-opportunity-btn-{{ $opportunity->id }}" class="w-full">
                                 <div
-                                    class="h-[40px] w-full bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                    class="h-[40px] w-full flex items-center justify-center p-2 hover:bg-[#1A67B1]" style="background:#005096; ">
                                     <p class="text-white">VIEW DETAILS</p>
                                 </div>
                             </button>
@@ -103,7 +103,7 @@
                                     </div>
                                 </div>
 
-                                <div class="w-full p-4">
+                                <div class="w-full p-4 flex flex-col gap-4">
                                     <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
                                         <p class="text-lg font-normal text-white">{{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                                     </div>
@@ -113,11 +113,11 @@
                                     <p class="text-2xl font-normal">Zoom Webinar Online, {{ $opportunity->location }}
                                     </p>
 
-                                    <div class="text-lg font-normal my-16 text-justify">
+                                    <div class="text-lg font-normal my-4 text-justify">
                                         {!! $opportunity->description !!}
                                     </div>
 
-                                    <div class="w-full flex items-center justify-center gap-4 mt-16">
+                                    <div class="w-full flex items-center justify-center gap-4">
                                         <div class="w-full">
                                             <div
                                                 class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 mb-16">
