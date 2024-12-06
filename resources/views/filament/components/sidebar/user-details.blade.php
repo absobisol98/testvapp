@@ -90,46 +90,47 @@
     </div>
 </a> --}}
 
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const profileText = document.querySelector('.profileText');
-        const profileImageWrapper = document.querySelector('.profileImageWrapper');
-        const sidebarHeaderButtons = document.querySelectorAll('.fi-sidebar-header button');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileText = document.querySelector('.profileText');
+            const profileImageWrapper = document.querySelector('.profileImageWrapper');
+            const sidebarHeaderButtons = document.querySelectorAll('.fi-sidebar-header button');
 
-        setTimeout(() => {
-            if (getComputedStyle(sidebarHeaderButtons[0]).display !== 'none') {
-                profileImageWrapper.style.width = "24px";
-                profileImageWrapper.style.height = "24px";
+            setTimeout(() => {
+                if (getComputedStyle(sidebarHeaderButtons[0]).display !== 'none') {
+                    profileImageWrapper.style.width = "24px";
+                    profileImageWrapper.style.height = "24px";
 
-                if (profileText) {
-                    profileText.style.display = "none"; // Hide text
-                    profileText.style.pointerEvents = "none";
-                }
-            }
-        }, 50);
-
-        if (sidebarHeaderButtons.length > 0) {
-            // Add event listeners to each sidebar button
-            sidebarHeaderButtons.forEach((button) => {
-                button.addEventListener('click', () => {
-                    // Check if the first button is hidden (collapsed state)
-                    if (getComputedStyle(sidebarHeaderButtons[0]).display === 'none') {
-                        profileImageWrapper.style.width = "24px";
-                        profileImageWrapper.style.height = "24px";
-
-                        if (profileText) {
-                            profileText.style.display = "none"; // Hide text
-                            profileText.style.pointerEvents = "none";
-                        }
-                    } else {
-                        profileImageWrapper.style.width = "120px";
-                        profileImageWrapper.style.height = "120px";
-
-                        if (profileText) {
-                            profileText.style.display = "block"; // Show text
-                            profileText.style.pointerEvents = "auto";
-                        }
+                    if (profileText) {
+                        profileText.style.display = "none"; // Hide text
+                        profileText.style.pointerEvents = "none";
                     }
+                }
+            }, 50);
+
+            if (sidebarHeaderButtons.length > 0) {
+                // Add event listeners to each sidebar button
+                sidebarHeaderButtons.forEach((button) => {
+                    button.addEventListener('click', () => {
+                        // Check if the first button is hidden (collapsed state)
+                        if (getComputedStyle(sidebarHeaderButtons[0]).display === 'none') {
+                            profileImageWrapper.style.width = "24px";
+                            profileImageWrapper.style.height = "24px";
+
+                            if (profileText) {
+                                profileText.style.display = "none"; // Hide text
+                                profileText.style.pointerEvents = "none";
+                            }
+                        } else {
+                            profileImageWrapper.style.width = "120px";
+                            profileImageWrapper.style.height = "120px";
+
+                            if (profileText) {
+                                profileText.style.display = "block"; // Show text
+                                profileText.style.pointerEvents = "auto";
+                            }
+                        }
+                    });
                 });
             });
         }

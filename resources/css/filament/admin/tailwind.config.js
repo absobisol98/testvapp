@@ -5,10 +5,18 @@ export default {
     content: [
         "./app/Filament/**/*.php",
         "./resources/views/filament/**/*.blade.php",
+        './resources/views/livewire/*.blade.php',
         "./vendor/filament/**/*.blade.php",
     ],
     theme: {
         extend: {
+            screens: {
+                sm: '640px',
+                md: '768px',
+                lg: '1024px',
+                xl: '1280px',
+                '2xl': '1536px',
+            },
             colors: {
                 secondary: {
                     50: "rgba(var(--secondary-50), <alpha-value>)",
