@@ -1,24 +1,5 @@
 <x-filament-panels::page id="volunteer-dashboard">
-    <style>
-        /* For Volunteer Dashboard Container(Start) */
-        .fi-main {
-            margin: 0px !important;
-            padding: 0px 0px !important;
-            margin-top: 0px !important;
-            margin-bottom: 0px !important;
-            padding-top: 0px !important;
-            padding-bottom: 0px !important;
-            border-radius: 0px !important;
-            max-width: 100% !important;
-        }
-
-        .fi-page section {
-            padding: 0px 0px 32px 0px !important;
-        }
-
-        /* For Volunteer Dashboard Container(End) */
-
-
+    {{-- <style>
         /* For StatsOverview(Start) */
         #dashboard-container {
             width: 100%;
@@ -95,6 +76,7 @@
             font-weight: 400;
             color: #03498D;
             margin-bottom: 0.5rem;
+            text-transform: capitalize;
         }
 
         #stat-date {
@@ -159,7 +141,7 @@
         #stat-footer {
             width: 100%;
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
         }
 
@@ -570,6 +552,7 @@
             margin-bottom: 4px;
             line-height: 1;
             cursor: pointer;
+            text-transform: capitalize;
         }
 
         /* Location */
@@ -636,14 +619,6 @@
         .orangeButton:hover {
             background-color: #FF9141;
         }
-
-
-
-
-
-
-
-
 
         .recentOpportunityModalContainer {
             width: 100%;
@@ -838,9 +813,36 @@
         }
 
         /* For Recent Opportunity(End) */
+    </style> --}}
+    <style>
+        /* For Volunteer Dashboard Container(Start) */
+        .fi-main {
+            margin: 0px !important;
+            padding: 0px 0px !important;
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+            border-radius: 0px !important;
+            max-width: 100% !important;
+        }
+
+        .fi-page section {
+            padding: 0px 0px 32px 0px !important;
+        }
+        /* For Volunteer Dashboard Container(End) */
     </style>
-    <div class="w-full flex flex-col items-center justify-between gap-8">
-        {{-- STATS OVERVIEW --}}
+
+<div class="w-full flex flex-col gap-8">
+    @livewire(\App\Livewire\StatsOverviewWidget::class)
+    @livewire(\App\Livewire\AdsSectionWidget::class)
+    @livewire(\App\Livewire\UpcomingOpportunityWidget::class)
+    @livewire(\App\Livewire\RecentOpportunitiesWidget::class)
+</div>
+
+    {{-- this is the Vanilla CSS version --}}
+    {{-- <div class="w-full flex flex-col items-center justify-between gap-8">
+
         <div class="w-full">
             <div id="dashboard-container">
                 <div id="dashboard-main">
@@ -852,47 +854,55 @@
                                 <p id="stat-header-title">Your involvement <br> is important to us!</p>
                             </div>
 
-                            <div id="stat-image-container">
-                                <div id="stat-image">
-                                    <img src="{{ $opportunity->getMedia('event-banner-attachments')->first()?->getURL() }}" alt=""
-                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
+                            @if($opportunity)
+                                <div id="stat-image-container">
+                                    <div id="stat-image">
+                                        <img src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt=""
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
 
-                                <div id="stat-details">
-                                    <p id="stat-title">{{ $opportunity->title }}</p>
-                                    <div id="stat-date">
-                                        <div>
-                                            <p id="stat-date-bold">DATE:
-                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            @foreach ($opportunity->slots as $index => $slot)
-                                                @if ($index == 0)
-                                                    <p>
-                                                        <span id="stat-date-bold">BATCH {{ $index + 1 }}:</span>
-                                                        {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }}
-                                                        -
-                                                        {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
-                                                    </p>
+                                    <div id="stat-details">
+                                        <p id="stat-title">{{ $opportunity->title }}</p>
+
+                                        <div id="stat-date">
+                                            <div>
+                                                <p id="stat-date-bold">DATE:
+                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') ?? 'Not available' }}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                @if ($opportunity->slots)
+                                                    @foreach ($opportunity->slots as $index => $slot)
+                                                        @if ($index == 0)
+                                                            <p>
+                                                                <span id="stat-date-bold">BATCH {{ $index + 1 }}:</span>
+                                                                {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} -
+                                                                {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
+                                                            </p>
+                                                        @endif
+                                                    @endforeach
+                                                @else
+                                                    <p>No slots available</p>
                                                 @endif
-                                            @endforeach
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="button-container">
-                                        <a href="">
-                                            <div class="button-checkin">
-                                                <p>CHECK-IN</p>
-                                            </div>
-                                        </a>
-                                        <a href="">
-                                            <div class="button-cancel">
-                                                <p>CANCEL</p>
-                                            </div>
-                                        </a>
+
+                                        <div class="button-container">
+                                            <a href="">
+                                                <div class="button-checkin">
+                                                    <p>CHECK-IN</p>
+                                                </div>
+                                            </a>
+                                            <a href="">
+                                                <div class="button-cancel">
+                                                    <p>CANCEL</p>
+                                                </div>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
+
                         </div>
 
                         <div id="stat-footer">
@@ -935,14 +945,14 @@
             </div>
         </div>
 
-        {{-- ADS SECTION --}}
+
         <div class="w-full px-8">
             <div id="adsSection">
                 <p style="font-size: 16px; font-weight: 400; color: #000000;">ADS SECTION</p>
             </div>
         </div>
 
-        {{-- UPCOMING OPPORTUNITY --}}
+
         <div class="w-full px-8">
             <div id="opportunitiesSection">
                 <div id="opportunitiesHeader">
@@ -1046,7 +1056,7 @@
             </script>
         </div>
 
-        {{-- RECENT OPPORTUNITIES --}}
+
         <div class="w-full px-8">
             <div id="recentOpportunitiesSection">
                 <div id="recentOpportunitiesHeader" class="headerContainer">
@@ -1058,7 +1068,7 @@
                         @foreach ($tags as $tag)
                             <div class="tag">
                                 <p>{{ \Illuminate\Support\Str::upper($tag->name) }}
-{{--                                    <span class="tagRemove">X</span>--}}
+                                   <span class="tagRemove">X</span>
                                 </p>
                             </div>
                         @endforeach
@@ -1208,7 +1218,7 @@
                     </div>
                 @endforeach
 
-                {{-- Modal Scripts --}}
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         // Parse opportunities from Laravel
@@ -1261,5 +1271,5 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
 </x-filament-panels::page>

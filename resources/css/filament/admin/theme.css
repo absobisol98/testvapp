@@ -102,3 +102,8 @@
 .fi-sidebar-header img {
     height: 4rem !important;
 }
+
+.fi-topbar .ms-auto
+{
+    @apply hidden;
+}
