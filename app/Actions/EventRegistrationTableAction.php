@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Models\Event;
 use App\Models\EventAttendee;
 use App\Models\EventRegistration;
+use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\FileUpload;
@@ -122,6 +123,18 @@ class EventRegistrationTableAction
                             ->title('You have successfully registered.')
                             ->success()
                             ->send();
+                    }
+
+                    foreach (User::role('super_admin')->get() as $recipient){
+                        Notification::make()
+                            ->title('You have new event registration for '.$record->title)
+                            ->icon('far-bell')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('view')
+                                    ->button()
+                                    ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
+                            ])
+                            ->sendToDatabase($recipient);
                     }
 
                 })
