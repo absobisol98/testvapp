@@ -28,17 +28,6 @@ class RegistrationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'registrations';
 
-    protected function getTableQuery(): Builder|Relation|null
-    {
-        $registrations = EventRegistration::query();
-
-        if(!auth()->user()->hasRole('super_admin')){ // If not super_admin
-            $registrations = $registrations->where('volunteer_id',auth()->user()->id);
-        }
-
-        return $registrations;
-    }
-
     public function form(Form $form): Form
     {
         return $form
@@ -58,6 +47,13 @@ class RegistrationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query){
+                if(!auth()->user()->hasRole('super_admin')){ // If not super_admin
+                    $query = $query->where('volunteer_id',auth()->user()->id);
+                }
+
+                return $query;
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('status.name')
                     ->badge()
