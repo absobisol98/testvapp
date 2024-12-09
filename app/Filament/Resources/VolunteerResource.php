@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class VolunteerResource extends Resource
 {
@@ -105,6 +107,13 @@ class VolunteerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query){
+                if(!auth()->user()->hasRole('super_admin')){ // If not super_admin
+                    $query = $query->where('id',auth()->id());
+                }
+
+                return $query;
+            })
             ->columns([
                 SpatieMediaLibraryImageColumn::make('media')->label('Avatar')
                     ->collection('avatars')
