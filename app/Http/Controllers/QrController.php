@@ -27,22 +27,56 @@ class QrController extends Controller
                 $attendee->save();
 
                 Notification::make()
+                    ->icon('fas-right-to-bracket')
                     ->title('Time in')
                     ->success()
                     ->send();
 
+                Notification::make()
+                    ->title("You have been logged in to the event: ".$attendee->event->title)
+                    ->icon('fas-right-to-bracket')
+                    ->actions([
+                        \Filament\Notifications\Actions\Action::make('view')
+                            ->button()
+                            ->url(route('filament.admin.resources.events.view', ['record' => $attendee->event->id]), shouldOpenInNewTab: true),
+                    ])
+                    ->sendToDatabase($attendee->attendee);
+
                 return 'time in';
 
             }elseif($attendee && $attendee->time_in){ //
-                $attendee->time_out = Carbon::now();
-                $attendee->save();
+                $time_in = Carbon::parse($attendee->time_in);
+
+                if($time_in->diffInHours(Carbon::now()) > 1){ // if more than an hour
+                    $attendee->time_out = Carbon::now();
+                    $attendee->save();
+
+                    Notification::make()
+                        ->icon('fas-right-from-bracket')
+                        ->title('Time out')
+                        ->success()
+                        ->send();
+
+                    Notification::make()
+                        ->title("You have been logged out of the event: ".$attendee->event->title)
+                        ->icon('fas-right-from-bracket')
+                        ->actions([
+                            \Filament\Notifications\Actions\Action::make('view')
+                                ->button()
+                                ->url(route('filament.admin.resources.events.view', ['record' => $attendee->event->id]), shouldOpenInNewTab: true),
+                        ])
+                        ->sendToDatabase($attendee->attendee);
+
+                    return 'time out';
+                }
 
                 Notification::make()
-                    ->title('Time out')
-                    ->success()
+                    ->title("You have just logged in")
+                    ->warning()
                     ->send();
 
-                return 'time out';
+                return "You have just logged in";
+
             }else{
                 Notification::make()
                     ->title('Invalid QR')
