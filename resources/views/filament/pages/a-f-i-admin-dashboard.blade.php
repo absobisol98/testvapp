@@ -19,15 +19,15 @@
         /* For AFI Dashboard Container(End) */
     </style>
 
-    <div class="w-full flex flex-col items-center justify-between gap-20">
+    <div class="w-full flex flex-col items-center justify-between gap-8">
         {{-- Hero Banner --}}
         <div class="w-full">
             <div class="flex items-center justify-center relative min-h-[583px]">
                 {{-- Stat Content --}}
                 <div class="w-full h-full flex flex-col items-center justify-center gap-8 p-8 z-[1]">
-                    <div class="w-full grid grid-cols-2 gap-8">
+                    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
                         {{-- Header Text --}}
-                        <div class="col-span-1 text-white">
+                        <div class="col-span-1 text-white flex flex-col items-center sm:items-start">
                             <p class="text-[30px] font-[700] mb-4">Welcome AFI Admin</p>
                             <p class="text-[55px] font-[700]">Your involvement <br> is important to us!</p>
                         </div>
@@ -35,14 +35,14 @@
                         {{--  --}}
                         <div class="col-span-1 flex items-center justify-start gap-4 bg-[#FFFFFF] p-4">
                             <div
-                                class="w-full h-full min-h-[160px] max-w-[180px] flex items-center justify-center overflow-hidden rounded-[20px] shadow-md">
+                                class="w-full h-full min-h-[160px] max-w-[150px] flex items-center justify-center overflow-hidden rounded-[20px] shadow-md">
                                 <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
                                     alt="">
                             </div>
 
                             <div class="w-full">
                                 <div class="w-full">
-                                    <p class="text-[28px] font-[400] text-[#03498D] mb-2">{{ $opportunity->title }}</p>
+                                    <p class="capitalize text-[28px] font-bold text-[#03498D] mb-2">{{ $opportunity->title }}</p>
 
                                     <div
                                         class="w-full flex flex-row items-center justify-start text-[14px] font-[400] text-[#000000] mb-6 gap-4">
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-center justify-between w-full gap-4">
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                                     <a class="w-full" href="">
                                         <div
                                             class="h-[40px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
@@ -77,7 +77,7 @@
                                     <a class="w-full" href="">
                                         <div
                                             class="h-[40px] w-full bg-[#FFFFFF] flex items-center justify-center p-2 hover:bg-[#f1f1f1]">
-                                            <p class="font-[400] text-[18px] text-[#9c9c9c]">CANCEL</p>
+                                            <p class="font-[400] text-[18px] text-black">CANCEL</p>
                                         </div>
                                     </a>
                                 </div>
@@ -86,7 +86,7 @@
                     </div>
 
                     {{-- STATS --}}
-                    <div class="w-full grid grid-cols-5 gap-4">
+                    <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5">
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalVolunteers }}</p>
                             <p class="text-[14px] font-[700] text-[#03498D]">VOLUNTEERS</p>
@@ -115,7 +115,7 @@
                 </div>
 
                 {{-- Stat Background --}}
-                <div class="w-full h-full grid grid-cols-5 absolute z-0">
+                <div class="w-full h-full grid grid-cols-5 absolute z-0 bg-gradient-to-tr from-[#03498D] to-[#03498D]">
                     <!-- Left Section -->
                     <div class="col-span-3 flex items-center justify-center relative overflow-hidden">
                         <div class="w-full h-full absolute inset-0 bg-gradient-to-tr from-[#03498D] to-[#03498D] z-[2]"
@@ -125,7 +125,7 @@
                             class="w-full h-full absolute bg-gradient-to-r from-[#03488d8a] via-[#03488d8a] to-[#03488d8a] z-[1]">
                         </div>
 
-                        <img class="w-full h-full object-cover z-0" src="{{ asset('img/hero-banner-bg_2.jpg') }}"
+                        <img class="w-full h-full object-cover z-0 hidden md:block" src="{{ asset('img/hero-banner-bg_2.jpg') }}"
                             alt="">
                     </div>
 
@@ -141,7 +141,7 @@
 
         {{-- Opportunities --}}
         <div class="w-full px-8">
-            <div class="w-full flex items-center justify-between gap-4">
+            <div class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="w-fit">
                     <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Opportunities</p>
                 </div>
@@ -167,7 +167,7 @@
                         </div>
 
                         <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+                            <p class="capitalize text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
 
                             <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, {{ $opportunity->location }}
                             </p>
@@ -193,7 +193,7 @@
 
                                 <div class="h-full min-h-[118px] max-h-[118px] border-l border-[#B6B6B6] mx-4"></div>
 
-                                <div class="w-fit grid grid-cols-2 gap-8">
+                                <div class="w-fit grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div
                                         class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-4">
                                         <p class="text-[40px] font-[700] text-[#F55E1D]">140</p>
@@ -236,7 +236,7 @@
 
         {{-- Business Unit / External Partners --}}
         <div class="w-full px-8">
-            <div class="w-full flex items-center justify-between gap-4">
+            <div class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="w-fit">
                     <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Business Unit / External Partners
                     </p>
@@ -253,7 +253,7 @@
             <div class="w-full border-t border-[#E1E1E1] my-4"></div>
 
             {{-- STATS --}}
-            <div class="w-full grid grid-cols-5 gap-4 mb-8">
+            <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5 mb-8">
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                     <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalVolunteers }}</p>
                     <p class="text-[14px] font-[700] text-[#03498D]">PARTNERS</p>
@@ -287,7 +287,7 @@
 
         {{-- Volunteers --}}
         <div class="w-full px-8">
-            <div class="w-full flex items-center justify-between gap-4">
+            <div class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="w-fit">
                     <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Opportunities</p>
                 </div>
@@ -312,7 +312,7 @@
             <div class="w-full border-t border-[#E1E1E1] my-4"></div>
 
             {{-- STATS --}}
-            <div class="w-full grid grid-cols-5 gap-4 mb-8">
+            <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5 mb-8">
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                     <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalVolunteers }}</p>
                     <p class="text-[14px] font-[700] text-[#03498D]">PARTNERS</p>
