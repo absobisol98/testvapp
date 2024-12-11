@@ -44,7 +44,7 @@ class GenerateEventQRCode
 
         // Create QR code
         $qrCode = new QrCode(
-            data: route('qr.scan', ['event_id' => $attendee->event_id,'attendee_id' => $attendee->id]),
+            data: route('qr.scan', ['event_id' => $attendee->event_id,'attendee_id' => $attendee->attendee_id]),
             encoding: new Encoding('UTF-8'),
             errorCorrectionLevel: ErrorCorrectionLevel::Low,
             size: 600,
