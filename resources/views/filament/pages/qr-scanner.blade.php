@@ -86,13 +86,23 @@
         function start_scan() {
             document.querySelector('.blur-overlay').style.display = 'flex';
             Instascan.Camera.getCameras().then(function (cameras) {
+                //If a camera is detected
                 if (cameras.length > 0) {
                     document.getElementById('btn_stop').style.display = 'block';
                     document.getElementById('btn_start').style.display = 'none';
                     document.getElementById('video-container').style.display = 'block';
                     document.querySelector('.blur-overlay').style.display = 'none';
-                    scanner.start(cameras[0]);
+
+                    //If the user has a rear/back camera
+                    if (cameras[1]) {
+                        //use that by default
+                        scanner.start(cameras[1]);
+                    } else {
+                        //else use front camera
+                        scanner.start(cameras[0]);
+                    }
                 } else {
+                    //if no cameras are detected give error
                     document.querySelector('.blur-overlay').style.display = 'none';
                     console.error('No cameras found.');
                 }
