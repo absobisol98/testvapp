@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Filament\Widgets;
 
 use App\Models\Event;
 use Filament\Widgets\Widget;
 
-class UpcomingOpportunityWidget extends Widget
+class PartnersOnGoingOpportunitiesWidget extends Widget
 {
-    protected static string $view = 'livewire.upcoming-opportunity-widget';
+    protected static string $view = 'filament.widgets.partners-on-going-opportunities-widget';
 
     protected function getViewData(): array
     {
+        
         $opportunities = Event::with('slots')->get();
-
-        // dd($opportunities);
 
         return [
             'opportunities' => $opportunities,

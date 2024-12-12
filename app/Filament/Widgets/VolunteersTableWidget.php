@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Filament\Widgets;
 
 use App\Models\User;
 use Filament\Tables;
@@ -10,7 +10,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
-class PartnersTableWidget extends BaseWidget
+class VolunteersTableWidget extends BaseWidget
 {
     public function table(Table $table): Table
     {

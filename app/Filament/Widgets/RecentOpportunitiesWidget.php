@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Filament\Widgets;
 
 use App\Models\Event;
 use Filament\Widgets\Widget;
 
 class RecentOpportunitiesWidget extends Widget
 {
-    protected static string $view = 'livewire.recent-opportunities-widget';
+    protected static string $view = 'filament.widgets.recent-opportunities-widget';
 
     protected function getViewData(): array
     {
