@@ -6,11 +6,13 @@ use App\Actions\EventFillFormAction;
 use App\Actions\EventUpdateAction;
 use App\Filament\Resources\EventResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class EditEvent extends EditRecord
 {
+
     protected static string $resource = EventResource::class;
 
     protected function mutateFormDataBeforeFill(array $data): array
@@ -32,4 +34,26 @@ class EditEvent extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        foreach ($this->record->attendees as $attendee){
+            Notification::make()
+                ->title('Some changes has been made on '.$this->record->title.' event.')
+                ->icon('far-bell')
+                ->actions([
+                    \Filament\Notifications\Actions\Action::make('view')
+                        ->button()
+                        ->url(route('filament.admin.resources.events.view', ['record' => $this->record->id]), shouldOpenInNewTab: true),
+                ])
+                ->sendToDatabase($attendee->attendee);
+        }
+        return  Notification::make()
+            ->title('Event Updated')
+            ->icon('far-bell')
+            ->send();
+      
+    }
+
+
 }
