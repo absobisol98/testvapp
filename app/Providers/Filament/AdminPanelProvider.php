@@ -26,6 +26,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
 
@@ -150,7 +151,9 @@ class AdminPanelProvider extends PanelProvider
                             ->collapsed(true)
                             ->collapsible(true)
                             ->paginate(perPage: 5, condition: true)
-                    ])
+                            ]),
+                FilamentApexChartsPlugin::make()
+
             ]);
     }
 }

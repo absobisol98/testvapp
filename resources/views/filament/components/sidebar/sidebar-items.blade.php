@@ -217,7 +217,7 @@
 
         {{-- Reports --}}
         <div class="w-full" role="none">
-            <a href="#" class="w-full block px-1 py-2 hover:bg-gray-100">
+            <a href="{{route('filament.admin.pages.reports')}}" class="w-full block px-1 py-2 hover:bg-gray-100">
                 <div class="w-full flex items-center justify-start gap-2">
                     <div class="w-[28px] h-[28px] flex items-center justify-center">
                         @include('custom.icons.navbar-icons', [
