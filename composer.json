@@ -44,7 +44,6 @@
         "saade/filament-fullcalendar": "^3.0",
         "stichoza/google-translate-php": "^5.2",
         "tomatophp/filament-media-manager": "^1.1",
-        "visualbuilder/email-templates": "^3.0",
         "ysfkaya/filament-phone-input": "^3.1",
         "z3d0x/filament-logger": "^0.7.2"
     },
