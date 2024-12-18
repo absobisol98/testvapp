@@ -167,4 +167,19 @@ class Event extends Model implements HasMedia
     {
         return $this->BelongsToMany(TagsEvent::class, 'event_tags', 'event_id', 'tag_id');
     }
+
+	public function notifiable()
+    {
+		$notifiable = array();
+		$notifiable[$this->created_by_user->id] = $this->created_by_user;
+		foreach($this->facilitators as $facilitator){
+			$notifiable[$facilitator->id] = $facilitator;
+		}
+
+		foreach(User::role('super_admin')->get() as $super_admin){
+			$notifiable[$super_admin->id] = $super_admin;
+		}
+		return $notifiable;
+    }
+
 }
