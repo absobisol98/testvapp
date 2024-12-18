@@ -12,8 +12,6 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Str;
-
 class EventRegistrationTableAction
 {
 
@@ -69,6 +67,7 @@ class EventRegistrationTableAction
                     ];
                 })
                 ->action(function (Event $record,array $data){
+
                     if($record->approval_type == "Automatic"){ // Automatic approved status for registration
 
                         $attendee = EventAttendee::create([
@@ -125,28 +124,8 @@ class EventRegistrationTableAction
                             ->success()
                             ->send();
                     }
-                    //notification for slot threshold
-                    $slot_treshold = $event_registration->event_slot->total_slots;
-                    $registered = $event_registration->event_slot->event_registrations->count();
-                    $slot_treshold  = ($slot_treshold > 1) ? $slot_treshold: 1;
-                    $slot_treshold =  $slot_treshold * .9;
-                    
-                    if( $registered >= $slot_treshold){
-                        foreach($record->notifiable() as $recipient){
-                            Notification::make()
-                                ->title('Slot almost full')
-                                ->icon('far-bell')
-                                ->body(Str::markdown('The Shift Slot: <b>'.$event_registration->event_slot->shift_name.'</b> for Event: <b>'.$record->title.'</b> <br> Reaches 90% Registrant Capacity!'))
-                                ->actions([
-                                    \Filament\Notifications\Actions\Action::make('view')
-                                        ->button()
-                                        ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
-                                ])
-                                ->sendToDatabase($recipient);
-                        }
-                    }
 
-                    foreach ($record->notifiable() as $recipient){
+                    foreach (User::role('super_admin')->get() as $recipient){
                         Notification::make()
                             ->title('You have new event registration for '.$record->title)
                             ->icon('far-bell')
