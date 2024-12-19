@@ -15,6 +15,9 @@ class VolunteerUsageWidgetByProgram extends ApexChartWidget
     public array $count;
     public string $overall_hrs;
 
+    protected static ?int $contentHeight = 300; //px
+
+
     protected function getOptions(): array
     {
 
@@ -22,7 +25,7 @@ class VolunteerUsageWidgetByProgram extends ApexChartWidget
             'series' => $this->count,
             'chart' => [
                 'type' => 'pie',
-                // 'width' => 300,
+                'height' => 300,
             ],
         
 
