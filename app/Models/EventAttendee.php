@@ -32,7 +32,11 @@ class EventAttendee extends Model
 	protected $casts = [
 		'event_id' => 'int',
 		'time_in' => 'datetime',
-		'time_out' => 'datetime'
+		'time_out' => 'datetime',
+		'updated_at' => 'datetime',
+		'is_approve' => 'bool',
+		'updated_by' => 'string'
+
 	];
 
 	protected $fillable = [
@@ -40,7 +44,10 @@ class EventAttendee extends Model
 		'attendee_id',
 		'facilitator_id',
 		'time_in',
-		'time_out'
+		'time_out',
+		'updated_at',
+		'updated_by',
+		'is_approve'
 	];
 
 	public function attendee()
@@ -56,4 +63,20 @@ class EventAttendee extends Model
 	{
 		return $this->belongsTo(Event::class);
 	}
+
+	public function updatedBy()
+	{
+		return $this->belongsTo(User::class,'updated_by');
+	}
+
+
+	public function get_totalHrs()
+	{
+		$hrs = 0;
+		if($this->time_in && $this->time_out){
+			$hrs = $this->time_in->diffInHours($this->time_out);
+		}
+		return $hrs;
+	}
+
 }

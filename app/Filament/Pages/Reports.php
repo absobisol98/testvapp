@@ -32,7 +32,9 @@ class Reports extends Page
                     if(!empty( $event->attendees)){
                         foreach ($event->attendees as $attendee){
                             if($attendee->time_in && $attendee->time_out){
-                                $tot_hrs += $attendee->time_in->diffInHours($attendee->time_out);
+                                if($attendee->is_approve){
+                                    $tot_hrs += $attendee->get_totalHrs();
+                                }
                             }
                         }
                     }
@@ -46,7 +48,6 @@ class Reports extends Page
             $overall_hrs += $tot_hrs;
         }
 
-
         $evntNames = array();
         $evntcount = array();
         $evntoverall_hrs = 0;
@@ -57,8 +58,8 @@ class Reports extends Page
                 foreach($evnt->events as $event){
                     if(!empty( $event->attendees)){
                         foreach ($event->attendees as $attendee){
-                            if($attendee->time_in && $attendee->time_out){
-                                $evnttot_hrs += $attendee->time_in->diffInHours($attendee->time_out);
+                            if($attendee->is_approve){
+                                $evnttot_hrs += $attendee->get_totalHrs();
                             }
                         }
                     }
@@ -71,7 +72,6 @@ class Reports extends Page
             }
             $evntoverall_hrs += $evnttot_hrs;
         }
-        
         return [
             VolunteerUsageWidgetByProgram::make([
                 'progNames' => $progNames,
