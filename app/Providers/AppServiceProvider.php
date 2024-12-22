@@ -61,13 +61,13 @@ class AppServiceProvider extends ServiceProvider
             fn (): View => view('filament.components.sidebar.user-details'),
         );
 
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::SIDEBAR_NAV_START,
-            fn (): View => view('filament.components.sidebar.sidebar-items'),
-        );
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::SIDEBAR_NAV_START,
+        //     fn (): View => view('filament.components.sidebar.sidebar-items'),
+        // );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::SIDEBAR_NAV_START,
+            PanelsRenderHook::SIDEBAR_NAV_END,
             fn (): View => view('filament.components.sidebar.ad-content'),
         );
     }

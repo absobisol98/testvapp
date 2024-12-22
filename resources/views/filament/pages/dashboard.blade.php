@@ -23,7 +23,7 @@
         @livewire(\App\Filament\Widgets\HeroBannerWidget::class)
         
         {{-- If the user is a Volunteer --}}
-        @if (false)
+        @if (true)
             @livewire(\App\Filament\Widgets\AdsWidget::class)
             @livewire(\App\Filament\Widgets\UpcomingOpportunityWidget::class)
             @livewire(\App\Filament\Widgets\RecentOpportunitiesWidget::class)
@@ -37,7 +37,7 @@
         @endif
 
         {{-- If the user is a Partner --}}
-        @if (true)
+        @if (false)
             @livewire(\App\Filament\Widgets\PartnersOnGoingOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\PartnersMyOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\FacilitatorWidget::class)

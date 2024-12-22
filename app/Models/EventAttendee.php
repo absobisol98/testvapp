@@ -35,8 +35,10 @@ class EventAttendee extends Model
 		'time_out' => 'datetime',
 		'updated_at' => 'datetime',
 		'is_approve' => 'bool',
-		'updated_by' => 'string'
-
+		'updated_by' => 'string',
+		'encoding_type' => 'int',
+		'no_account_name' => 'string',
+		'volunteer_count' => 'int',
 	];
 
 	protected $fillable = [
@@ -47,6 +49,9 @@ class EventAttendee extends Model
 		'time_out',
 		'updated_at',
 		'updated_by',
+		'encoding_type',
+		'no_account_name',
+		'volunteer_count',
 		'is_approve'
 	];
 
@@ -75,6 +80,10 @@ class EventAttendee extends Model
 		$hrs = 0;
 		if($this->time_in && $this->time_out){
 			$hrs = $this->time_in->diffInHours($this->time_out);
+			//for bulk encoding
+			if($this->encoding_type == 3){
+				$hrs*=$this->volunteer_count;
+			}
 		}
 		return $hrs;
 	}
