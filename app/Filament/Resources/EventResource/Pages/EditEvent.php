@@ -38,8 +38,9 @@ class EditEvent extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         foreach ($this->record->attendees as $attendee){
-            Notification::make()
-                ->title('Some changes has been made on '.$this->record->title.' event.')
+            if($attendee->attendee){
+                Notification::make()
+                ->title(auth()->user()->firstname.' '.auth()->user()->lastname.' make some changes on '.$this->record->title.' event.')
                 ->icon('far-bell')
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('view')
@@ -47,6 +48,8 @@ class EditEvent extends EditRecord
                         ->url(route('filament.admin.resources.events.view', ['record' => $this->record->id]), shouldOpenInNewTab: true),
                 ])
                 ->sendToDatabase($attendee->attendee);
+            }
+
         }
         return  Notification::make()
             ->title('Event Updated')
