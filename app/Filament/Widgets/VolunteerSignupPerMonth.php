@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\EventRegistration;
 use App\Models\User;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
@@ -10,7 +11,7 @@ use Flowframe\Trend\TrendValue;
 
 class VolunteerSignupPerMonth extends ChartWidget
 {
-    protected static ?string $heading = 'Volunteer Sign Up Per Month';
+    protected static ?string $heading = 'Volunteer Signed Up on Event Per Month';
 
     protected int | string | array $columnSpan = 'full';
 
@@ -19,7 +20,7 @@ class VolunteerSignupPerMonth extends ChartWidget
     protected function getData(): array
     {
 
-        $data = Trend::query(User::role('volunteer'))
+        $data = Trend::model(EventRegistration::class,)
             ->between(
                 start: now()->startOfYear(),
                 end: now()->endOfYear(),

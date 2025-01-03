@@ -106,16 +106,21 @@ class EventsRelationManager extends RelationManager
                             ];
 
                         })
+
                         ->label('Edit Time In/ Time Out')
                         ->form([
                             Grid::make(2)
                             ->schema([
                                 DateTimePicker::make('time_in')
                                     ->seconds(false)
+                                    ->minDate(fn ($record) => $record->start_date)
+                                    ->maxDate(fn ($record) => $record->end_date)
                                     ->live()
                                     ->displayFormat('Y-m-d h:i A'),
                                 DateTimePicker::make('time_out')
                                     ->minDate(fn ( \Filament\Forms\Get $get) => $get('time_in'))
+                                    ->maxDate(fn ($record) => $record->end_date)
+
                                     ->seconds(false),
                             ])  
                         ])

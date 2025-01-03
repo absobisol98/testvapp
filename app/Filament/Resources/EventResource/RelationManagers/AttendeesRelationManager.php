@@ -18,6 +18,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AttendeesRelationManager extends RelationManager
@@ -34,6 +35,12 @@ class AttendeesRelationManager extends RelationManager
             ]);
     }
 
+    
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return auth()->user()->hasRole('super_admin');
+    }
+    
 
     public function table(Table $table): Table
     {
@@ -89,61 +96,61 @@ class AttendeesRelationManager extends RelationManager
                 // ...
 
 
-                Tables\Actions\Action::make('single_w_account')
-                    ->label('Add attendee')
-                    ->color('success')
-                    ->form([
-                        Grid::make(2)
-                            ->schema([
-                                Select::make('attendee_id')
-                                    ->label('Volunteer')
-                                    ->columnSpan(2)
-                                    ->options(function (){
-                                        $options = array();
-                                        $event = $this->getOwnerRecord();
-                                        $atttended = $event->attendees->pluck('attendee_id');
-                                        $not_attended = $event->registrations->whereNotIn('volunteer_id',$atttended);
+                // Tables\Actions\Action::make('single_w_account')
+                //     ->label('Add attendee')
+                //     ->color('success')
+                //     ->form([
+                //         Grid::make(2)
+                //             ->schema([
+                //                 Select::make('attendee_id')
+                //                     ->label('Volunteer')
+                //                     ->columnSpan(2)
+                //                     ->options(function (){
+                //                         $options = array();
+                //                         $event = $this->getOwnerRecord();
+                //                         $atttended = $event->attendees->pluck('attendee_id');
+                //                         $not_attended = $event->registrations->whereNotIn('volunteer_id',$atttended);
 
-                                        foreach($not_attended as $attendee){
-                                            $options[$attendee->volunteer_id] = $attendee->volunteer->firstname.' '.$attendee->volunteer->lastname;
-                                        }
-                                        return $options;
-                                    })
-                                    ->required(),
+                //                         foreach($not_attended as $attendee){
+                //                             $options[$attendee->volunteer_id] = $attendee->volunteer->firstname.' '.$attendee->volunteer->lastname;
+                //                         }
+                //                         return $options;
+                //                     })
+                //                     ->required(),
 
 
-                                DateTimePicker::make('time_in')
-                                    ->seconds(false)
-                                    ->live()
-                                    ->required()
-                                    ->minDate(fn () => $this->getOwnerRecord()->start_date)
-                                    ->maxDate(fn () => $this->getOwnerRecord()->end_date)
-                                    ->displayFormat('Y-m-d h:i A'),
-                                DateTimePicker::make('time_out')
-                                    ->required()
-                                    ->minDate(fn ( \Filament\Forms\Get $get) => $get('time_in'))
-                                    ->maxDate(fn () => $this->getOwnerRecord()->end_date)
-                                    ->seconds(false),
-                            ])
-                    ])
-                    ->action(function (array $data): void {
-                        $data['event_id'] = $this->getOwnerRecord()->id;
-                        $data['facilitator_id'] = auth()->id();
-                        $data['updated_at'] = now();
-                        $data['updated_by'] = auth()->user()->id;
-                        $data['encoding_type'] = 1;
-                        $data['is_approve'] = true;
+                //                 DateTimePicker::make('time_in')
+                //                     ->seconds(false)
+                //                     ->live()
+                //                     ->required()
+                //                     ->minDate(fn () => $this->getOwnerRecord()->start_date)
+                //                     ->maxDate(fn () => $this->getOwnerRecord()->end_date)
+                //                     ->displayFormat('Y-m-d h:i A'),
+                //                 DateTimePicker::make('time_out')
+                //                     ->required()
+                //                     ->minDate(fn ( \Filament\Forms\Get $get) => $get('time_in'))
+                //                     ->maxDate(fn () => $this->getOwnerRecord()->end_date)
+                //                     ->seconds(false),
+                //             ])
+                //     ])
+                //     ->action(function (array $data): void {
+                //         $data['event_id'] = $this->getOwnerRecord()->id;
+                //         $data['facilitator_id'] = auth()->id();
+                //         $data['updated_at'] = now();
+                //         $data['updated_by'] = auth()->user()->id;
+                //         $data['encoding_type'] = 1;
+                //         $data['is_approve'] = true;
 
-                        EventAttendee::create($data);
+                //         EventAttendee::create($data);
 
-                        Notification::make()
-                            ->title('Volunteer Attendance Added')
-                            ->success()
-                            ->send();
-                    })
+                //         Notification::make()
+                //             ->title('Volunteer Attendance Added')
+                //             ->success()
+                //             ->send();
+                //     })
                     
-                    ->modalWidth('md')
-                    ->modalDescription('Add a registerered volunteer with account'),
+                //     ->modalWidth('md')
+                //     ->modalDescription('Add a registerered volunteer with account'),
 
                 Tables\Actions\Action::make('single_wo_account')
                     ->label('Add attendee (without account)')

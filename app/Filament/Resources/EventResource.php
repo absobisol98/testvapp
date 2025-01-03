@@ -21,6 +21,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class EventResource extends Resource
 {
@@ -360,6 +361,7 @@ class EventResource extends Resource
             AttendeesRelationManager::class,
         ];
     }
+
 
     public static function getPages(): array
     {

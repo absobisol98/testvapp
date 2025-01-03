@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Event;
+use App\Models\User;
 use Filament\Widgets\Widget;
 
 class HeroBannerWidget extends Widget
@@ -45,8 +46,8 @@ class HeroBannerWidget extends Widget
         // For partners
         elseif (true) {
             $bgImg = 'img/hero-banner-bg_3.jpg';
-            $totalStat1 = 654;
-            $totalStat2 = 781;
+            $totalStat1 = User::role('volunteer')->count();
+            $totalStat2 = Event::get()->count();
             $totalStat3 = 658.51;
             $totalStat4 = 980;
             $totalStat5 = 223;
