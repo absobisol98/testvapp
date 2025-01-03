@@ -28,6 +28,11 @@ Route::get('/', function () {
     return view('custom.main-landing');
 })->name('home');
 
+Route::get('/bpi', function () {
+    return view('custom.bpi-homepage');
+})->name('bpi-home');
+
+
 Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'view'])->name('volunteer.form.view');
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
 

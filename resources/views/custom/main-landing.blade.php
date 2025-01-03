@@ -132,7 +132,7 @@
                 <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
 
                 {{-- OPPORTUNITIES List --}}
-                <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300">
+                <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
                     {{-- List 1 --}}
                     <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                         <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">

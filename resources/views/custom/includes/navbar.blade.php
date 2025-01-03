@@ -32,9 +32,26 @@
     }
 </style>
 
+{{-- If user is BPI User --}}
+@if (true)
+    <style>
+        #navBar {
+            padding: 30px 80px;
+            background: white;
+            position: absolute;
+            transition: background-color 0.3s ease-in-out, position 0.3s ease-in-out, padding 0.3s ease-in-out;
+        }
+    </style>
+@endif
+
 <div id="navBar" class="w-full flex items-center justify-between z-50">
     <a href="{{ route('home') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
-        <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
+        {{-- If user is BPI User --}}
+        @if (true)
+            <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
+        @else
+            <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
+        @endif
     </a>
 
     <a href="{{ route('home') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
@@ -43,7 +60,7 @@
 
     <div class="h-full flex items-center justify-between gap-4">
         <a href="">
-            <div class="h-[36px] md:h-[56px] w-[120px] md:w-[184px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+            <div class="h-[36px] md:h-[56px] w-[120px] md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                 <p class="font-medium text-base text-white">DONATE</p>
             </div>
         </a>
