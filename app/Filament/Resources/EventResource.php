@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Actions\EventRegistrationTableAction;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
+use App\Filament\Resources\EventResource\RelationManagers\AttendeesRelationManager;
 use App\Models\Cluster;
 use App\Models\Event;
 use App\Models\EventSlotType;
@@ -20,6 +21,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class EventResource extends Resource
 {
@@ -356,8 +358,10 @@ class EventResource extends Resource
     {
         return [
             RelationManagers\RegistrationsRelationManager::class,
+            AttendeesRelationManager::class,
         ];
     }
+
 
     public static function getPages(): array
     {

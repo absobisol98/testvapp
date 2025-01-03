@@ -32,4 +32,3 @@ Route::get('/volunteer-registration', [VolunteerRegistrationController::class, '
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
 
 Route::get('/qr/{event_id}/{attendee_id}', [QrController::class, 'scan_qr'])->name('qr.scan');
-
