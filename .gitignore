@@ -58,3 +58,4 @@ public/js/filament/forms/components/file-upload.js
 public/js/filament/forms/components/rich-editor.js
 public/js/ysfkaya/filament-phone-input/components/filament-phone-input.js
 public/js/filament/support/support.js
+composer.lock

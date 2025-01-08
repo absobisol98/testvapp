@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Settings\GeneralSettings;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Table;
 use Filament\Support\Facades\FilamentView;
@@ -70,5 +73,13 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::SIDEBAR_NAV_END,
             fn (): View => view('filament.components.sidebar.ad-content'),
         );
+
+        FilamentAsset::register([
+            Css::make('example-external-stylesheet', 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css'),
+            Css::make('example-local-stylesheet', asset('css/local.css')),
+            Js::make('example-external-script', 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js'),
+            Js::make('example-local-script', asset('js/local.js')),
+        ]);
+        
     }
 }
