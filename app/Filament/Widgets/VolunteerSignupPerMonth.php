@@ -39,9 +39,21 @@ class VolunteerSignupPerMonth extends ChartWidget
             'backgroundColor' => '#0000FF',
             'borderColor' => '#0000FF',
             'labels' => $data->map(fn (TrendValue $value) => $value->date),
+            
         ];
 
     }
+
+    protected static ?array $options = [
+       'scales' => [
+            'y' => [
+                'ticks' => [
+                    'stepSize'=> 1,
+                ]
+            ]
+        ]
+    ];
+
     protected function getType(): string
     {
         return 'bar';

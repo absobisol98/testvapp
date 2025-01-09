@@ -14,12 +14,12 @@ class Reports extends Page
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.reports';
+    public $widgetData = array();
     protected static ?int $contentHeight = 300; //px
 
-    
-    
-    protected function getHeaderWidgets(): array
-    {
+
+    public function mount() :void {
+
 
         $progNames = array();
         $count = array();
@@ -72,25 +72,23 @@ class Reports extends Page
             }
             $evntoverall_hrs += $evnttot_hrs;
         }
-        return [
-            VolunteerUsageWidgetByProgram::make([
+
+        $this->widgetData = [
+            'widgetByProgram' => [
                 'progNames' => $progNames,
                 'count' =>  $count,
                 'overall_hrs' =>  number_format($overall_hrs,1),
-            ]),
+            ],
 
-            VolunteerUsageWidgetByDepartment::make([
+            'widgetByDepartment' => [
                 'progNames' => $evntNames,
                 'count' =>  $evntcount,
                 'overall_hrs' =>  number_format($evntoverall_hrs,1),
-            ]),
-            VolunteerSignupPerMonth::class,
+            ],
         ];
+
     }
-
-  
-
-
+    
 
     public function getHeaderWidgetsColumns(): int | array
     {
