@@ -147,8 +147,21 @@
                                                 </div>
                                             </div>
 
+                                            <!-- Cluster Select Dropdown -->
+
+                                            <div class="" id="clusterSelectWrapper">
+                                                <label class="block text-sm font-semibold required">Cluster</label>
+                                                <select required class="w-full p-2 bg-white text-gray-900 rounded" name="cluster_id" id="clusterSelect" class="form-select">
+                                                    <option value="" disabled selected></option>
+                                                    @foreach ($clusters as $cluster)
+                                                        <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
                                             <!-- Company Select Dropdown -->
                                             <div class="" id="companySelectWrapper">
+                                                <label class="block text-sm font-semibold required">Company Name</label>
                                                 <select required class="w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect" class="form-select">
                                                     <option value="" disabled selected></option>
                                                     @foreach ($companies as $company)
@@ -156,10 +169,10 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div>
+                                            {{-- <div>
                                                 <label class="block text-sm font-semibold required">Company Name</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_name" />
-                                            </div>
+                                            </div> --}}
                                             <div>
                                                 <label class="block text-sm font-semibold required">Company Address</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
@@ -272,16 +285,24 @@
             }
         }
 
-        function updateCompanies() {
+        function updateDropdowns() {
             const selectedOrganization = document.querySelector('input[name="affiliate_type_id"]:checked')?.id;
+            const clusterSelectWrapper = document.getElementById('clusterSelectWrapper');
             const companySelect = document.getElementById('companySelect');
             const companySelectWrapper = document.getElementById('companySelectWrapper');
 
-            // If "Non-Ayala Group" is selected, hide the company select dropdown
-            if (selectedOrganization === 'non_ayala') {
-                companySelectWrapper.style.display = 'none';
+            // Show or hide the cluster dropdown based on the selected organization
+            if (selectedOrganization === 'ayala_employee') {
+                clusterSelectWrapper.style.display = 'block'; // Show cluster dropdown
             } else {
-                companySelectWrapper.style.display = 'block';
+                clusterSelectWrapper.style.display = 'none'; // Hide cluster dropdown
+            }
+
+            // Show or hide the company dropdown based on the selected organization
+            if (selectedOrganization === 'non_ayala') {
+                companySelectWrapper.style.display = 'none'; // Hide company dropdown
+            } else {
+                companySelectWrapper.style.display = 'block'; // Show company dropdown
 
                 // Filter and show companies based on the selected organization
                 const allOptions = companySelect.querySelectorAll('option');
@@ -298,6 +319,14 @@
                 });
             }
         }
+
+        // Add event listeners to update dropdowns when the organization changes
+        document.querySelectorAll('input[name="affiliate_type_id"]').forEach(radio => {
+            radio.addEventListener('change', updateDropdowns);
+        });
+
+        // Call the function on page load to ensure the initial state is set correctly
+        updateDropdowns();
 
         $(document).ready(function() {
             $("#btn-register").click(function(e) {
@@ -324,6 +353,7 @@
                     var affiliate_type_id = $("input[name='affiliate_type_id']").val();
                     var company_id = $("select[name='company_id']").val();
                     var program_id = $("select[name='program_id']").val();
+                    var cluster_id = $("select[name='cluster_id']").val();
 
                 $.ajax({
                     url: "{{ route('volunteer.form.store') }}",
@@ -350,7 +380,8 @@
                         emergency_contact_number: emergency_contact_number,
                         affiliate_type_id: $("input[type=radio][name=affiliate_type_id]:checked").val(),
                         company_id: company_id,
-                        program_id: program_id
+                        program_id: program_id,
+                        cluster_id: cluster_id
                     },
                     success: function (data) {
                         if ($.isEmptyObject(data.error)) {
