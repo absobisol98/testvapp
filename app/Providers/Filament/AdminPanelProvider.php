@@ -26,6 +26,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
 
@@ -44,6 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
             // ->brandLogo(fn (GeneralSettings $settings) => Storage::url($settings->brand_logo))
             ->brandLogo(asset('img/logo-white.png'))
+            ->darkMode(false)
             ->brandLogoHeight(fn (GeneralSettings $settings) => $settings->brand_logoHeight)
             ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
@@ -78,7 +80,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -149,7 +151,9 @@ class AdminPanelProvider extends PanelProvider
                             ->collapsed(true)
                             ->collapsible(true)
                             ->paginate(perPage: 5, condition: true)
-                    ])
+                            ]),
+                FilamentApexChartsPlugin::make()
+
             ]);
     }
 }
