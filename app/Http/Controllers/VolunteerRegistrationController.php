@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Program;
+use App\Models\Cluster;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
@@ -17,14 +18,15 @@ class VolunteerRegistrationController extends Controller
      * Show the registration form.
      */
     public function view()
-    {
-        // Fetch companies and programs from the database
-        $companies = Company::all();
-        $programs = Program::all();
+{
+    // Fetch companies, programs, and clusters from the database
+    $companies = Company::all();
+    $programs = Program::all();
+    $clusters = Cluster::all();
 
-        // Pass both companies and programs to the view
-        return view('custom.volunteer-registration', compact('companies', 'programs'));
-    }
+    // Pass all data to the view
+    return view('custom.volunteer-registration', compact('companies', 'programs', 'clusters'));
+}
 
 
     /**
@@ -50,6 +52,7 @@ class VolunteerRegistrationController extends Controller
             'affiliate_type_id' => 'nullable|integer',
             'company_id' => 'nullable|integer',
             'program_id' => 'nullable|integer',
+            'cluster_id' => 'nullable|integer',
         ];
 
         // Perform validation
@@ -72,7 +75,7 @@ class VolunteerRegistrationController extends Controller
             'middle_name' => $input['middle_name'],
             'birthday' => $input['birthday'],
             'is_company' => $input['is_company'],
-            'company_name' => $input['company_name'],
+            'company_name' => $input['company_name'] ?? null,
             'company_address' => $input['company_address'],
             'company_contact_number' => $input['company_contact_number'],
             'school' => $input['school'],
@@ -82,6 +85,7 @@ class VolunteerRegistrationController extends Controller
             'affiliate_type_id' => $input['affiliate_type_id'],
             'company_id' => $input['company_id'],
             'program_id' =>  $input['program_id'],
+            'cluster_id' =>  $input['cluster_id'] ?? null,
         ]);
 
             $role = Role::where('name','volunteer')->first();
