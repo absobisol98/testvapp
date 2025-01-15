@@ -44,10 +44,10 @@ class RegistrationsRelationManager extends RelationManager
             ]);
     }
 
-    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
-    {
-        return auth()->user()->hasRole('super_admin');
-    }
+    // public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    // {
+    //     return auth()->user()->hasRole('super_admin');
+    // }
 
     public function table(Table $table): Table
     {

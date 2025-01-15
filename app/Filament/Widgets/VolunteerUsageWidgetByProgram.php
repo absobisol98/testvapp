@@ -14,13 +14,13 @@ class VolunteerUsageWidgetByProgram extends ApexChartWidget
     public array $progNames;
     public array $count;
     public string $overall_hrs;
+    public  $head = 0;
 
     protected static ?int $contentHeight = 300; //px
 
-
     protected function getOptions(): array
     {
-
+        $this->head = $this->overall_hrs;
         return[
             'series' => $this->count,
             'chart' => [
@@ -42,6 +42,6 @@ class VolunteerUsageWidgetByProgram extends ApexChartWidget
 
     public function getHeading() : ?string
     {
-        return 'Volunteer Hours By Department (Total Hours: '.$this->overall_hrs.')';
+        return 'Volunteer Hours By Program (Total Hours: '.$this->head.')';
     }
 }
