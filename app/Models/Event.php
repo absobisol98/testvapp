@@ -92,6 +92,11 @@ class Event extends Model implements HasMedia
 		return $this->belongsTo(EventType::class);
 	}
 
+    public function record()
+	{
+		return $this->belongsTo(EventPage::class);
+	}
+
 	public function status()
 	{
 		return $this->belongsTo(EventApprovalStatus::class, 'approval_status_id');

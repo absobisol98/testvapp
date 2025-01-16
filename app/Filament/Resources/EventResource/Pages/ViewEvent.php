@@ -20,7 +20,7 @@ class ViewEvent extends ViewRecord
     }
 
 
-    
+
 
      protected function getActions(): array
      {
