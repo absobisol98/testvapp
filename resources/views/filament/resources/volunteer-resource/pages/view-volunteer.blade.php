@@ -89,6 +89,7 @@
                         <p class="text-[20px] font-[500]">{{ auth()->user()->name }}</p>
                         <p class="text-[14px] font-[300]">Member Since:
                             {{ auth()->user()->created_at->format('F j, Y') }}</p>
+                        <p class="text-[18px] font-bold text-[#F55E1D]">LEVEL: 1</p>
                     </div>
                 </div>
 
