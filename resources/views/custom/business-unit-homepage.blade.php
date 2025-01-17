@@ -75,7 +75,7 @@
 
 
         {{-- Opportunity Section --}}
-        <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] p-4 mb-8 gap-8">
+        <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] py-4 mb-8 px-[16px] xl:px-[80px] gap-8">
             <div class="grid grid-cols-2 lg:grid-cols-3 w-full gap-4">
                 <div class="col-span-2 xl:col-span-1 lg:col-span-3 min-h-[300px] flex items-center justify-between gap-4"
                     style="background: url('{{ asset('img/bpi-bg-1.jpg') }}') no-repeat center center; background-size: cover;">
@@ -209,8 +209,64 @@
                     {{-- OPPORTUNITIES List --}}
                     <div id="opportunityList"
                         class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
+                        {{-- List --}}
+                        @foreach ($opportunities as $index => $opportunity)
+                            <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                                <div
+                                    class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                    <img class="w-full h-full object-cover"
+                                        src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                                </div>
+
+                                <div class="w-full">
+                                    <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+
+                                    <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online,
+                                        {{ $opportunity->location }}</p>
+
+                                    <div
+                                        class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                            <p class="font-[600]">DATE:
+                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
+                                            <p class="font-[600]">
+                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
+                                                {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
+                                        </div>
+                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                            <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage
+                                                actively
+                                                in the session</p>
+                                            <div class="flex items-center justify-start gap-4">
+                                                @foreach ($opportunity->slots as $index => $slot)
+                                                    <p>
+                                                        <span class="font-[600]">BATCH {{ $index + 1 }}:</span>
+                                                        {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} -
+                                                        {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
+                                                    </p>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="w-[200px]">
+                                    <a href="">
+                                        <div
+                                            class="h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                                            <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            @if (!$loop->last)
+                                <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                            @endif
+                        @endforeach
+
                         {{-- List 1 --}}
-                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                             <div
                                 class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                 <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
@@ -249,10 +305,10 @@
                             </div>
                         </div>
 
-                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
 
                         {{-- List 2 --}}
-                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                             <div
                                 class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                 <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
@@ -291,10 +347,10 @@
                             </div>
                         </div>
 
-                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
 
                         {{-- List 3 --}}
-                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                             <div
                                 class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                 <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
@@ -331,126 +387,13 @@
                                     </div>
                                 </a>
                             </div>
-                        </div>
+                        </div> --}}
 
                     </div>
 
                     {{-- OPPORTUNITIES Calendar --}}
-                    <div id="opportunityCalendar"
-                        class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 hidden">
-                        {{-- This is a sample calendar --}}
-                        <div id="calendar"
-                            class="w-full grid grid-cols-7 gap-0 border border-gray-300 rounded-md overflow-hidden">
-                            <div class="text-center font-bold border-b border-gray-300">Sun</div>
-                            <div class="text-center font-bold border-b border-gray-300">Mon</div>
-                            <div class="text-center font-bold border-b border-gray-300">Tue</div>
-                            <div class="text-center font-bold border-b border-gray-300">Wed</div>
-                            <div class="text-center font-bold border-b border-gray-300">Thu</div>
-                            <div class="text-center font-bold border-b border-gray-300">Fri</div>
-                            <div class="text-center font-bold border-b border-gray-300">Sat</div>
-                            <!-- Placeholder for empty days, adjust as necessary for the month -->
-                            <div class="h-20 flex items-center justify-center border border-gray-300"></div>
-                            <!-- Empty for padding -->
-                            <div class="h-20 flex items-center justify-center border border-gray-300"></div>
-                            <!-- Empty for padding -->
-                            <div class="h-20 flex items-center justify-center border border-gray-300"></div>
-                            <!-- Empty for padding -->
-                            <div class="h-20 flex items-center justify-center border border-gray-300"></div>
-                            <!-- Empty for padding -->
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                1</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                2</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                3</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                4</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                5</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                6</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                7</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                8</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                9</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                10</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                11</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                12</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                13</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                14</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                15</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                16</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                17</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                18</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                19</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                20</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                21</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                22</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                23</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                24</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                25</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                26</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                27</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                28</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                29</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                30</div>
-                            <div
-                                class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">
-                                31</div>
-                        </div>
+                    <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
+                        @livewire(\App\Filament\Widgets\CalendarWidget::class)
                     </div>
 
                     {{-- Tab Scripts --}}
@@ -477,6 +420,10 @@
                                 iconList.classList.remove("active");
                             }
                         }
+
+                        setTimeout(() => {
+                            opportunityCalendar.classList.add("hidden");
+                        }, 2000);
                     </script>
                 </div>
             </div>
@@ -512,10 +459,14 @@
                 <div class="program-swiper-container h-full w-full overflow-hidden z-0">
                     <div class="swiper-wrapper w-full">
                         <!-- Slide 1 -->
-                        <div class="swiper-slide w-full h-full" style="background: url('{{ asset('img/bpi-bg-4.jpg') }}') no-repeat center center; background-size: cover;"></div>
+                        <div class="swiper-slide w-full h-full"
+                            style="background: url('{{ asset('img/bpi-bg-4.jpg') }}') no-repeat center center; background-size: cover;">
+                        </div>
 
                         <!-- Slide 2 -->
-                        <div class="swiper-slide w-full h-full" style="background: url('{{ asset('img/bpi-bg-3.jpg') }}') no-repeat center center; background-size: cover;"></div>
+                        <div class="swiper-slide w-full h-full"
+                            style="background: url('{{ asset('img/bpi-bg-3.jpg') }}') no-repeat center center; background-size: cover;">
+                        </div>
                     </div>
                 </div>
 
@@ -548,11 +499,13 @@
                 <div class="w-full flex flex-col items-start gap-4 z-10 text-[#5B5B5B] font-[400]">
                     <p class="text-[36px]">Recent Event Gallery</p>
                     <p class="text-[48px]">JUST BRING YOUR HEARTS.</p>
-                    <p class="text-[24px] w-full max-w-[510px] text-[#494949]">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
+                    <p class="text-[24px] w-full max-w-[510px] text-[#494949]">Lorem Ipsum is simply dummy text of the
+                        printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
                 </div>
                 <div class="w-full z-10">
                     <a href="{{ route('volunteer.form.view') }}">
-                        <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
+                        <div
+                            class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
                             <p class="font-[800] text-sm text-[#D43F3F]">SIGN UP NOW!</p>
                         </div>
                     </a>

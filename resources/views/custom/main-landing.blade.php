@@ -2,9 +2,9 @@
 
 @section('content')
     <style>
-    .clip-path-custom {
-		clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
-	}
+        .clip-path-custom {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
+        }
     </style>
 
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
@@ -19,12 +19,15 @@
                     </div>
                 </div>
 
-                <div class="h-[100vh] col-span-3 clip-path-custom" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+                <div class="h-[100vh] col-span-3 clip-path-custom"
+                    style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
                 </div>
             </div>
         </section>
         {{-- Tablet & mobile: Hero Banner Section --}}
-        <section class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+        <section
+            class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative"
+            style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
             <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
                 <p class="font-[700] text-[70px] leading-none">Your involvement is important to us!</p>
@@ -35,7 +38,8 @@
 
 
         {{-- Opportunity Section --}}
-        <div class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
+        <div
+            class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
             {{-- Featured Opportunity --}}
             <div class="flex flex-col md:flex-row items-center justify-center gap-4">
                 <div class="flex items-center justify-between h-[400px] w-[100%] md:w-[40%]  gap-4"
@@ -48,7 +52,8 @@
 
                 <div class="w-[100%] md:w-[60%]">
                     <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                    <p class="text-[40px] font-[700] text-[#03498D] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit dolor met.</p>
+                    <p class="text-[40px] font-[700] text-[#03498D] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit
+                        dolor met.</p>
 
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
@@ -59,7 +64,8 @@
                             <p class="font-[600]">2:00 PM - 6:00 PM</p>
                         </div>
                         <div class="w-fit flex flex-col items-start justify-between gap-1">
-                            <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
+                            <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session
+                            </p>
                             <div class="flex items-center justify-start gap-4">
                                 <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
                                 <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
@@ -102,20 +108,24 @@
                             /* Default stroke color */
                             #icon svg path,
                             #icon-calendar svg path {
-                                stroke: #000000; /* Default stroke color */
-                                transition: stroke 0.3s ease; /* Smooth transition for stroke color change */
+                                stroke: #000000;
+                                /* Default stroke color */
+                                transition: stroke 0.3s ease;
+                                /* Smooth transition for stroke color change */
                             }
 
                             /* Stroke color on hover */
                             #icon:hover svg path,
                             #icon-calendar:hover svg path {
-                                stroke: #FF781E; /* Change this to your desired hover color */
+                                stroke: #FF781E;
+                                /* Change this to your desired hover color */
                             }
 
                             /* Stroke color on click (active state) */
                             #icon.active svg path,
                             #icon-calendar.active svg path {
-                                stroke: #FF9141; /* Change this to your desired active color */
+                                stroke: #FF9141;
+                                /* Change this to your desired active color */
                             }
                         </style>
 
@@ -132,15 +142,73 @@
                 <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
 
                 {{-- OPPORTUNITIES List --}}
-                <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
+                <div id="opportunityList"
+                    class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
+                    {{-- List --}}
+                    @foreach ($opportunities as $index => $opportunity)
+                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div
+                                class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                    alt="">
+                            </div>
+
+                            <div class="w-full">
+                                <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+
+                                <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online,
+                                    {{ $opportunity->location }}</p>
+
+                                <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                    <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                        <p class="font-[600]">DATE:
+                                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
+                                        <p class="font-[600]">
+                                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
+                                            {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
+                                    </div>
+                                    <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                        <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage
+                                            actively
+                                            in the session</p>
+                                        <div class="flex items-center justify-start gap-4">
+                                            @foreach ($opportunity->slots as $index => $slot)
+                                                <p>
+                                                    <span class="font-[600]">BATCH {{ $index + 1 }}:</span>
+                                                    {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} -
+                                                    {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
+                                                </p>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-[200px]">
+                                <a href="">
+                                    <div
+                                        class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                        <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        @if (!$loop->last)
+                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                        @endif
+                    @endforeach
+
                     {{-- List 1 --}}
-                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                    {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                         <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                alt="">
                         </div>
 
                         <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span class="font-[700]">BASA</span>dors Storytelling Webinar</p>
+                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
+                                    class="font-[700]">BASA</span>dors Storytelling Webinar</p>
 
                             <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
 
@@ -150,7 +218,9 @@
                                     <p class="font-[600]">2:00 PM - 6:00 PM</p>
                                 </div>
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
+                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
+                                        the
+                                        session</p>
                                     <div class="flex items-center justify-start gap-4">
                                         <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
                                         <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
@@ -169,16 +239,19 @@
                         </div>
                     </div>
 
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
 
                     {{-- List 2 --}}
-                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                    {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div
+                            class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                alt="">
                         </div>
 
                         <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span class="font-[700]">BASA</span>dors Storytelling Webinar</p>
+                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
+                                    class="font-[700]">BASA</span>dors Storytelling Webinar</p>
 
                             <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
 
@@ -188,7 +261,8 @@
                                     <p class="font-[600]">2:00 PM - 6:00 PM</p>
                                 </div>
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
+                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
+                                        the session</p>
                                     <div class="flex items-center justify-start gap-4">
                                         <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
                                         <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
@@ -207,16 +281,19 @@
                         </div>
                     </div>
 
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
 
                     {{-- List 3 --}}
-                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                    {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div
+                            class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                alt="">
                         </div>
 
                         <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span class="font-[700]">BASA</span>dors Storytelling Webinar</p>
+                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
+                                    class="font-[700]">BASA</span>dors Storytelling Webinar</p>
 
                             <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
 
@@ -226,7 +303,8 @@
                                     <p class="font-[600]">2:00 PM - 6:00 PM</p>
                                 </div>
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
+                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
+                                        the session</p>
                                     <div class="flex items-center justify-start gap-4">
                                         <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
                                         <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
@@ -243,58 +321,13 @@
                                 </div>
                             </a>
                         </div>
-                    </div>
+                    </div> --}}
 
                 </div>
 
                 {{-- OPPORTUNITIES Calendar --}}
-                <div id="opportunityCalendar" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 hidden">
-                    {{-- This is a sample calendar --}}
-                    <div id="calendar" class="w-full grid grid-cols-7 gap-0 border border-gray-300 rounded-md overflow-hidden">
-                        <div class="text-center font-bold border-b border-gray-300">Sun</div>
-                        <div class="text-center font-bold border-b border-gray-300">Mon</div>
-                        <div class="text-center font-bold border-b border-gray-300">Tue</div>
-                        <div class="text-center font-bold border-b border-gray-300">Wed</div>
-                        <div class="text-center font-bold border-b border-gray-300">Thu</div>
-                        <div class="text-center font-bold border-b border-gray-300">Fri</div>
-                        <div class="text-center font-bold border-b border-gray-300">Sat</div>
-                        <!-- Placeholder for empty days, adjust as necessary for the month -->
-                        <div class="h-20 flex items-center justify-center border border-gray-300"></div> <!-- Empty for padding -->
-                        <div class="h-20 flex items-center justify-center border border-gray-300"></div> <!-- Empty for padding -->
-                        <div class="h-20 flex items-center justify-center border border-gray-300"></div> <!-- Empty for padding -->
-                        <div class="h-20 flex items-center justify-center border border-gray-300"></div> <!-- Empty for padding -->
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">1</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">2</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">3</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">4</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">5</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">6</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">7</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">8</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">9</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">10</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">11</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">12</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">13</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">14</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">15</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">16</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">17</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">18</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">19</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">20</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">21</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">22</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">23</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">24</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">25</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">26</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">27</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">28</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">29</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">30</div>
-                        <div class="h-20 flex items-center justify-center border border-gray-300 hover:bg-orange-200 transition duration-300">31</div>
-                    </div>
+                <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
+                    @livewire(\App\Filament\Widgets\CalendarWidget::class)
                 </div>
 
                 {{-- Tab Scripts --}}
@@ -321,6 +354,10 @@
                             iconList.classList.remove("active");
                         }
                     }
+
+                    setTimeout(() => {
+                        opportunityCalendar.classList.add("hidden");
+                    }, 2000);
                 </script>
             </div>
         </div>
@@ -333,16 +370,12 @@
                 <div class="h-[33px] w-full max-w-[535px] bg-[#FF781E]"></div>
             </div>
 
-            <div class="h-[100vh] md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('img/background-img-2.png') }}')">
+            <div class="h-[100vh] md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
+                style="background-image: url('{{ asset('img/background-img-2.png') }}')">
                 <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
                     <div class="flex flex-col md:flex-row items-center justify-center gap-12">
                         <!-- Statistics Item -->
-                        @foreach ([
-                            ['number' => '1269', 'label' => 'VOLUNTEERS'],
-                            ['number' => '284.98', 'label' => 'HOURS LOGGED'],
-                            ['number' => '20', 'label' => 'PROGRAMS'],
-                            ['number' => '300', 'label' => 'OPPORTUNITIES']
-                        ] as $stat)
+                        @foreach ([['number' => '1269', 'label' => 'VOLUNTEERS'], ['number' => '284.98', 'label' => 'HOURS LOGGED'], ['number' => '20', 'label' => 'PROGRAMS'], ['number' => '300', 'label' => 'OPPORTUNITIES']] as $stat)
                             <div class="w-fit flex flex-col items-center justify-center gap-1">
                                 <p class="text-[80px] font-bold">{{ $stat['number'] }}</p>
                                 <p class="text-[20px] font-medium">{{ $stat['label'] }}</p>
@@ -359,14 +392,16 @@
             {{-- Our Program Section --}}
             <div class="w-full grid grid-cols-1 lg:grid-cols-2">
                 <!-- Our Program Section -->
-                <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#03498D]">
+                <div
+                    class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#03498D]">
                     <div class="w-full min-h-[450px] flex flex-col items-start">
                         <p class="text-[36px] font-semibold">Our Program</p>
                         <p class="text-[48px] font-bold leading-none">Corporate Citizenship and Volunteerism</p>
                         <p class="text-[20px] font-light">
                             We believe in contributing to the nation’s development goals by adapting to the evolving needs of
                             stakeholders to remain relevant and responsive. Through our programs, we affirm our commitment to
-                            aligning, giving focus, and making an impact in the lives of people in our conglomerate, communities,
+                            aligning, giving focus, and making an impact in the lives of people in our conglomerate,
+                            communities,
                             and country.
                         </p>
                     </div>
@@ -381,15 +416,16 @@
 
                 <!-- Become a Volunteer Section -->
                 <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
-                     style="background-image: url('{{ asset('img/ayala-foundation-bg-1.jpg') }}')">
+                    style="background-image: url('{{ asset('img/ayala-foundation-bg-1.jpg') }}')">
                     <!-- Diagonal Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-tr from-[#03498D4D] to-[#03498D4D] z-0"
-                         style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+                        style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
 
                     <div class="w-full min-h-[450px] flex flex-col items-start z-10">
                         <p class="text-[36px] font-semibold">Become a</p>
                         <p class="text-[48px] font-bold">Volunteer</p>
-                        <p class="text-[24px] w-full max-w-[510px] font-light">Ayala Corporate Citizenship and Volunteer Program</p>
+                        <p class="text-[24px] w-full max-w-[510px] font-light">Ayala Corporate Citizenship and Volunteer
+                            Program</p>
                     </div>
                     <div class="w-full z-10">
                         <a href="{{ route('volunteer.form.view') }}">
@@ -408,7 +444,8 @@
             {{-- Our Program Section --}}
             <div class="w-full grid grid-cols-1 lg:grid-cols-2">
                 <!-- Program Section with Swiper -->
-                <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D]">
+                <div
+                    class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D]">
                     <div class="program-swiper-container w-full overflow-hidden">
                         <div class="swiper-wrapper w-full">
                             <!-- Slide 1 -->
@@ -418,17 +455,24 @@
                                         <p class="text-[36px] font-semibold">Our Program</p>
                                         <p class="text-[48px] font-bold">Community Development 1</p>
                                         <p class="text-[20px] font-light">
-                                            We aim to elevate Filipino families from poverty to the middle class. To achieve this goal, we
-                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health, education, WASH
-                                            (water, sanitation, and hygiene), electrification, and connectivity within our target communities.
-                                            We boost economic vitality through programs in financial inclusion, sustainable livelihood, and by
-                                            supporting local museums and libraries. Working closely with partners, we serve as an integrator
-                                            of interventions to find solutions that are suited and relevant to the needs of communities.
+                                            We aim to elevate Filipino families from poverty to the middle class. To achieve
+                                            this goal, we
+                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
+                                            education, WASH
+                                            (water, sanitation, and hygiene)
+                                            , electrification, and connectivity within our target communities.
+                                            We boost economic vitality through programs in financial inclusion, sustainable
+                                            livelihood, and by
+                                            supporting local museums and libraries. Working closely with partners, we serve as
+                                            an integrator
+                                            of interventions to find solutions that are suited and relevant to the needs of
+                                            communities.
                                         </p>
                                     </div>
                                     <div class="w-full">
                                         <a href="">
-                                            <div class="h-12 w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
+                                            <div
+                                                class="h-12 w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
                                                 <p class="font-medium text-lg text-white">SEE ALL OPPORTUNITIES</p>
                                             </div>
                                         </a>
@@ -443,17 +487,24 @@
                                         <p class="text-[36px] font-semibold">Our Program</p>
                                         <p class="text-[48px] font-bold">Community Development 2</p>
                                         <p class="text-[20px] font-light">
-                                            We aim to elevate Filipino families from poverty to the middle class. To achieve this goal, we
-                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health, education, WASH
-                                            (water, sanitation, and hygiene), electrification, and connectivity within our target communities.
-                                            We boost economic vitality through programs in financial inclusion, sustainable livelihood, and by
-                                            supporting local museums and libraries. Working closely with partners, we serve as an integrator
-                                            of interventions to find solutions that are suited and relevant to the needs of communities.
+                                            We aim to elevate Filipino families from poverty to the middle class. To achieve
+                                            this goal, we
+                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
+                                            education, WASH
+                                            (water, sanitation, and hygiene), electrification, and connectivity within our
+                                            target communities.
+                                            We boost economic vitality through programs in financial inclusion, sustainable
+                                            livelihood, and by
+                                            supporting local museums and libraries. Working closely with partners, we serve as
+                                            an integrator
+                                            of interventions to find solutions that are suited and relevant to the needs of
+                                            communities.
                                         </p>
                                     </div>
                                     <div class="w-full">
                                         <a href="">
-                                            <div class="h-12 w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
+                                            <div
+                                                class="h-12 w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
                                                 <p class="font-medium text-lg text-white">SEE ALL OPPORTUNITIES</p>
                                             </div>
                                         </a>
@@ -464,10 +515,12 @@
                     </div>
 
                     <div class="w-full flex items-center justify-start gap-4">
-                        <div class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                        <div
+                            class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
                             @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
                         </div>
-                        <div class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                        <div
+                            class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
                             @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
                         </div>
                     </div>
@@ -487,10 +540,10 @@
 
                 <!-- Right Section with Background and Overlay -->
                 <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
-                     style="background-image: url('{{ asset('img/ayala-foundation-bg-2.png') }}')">
+                    style="background-image: url('{{ asset('img/ayala-foundation-bg-2.png') }}')">
                     <!-- Diagonal Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-tr from-[#F55E1D4D] to-[#03498D4D] z-0"
-                         style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+                        style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
                 </div>
             </div>
         @endauth
@@ -514,18 +567,21 @@
                         }
                     </style>
 
-                    <div class="w-[80%] p-2 flex flex-col-reverse md:flex-row items-end md:items-start justify-between gap-4 bg-white">
+                    <div
+                        class="w-[80%] p-2 flex flex-col-reverse md:flex-row items-end md:items-start justify-between gap-4 bg-white">
                         <div class="stories-swiper-container w-full overflow-hidden">
                             <div class="swiper-wrapper w-full">
                                 <!-- Slide 1 -->
                                 <div class="swiper-slide">
-                                    <div class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
+                                    <div
+                                        class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white shadow-sm flex flex-col items-center">
                                             <p>AUG</p>
                                             <p>21</p>
                                         </div>
                                         <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 1 goes here</p>
+                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 1 goes here
+                                            </p>
                                             <p class="text-[14px]">Lorem Ipsum is simply dummy text of the printing and
                                                 typesetting industry.</p>
                                             <a href="">
@@ -540,13 +596,15 @@
 
                                 <!-- Slide 2 -->
                                 <div class="swiper-slide">
-                                    <div class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
+                                    <div
+                                        class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white shadow-sm flex flex-col items-center">
                                             <p>AUG</p>
                                             <p>25</p>
                                         </div>
                                         <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 2 goes here</p>
+                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 2 goes here
+                                            </p>
                                             <p class="text-[14px] ">Lorem Ipsum is simply dummy text of the printing and
                                                 typesetting industry.</p>
                                             <a href="">
@@ -587,14 +645,16 @@
                 </div>
 
                 <!-- Right Section: Testimonials -->
-                <div class="col-span-1 h-full flex flex-col items-center justify-between gap-8 md:gap-16 text-white p-8 md:p-16 bg-[#03498DB2]">
+                <div
+                    class="col-span-1 h-full flex flex-col items-center justify-between gap-8 md:gap-16 text-white p-8 md:p-16 bg-[#03498DB2]">
                     <p>VOLUNTEER TESTIMONIALS</p>
 
                     <div class="flex items-center gap-4 h-fit">
                         <div class="w-8 md:w-16 h-full flex items-start">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
-                        <p class="px-0 md:px-2 py-4 text-[28px] md:text-[36px]">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
+                        <p class="px-0 md:px-2 py-4 text-[28px] md:text-[36px]">Lorem Ipsum is simply dummy text of the
+                            printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
                         <div class="w-8 md:w-16 h-full flex items-end">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
@@ -619,19 +679,25 @@
 
         {{-- Featured Opportunity Modal --}}
         <div class="w-full h-fit">
-            <div id="featuredImageModal" class="fixed inset-0 flex justify-center items-center z-50 hidden transition-opacity duration-300 bg-black bg-opacity-50" onclick="closeModal(event)">
+            <div id="featuredImageModal"
+                class="fixed inset-0 flex justify-center items-center z-50 hidden transition-opacity duration-300 bg-black bg-opacity-50"
+                onclick="closeModal(event)">
                 <!-- Modal Content -->
-                <div class="modal-content bg-white shadow-lg max-w-[80%] w-full p-8 transform transition-all duration-300 scale-95 opacity-0">
+                <div
+                    class="modal-content bg-white shadow-lg max-w-[80%] w-full p-8 transform transition-all duration-300 scale-95 opacity-0">
                     <div class="w-full flex justify-end items-end p-4">
-                        <button id="closeModal" class="text-2xl font-semibold text-black hover:bg-gray-100 focus:outline-none">
+                        <button id="closeModal"
+                            class="text-2xl font-semibold text-black hover:bg-gray-100 focus:outline-none">
                             @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
                         </button>
                     </div>
 
                     <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
                         <div class="flex flex-col  items-center justify-center">
-                            <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center" style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
-                                <div class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
+                            <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center"
+                                style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
+                                <div
+                                    class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
                                     <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
                                 </div>
                             </div>
@@ -641,30 +707,41 @@
                                     <p class="text-lg font-normal text-white">EDUCATION</p>
                                 </div>
 
-                                <p class="text-4xl font-normal text-[#03498D]">Ayala Reading Am<span class="font-bold">BASA</span>dors Storytelling Webinar</p>
+                                <p class="text-4xl font-normal text-[#03498D]">Ayala Reading Am<span
+                                        class="font-bold">BASA</span>dors Storytelling Webinar</p>
 
                                 <p class="text-2xl font-normal">Zoom Webinar Online, National Capital Region</p>
 
                                 <p class="text-lg font-normal my-16 text-justify">
-                                    &emsp; &emsp;Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                                    &emsp; &emsp;Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an
+                                    unknown printer took a galley of type and scrambled it to make a type specimen book. It
+                                    has survived not only five centuries, but also the leap into electronic typesetting,
+                                    remaining essentially unchanged. It was popularised in the 1960s with the release of
+                                    Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
+                                    publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                                 </p>
 
-                                <div class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 my-16">
+                                <div
+                                    class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 my-16">
                                     <p class="font-semibold">DATE: Aug-27-2024 | 2:00 PM - 6:00 PM</p>
-                                    <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage actively in the session</p>
+                                    <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage actively in
+                                        the session</p>
                                     <p><span class="font-semibold">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
                                     <p><span class="font-semibold">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
                                 </div>
 
                                 <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                     <a href="">
-                                        <div class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                        <div
+                                            class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                             <p class="font-normal text-lg text-white">SIGN UP</p>
                                         </div>
                                     </a>
 
                                     <a href="">
-                                        <div class="h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                        <div
+                                            class="h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                                             <p class="font-normal text-lg text-white">FAVORITE</p>
                                         </div>
                                     </a>

@@ -30,10 +30,24 @@
     #avatarContainer {
         background: transparent;
     }
+
+    @media screen and (max-width: 1279px) {
+        #navBar {
+            padding: 30px 16px;
+        }
+
+        #navBar.scrolled {
+            padding: 30px 16px;
+        }
+    }
 </style>
 
+@php
+    $isBusinessUnit = (true) ? true : false;
+@endphp
+
 {{-- If user is BPI User --}}
-@if (true)
+@if ($isBusinessUnit)
     <style>
         #navBar {
             padding: 30px 80px;
@@ -41,20 +55,34 @@
             position: absolute;
             transition: background-color 0.3s ease-in-out, position 0.3s ease-in-out, padding 0.3s ease-in-out;
         }
+
+        #userDropdownBtn {
+            color: black !important;
+        }
+
+        #avatarContainer {
+            background: #005096 !important;
+        }
+
+        @media screen and (max-width: 1279px) {
+            #navBar {
+                padding: 30px 16px;
+            }
+        }
     </style>
 @endif
 
 <div id="navBar" class="w-full flex items-center justify-between z-50">
-    <a href="{{ route('home') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
+    <a href="{{ $isBusinessUnit ? route('businessunit.homepage.view') : route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
         {{-- If user is BPI User --}}
-        @if (true)
+        @if ($isBusinessUnit)
             <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
         @else
             <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
         @endif
     </a>
 
-    <a href="{{ route('home') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
+    <a href="{{ $isBusinessUnit ? route('businessunit.homepage.view') : route('main.homepage.view') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
         <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
     </a>
 

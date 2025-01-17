@@ -1,4 +1,4 @@
-<div id="footer" class="py-[100px] px-[80px] flex items-center justify-center bg-[#F2F2F2]">
+<div id="footer" class="py-[100px] px-[16px] xl:px-[80px] flex items-center justify-center bg-[#F2F2F2]">
     <div class="w-full flex items-center justify-start gap-[100px]">
         <div class="w-[280px] flex flex-col items-start justify-between gap-[20px] text-[14px] font-[400]">
             <img class="w-[280px]" src="{{ asset('img/logo-colored.png') }}" alt="">
