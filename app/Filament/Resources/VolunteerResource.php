@@ -174,6 +174,7 @@ class VolunteerResource extends Resource
             'index' => Pages\ListVolunteers::route('/'),
             'create' => Pages\CreateVolunteer::route('/create'),
             'edit' => Pages\EditVolunteer::route('/{record}/edit'),
+            'view' => Pages\ViewVolunteer::route('view/{record}'),
         ];
     }
 }
