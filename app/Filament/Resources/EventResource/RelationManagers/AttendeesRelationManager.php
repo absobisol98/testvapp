@@ -185,6 +185,8 @@ class AttendeesRelationManager extends RelationManager
                                 TextInput::make('volunteers')
                                     ->label('How many volunteers?')
                                     ->minValue(1)
+                                    ->maxValue(20)
+
                                     ->numeric()
                                     ->live()
                                     ->columnSpan(2)
