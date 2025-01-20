@@ -10,6 +10,7 @@ use App\Models\Volunteer;
 use App\Settings\MailSettings;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -73,6 +74,9 @@ class VolunteerResource extends Resource
 
                         Forms\Components\Section::make()
                             ->schema([
+
+                                Placeholder::make('badges')            
+                                    ->content(new HtmlString('<span></span>')),
                                 Forms\Components\Placeholder::make('email_verified_at')
                                     ->label(__('resource.general.email_verified_at'))
                                     ->content(fn(User $record): ?string => new HtmlString("$record->email_verified_at")),
@@ -174,7 +178,7 @@ class VolunteerResource extends Resource
             'index' => Pages\ListVolunteers::route('/'),
             'create' => Pages\CreateVolunteer::route('/create'),
             'edit' => Pages\EditVolunteer::route('/{record}/edit'),
-            'view' => Pages\ViewVolunteer::route('view/{record}'),
+            'view' => Pages\ViewVolunteer::route('/{record}'),
         ];
     }
 }

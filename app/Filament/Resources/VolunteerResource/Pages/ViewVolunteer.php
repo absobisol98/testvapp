@@ -11,6 +11,21 @@ class ViewVolunteer extends Page
     protected static string $resource = VolunteerResource::class;
 
     protected static string $view = 'filament.resources.volunteer-resource.pages.view-volunteer';
+  
+  
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['user_id'] = auth()->id();
+        $data['badges'] = $this->record->getBadges(); 
+        return $data;
+    }
+
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\EditAction::make(),
+        ];
 
     protected function getViewData(): array
     {
@@ -40,4 +55,5 @@ class ViewVolunteer extends Page
             'bgImg' => $bgImg,
         ];
     }
+
 }

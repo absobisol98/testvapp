@@ -52,16 +52,49 @@ class EventsRelationManager extends RelationManager
                         return $date_start.' - '.$end;
                     }),
 
-                    Tables\Columns\TextColumn::make('attendees')
-                        ->label('Hrs Rendered')
-                        ->formatStateUsing(function ($record) {
-                            $attendee = $record->attendees->where('attendee_id', auth()->id())->first();
-                            $hrs = 0;
-                            if($attendee){
-                                $hrs = number_format($attendee->get_totalHrs(),1);
-                            }
-                            return $hrs;
-                        }),
+                Tables\Columns\TextColumn::make('attendees')
+                    ->label('Hrs Rendered')
+                    ->formatStateUsing(function ($record) {
+                        $attendee = $record->attendees->where('attendee_id', auth()->id())->first();
+                        $hrs = 0;
+                        if($attendee){
+                            $hrs = number_format($attendee->get_totalHrs(),1);
+                        }
+                        return $hrs;
+                    }),
+
+                Tables\Columns\TextColumn::make('is_approve')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(function ($record){
+                        if($record->is_approve){
+                            return 'Approve';
+                        }
+
+                        if($record->is_rejected){
+                            return 'Rejected';
+                        }
+                        return 'Pending';
+                    })
+                    ->color(function ($record): string {
+                        $list = [
+                            'Approve' => 'success',
+                            'Rejected' => 'danger',
+                            'Pending' => 'warning',
+                        ];
+                    
+                        if($record->is_approve){
+                            return $list['Approve'];
+                        }
+
+                        if($record->is_rejected){
+                            return $list['Rejected'];
+                        }
+                        return $list['Pending'];
+                        
+                    }),
+
+
             ])
             ->filters([
                 //
