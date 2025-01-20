@@ -7,6 +7,10 @@ export default {
         "./resources/views/filament/**/*.blade.php",
         './resources/views/livewire/*.blade.php',
         "./vendor/filament/**/*.blade.php",
+
+        './resources/views/**/*.blade.php',
+        './resources/views/custom/**/*.blade.php',
+        './resources/js/**/*.js',
     ],
     theme: {
         extend: {

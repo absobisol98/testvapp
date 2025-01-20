@@ -35,6 +35,7 @@ class EventAttendee extends Model
 		'time_out' => 'datetime',
 		'updated_at' => 'datetime',
 		'is_approve' => 'bool',
+		'is_rejected' => 'bool',
 		'updated_by' => 'string',
 		'encoding_type' => 'int',
 		'no_account_name' => 'string',
@@ -52,7 +53,8 @@ class EventAttendee extends Model
 		'encoding_type',
 		'no_account_name',
 		'volunteer_count',
-		'is_approve'
+		'is_approve',
+		'is_rejected'
 	];
 
 	public function attendee()
@@ -73,7 +75,6 @@ class EventAttendee extends Model
 	{
 		return $this->belongsTo(User::class,'updated_by');
 	}
-
 
 	public function get_totalHrs()
 	{

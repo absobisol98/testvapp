@@ -185,6 +185,8 @@ class AttendeesRelationManager extends RelationManager
                                 TextInput::make('volunteers')
                                     ->label('How many volunteers?')
                                     ->minValue(1)
+                                    ->maxValue(20)
+
                                     ->numeric()
                                     ->live()
                                     ->columnSpan(2)
@@ -396,6 +398,40 @@ class AttendeesRelationManager extends RelationManager
                         }
                       
                     }),
+
+                    Action::make('reject')
+                        ->color('danger')
+                        ->label('Decline')
+                        ->requiresConfirmation()
+                        ->modalHeading('Deny Hours')
+                        ->modalDescription('This will remove encoded hours and status changed to rejected')
+                        ->visible(fn (EventAttendee $record) => ($record->is_approve)? false : true)
+                        ->action(function (EventAttendee $record): void {
+                            $record->time_out = null;
+                            $record->time_in = null;
+                            $record->is_rejected = true;
+                            $record->update();
+
+
+
+                            Notification::make()
+                                ->title('Hours Decline')
+                                ->icon('far-bell')
+                                ->body(Str::markdown('Encoded Hours for event:  <b>'.$record->event->title.'</b> has been denied. Please re-encode'))
+                                ->actions([
+                                    \Filament\Notifications\Actions\Action::make('view')
+                                        ->button()
+                                        ->url(route('filament.admin.resources.volunteers.view', ['record' => $record->attendee_id]), shouldOpenInNewTab: true),
+                                ])
+                                ->sendToDatabase($record->attendee);
+
+
+                            Notification::make()
+                                ->title('Hours Denied')
+                                ->success()
+                                ->send();
+                        
+                        }),
 
 
                 Tables\Actions\Action::make('edit_hours')

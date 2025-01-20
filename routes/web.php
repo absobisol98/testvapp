@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\QrController;
 use App\Livewire\VolunteerRegistration;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +25,10 @@ use App\Http\Controllers\VolunteerRegistrationController;
 //     return view('welcome');
 // });
 
-Route::get('/', function () {
-    return view('custom.main-landing');
-})->name('home');
+
+Route::get('/', [HomepageController::class, 'mainHomepageView'])->name('main.homepage.view');
+Route::get('/business-unit', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
+
 
 Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'view'])->name('volunteer.form.view');
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');

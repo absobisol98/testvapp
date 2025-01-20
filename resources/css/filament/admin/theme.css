@@ -107,3 +107,14 @@
 .fi-topbar .ms-auto .fi-global-search {
     @apply hidden;
 }
+
+
+
+.fi-sidebar-nav {
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+  
+.fi-sidebar-nav::-webkit-scrollbar { 
+    display: none !important;
+}
