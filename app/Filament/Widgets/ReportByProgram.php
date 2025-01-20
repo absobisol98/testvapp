@@ -26,7 +26,7 @@ class ReportByProgram extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Volunteer Usage Report By Department';
+    protected static ?string $heading = 'Volunteer Usage Report By Program';
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -43,7 +43,7 @@ class ReportByProgram extends ApexChartWidget
         return [
             
             Select::make('type')
-                ->label('Event type')
+                ->label('Program Type')
                 ->options( function(Program $eventtype){
                     $options = array();
                     foreach($eventtype->orderBy('name')->get() as $type){

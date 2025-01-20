@@ -28,7 +28,7 @@ class ViewVolunteer extends Page
                 $query->where('attendee_id', auth()->user()->id);
             })
             ->get();
-        
+
         $bgImg = 'img/ayala-foundation-bg-2.jpg';
 
         // dd($favoriteEvents);

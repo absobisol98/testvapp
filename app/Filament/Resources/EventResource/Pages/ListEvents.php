@@ -16,7 +16,7 @@ class ListEvents extends ListRecords
 
     protected function getTableQuery(): ?Builder
     {
-        $events = (new EventsGetTableQueryAction())->execute();
+        $events = (new EventsGetTableQueryAction())->execute(auth()->user());
 
         return $events;
     }
