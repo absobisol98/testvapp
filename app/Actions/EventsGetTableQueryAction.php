@@ -19,30 +19,33 @@ use claviska\SimpleImage;
 
 class EventsGetTableQueryAction
 {
-    public function execute()
+    public function execute($user)
     {
+
+       
+
         $ayala = Company::where('cluster_id',1)->pluck('id')->toArray();
         $non_ayala = Company::where('cluster_id','!=',1)->pluck('id')->toArray();
 
-        if(auth()->user()->hasRole(['Volunteer'])){ // For Volunteer
+        if( $user->hasRole(['Volunteer'])){ // For Volunteer
             $events = Event::query()
                 ->leftJoin('event_companies','event_companies.event_id','=','events.id')
-                ->where(function ($query) use ($ayala,$non_ayala) {
+                ->where(function ($query) use ($ayala,$non_ayala,  $user) {
                     $query->where('event_type_id', 4) // Public Events
-                    ->orWhere(function ($query) use ($ayala, $non_ayala){
+                    ->orWhere(function ($query) use ($ayala, $non_ayala,$user){
 
                         // Exclusive for Ayala
-                        if(in_array(auth()->user()->company_id, $ayala)){
+                        if(in_array( $user->company_id, $ayala)){
                             $query->where('event_type_id', 1);
                         }
 
                         // Exclusive for Business Unit
-                        if(in_array(auth()->user()->company_id, $non_ayala)){
+                        if(in_array($user->company_id, $non_ayala)){
                             $query->where('event_type_id', 2);
                         }
                     })
-                        ->orWhere(function ($query){
-                            $query->where('event_type_id',4)->where('event_companies.company_id', auth()->user()->company_id); // Hybrid
+                        ->orWhere(function ($query) use ($user){
+                            $query->where('event_type_id',4)->where('event_companies.company_id', $user->company_id); // Hybrid
                         });
                 })->select('events.*');
         }else{
