@@ -78,7 +78,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
 
     public function getFilamentName(): string
     {
-        return $this->username;
+        return $this->username  ?? 'No Name';
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -150,7 +150,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
                 'name' => 'plat',
                 'color'=> '#004d24'
             ],
-    
+
             [
                 'name' => 'gold',
                 'color'=> '#D4AF37'
@@ -169,7 +169,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             'hours' => false,
             'opportuninities' => false,
             'streak' => true,
-        ]; 
+        ];
 
         foreach($hours as $key => $hr){
             if($total_hrs >= $hr){

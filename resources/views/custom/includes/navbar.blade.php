@@ -74,7 +74,7 @@
 
 <div id="navBar" class="w-full flex items-center justify-between z-50">
     <a href="{{ $isBusinessUnit ? route('businessunit.homepage.view') : route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
-        {{-- If user is BPI User --}}
+
         @if ($isBusinessUnit)
             <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
         @else
