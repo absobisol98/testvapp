@@ -20,13 +20,17 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static ?string $slug = 'blog/posts';
+    protected static ?string $slug = 'articles';
 
     protected static ?string $recordTitleAttribute = 'title';
 
     protected static ?string $navigationIcon = 'fluentui-news-20';
 
     protected static ?int $navigationSort = 0;
+
+    protected static ?string $navigationLabel = 'Articles';
+
+    public static ?string $label = 'Article';
 
     public static function form(Form $form): Form
     {

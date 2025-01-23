@@ -4,7 +4,7 @@ use App\Http\Controllers\QrController;
 use App\Livewire\VolunteerRegistration;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VolunteerRegistrationController;
-
+use App\Http\Controllers\ArticleController;
 
 
 
@@ -27,6 +27,8 @@ use App\Http\Controllers\VolunteerRegistrationController;
 Route::get('/', function () {
     return view('custom.main-landing');
 })->name('home');
+
+Route::get('/article/{slug}',[ArticleController::class,'viewArticle']);
 
 Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'view'])->name('volunteer.form.view');
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
