@@ -90,6 +90,7 @@ class EventRegistrationTableAction
                             'event_id' => $record->id,
                             'attendee_id' => auth()->user()->id,
                             'facilitator_id' => auth()->id(),
+                            'is_approve' => 1,
                         ]);
 
                         // Generate QR code for attendee
@@ -151,7 +152,7 @@ class EventRegistrationTableAction
                             'percentage'  => $slot_treshold * .9,
                             'description' => '90%',
                         ],
-                        
+
                         [
                             'percentage'  => $slot_treshold * .5,
                             'description' => '50%',
@@ -175,7 +176,7 @@ class EventRegistrationTableAction
                             break;
                         }
                     }
-                          
+
                     if( $throw_notif && $notif_to_show){
                         foreach($record->notifiable() as $recipient){
                             Notification::make()
