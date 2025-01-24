@@ -31,7 +31,7 @@ export default {
                     500: "rgba(var(--secondary-500), <alpha-value>)",
                     600: "rgba(var(--secondary-600), <alpha-value>)",
                     700: "rgba(var(--secondary-700), <alpha-value>)",
-                    800: "rgba(var(--secondary-800), <alpha-value>)",
+                    800: "rgba(var(--secondary-800), <alcustompha-value>)",
                     900: "rgba(var(--secondary-900), <alpha-value>)",
                 },
             },

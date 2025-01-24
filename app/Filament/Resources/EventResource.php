@@ -377,8 +377,9 @@ class EventResource extends Resource
             'calendar' => Pages\Calendar::route('/calendar'),
             'thumbnail' => Pages\Thumbnail::route('/thumbnail'),
             'create' => Pages\CreateEvent::route('/create'),
-            'view' => Pages\ViewEvent::route('/{record}'),
+            'view' => Pages\EventPage::route('/view/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
+
     }
 }
