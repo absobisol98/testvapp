@@ -29,6 +29,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
+use Tapp\FilamentMailLog\FilamentMailLogPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -72,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('fluentui-document-bullet-list-multiple-20-o')
                     ->group(__('menu.nav_group.activities'))
                     ->sort(99),
+
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -101,6 +103,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
+                FilamentMailLogPlugin::make(),
                 \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make(),
                 FilamentFullCalendarPlugin::make()
                     ->schedulerLicenseKey('')

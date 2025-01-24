@@ -45,6 +45,7 @@
         "riodwanto/filament-ace-editor": "^1.0",
         "saade/filament-fullcalendar": "^3.0",
         "stichoza/google-translate-php": "^5.2",
+        "tapp/filament-maillog": "^1.0",
         "tomatophp/filament-media-manager": "^1.1",
         "ysfkaya/filament-phone-input": "^3.1",
         "z3d0x/filament-logger": "^0.7.2"

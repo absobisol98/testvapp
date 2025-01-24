@@ -253,6 +253,6 @@ class BannerResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __("menu.nav_group.banner");
+        return __("Banner Ads");
     }
 }
