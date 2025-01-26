@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Filament\Resources\EventResource\Pages\EventPage;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -90,6 +91,11 @@ class Event extends Model implements HasMedia
 	public function event_type()
 	{
 		return $this->belongsTo(EventType::class);
+	}
+
+    public function record()
+	{
+		return $this->belongsTo(EventPage::class);
 	}
 
 	public function status()
