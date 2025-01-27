@@ -109,12 +109,13 @@
 }
 
 
-
 .fi-sidebar-nav {
-    overflow-y: auto;
+    overflow-y: hidden;
     scrollbar-width: none;
+    background-color: white;
 }
-  
-.fi-sidebar-nav::-webkit-scrollbar { 
+
+.fi-sidebar-nav::-webkit-scrollbar {
     display: none !important;
 }
+
