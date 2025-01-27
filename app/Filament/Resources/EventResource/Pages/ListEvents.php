@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EventResource\Pages;
 
 use App\Actions\EventsGetTableQueryAction;
 use App\Filament\Resources\EventResource;
+use App\Filament\Resources\EventResource\Widgets\EventsToApprove;
 use App\Models\Company;
 use App\Models\Event;
 use Filament\Actions;
@@ -36,4 +37,15 @@ class ListEvents extends ListRecords
                 ->icon('heroicon-o-plus'),
         ];
     }
+
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            EventsToApprove::class,
+        ];
+    }
+
+ 
+
 }

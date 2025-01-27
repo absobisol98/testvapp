@@ -6,7 +6,9 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\PublishedEventScope;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,6 +46,12 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  *
  * @package App\Models
  */
+
+
+ // scopes
+
+ #[ScopedBy([PublishedEventScope::class])]
+
 class Event extends Model implements HasMedia
 {
     use InteractsWithMedia;
@@ -58,7 +66,9 @@ class Event extends Model implements HasMedia
 		'program_id' => 'int',
 		'approval_status_id' => 'int',
 		'sign_up_approval_required' => 'bool',
-		'attachment_required' => 'bool'
+		'attachment_required' => 'bool',
+		'is_published' => 'bool'
+
 	];
 
 	protected $fillable = [
@@ -85,6 +95,7 @@ class Event extends Model implements HasMedia
         'updated_by',
         'created_at',
         'updated_at',
+		'is_published'
 	];
 
 	public function event_type()
@@ -142,6 +153,11 @@ class Event extends Model implements HasMedia
         return $this->belongsTo(EventSlotType::class);
     }
 
+
+	public function other_fields()
+	{
+		return $this->hasMany(EventOtherField::class);
+	}
 
 
     public function created_by_user(): BelongsTo

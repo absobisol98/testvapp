@@ -7,10 +7,14 @@ use App\Filament\Widgets\VolunteerUsageWidgetByDepartment;
 use App\Filament\Widgets\VolunteerUsageWidgetByProgram;
 use App\Models\EventType;
 use App\Models\Program;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 
 class Reports extends Page
 {
+    use HasPageShield;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.reports';
@@ -19,8 +23,6 @@ class Reports extends Page
 
 
     public function mount() :void {
-
-
         $progNames = array();
         $count = array();
         $overall_hrs = 0;

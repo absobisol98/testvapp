@@ -13,7 +13,10 @@ use App\Models\EventType;
 use App\Models\TagsEvent;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -251,6 +254,18 @@ class EventResource extends Resource
                     ])
                     ->default(2)
                     ->required(),
+
+                Repeater::make('other_fields')
+                    ->relationship()
+                    ->columnSpanFull()
+                    ->defaultItems(0)
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('label')->label('Field Label')->required(),
+                            TextInput::make('text')->required('Value')
+                        ]),
+                    ]),
+                    
                 Forms\Components\Section::make('Attachments')
                     ->schema([
                         Forms\Components\FileUpload::make('media')
@@ -262,10 +277,22 @@ class EventResource extends Resource
                             ->downloadable(),
                     ])
                     ->collapsible(),
+
+
+               
 //                        Forms\Components\TagsInput::make('required_document_types')
 //                            ->visible(fn ($get) => $get('requires_documents')),
             ]);
     }
+
+
+    public static function getWidgets(): array
+    {
+        return [
+            EventResource\Widgets\EventsToApprove::class,
+        ];
+    }
+
 
     public static function table(Table $table): Table
     {

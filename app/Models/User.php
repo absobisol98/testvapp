@@ -131,6 +131,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $this->hasMany(EventAttendee::class, 'attendee_id');
     }
 
+    public function getTotalHours()
+    {
+        $totalHrs = 0;
+        foreach($this->eventAttended as $event){
+            $totalHrs += $event->get_totalHrs();
+        }
+        return $totalHrs;
+    }
+
+
     public function getBadges()
     {
 
