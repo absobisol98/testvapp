@@ -59,6 +59,7 @@ class EventResource extends Resource
                     ->required(),
 
                 Forms\Components\Grid::make()
+                    ->columns(3)
                     ->schema([
                         Forms\Components\Select::make('program_id')
                             ->relationship('program', 'name')
@@ -73,12 +74,11 @@ class EventResource extends Resource
                                 modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
                             )
                             ->searchable(['firstname','middle_name', 'lastname']),
-                    ]),
-
-                Forms\Components\Select::make('event_type_id')
-                    ->relationship('event_type', 'name')
-                    ->required()
-                    ->reactive(),
+                        Forms\Components\Select::make('event_type_id')
+                        ->relationship('event_type', 'name')
+                        ->required()
+                        ->reactive(),
+                            ]),
 
                 Forms\Components\Select::make('companies')
                     ->label('Companies')
@@ -186,14 +186,14 @@ class EventResource extends Resource
 //                                                $get('frequency') == 'monthly'
 //                                            ),
                             ]),
+                            Forms\Components\TextInput::make('location')
+                            ->required(),
+
+                            Forms\Components\TagsInput::make('tags')
+                            ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray()),
+
                     ]),
 
-
-                Forms\Components\TextInput::make('location')
-                    ->required(),
-
-                Forms\Components\TagsInput::make('tags')
-                    ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray()),
 
                 Forms\Components\Repeater::make('slots')
                     ->required()
@@ -233,19 +233,33 @@ class EventResource extends Resource
                     ->columnSpanFull()
                     ->columns(3),
 
-                Forms\Components\Select::make('facilitators')
-                    ->preload()
-                    ->multiple()
-                    ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
-                    ->relationship(
-                        name: 'facilitators',
-                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
-                    )
-                    ->searchable(['firstname','middle_name', 'lastname']),
 
-                Forms\Components\Toggle::make('attachment_required')
-                    ->columnSpanFull()
-                    ->reactive(),
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\Select::make('facilitators')
+                        ->preload()
+                        ->multiple()
+                        ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
+                        ->relationship(
+                            name: 'facilitators',
+                            modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
+                        )
+                        ->searchable(['firstname','middle_name', 'lastname']),
+
+                        Forms\Components\Toggle::make('attachment_required')
+                        ->reactive(),
+                    ])->columnSpan(1),
+
+                    Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Radio::make('approval_type')
+                        ->options([
+                            'Automatic' => 'Automatic',
+                            'Requires Approval' => 'Requires Facilitator Approval',
+                        ])
+                        ->default(2)
+                        ->required(),
+                    ])->columnSpan(1),
 
                 Forms\Components\Radio::make('approval_type')
                     ->options([
@@ -397,8 +411,9 @@ class EventResource extends Resource
             'calendar' => Pages\Calendar::route('/calendar'),
             'thumbnail' => Pages\Thumbnail::route('/thumbnail'),
             'create' => Pages\CreateEvent::route('/create'),
-            'view' => Pages\ViewEvent::route('/{record}'),
+            'view' => Pages\EventPage::route('/view/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
+
     }
 }

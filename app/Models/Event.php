@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\PublishedEventScope;
+use App\Filament\Resources\EventResource\Pages\EventPage;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Collection;
@@ -101,6 +102,11 @@ class Event extends Model implements HasMedia
 	public function event_type()
 	{
 		return $this->belongsTo(EventType::class);
+	}
+
+    public function record()
+	{
+		return $this->belongsTo(EventPage::class);
 	}
 
 	public function status()

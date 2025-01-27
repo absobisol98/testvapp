@@ -7,6 +7,10 @@ export default {
         "./resources/views/filament/**/*.blade.php",
         './resources/views/livewire/*.blade.php',
         "./vendor/filament/**/*.blade.php",
+
+        './resources/views/**/*.blade.php',
+        './resources/views/custom/**/*.blade.php',
+        './resources/js/**/*.js',
     ],
     theme: {
         extend: {
@@ -27,7 +31,7 @@ export default {
                     500: "rgba(var(--secondary-500), <alpha-value>)",
                     600: "rgba(var(--secondary-600), <alpha-value>)",
                     700: "rgba(var(--secondary-700), <alpha-value>)",
-                    800: "rgba(var(--secondary-800), <alpha-value>)",
+                    800: "rgba(var(--secondary-800), <alcustompha-value>)",
                     900: "rgba(var(--secondary-900), <alpha-value>)",
                 },
             },
