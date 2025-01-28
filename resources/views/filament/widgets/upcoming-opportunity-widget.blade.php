@@ -1,9 +1,9 @@
 <x-filament-widgets::widget>
     {{-- OPPORTUNITIES --}}
     <div class="w-full px-8">
-        <div class="flex items-center justify-between gap-4 font-[400]">
+        <div class="flex items-center justify-between gap-4 font-normal">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Upcoming Opportunity</p>
+                <p class="text-[28px] md:text-[32px] text-[#03498D] font-bold">Upcoming Opportunity</p>
             </div>
 
             <div class="flex items-center justify-between gap-4 md:gap-8">
@@ -85,8 +85,8 @@
                     <div style="width:200px">
                         <a href="">
                             <div
-                                class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-400 text-lg text-white">CHECK-IN</p>
+                                class="h-[36px] md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                <p class="font-normal text-lg text-white">CHECK-IN</p>
                             </div>
                         </a>
                     </div>

@@ -96,14 +96,14 @@
         @guest
             <a href="{{ route('volunteer.form.view') }}">
                 <div
-                    class="h-[36px] md:h-[56px] w-[200px] md:w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                    class="h-auto md:h-[56px] w-auto md:w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                     <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
                 </div>
             </a>
 
-            <a href="/admin">
+            <a href="{{route('filament.admin.auth.login')}}">
                 <div
-                    class="h-[36px] md:h-[56px] w-[180px] md:w-[200px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                    class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                     <p class="font-medium text-base text-white">LOG IN</p>
                 </div>
             </a>

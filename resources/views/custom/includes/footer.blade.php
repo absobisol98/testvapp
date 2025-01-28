@@ -9,7 +9,7 @@
                 <p>All Rights Reserved | Ayala Foundation</p>
             </div>
 
-            <div class="w-full max-w-[400px] grid grid-cols-3 gap-[10px]">
+            {{-- <div class="w-full max-w-[400px] grid grid-cols-3 gap-[10px]">
                 <div class="col-span-1 flex flex-col items-start justify-center gap-1 text-[20px] font-[400]">
                     <div class="w-full">
                         <a class="hover:underline" href="">Menu Link 1</a>
@@ -69,12 +69,12 @@
                         <a class="hover:underline" href="">Menu Link 7</a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <div class="w-full flex">
             <div class="col-span-1 w-full flex flex-col items-end justify-end">
-                <img style="max-width:25%; height:auto;" src="{{ asset('img/npc-logo.png') }}" alt="">
+                <img style="max-width:20%; height:auto;" src="{{ asset('img/npc-logo.png') }}" alt="">
             </div>
         </div>
     </div>

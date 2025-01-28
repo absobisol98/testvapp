@@ -210,7 +210,7 @@
                             <div   class="p-8 lg:p-12 flex items-start justify-start">
                                 <div class="text-white w-full">
                                     <!-- Step 2 -->
-                                    <div class="w-1/2">
+                                    <div class="md:w-1/2 w-full">
                                         <h3 class="text-4xl font-bold mb-4">In Case of Emergency Contact Details</h3>
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Name</label>

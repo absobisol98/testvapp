@@ -8,8 +8,11 @@
 
             <button class="w-fit">
                 <div
-                    class="h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-6 hover:bg-[#1A67B1]">
-                    <p class="font-[400] text-[18px] text-white">CREATE NEW OPPORTUNITY</p>
+                    class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                    <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
+
+                    <!-- Tablet and Mobile text -->
+                    <p class="font-normal text-lg text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> OPPORTUNITY </p>
                 </div>
             </button>
         </div>
