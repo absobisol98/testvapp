@@ -20,11 +20,11 @@ class CategoryResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $slug = 'blog/categories';
+    protected static ?string $slug = 'article-categories';
 
     protected static ?int $navigationSort = -1;
     protected static ?string $navigationIcon = 'fluentui-stack-20';
-
+    public static ?string $label = 'Article Category';
     public static function form(Form $form): Form
     {
         return $form
