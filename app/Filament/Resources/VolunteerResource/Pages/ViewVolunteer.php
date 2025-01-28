@@ -11,12 +11,12 @@ class ViewVolunteer extends Page
     protected static string $resource = VolunteerResource::class;
 
     protected static string $view = 'filament.resources.volunteer-resource.pages.view-volunteer';
-  
-  
+
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['user_id'] = auth()->id();
-        $data['badges'] = $this->record->getBadges(); 
+        $data['badges'] = $this->record->getBadges();
         return $data;
     }
 
@@ -26,7 +26,7 @@ class ViewVolunteer extends Page
         return [
             Actions\EditAction::make(),
         ];
-
+    }
     protected function getViewData(): array
     {
         $opportunity = Event::with('slots', 'tags', 'program')
@@ -43,7 +43,7 @@ class ViewVolunteer extends Page
                 $query->where('attendee_id', auth()->user()->id);
             })
             ->get();
-        
+
         $bgImg = 'img/ayala-foundation-bg-2.jpg';
 
         // dd($favoriteEvents);

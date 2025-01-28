@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\QrController;
 use App\Livewire\VolunteerRegistration;
@@ -34,3 +35,6 @@ Route::get('/volunteer-registration', [VolunteerRegistrationController::class, '
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
 
 Route::get('/qr/{event_id}/{attendee_id}', [QrController::class, 'scan_qr'])->name('qr.scan');
+
+
+Route::get('/exports/volunteer-list/{event_id}' , [ExportController::class, 'exportVolunteer'])->name('volunteer.export');

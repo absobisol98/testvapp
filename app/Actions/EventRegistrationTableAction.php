@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\Event;
 use App\Models\EventAttendee;
+use App\Models\EventFacilitator;
 use App\Models\EventRegistration;
 use App\Models\User;
 use Carbon\Carbon;
@@ -151,7 +152,6 @@ class EventRegistrationTableAction
                             'percentage'  => $slot_treshold * .9,
                             'description' => '90%',
                         ],
-                        
                         [
                             'percentage'  => $slot_treshold * .5,
                             'description' => '50%',
@@ -175,7 +175,6 @@ class EventRegistrationTableAction
                             break;
                         }
                     }
-                          
                     if( $throw_notif && $notif_to_show){
                         foreach($record->notifiable() as $recipient){
                             Notification::make()
@@ -241,6 +240,27 @@ class EventRegistrationTableAction
 
 
                 }),
+
+                \Filament\Tables\Actions\Action::make('export')
+                ->color('secondary')
+                ->button()
+                ->label('Export')
+                ->url(fn (Event $record): string => route('volunteer.export', $record))
+                ->visible(function (Event $record){
+
+                    if(is_null($record->event)){
+                        return true;
+                    };
+                    $user = auth()->user();
+                    if($user->can('export')){
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }),
+
             \Filament\Tables\Actions\Action::make('Edit')
                 ->icon('heroicon-o-pencil-square')
                 ->tooltip('Edit registration')

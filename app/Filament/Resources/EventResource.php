@@ -12,6 +12,7 @@ use App\Models\EventSlotType;
 use App\Models\EventType;
 use App\Models\TagsEvent;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -23,7 +24,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class EventResource extends Resource
+class EventResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Event::class;
 
@@ -362,6 +363,27 @@ class EventResource extends Resource
         ];
     }
 
+
+
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'restore',
+            'restore_any',
+            'replicate',
+            'reorder',
+            'delete',
+            'delete_any',
+            'force_delete',
+            'force_delete_any',
+            'export'
+        ];
+    }
 
     public static function getPages(): array
     {

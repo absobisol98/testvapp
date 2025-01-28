@@ -20,6 +20,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-snappy": "^1.0",
         "bezhansalleh/filament-exceptions": "^2.1",
         "bezhansalleh/filament-shield": "^3.2",
         "claviska/simpleimage": "^4.2",
@@ -40,6 +41,7 @@
         "laravel/tinker": "^2.8",
         "league/commonmark": "^2.4",
         "leandrocfe/filament-apex-charts": "^3.1",
+        "maatwebsite/excel": "^3.1",
         "opcodesio/log-viewer": "^3.11",
         "owenvoke/blade-fontawesome": "^2.6",
         "riodwanto/filament-ace-editor": "^1.0",
