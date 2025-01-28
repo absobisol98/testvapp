@@ -18,15 +18,15 @@ class VolunteerRegistrationController extends Controller
      * Show the registration form.
      */
     public function view()
-{
-    // Fetch companies, programs, and clusters from the database
-    $companies = Company::all();
-    $programs = Program::all();
-    $clusters = Cluster::all();
+    {
+        // Fetch companies, programs, and clusters from the database
+        $companies = Company::all();
+        $programs = Program::all();
+        $clusters = Cluster::all();
 
-    // Pass all data to the view
-    return view('custom.volunteer-registration', compact('companies', 'programs', 'clusters'));
-}
+        // Pass all data to the view
+        return view('custom.volunteer-registration', compact('companies', 'programs', 'clusters'));
+    }
 
 
     /**

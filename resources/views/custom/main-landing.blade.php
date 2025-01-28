@@ -7,6 +7,7 @@
         }
     </style>
 
+
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
 
         {{-- Desktop: Hero Banner Section --}}
@@ -572,42 +573,19 @@
                         <div class="stories-swiper-container w-full overflow-hidden">
                             <div class="swiper-wrapper w-full">
                                 <!-- Slide 1 -->
-                                <div class="swiper-slide">
-                                    <div
-                                        class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
-                                        <div class="w-fit min-w-[104px] p-4 bg-white shadow-sm flex flex-col items-center">
-                                            <p>AUG</p>
-                                            <p>21</p>
-                                        </div>
-                                        <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 1 goes here
-                                            </p>
-                                            <p class="text-[14px]">Lorem Ipsum is simply dummy text of the printing and
-                                                typesetting industry.</p>
-                                            <a href="">
-                                                <div
-                                                    class="h-12 w-[219px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
-                                                    <p class="font-medium text-lg text-white">READ MORE</p>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+                                @foreach ($articles as $article)
 
-                                <!-- Slide 2 -->
                                 <div class="swiper-slide">
                                     <div
                                         class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white shadow-sm flex flex-col items-center">
-                                            <p>AUG</p>
-                                            <p>25</p>
+                                            <p>{{ \Carbon\Carbon::parse($article->published_at)->format('F j, Y') }}</p>
                                         </div>
                                         <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                            <p class="text-[32px] font-semibold leading-none">Opportunity Story 2 goes here
+                                            <p class="text-[32px] font-semibold leading-none">{{ $article->title }}
                                             </p>
-                                            <p class="text-[14px] ">Lorem Ipsum is simply dummy text of the printing and
-                                                typesetting industry.</p>
-                                            <a href="">
+                                            <p class="text-[14px]">{{ $article->content_overview }}</p>
+                                            <a href="{{ url('/article'). '/' . $article->slug }}">
                                                 <div
                                                     class="h-12 w-[219px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
                                                     <p class="font-medium text-lg text-white">READ MORE</p>
@@ -616,6 +594,8 @@
                                         </div>
                                     </div>
                                 </div>
+                                @endforeach
+
                             </div>
                         </div>
 

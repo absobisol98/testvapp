@@ -40,14 +40,14 @@
         });
     </script> --}}
 
-    <div class="w-full h-[350px] flex items-center justify-center">
+    {{-- <div class="w-full h-[350px] flex items-center justify-center">
         <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg-2.jpg') }}" alt="">
     </div>
 
-    {{-- If user is a AFI Admin or Partners this is the sidebar links --}}
+    {{-- If user is a AFI Admin or Partners this is the sidebar links
     @if (true)
         <div class="w-full h-[600px] flex items-center justify-center">
             <img class="w-full h-full object-cover" src="{{ asset('img/hero-banner-bg_2.jpg') }}" alt="">
         </div>
-    @endif
+    @endif --}}
 </div>
