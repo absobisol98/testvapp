@@ -26,6 +26,7 @@
     @apply !ring-0 py-2 !border-none bg-gray-50 dark:bg-gray-950 !shadow-none;
 }
 
+
 /* SIDEBAR ITEM */
 .fi-sidebar-item a {
     @apply px-4 py-2 rounded-xl;
@@ -69,7 +70,9 @@
     @apply my-4 pb-4 bg-white dark:bg-gray-900 rounded-3xl shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px];
 }
 
-.fi-simple-main,
+.fi-simple-main {
+    @apply bg-[url(/public/img/login-bg.jpg)] bg-cover text-primary-400;
+}
 .fi-section,
 .fi-ta-ctn,
 .fi-fo-tabs,

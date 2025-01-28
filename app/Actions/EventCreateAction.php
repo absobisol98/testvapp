@@ -21,6 +21,9 @@ final class EventCreateAction
 
         $data['created_by'] = auth()->id();
         $data['created_at'] = now();
+        if(auth()->user()->hasRole('External Partner')){
+            $data['is_published'] = false;
+        }
         $data['start_date'] = $data['date'].' '.$data['start_time'].':00';
         $data['end_date'] = $data['date'].' '.$data['end_time'].':00';
 

@@ -35,8 +35,8 @@ class StatsOverview extends BaseWidget
         $overall_hrs = (double)number_format($overall_hrs,1);
         $event = Event::get()->count();
         return [
-            Stat::make('Volunteers',  $event),
-            Stat::make('Opportunities', $volunteers),
+            Stat::make('Volunteers',  $volunteers),
+            Stat::make('Opportunities', $event),
             Stat::make('Total Hours',  $overall_hrs.' hrs'),
         ];
     }

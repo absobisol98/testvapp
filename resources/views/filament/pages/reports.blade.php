@@ -19,7 +19,7 @@
             <button class="inline-block p-4 border-b-2 rounded-t-lg" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Opportunities</button>
         </li>
         <li role="presentation">
-            <button class="inline-block p-4 border-b-2 rounded-t-lg opacity-50" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false" disabled>Export Volunteer List</button>
+            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">Export Volunteer List</button>
         </li>
     </ul>
 </div>
