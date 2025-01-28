@@ -43,7 +43,7 @@ class BannerResource extends Resource
                                     ->icon('heroicon-o-clipboard')
                                     ->schema([
                                         Forms\Components\Select::make('banner_category_id')
-                                            ->label('Category')
+                                            ->label('Position')
                                             ->relationship('category', 'name')
                                             ->searchable()
                                             ->required(),
@@ -78,9 +78,10 @@ class BannerResource extends Resource
                                         MediaManagerInput::make('images')
                                             ->hiddenLabel()
                                             ->schema([
-                                            ])
+                                                        ])
                                             ->defaultItems(1)
-                                            ->minItems(1),
+                                            ->minItems(1)
+                                            ->maxItems(1),
                                     ])
                                     ->compact(),
                             ]),
@@ -107,6 +108,7 @@ class BannerResource extends Resource
                                     ->description('Additional settings for the banner')
                                     ->schema([
                                         Forms\Components\TextInput::make('sort')
+                                            ->hidden()
                                             ->label('Sort Order')
                                             ->helperText('Set the sort order of the banner')
                                             ->required()
@@ -208,8 +210,7 @@ class BannerResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('sort', 'asc')
-            ->reorderable('sort');
+            ->defaultSort('sort', 'asc');
     }
 
 

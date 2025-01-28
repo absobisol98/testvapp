@@ -87,11 +87,11 @@
     </a>
 
     <div class="h-full flex items-center justify-between gap-4">
-        <a href="">
+        {{-- <a href="">
             <div class="h-[36px] md:h-[56px] w-[120px] md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                 <p class="font-medium text-base text-white">DONATE</p>
             </div>
-        </a>
+        </a> --}}
 
         @guest
             <a href="{{ route('volunteer.form.view') }}">
