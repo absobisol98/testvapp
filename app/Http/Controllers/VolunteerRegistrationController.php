@@ -36,22 +36,22 @@ class VolunteerRegistrationController extends Controller
     {
         // Define validation rules
         $rules = [
-            'username' => 'required|string|max:255',
+            // 'username' => 'required|string|max:255',
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'birthday' => 'required|date',
             'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_number' => 'nullable|string|max:15',
+            'emergency_contact_number' => 'nullable|string|max:15|regex:/^[0-9]+$/',
             'company_name' => 'nullable|string|max:255',
             'company_address' => 'nullable|string|max:255',
-            'company_contact_number' => 'nullable|string|max:15',
+            'company_contact_number' => 'nullable|string|max:15|regex:/^[0-9]+$/',
             'school' => 'nullable|string|max:255',
             'school_address' => 'nullable|string|max:255',
             'affiliate_type_id' => 'nullable|integer',
             'company_id' => 'nullable|integer',
-            'program_id' => 'nullable|integer',
+            'program_id' => 'nullable|array',
             'cluster_id' => 'nullable|integer',
         ];
 
@@ -67,7 +67,7 @@ class VolunteerRegistrationController extends Controller
         $user = User::create([
             'email_verified_at' => now(), // Temporary;for testing only
             'volunteer' => 1, // Volunteer
-            'username' => $input['username'],
+            'username' => $input['username']?? null,
             'email' => $input['email'],
             'firstname' => $input['firstname'],
             'lastname' => $input['lastname'],
@@ -84,7 +84,7 @@ class VolunteerRegistrationController extends Controller
             'emergency_contact_number' => $input['emergency_contact_number'],
             'affiliate_type_id' => $input['affiliate_type_id'],
             'company_id' => $input['company_id'],
-            'program_id' =>  $input['program_id'],
+            // 'program_id' =>  $input['program_id'],
             'cluster_id' =>  $input['cluster_id'] ?? null,
         ]);
 
@@ -95,6 +95,17 @@ class VolunteerRegistrationController extends Controller
                 'model_id' => $user->id,
                 'model_type' => 'App\Models\User',
             ]);
+
+            // Save selected programs in `volunteer_interests`
+        if (!empty($input['program_id'])) {
+            foreach ($input['program_id'] as $program) {
+                DB::table('volunteer_interests')->insert([
+                    'program_id' => $program,
+                    'volunteer_id' => $user->id
+                ]);
+            }
+        }
+
             // Return success response
             return response()->json(['success' => 'Volunteer registration completed successfully.']);
         }
