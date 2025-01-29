@@ -90,7 +90,7 @@
 
                 {{-- Badges Container --}}
                 <div class="swiper-container w-full max-w-[700px] overflow-hidden">
-                    <div class="swiper-wrapper justify-end">
+                    <div class="swiper-wrapper justify-center md:justify-end">
                             <!-- Badge 1 -->
                             <div class="swiper-slide flex items-center text-center w-auto">
                                 @if ($badges['current_rank'] !== null)
@@ -175,7 +175,7 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Personal Infomation</p>
 
                         <div class="shadow-md p-8">
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">First Name</p>
                                     <p class="text-lg md:text-xl">{{ $user->firstname }}</p>
@@ -195,7 +195,7 @@
 
                             <div class="w-full border-t border-[#E1E1E1] my-4"></div>
 
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Username</p>
                                     <p class="text-lg md:text-xl">{{ $user->username }}</p>
@@ -221,14 +221,12 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Company / School</p>
 
                         <div class="shadow-md p-8">
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Company Name</p>
                                     <p class="text-lg md:text-xl">
                                         {{ $user->company_name ? $user->company_name : 'N/A' }}</p>
                                 </div>
-
-
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Address</p>
@@ -245,14 +243,13 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">In Case of Emergency</p>
 
                         <div class="shadow-md p-8">
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Person</p>
                                     <p class="text-lg md:text-xl">
                                         {{ $user->emergency_contact_name ? $user->emergency_contact_name : 'N/A' }}
                                     </p>
                                 </div>
-
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Number</p>
@@ -278,7 +275,7 @@
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-lg md:text-xl">{{ $program_name }}</p>
+                                    <p class="text-lg md:text-xl capitalize">{{ $program_name }}</p>
                                 </div>
                             </div>
                         </div>
