@@ -42,12 +42,11 @@
     }
 </style>
 
-@php
-    $isBusinessUnit = (true) ? true : false;
-@endphp
+    @php
+        $isBusinessUnit = (false) ? true : false;
+    @endphp
 
 {{-- If user is BPI User --}}
-@if ($isBusinessUnit)
     <style>
         #navBar {
             padding: 30px 80px;
@@ -70,19 +69,13 @@
             }
         }
     </style>
-@endif
 
 <div id="navBar" class="w-full flex items-center justify-between z-50">
-    <a href="{{ $isBusinessUnit ? route('businessunit.homepage.view') : route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
-
-        @if ($isBusinessUnit)
-            <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
-        @else
-            <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
-        @endif
+    <a href="" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
+        <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
     </a>
 
-    <a href="{{ $isBusinessUnit ? route('businessunit.homepage.view') : route('main.homepage.view') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
+    <a href="" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
         <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
     </a>
 

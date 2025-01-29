@@ -18,7 +18,6 @@
     }
 
 </style>
-
 <div class="max-w-screen-xl mx-auto relative flex flex-col gap-8 " style="padding-top:10%; padding-bottom:5%; padding-right:5%; padding-left:5%">
     <!-- Hero Section -->
     <div class="bg-cover h-auto text-center overflow-hidden"

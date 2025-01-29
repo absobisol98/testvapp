@@ -4,14 +4,18 @@
 
 
     $today = \Carbon\Carbon::now();
-    $categ_id = \App\Models\BannerCategory::where('name', 'Dashboard')->first()->id;
-    $banners = \App\Models\Banner::where('banner_category_id', $categ_id)
+    $categ_id = \App\Models\BannerCategory::where('name', 'Dashboard')->first();
+    $banners = null;
+    if( $categ_id){
+        $categ_id = \App\Models\BannerCategory::where('name', 'Dashboard')->first()->id;
+        $banners = \App\Models\Banner::where('banner_category_id', $categ_id)
                             ->whereDate('start_date','<=', $today )
                             ->whereDate('end_date','>=', $today)
                             ->where('is_visible', 1)
                             ->inRandomOrder()
                             ->first();
-
+    }
+    
     if($banners != null){
     $banner_url = url('/storage/' . $banners?->media[0]->id . '/' . $banners->media[0]->file_name);
     }else{

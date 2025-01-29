@@ -2,7 +2,7 @@
 
 @php
     $today = \Carbon\Carbon::now();
-    $categ_id = \App\Models\BannerCategory::where('name', 'Sidebar')->first()->id;
+    $categ_id = \App\Models\BannerCategory::where('name', 'Sidebar')->first()?->id;
     $banners = \App\Models\Banner::where('banner_category_id', $categ_id)
                             ->whereDate('start_date','<=', $today )
                             ->whereDate('end_date','>=', $today)

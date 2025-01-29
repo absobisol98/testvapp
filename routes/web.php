@@ -27,7 +27,7 @@ use App\Http\Controllers\ArticleController;
 
 
 Route::get('/', [HomepageController::class, 'mainHomepageView'])->name('main.homepage.view');
-Route::get('/business-unit', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
+Route::get('/business-unit/{slug}', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
 
 
 Route::get('/article/{slug}',[ArticleController::class,'viewArticle']);
