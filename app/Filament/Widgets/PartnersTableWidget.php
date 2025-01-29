@@ -19,15 +19,21 @@ class PartnersTableWidget extends BaseWidget
             User::query()
         )
         ->columns([
-            TextColumn::make('id'),
-            TextColumn::make('firstname')
+            TextColumn::make('name')
                 ->label('Partner')
                 ->searchable()->sortable(),
-            TextColumn::make('email')
+            TextColumn::make('address')
+                ->label('Address')
                 ->searchable()->sortable(),
-            // ToggleColumn::make('is_active')
-            //     ->onColor('success')
-            //     ->offColor('danger')
+            TextColumn::make('nickname')
+                ->label('Abbreviation')
+                ->searchable()->sortable(),
+            TextColumn::make('created_by')
+                ->label('Created By')
+                ->searchable()->sortable(),
+            TextColumn::make('created_at')
+                ->label('Created At')
+                ->searchable()->sortable(),
         ])
         ->actions([
             Action::make('view')

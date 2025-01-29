@@ -1,4 +1,5 @@
 
+
 <div id="footer" class="py-[100px] px-[16px] xl:px-[80px] flex items-center justify-center bg-[#F2F2F2]">
     <div class="w-full flex flex-col md:flex-row items-center justify-start gap-[100px]">
         <div class="flex w-full gap-8">
