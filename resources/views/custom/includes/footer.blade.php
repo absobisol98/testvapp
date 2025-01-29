@@ -2,7 +2,6 @@
     <div class="w-full flex items-center justify-start gap-[100px]">
         <div class="w-[280px] flex flex-col items-start justify-between gap-[20px] text-[14px] font-[400]">
             <img class="w-[280px]" src="{{ asset('img/logo-colored.png') }}" alt="">
-
             {{-- <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard</p> --}}
 
             <p>All Rights Reserved | Ayala Foundation</p>

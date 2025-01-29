@@ -19,15 +19,24 @@ class VolunteersTableWidget extends BaseWidget
                 User::query()
             )
             ->columns([
-                TextColumn::make('id'),
                 TextColumn::make('firstname')
-                    ->label('Partner')
+                    ->label('First Name')
+                    ->searchable()->sortable(),
+                    TextColumn::make('lastname')
+                    ->label('Last Name')
                     ->searchable()->sortable(),
                 TextColumn::make('email')
+                    ->label('Email')
                     ->searchable()->sortable(),
-                ToggleColumn::make('is_active')
-                    ->onColor('success')
-                    ->offColor('danger')
+                TextColumn::make('birthday')
+                    ->label('Birthday')
+                    ->searchable()->sortable(),
+                    TextColumn::make('created_by')
+                    ->label('Created By')
+                    ->searchable()->sortable(),
+                    TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->searchable()->sortable(),
             ])
             ->actions([
                 Action::make('view')

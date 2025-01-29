@@ -60,120 +60,69 @@
     <div class="w-full flex-row">
         <div class="col-span-1 max-h-[500px]">
             <p class="text-[#03498D] font-bold text-2xl mb-5 capitalize">Recent Articles</p>
-                <!-- Carousel Navigation Buttons -->
-                    <div class="flex justify-end">
-                        <div class="stories-button-24-prev"> <!-- Previous Button -->
-                            <div class="w-[24px] h-[24px] flex items-center justify-center bg-gray-200 hover:bg-[#f3f2f2]">
-                                @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
-                            </div>
-                        </div>
-                        <div class="stories-button-24-next"> <!-- Next Button -->
-                            <div class="w-[24px] h-[24px] flex items-center justify-center bg-gray-200 hover:bg-[#f3f2f2]">
-                                @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
-                            </div>
-                        </div>
+
+            <!-- Carousel Navigation Buttons -->
+            <div class="flex justify-end">
+                <div class="stories-button-24-prev">
+                    <div class="w-[24px] h-[24px] flex items-center justify-center bg-gray-200 hover:bg-[#f3f2f2]">
+                        @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
                     </div>
+                </div>
+                <div class="stories-button-24-next">
+                    <div class="w-[24px] h-[24px] flex items-center justify-center bg-gray-200 hover:bg-[#f3f2f2]">
+                        @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
+                    </div>
+                </div>
+            </div>
 
             <div class="w-full p-2 bg-white">
                 <div class="stories-swiper-container w-full overflow-hidden">
                     <div class="swiper-wrapper w-full">
-                        <!-- Slide 1 -->
-                        <div class="swiper-slide">
-                            <div class="w-full min-h-[200px] flex flex-row items-start gap-4">
-                                <div class="w-fit min-w-[90px] p-4 bg-white shadow-md flex flex-col items-center">
-                                    <p>AUG</p>
-                                    <p>21</p>
-                                </div>
-                                <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                    <p class="text-xl font-semibold leading-none">Opportunity Story 1</p>
-                                    <p class="text-[14px] line-clamp-1">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                    <a href="#">
-                                        <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
-                                            <p class="font-medium text-base text-white">READ MORE</p>
-                                        </div>
-                                    </a>
+
+                        @foreach ($articles as $item)
+
+                            <div class="swiper-slide">
+                                <div class="w-full min-h-[200px] flex flex-row items-start gap-4">
+                                    <div class="w-fit min-w-[90px] p-4 bg-white shadow-md flex flex-col items-center">
+                                        <p>{{ \Carbon\Carbon::parse($item->date)->format('M') }}</p>
+                                        <p>{{ \Carbon\Carbon::parse($item->date)->format('d') }}</p>
+                                    </div>
+                                    <div class="w-full text-[#03498D] flex flex-col gap-4">
+                                        <p class="text-xl font-semibold leading-none">{{ $item->title }}</p>
+                                        <p class="text-[14px] line-clamp-1">{{ $item->description }}</p>
+                                        <a href="#">
+                                            <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
+                                                <p class="font-medium text-base text-white">READ MORE</p>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="w-full min-h-[200px] flex flex-row items-start gap-4">
-                                <div class="w-fit min-w-[90px] p-4 bg-white shadow-md flex flex-col items-center">
-                                    <p>AUG</p>
-                                    <p>21</p>
-                                </div>
-                                <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                    <p class="text-xl font-semibold leading-none">Opportunity Story 2</p>
-                                    <p class="text-[14px]">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                    <a href="#">
-                                        <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
-                                            <p class="font-medium text-base text-white">READ MORE</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="w-full min-h-[200px] flex flex-row items-start gap-4">
-                                <div class="w-fit min-w-[90px] p-4 bg-white shadow-md flex flex-col items-center">
-                                    <p>AUG</p>
-                                    <p>21</p>
-                                </div>
-                                <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                    <p class="text-xl font-semibold leading-none">Opportunity Story 3</p>
-                                    <p class="text-[14px]">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                    <a href="#">
-                                        <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
-                                            <p class="font-medium text-base text-white">READ MORE</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="w-full min-h-[200px] flex flex-row items-start gap-4">
-                                <div class="w-fit min-w-[90px] p-4 bg-white shadow-md flex flex-col items-center">
-                                    <p>AUG</p>
-                                    <p>21</p>
-                                </div>
-                                <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                    <p class="text-xl font-semibold leading-none">Opportunity Story 3</p>
-                                    <p class="text-[14px]">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                    <a href="#">
-                                        <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
-                                            <p class="font-medium text-base text-white">READ MORE</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
+                        @endforeach
                     </div>
                 </div>
             </div>
 
             <!-- Swiper Script -->
             <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
             <script>
-            const storiesSwiper = new Swiper('.stories-swiper-container', {
-                loop: true,
-                slidesPerView: 1,
-                spaceBetween: 20,
-                navigation: {
-                    nextEl: '.stories-button-24-next',
-                    prevEl: '.stories-button-24-prev',
-                },
-                breakpoints: {
-                    640: { slidesPerView: 1 },
-                    768: { slidesPerView: 2 },
-                    1024: { slidesPerView: 3 },
-                },
-            });
+                const storiesSwiper = new Swiper('.stories-swiper-container', {
+                    loop: true,
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                    navigation: {
+                        nextEl: '.stories-button-24-next',
+                        prevEl: '.stories-button-24-prev',
+                    },
+                    breakpoints: {
+                        640: { slidesPerView: 1 },
+                        768: { slidesPerView: 2 },
+                        1024: { slidesPerView: 3 },
+                    },
+                });
             </script>
         </div>
     </div>
+
 </div>
 @endsection
