@@ -22,6 +22,7 @@
     <div class="w-full flex flex-col gap-8">
         @livewire(\App\Filament\Widgets\HeroBannerWidget::class)
 
+
         {{-- If the user is a Volunteer --}}
         @if (auth()->user()->hasRole('Volunteer'))
             @livewire(\App\Filament\Widgets\AdsWidget::class)

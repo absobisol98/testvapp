@@ -7,7 +7,7 @@
             </div>
 
             <div
-                class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[30%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-[#F5F5F5]">
+                class="w-full sm:max-w-[40%] lg:max-w-[30%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-[#F5F5F5]">
                 @foreach ($tags as $tag)
                     <div class="w-fit px-2 py-1" style="background:#DADADA; border-radius: 10px;">
                         <p>{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center justify-center cursor-pointer hover:font-[700]">X</span></p>
@@ -29,36 +29,36 @@
                     </div>
 
                     <div class="w-full text-[14px] p-4">
-                        <div class="w-full flex items-center justify-between gap-4 text-[14px] font-[400]">
+                        <div class="w-full flex items-center justify-between gap-4 text-[14px] font-normal">
                             <div class="w-fit py-1 px-2 flex items-center justify-center bg-[#F55E1D]">
                                 <p class="font-normal text-white">
                                     {{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                             </div>
 
                             <div class="w-fit">
-                                <p class="text-[#000000] font-[600]">
+                                <p class="text-[#000000] font-semibold">
                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
                             </div>
                         </div>
 
-                        <p class="text-2xl font-[700] text-[#03498D] mt-3 mb-1 leading-none capitalize">
+                        <p class="text-2xl font-bold text-[#03498D] mt-3 mb-1 leading-none capitalize">
                             {{ \Illuminate\Support\Str::limit($opportunity->title, 22) }}</p>
 
-                        <p class="font-[400] mb-3">Zoom Webinar Online, {{ $opportunity->location }}</p>
-                        <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session
+                        <p class="font-normal mb-3">Zoom Webinar Online, {{ $opportunity->location }}</p>
+                        <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage actively in the session
                         </p>
 
                         <div class="flex items-center justify-start gap-4">
                             @foreach ($opportunity->slots as $index => $slot)
                                 <p>
-                                    <span class="font-[600]">BATCH {{ $index + 1 }}:</span>
+                                    <span class="font-semibold">BATCH {{ $index + 1 }}:</span>
                                     {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} -
                                     {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                 </p>
                             @endforeach
                         </div>
 
-                        <div class="flex items-center justify-start gap-4 mt-4 max-w-[416px] text-[16px] font-[400]">
+                        <div class="flex items-center justify-start gap-4 mt-4 max-w-[416px] text-sm md:text-base font-normal">
                             <button id="recent-opportunity-btn-{{ $opportunity->id }}" class="w-full">
                                 <div
                                     class="h-[40px] w-full flex items-center justify-center p-2 hover:bg-[#1A67B1]" style="background:#005096; ">
@@ -104,23 +104,23 @@
                                 </div>
 
                                 <div class="w-full p-4 flex flex-col gap-4">
-                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
+                                    <div class="w-fit py-1 md:py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
                                         <p class="text-lg font-normal text-white">{{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                                     </div>
 
-                                    <p class="text-4xl font-normal text-[#03498D]">{{ $opportunity->title }}</p>
+                                    <p class="text-2xl md:text-4xl font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
 
-                                    <p class="text-2xl font-normal">Zoom Webinar Online, {{ $opportunity->location }}
+                                    <p class="text-xl md:text-2xl font-normal">Zoom Webinar Online, {{ $opportunity->location }}
                                     </p>
 
                                     <div class="text-lg font-normal my-4 text-justify">
                                         {!! $opportunity->description !!}
                                     </div>
 
-                                    <div class="w-full flex items-center justify-center gap-4">
+                                    <div class="w-full flex flex-col md:flex-row items-center justify-center gap-4">
                                         <div class="w-full">
                                             <div
-                                                class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 mb-16">
+                                                class="w-full flex flex-col items-start justify-start text-base md:text-xl font-normal gap-2 mb-16">
                                                 <p class="font-semibold">DATE: {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
                                                     {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
                                                 <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage
@@ -140,15 +140,15 @@
                                                 class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                                 <a href="">
                                                     <div
-                                                        class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                                        <p class="font-normal text-lg text-white">SIGN UP</p>
+                                                        class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                        <p class="font-normal text-base md:text-lg text-white">SIGN UP</p>
                                                     </div>
                                                 </a>
 
                                                 <a href="">
                                                     <div
-                                                        class="h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                                                        <p class="font-normal text-lg text-white">FAVORITE</p>
+                                                        class="h-auto md:h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                                        <p class="font-normal text-base md:text-lg text-white">FAVORITE</p>
                                                     </div>
                                                 </a>
                                             </div>

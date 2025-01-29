@@ -69,5 +69,5 @@ public/js/filament/forms/components/rich-editor.js
 public/js/filament/support/support.js
 public/js/filament/widgets/components/chart.js
 public/js/ysfkaya/filament-phone-input/components/filament-phone-input.js
-composer.lock
-public/js/filament/forms/components/key-value.js
+*.js
+

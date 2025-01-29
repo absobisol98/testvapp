@@ -31,8 +31,8 @@
             style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
             <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
-                <p class="font-[700] text-[70px] leading-none">Your involvement is important to us!</p>
-                <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
+                <p class="font-[700] text-5xl leading-none">Your involvement is important to us!</p>
+                <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Program</p>
             </div>
         </section>
         {{-- Opportunity Section --}}
@@ -71,36 +71,58 @@
                         <div class="flex items-center justify-start gap-4">
                             <p><span class="font-[600]">BATCH:</span>{{$latestOpportunity->slots['0']->type->name}}</p>
 
+
+                <div class="w-[100%] md:w-[60%]">
+                    <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
+                    <p class="text-3xl md:text-[40px] font-[700] text-[#03498D] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit
+                        dolor met.</p>
+
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
+
+                    <p class="text-base md:text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
+                    <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                        <div class="w-fit flex flex-col items-start justify-between gap-1">
+                            <p class="font-[600]">DATE: Aug-27-2024</p>
+                            <p class="font-[600]">2:00 PM - 6:00 PM</p>
+                        </div>
+                        <div class="w-fit flex flex-col items-start justify-between gap-1">
+                            <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session
+                            </p>
+                            <div class="flex items-center justify-start gap-4">
+                                <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
+                                <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                            </div>
+
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
-                    <button onclick="openModal()" class="w-full">
-                        <div
-                            class="h-[48px] w-full bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                            <p class="font-[400] text-[18px] text-white">VIEW DETAILS</p>
-                        </div>
-                    </button>
+                    <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
+                        <button onclick="openModal()" class="w-full">
+                            <div
+                                class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                <p class="font-[400] text-base md:text-[18px] text-white">VIEW DETAILS</p>
+                            </div>
+                        </button>
 
-                    @guest
-                    <a href="\volunteer-registration" class="w-full">
-                        <div
-                            class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                            <p class="font-[400] text-[18px] text-white">JOIN</p>
-                        </div>
-                    </a>
-                    @endguest
-
-                    @auth
-                    <a href="\admin/events" class="w-full">
-                    {{-- <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}" class="w-full"> --}}
-                        <div
-                            class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                            <p class="font-[400] text-[18px] text-white">JOIN</p>
-                        </div>
-                    </a>
-                    @endauth
+                        @guest
+                        <a href="\volunteer-registration" class="w-full">
+                            <div
+                                class="h-auto md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                            </div>
+                        </a>
+                        @endguest
+                        
+                        @auth
+                        <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}" class="w-full">
+                            <div
+                                class="h-auto md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                            </div>
+                        </a>
+                        @endauth
+                    </div>
                 </div>
             </div>
             @endif
@@ -112,11 +134,12 @@
             <div class="w-full">
                 <div class="flex items-center justify-between gap-4 font-[400]">
                     <div class="w-fit">
-                        <p class="text-[32px] md:text-[40px]">OPPORTUNITIES</p>
+                        <p class="text-2xl md:text-[32px] md:text-[40px]">OPPORTUNITIES</p>
                     </div>
 
                     <div class="flex items-center justify-between gap-4 md:gap-8">
-                        <a class="text-[20px] font-[400]">VIEW</a>
+
+                        <a class="text-lg md:text-[20px] font-[400]" href="">VIEW</a>
 
                         {{-- Style for the tabs --}}
                         <style>
@@ -169,7 +192,7 @@
                             </div>
 
                             <div class="w-full">
-                                <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+                                <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
 
                                 <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
 
@@ -194,8 +217,8 @@
                                 @guest
                                 <a href="\volunteer-registration">
                                     <div
-                                        class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                        <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                        class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                        <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
                                     </div>
                                 </a>
                                 @endguest
@@ -423,11 +446,11 @@
             <div class="w-full grid grid-cols-1 lg:grid-cols-2">
                 <!-- Our Program Section -->
                 <div
-                    class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#03498D]">
+                    class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#03498D]">
                     <div class="w-full min-h-[450px] flex flex-col items-start">
-                        <p class="text-[36px] font-semibold">Our Program</p>
-                        <p class="text-[48px] font-bold leading-none">Corporate Citizenship and Volunteerism</p>
-                        <p class="text-[20px] font-light">
+                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
+                        <p class="text-4xl md:text-5xl font-bold leading-none">Corporate Citizenship and Volunteerism</p>
+                        <p class="text-4lg md:text-xl font-light">
                             We believe in contributing to the nation’s development goals by adapting to the evolving needs of
                             stakeholders to remain relevant and responsive. Through our programs, we affirm our commitment to
                             aligning, giving focus, and making an impact in the lives of people in our conglomerate,
@@ -436,16 +459,17 @@
                         </p>
                     </div>
                     <div class="w-full">
+
                         <a href="/volunteer-registration">
-                            <div class="h-16 w-[305px] bg-[#FF781E] flex items-center justify-center hover:bg-[#FF9141]">
-                                <p class="font-medium text-lg text-white">SEE ALL PROGRAMS</p>
+                            <div class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#FF781E] flex items-center justify-center hover:bg-[#FF9141]">
+                                <p class="font-medium text-base md:text-lg text-white">SEE ALL PROGRAMS</p>
                             </div>
                         </a>
                     </div>
                 </div>
 
                 <!-- Become a Volunteer Section -->
-                <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
+                <div class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
                     style="background-image: url('{{ asset('img/ayala-foundation-bg-1.jpg') }}')">
                     <!-- Diagonal Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-tr from-[#03498D4D] to-[#03498D4D] z-0"
@@ -459,7 +483,7 @@
                     </div>
                     <div class="w-full z-10">
                         <a href="{{ route('volunteer.form.view') }}">
-                            <div class="h-16 w-[305px] bg-[#FF781E] flex items-center justify-center hover:bg-[#FF9141]">
+                            <div class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#FF781E] flex items-center justify-center hover:bg-[#FF9141]">
                                 <p class="font-medium text-lg text-white">BECOME A VOLUNTEER</p>
                             </div>
                         </a>
@@ -475,16 +499,18 @@
             <div class="w-full grid grid-cols-1 lg:grid-cols-2">
                 <!-- Program Section with Swiper -->
                 <div
-                    class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D]">
+                    class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D]">
                     <div class="program-swiper-container w-full overflow-hidden">
                         <div class="swiper-wrapper w-full">
                             <!-- Slide 1 -->
                             <div class="swiper-slide">
                                 <div class="flex flex-col items-center gap-8">
                                     <div class="w-full min-h-[450px] flex flex-col items-start">
-                                        <p class="text-[36px] font-semibold">Our Program</p>
-                                        <p class="text-[48px] font-bold">Community Development</p>
-                                        <p class="text-[20px] font-light">
+                                    
+                                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
+                                        <p class="text-4xl md:text-5xl font-bold">Community Development</p>
+                                        <p class="text-lg md:text-xl font-light">
+
                                             We aim to elevate Filipino families from poverty to the middle class. To achieve
                                             this goal, we
                                             take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
@@ -502,8 +528,8 @@
                                     <div class="w-full">
                                         <a href="\admin/events">
                                             <div
-                                                class="h-12 w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
-                                                <p class="font-medium text-lg text-white">SEE ALL OPPORTUNITIES</p>
+                                                class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
+                                                <p class="font-medium text-base md:text-lg text-white">SEE ALL OPPORTUNITIES</p>
                                             </div>
                                         </a>
                                     </div>
@@ -514,9 +540,11 @@
                             <div class="swiper-slide">
                                 <div class="flex flex-col items-center gap-8">
                                     <div class="w-full min-h-[450px] flex flex-col items-start">
-                                        <p class="text-[36px] font-semibold">Our Program</p>
-                                        <p class="text-[48px] font-bold">Community Development</p>
-                                        <p class="text-[20px] font-light">
+
+                                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
+                                        <p class="text-4xl md:text-5xl font-bold">Corporate Citizenship and Volunteerism</p>
+                                        <p class="text-lg md:text-xl font-light">
+
                                             We aim to elevate Filipino families from poverty to the middle class. To achieve
                                             this goal, we
                                             take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
@@ -534,7 +562,7 @@
                                     <div class="w-full">
                                         <a href="\admin/events">
                                             <div
-                                                class="h-12 w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
+                                                class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#03498D] flex items-center justify-center hover:bg-[#1A67B1]">
                                                 <p class="font-medium text-lg text-white">SEE ALL OPPORTUNITIES</p>
                                             </div>
                                         </a>
@@ -608,16 +636,16 @@
                                     <div
                                         class="w-full min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white shadow-sm flex flex-col items-center">
-                                            <p>{{ \Carbon\Carbon::parse($article->published_at)->format('F j, Y') }}</p>
+                                            <p class="text-lg font-medium">{{ \Carbon\Carbon::parse($article->published_at)->format('M j, Y') }}                                            </p>
                                         </div>
                                         <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                            <p class="text-[32px] font-semibold leading-none">{{ $article->title }}
+                                            <p class="text-2xl md:text-[32px] font-semibold leading-none capitalize">{{ $article->title }}
                                             </p>
                                             <p class="text-[14px]">{{ $article->content_overview }}</p>
                                             <a href="{{ url('/article'). '/' . $article->slug }}">
                                                 <div
-                                                    class="h-12 w-[219px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
-                                                    <p class="font-medium text-lg text-white">READ MORE</p>
+                                                    class="h-10 md:h-12 w-[180px] md:w-[219px] bg-[#FF781E] flex items-center justify-center hover:bg-[#FF8252]">
+                                                    <p class="font-medium text-base md:text-lg text-white">READ MORE</p>
                                                 </div>
                                             </a>
                                         </div>
@@ -662,18 +690,20 @@
                         <div class="w-8 md:w-16 h-full flex items-start">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
-                        <p class="px-0 md:px-2 py-4">Volunteering with Ayala Foundation has been one of the most rewarding experiences of my life.
+
+                        <p class="px-0 md:px-2 py-4 text-2xl md:text-[28px] md:text-[36px]">Volunteering with Ayala Foundation has been one of the most rewarding experiences of my life.
                             Not only did I get to make a real difference in the lives of others,
                             but I also gained valuable skills and met incredible people who share my passion for giving back.
                             It’s a joy to be part of such a supportive and impactful community.</p>
+                            
                         <div class="w-8 md:w-16 h-full flex items-end">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
                     </div>
 
                     <div class="w-full px-8 md:px-16">
-                        <p>JUAN DELA CRUZ</p>
-                        <p class="text-[#817B7B]">Business Associate, Company Name</p>
+                        <p class="text-xl md:text-2xl fornt-bold">JUAN DELA CRUZ</p>
+                        <p class="text-base md:text-xl text-[#817B7B]">Business Associate, Company Name</p>
                     </div>
                 </div>
             </div>

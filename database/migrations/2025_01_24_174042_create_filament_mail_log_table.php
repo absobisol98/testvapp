@@ -32,4 +32,10 @@ return new class extends Migration
             $table->index('status');
         });
     }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('mail_logs');
+    }
+
 };

@@ -6,10 +6,16 @@
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Opportunities</p>
             </div>
 
-            <a href="/admin/events/create" class="w-fit">
-                <div class="h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-6 hover:bg-[#1A67B1]">
-                    <p class="font-[400] text-[18px] text-white">CREATE NEW OPPORTUNITY</p>
-                </div>
+            <a href="/admin/events/create">
+                <button class="w-fit">
+                    <div
+                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                        <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
+
+                        <!-- Tablet and Mobile text -->
+                        <p class="font-normal text-base text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> OPPORTUNITY </p>
+                    </div>
+                </button>
             </a>
 
         </div>
@@ -43,35 +49,42 @@
                                 {{-- @endif --}}
                             </div>
                         </div>
-                        <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+                        <p class="text-[28px] font-normal font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
 
-                        <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}
+                        <p class="text-xl font-normal mb-3">{{ $opportunity->location }}
                         </p>
 
                         <div
-                            class="w-full h-fit flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                            <div class="w-fit flex flex-col items-start justify-between gap-0">
-                                <p><span class="font-[600]">DATE:</span>
+                            class="w-full h-fit flex flex-col md:flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                            <div class="w-full md:w-fit flex flex-col items-start justify-between gap-0">
+                                <p class="font-semibold">DATE:
                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
-                                <p>
+                                <p class="font-semibold">
                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
                                     {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
 
-                                <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots['0']->shift_name}}</p>
-                                <p><span class="font-[600]">BATCH:</span> {{ $opportunity->slots['0']->type->name }}</p>
+                                <p><span class="font-semibold">SHIFTS:</span> {{$opportunity->slots['0']->shift_name}}</p>
+                                    <p><span class="font-semibold">BATCH</span> {{ $opportunity->slots['0']->type->name }}</p>
+                                @endforeach
+
                             </div>
 
-                            <div class="h-full min-h-[118px] max-h-[118px] border-l border-[#B6B6B6] mx-4"></div>
+                            <div class="hidden md:block h-full min-h-[118px] max-h-[118px] border-l border-[#B6B6B6] mx-4"></div>
 
-                            {{-- @php
-                                dd($opportunity->attendees, $opportunity)
-                            @endphp --}}
-                            <div class="w-fit grid grid-cols-2 gap-8">
+
+                            <div class="w-full md:w-fit grid grid-cols-2 gap-8">
                                 <div
                                     class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-4">
-                                    <p class="text-[40px] font-[700] text-[#F55E1D]">140</p>
-                                    <p class="text-[14px] font-[700] text-[#03498D]">VOLUNTEERS</p>
+                                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">140</p>
+                                    <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
                                 </div>
+
+                                <div
+                                    class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-4">
+                                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">5</p>
+                                    <p class="text-sm font-bold text-[#03498D]">HOURS</p>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -84,6 +97,7 @@
                             </div>
                         </a>
                     </div>
+
 
                 </div>
 

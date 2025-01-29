@@ -27,7 +27,7 @@ use App\Http\Controllers\ArticleController;
 
 
 Route::get('/', [HomepageController::class, 'mainHomepageView'])->name('main.homepage.view');
-Route::get('/business-unit', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
+Route::get('/business-unit/{slug}', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
 
 
 Route::get('/article/{slug}',[ArticleController::class,'viewArticle']);
@@ -36,3 +36,7 @@ Route::get('/volunteer-registration', [VolunteerRegistrationController::class, '
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
 
 Route::get('/qr/{event_id}/{attendee_id}', [QrController::class, 'scan_qr'])->name('qr.scan');
+
+Route::get('/registration-confirmation', function () {
+    return view('registration-confirmation');
+});

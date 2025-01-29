@@ -37,6 +37,7 @@ class VolunteersTableWidget extends BaseWidget
                     TextColumn::make('created_at')
                     ->label('Created At')
                     ->searchable()->sortable(),
+
             ])
             ->actions([
                 Action::make('view')

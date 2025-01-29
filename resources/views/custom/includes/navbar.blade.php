@@ -42,12 +42,11 @@
     }
 </style>
 
-@php
-    $isBusinessUnit = (true) ? true : false;
-@endphp
+    @php
+        $isBusinessUnit = (false) ? true : false;
+    @endphp
 
 {{-- If user is BPI User --}}
-@if ($isBusinessUnit)
     <style>
         #navBar {
             padding: 30px 80px;
@@ -70,11 +69,11 @@
             }
         }
     </style>
-@endif
 
 <div id="navBar" class="w-full flex items-center justify-between z-50">
-    <a href="{{ $isBusinessUnit ? route('businessunit.homepage.view') : route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
 
+    <a href="{{ route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
+        {{-- If user is BPI User --}}
         @if ($isBusinessUnit)
             <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
         @else
@@ -82,7 +81,8 @@
         @endif
     </a>
 
-    <a href="{{ $isBusinessUnit ? route('businessunit.homepage.view') : route('main.homepage.view') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
+    <a href="{{ route('main.homepage.view') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
+
         <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
     </a>
 
@@ -90,15 +90,32 @@
         @guest
             <a href="{{ route('volunteer.form.view') }}">
                 <div
-                    class="h-[36px] md:h-[56px] w-[200px] md:w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                    class="h-auto md:h-[56px] w-auto md:w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                     <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
+                </div>
+            </a>
+
+            <a href="{{route('filament.admin.auth.login')}}">
+                <div
+                    class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                    <p class="font-medium text-base text-white">LOG IN</p>
                 </div>
             </a>
         @endguest
 
         {{-- User Dropdown --}}
         @auth
-            <div>
+        <a href="{{ route('filament.admin.pages.dashboard') }}">
+            <div class="h-auto md:h-[56px] w-auto md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                <div class="w-[34px] h-[34px] inline-flex items-center justify-center">
+                    @include('custom.icons.navbar-icons', [
+                        'icon' => 'avatar',
+                    ])
+                </div>
+                <p class="font-medium text-base text-white">DASHBOARD</p>
+            </div>
+        </a>
+            {{-- <div>
                 <div class="relative inline-block text-left">
                     <div>
                         <button id="userDropdownBtn" type="button"
@@ -260,7 +277,7 @@
                         });
                     </script>
                 </div>
-            </div>
+            </div> --}}
         @endauth
     </div>
 
