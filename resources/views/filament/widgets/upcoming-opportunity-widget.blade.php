@@ -1,9 +1,9 @@
 <x-filament-widgets::widget>
     {{-- OPPORTUNITIES --}}
     <div class="w-full px-8">
-        <div class="flex items-center justify-between gap-4 font-[400]">
+        <div class="flex items-center justify-between gap-4 font-normal">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Upcoming Opportunity</p>
+                <p class="text-[28px] md:text-[32px] text-[#03498D] font-bold">Upcoming Opportunity</p>
             </div>
 
             <div class="flex items-center justify-between gap-4 md:gap-8">
@@ -58,7 +58,7 @@
 
                     <div class="w-full">
                         <p class="text-2xl font-[700] text-[#03498D] mr-[12px] mb-[4px] cursor-pointer capitalize leading-none">{{ $opportunity->title }}</p>
-                        <p class="text-lg font-[400] mb-[12px]">Zoom Webinar Online, {{ $opportunity->location }}</p>
+                        <p class="text-lg font-[400] mb-[12px]">{{ $opportunity->location }}</p>
 
                         <div class="w-full flex items-center justify-start text-[14px] font-[400] gap-4">
                             <div class="w-fit flex flex-col items-start justify-between gap-1">
@@ -85,8 +85,8 @@
                     <div style="width:200px">
                         <a href="">
                             <div
-                                class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-400 text-lg text-white">CHECK-IN</p>
+                                class="h-[36px] md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                <p class="font-normal text-lg text-white">CHECK-IN</p>
                             </div>
                         </a>
                     </div>

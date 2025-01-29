@@ -24,7 +24,6 @@
     <div class="w-full">
         <div class="w-auto " style="min-height:250px; max-height: 250px; ">
             <img class="w-full object-cover" style="min-height:250px; max-height: 250px; padding-left:32px; padding-right:32px;"  src="{{$banner_url ?? ''}}" alt="">
-
         </div>
     </div>
     </a>

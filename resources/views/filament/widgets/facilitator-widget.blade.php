@@ -6,14 +6,19 @@
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Facilitator</p>
             </div>
 
-            <div class="w-fit flex items-center justify-between gap-4">
-                <button class="w-fit">
-                    <div
-                        class="h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-6 hover:bg-[#1A67B1]">
-                        <p class="font-[400] text-[18px] text-white">ASSIGN NEW FACILITATOR</p>
-                    </div>
-                </button>
-            </div>
+            <a href="">
+                <div class="w-fit flex items-center justify-between gap-4">
+                    <button class="w-fit">
+                        <div
+                            class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-6 hover:bg-[#1A67B1]">
+                            <p class="font-normal text-lg text-white hidden md:block">ASSIGN NEW FACILITATOR</p>
+
+                            <!-- Tablet and Mobile text -->
+                            <p class="font-normal text-base text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> FACILITATOR </p>
+                        </div>
+                    </button>
+                </div>
+            </a>
         </div>
 
         <div class="w-full border-t border-[#E1E1E1] my-4"></div>
