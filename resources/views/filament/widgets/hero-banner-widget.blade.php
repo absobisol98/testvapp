@@ -11,6 +11,12 @@
                     </div>
 
                     {{-- featured opportunity --}}
+
+                    @php
+                        $latestOpportunity = $opportunity->get()->sortByDesc('created_at')->first();
+                    @endphp
+
+
                     @if ($opportunity)
                         <div class="col-span-1 flex items-center justify-between gap-4 bg-[#FFFFFF] p-4">
                             <div
@@ -22,35 +28,31 @@
                             <div class="w-full">
                                 <div class="w-full">
                                     <p class="capitalize text-[28px] font-bold text-[#03498D] mb-2">
-                                        {{ $opportunity->title }}</p>
+                                        {{ $latestOpportunity->title }}</p>
 
                                     <div
                                         class="w-full flex flex-row items-center justify-start text-[14px] font-[400] text-[#000000] mb-6 gap-4">
                                         <div class="w-fit">
-                                            <p class="font-[600]">DATE:
-                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
+                                            <p><span class="font-[600]">DATE:</span>
+                                                {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }}
                                             </p>
                                         </div>
                                         <div class="w-fit">
-                                            @foreach ($opportunity->slots as $index => $slot)
-                                                @if ($index == 0)
                                                     <p>
-                                                        <span class="font-[600]">BATCH {{ $index + 1 }}:</span>
-                                                        {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }}
+                                                        <span class="font-[600]">BATCH:</span>
+                                                        {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i A') }}
                                                         -
-                                                        {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
+                                                        {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i A') }}
                                                     </p>
-                                                @endif
-                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                    <a class="w-full" href="">
+                                    <a class="w-full" href="\admin/events">
                                         <div
                                             class="h-[40px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-[400] text-[18px] text-white">CHECK-IN</p>
+                                            <p class="font-[400] text-[18px] text-white">REGISTER</p>
                                         </div>
                                     </a>
 
@@ -64,7 +66,6 @@
                             </div>
                         </div>
                     @endif
-
                 </div>
 
                 {{-- STATS --}}
@@ -74,6 +75,7 @@
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
                             <p class="text-sm font-bold text-[#03498D]">UPCOMING</p>
+
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -100,6 +102,7 @@
                     {{-- For AFI Admins --}}
                     @if (false)
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
                             <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
                         </div>
@@ -128,27 +131,27 @@
                     {{-- For Partners --}}
                     @if (true)
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\User::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat2 }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat3 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">ON GOING</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat4 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">HRS RENDERED</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Company::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat5 }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\EventFacilitator::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
                         </div>
                     @endif

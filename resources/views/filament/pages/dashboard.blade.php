@@ -24,14 +24,14 @@
 
 
         {{-- If the user is a Volunteer --}}
-        @if (true)
-            @livewire(\App\Filament\Widgets\AdsDashboardWidget::class)
+        @if (auth()->user()->hasRole('Volunteer'))
+            @livewire(\App\Filament\Widgets\AdsWidget::class)
             @livewire(\App\Filament\Widgets\UpcomingOpportunityWidget::class)
-            @livewire(\App\Filament\Widgets\RecentOpportunitiesWidget::class)
+            {{-- @livewire(\App\Filament\Widgets\RecentOpportunitiesWidget::class) --}}
         @endif
 
         {{-- If the user is an AFI Admin --}}
-        @if (false)
+        @if (auth()->user()->hasRole('super_admin'))
             @livewire(\App\Filament\Widgets\AFIAdminOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\BusinessUnitOrExternalPartersWidget::class)
             @livewire(\App\Filament\Widgets\VolunteersWidget::class)

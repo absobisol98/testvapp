@@ -1,7 +1,7 @@
 <x-filament-panels::page>
-    
 
-    
+
+
 
 
 
@@ -29,7 +29,7 @@
             @livewire(\App\Filament\Widgets\StatsOverview::class)
         </div>
         <div>
-            @livewire(\App\Filament\Widgets\VolunteerUsageWidgetByDepartment::class, ['progNames' =>$widgetData['widgetByDepartment']['progNames'] ,'count'=>$widgetData['widgetByDepartment']['count'] ,'overall_hrs' => $widgetData['widgetByDepartment']['overall_hrs']])  
+            @livewire(\App\Filament\Widgets\VolunteerUsageWidgetByDepartment::class, ['progNames' =>$widgetData['widgetByDepartment']['progNames'] ,'count'=>$widgetData['widgetByDepartment']['count'] ,'overall_hrs' => $widgetData['widgetByDepartment']['overall_hrs']])
         </div>
         <div>
             @livewire(\App\Filament\Widgets\VolunteerUsageWidgetByProgram::class, ['progNames' =>$widgetData['widgetByProgram']['progNames'] ,'count'=>$widgetData['widgetByProgram']['count'] ,'overall_hrs' => $widgetData['widgetByProgram']['overall_hrs']])
@@ -44,9 +44,9 @@
             @livewire(\App\Filament\Widgets\ReportByProgram::class)
         </div>
     </div>
-    
+
     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 grid gap-4" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-        <div>            
+        <div>
             @livewire(\App\Filament\Widgets\VolunteersByCategory::class)
             {{-- @livewire(\App\Filament\Widgets\VolunteersReportByGroupWidget::class) --}}
         </div>

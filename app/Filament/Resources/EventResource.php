@@ -263,14 +263,6 @@ class EventResource extends Resource
                         ->required(),
                     ])->columnSpan(1),
 
-                Forms\Components\Radio::make('approval_type')
-                    ->options([
-                        'Automatic' => 'Automatic',
-                        'Requires Approval' => 'Requires Facilitator Approval',
-                    ])
-                    ->default(2)
-                    ->required(),
-
                 Repeater::make('other_fields')
                     ->relationship()
                     ->columnSpanFull()
@@ -281,7 +273,7 @@ class EventResource extends Resource
                             TextInput::make('text')->required('Value')
                         ]),
                     ]),
-                    
+
                 Forms\Components\Section::make('Attachments')
                     ->schema([
                         Forms\Components\FileUpload::make('media')
@@ -295,7 +287,7 @@ class EventResource extends Resource
                     ->collapsible(),
 
 
-               
+
 //                        Forms\Components\TagsInput::make('required_document_types')
 //                            ->visible(fn ($get) => $get('requires_documents')),
             ]);

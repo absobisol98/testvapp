@@ -74,11 +74,13 @@
 
     <a href="{{ route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
         {{-- If user is BPI User --}}
-        @if ($isBusinessUnit)
+        {{-- @if ($isBusinessUnit)
             <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
         @else
             <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
-        @endif
+        @endif --}}
+        <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
+
     </a>
 
     <a href="{{ route('main.homepage.view') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
@@ -87,12 +89,6 @@
     </a>
 
     <div class="h-full flex items-center justify-between gap-4">
-        {{-- <a href="">
-            <div class="h-[36px] md:h-[56px] w-[120px] md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                <p class="font-medium text-base text-white">DONATE</p>
-            </div>
-        </a> --}}
-
         @guest
             <a href="{{ route('volunteer.form.view') }}">
                 <div
