@@ -36,8 +36,7 @@
             </div>
         </section>
         {{-- Opportunity Section --}}
-        <div
-            class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
+        <div class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
             {{-- Featured Opportunity --}}
             <div class="flex flex-col md:flex-row items-center justify-center gap-4">
                 <div class="flex items-center justify-between h-[400px] w-[100%] md:w-[40%]  gap-4"
@@ -47,144 +46,214 @@
                         <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="">
                     </div>
                 </div>
-            @php
-                $latestOpportunity = $opportunities->sortByDesc('created_at')->first();
-            @endphp
 
-        @if ($latestOpportunity)
-            <div class="w-[100%] md:w-[60%]">
-                <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                <p class="text-[40px] font-[700] text-[#03498D] mt-3 leading-none">{{$latestOpportunity->title}}</p>
-
-                <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
-
-                <p class="text-[18px] font-[400] mb-3">{{$latestOpportunity->location}}</p>
-                <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                    <div class="w-fit flex flex-col items-start justify-between gap-1">
-                        <p><span class="font-[600]">DATE:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }}</p>
-                        <p><span class="font-[600]"></span>{{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i A') }}
-                            - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i A') }}</p>
-                    </div>
-                    <div class="w-fit flex flex-col items-start justify-between gap-1">
-                        <p><span class="font-[600]">SHIFTS:</span> {{$latestOpportunity->slots['0']->shift_name}}
-                        </p>
-                        <div class="flex items-center justify-start gap-4">
-                            <p><span class="font-[600]">BATCH:</span>{{$latestOpportunity->slots['0']->type->name}}</p>
+                @php
+                    $latestOpportunity = $opportunities?->sortByDesc('created_at')->first();
+                @endphp
 
 
-                <div class="w-[100%] md:w-[60%]">
-                    <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                    <p class="text-3xl md:text-[40px] font-[700] text-[#03498D] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit
-                        dolor met.</p>
+                    @if ($latestOpportunity)
+                        <div class="w-[100%] md:w-[60%]">
+                            <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
+                            <p class="text-3xl md:text-[40px] font-[700] text-[#03498D] mt-3 leading-none">{{$latestOpportunity->title}}</p>
 
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
+                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
-                    <p class="text-base md:text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-                    <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                        <div class="w-fit flex flex-col items-start justify-between gap-1">
-                            <p class="font-[600]">DATE: Aug-27-2024</p>
-                            <p class="font-[600]">2:00 PM - 6:00 PM</p>
+                            <p class="text-[18px] font-[400] mb-3">{{$latestOpportunity->location}}</p>
+                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                    <p><span class="font-[600]">DATE:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }}</p>
+                                    <p><span class="font-[600]"></span>{{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i A') }}
+                                        - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i A') }}</p>
+                                </div>
+                                <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                    <p><span class="font-[600]">SHIFTS:</span> {{$latestOpportunity->slots['0']->shift_name}}</p>
+                                    <div class="flex items-center justify-start gap-4">
+                                        <p><span class="font-[600]">BATCH:</span>{{$latestOpportunity->slots['0']->type->name}}</p>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
+                                <button onclick="openModal()" class="w-full">
+                                    <div class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                        <p class="font-[400] text-base md:text-[18px] text-white">VIEW DETAILS</p>
+                                    </div>
+                                </button>
+
+                                @guest
+                                    <a href="\volunteer-registration" class="w-full">
+                                        <div class="h-auto md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                        </div>
+                                    </a>
+                                @endguest
+
+                                @auth
+                                    <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}" class="w-full">
+                                        <div class="h-auto md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                        </div>
+                                    </a>
+                                @endauth
+                            </div>
                         </div>
-                        <div class="w-fit flex flex-col items-start justify-between gap-1">
-                            <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session
-                            </p>
-                            <div class="flex items-center justify-start gap-4">
-                                <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
-                            </div>
-
+                    </div>
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                                    {{-- OPPORTUNITIES --}}
+                <div class="w-full">
+                    <div class="flex items-center justify-between gap-4 font-[400]">
+                        <div class="w-fit">
+                            <p class="text-2xl md:text-[32px] md:text-[40px]">OPPORTUNITIES</p>
                         </div>
-                    </div>
-                </div>
 
-                    <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
-                        <button onclick="openModal()" class="w-full">
-                            <div
-                                class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                                <p class="font-[400] text-base md:text-[18px] text-white">VIEW DETAILS</p>
-                            </div>
-                        </button>
+                        <div class="flex items-center justify-between gap-4 md:gap-8">
 
-                        @guest
-                        <a href="\volunteer-registration" class="w-full">
-                            <div
-                                class="h-auto md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
-                            </div>
-                        </a>
-                        @endguest
-                        
-                        @auth
-                        <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}" class="w-full">
-                            <div
-                                class="h-auto md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
-                            </div>
-                        </a>
-                        @endauth
-                    </div>
-                </div>
-            </div>
-            @endif
-            </div>
+                            <a class="text-lg md:text-[20px] font-[400]" href="">VIEW</a>
 
-            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-
-            {{-- OPPORTUNITIES --}}
-            <div class="w-full">
-                <div class="flex items-center justify-between gap-4 font-[400]">
-                    <div class="w-fit">
-                        <p class="text-2xl md:text-[32px] md:text-[40px]">OPPORTUNITIES</p>
-                    </div>
-
-                    <div class="flex items-center justify-between gap-4 md:gap-8">
-
-                        <a class="text-lg md:text-[20px] font-[400]" href="">VIEW</a>
-
-                        {{-- Style for the tabs --}}
-                        <style>
-                            /* Default stroke color */
-                            #icon svg path,
-                            #icon-calendar svg path {
-                                stroke: #000000;
+                            {{-- Style for the tabs --}}
+                            <style>
                                 /* Default stroke color */
-                                transition: stroke 0.3s ease;
-                                /* Smooth transition for stroke color change */
-                            }
+                                #icon svg path,
+                                #icon-calendar svg path {
+                                    stroke: #000000;
+                                    /* Default stroke color */
+                                    transition: stroke 0.3s ease;
+                                    /* Smooth transition for stroke color change */
+                                }
 
-                            /* Stroke color on hover */
-                            #icon:hover svg path,
-                            #icon-calendar:hover svg path {
-                                stroke: #FF781E;
-                                /* Change this to your desired hover color */
-                            }
+                                /* Stroke color on hover */
+                                #icon:hover svg path,
+                                #icon-calendar:hover svg path {
+                                    stroke: #FF781E;
+                                    /* Change this to your desired hover color */
+                                }
 
-                            /* Stroke color on click (active state) */
-                            #icon.active svg path,
-                            #icon-calendar.active svg path {
-                                stroke: #FF9141;
-                                /* Change this to your desired active color */
-                            }
-                        </style>
+                                /* Stroke color on click (active state) */
+                                #icon.active svg path,
+                                #icon-calendar.active svg path {
+                                    stroke: #FF9141;
+                                    /* Change this to your desired active color */
+                                }
+                            </style>
 
-                        <button id="icon" class="w-[32px] h-[32px] active" onclick="changeTab('list')">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'list-32'])
-                        </button>
+                            <button id="icon" class="w-[32px] h-[32px] active" onclick="changeTab('list')">
+                                @include('custom.icons.landing-page-icons', ['icon' => 'list-32'])
+                            </button>
 
-                        <button id="icon-calendar" class="w-[32px] h-[32px]" onclick="changeTab('calendar')">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'calendar-32'])
-                        </button>
+                            <button id="icon-calendar" class="w-[32px] h-[32px]" onclick="changeTab('calendar')">
+                                @include('custom.icons.landing-page-icons', ['icon' => 'calendar-32'])
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
 
-                {{-- OPPORTUNITIES List --}}
-                <div id="opportunityList"
-                    class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
-                    {{-- List --}}
-                    @foreach ($opportunities as $index => $opportunity)
-                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                    {{-- OPPORTUNITIES List --}}
+                    <div id="opportunityList"
+                        class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
+                        {{-- List --}}
+                        @foreach ($opportunities as $index => $opportunity)
+                            <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                                <div
+                                    class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                    <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                        alt="">
+                                </div>
+
+                                <div class="w-full">
+                                    <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
+
+                                    <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
+
+                                    <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                            <p><span class="font-[600]">DATE:</span>
+                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
+                                            <p><span class="font-[600]"></span>
+                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
+                                                {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</pclass=>
+                                        </div>
+                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                            <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots[0]->shift_name}}</p>
+                                            <div class="flex items-center justify-start gap-4">
+                                            <p><span class="font-[600]">BATCH:</span> {{$opportunity->slots['0']->type->name}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="w-[200px]">
+                                    @guest
+                                    <a href="\volunteer-registration">
+                                        <div
+                                            class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                        </div>
+                                    </a>
+                                    @endguest
+
+                                    @auth
+                                    <a href="\admin/events">
+                                        <div
+                                            class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                        </div>
+                                    </a>
+                                    @endauth
+
+                                </div>
+                            </div>
+
+                            @if (!$loop->last)
+                                <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                            @endif
+                        @endforeach
+
+                        {{-- List 1 --}}
+                        {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                    alt="">
+                            </div>
+
+                            <div class="w-full">
+                                <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
+                                        class="font-[700]">BASA</span>dors Storytelling Webinar</p>
+
+                                <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
+
+                                <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                    <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                        <p class="font-[600]">DATE: Aug-27-2024</p>
+                                        <p class="font-[600]">2:00 PM - 6:00 PM</p>
+                                    </div>
+                                    <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                        <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
+                                            the
+                                            session</p>
+                                        <div class="flex items-center justify-start gap-4">
+                                            <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
+                                            <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-[200px]">
+                                <a href="">
+                                    <div
+                                        class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                        <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
+
+                        {{-- List 2 --}}
+                        {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                             <div
                                 class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                 <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
@@ -192,217 +261,124 @@
                             </div>
 
                             <div class="w-full">
-                                <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
+                                <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
+                                        class="font-[700]">BASA</span>dors Storytelling Webinar</p>
 
-                                <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
+                                <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
 
                                 <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
                                     <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                        <p><span class="font-[600]">DATE:</span>
-                                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
-                                        <p><span class="font-[600]"></span>
-                                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
-                                            {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</pclass=>
+                                        <p class="font-[600]">DATE: Aug-27-2024</p>
+                                        <p class="font-[600]">2:00 PM - 6:00 PM</p>
                                     </div>
                                     <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                        <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots[0]->shift_name}}</p>
+                                        <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
+                                            the session</p>
                                         <div class="flex items-center justify-start gap-4">
-                                        <p><span class="font-[600]">BATCH:</span> {{$opportunity->slots['0']->type->name}}</p>
+                                            <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
+                                            <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="w-[200px]">
-                                @guest
-                                <a href="\volunteer-registration">
-                                    <div
-                                        class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                        <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
-                                    </div>
-                                </a>
-                                @endguest
-
-                                @auth
-                                <a href="\admin/events">
+                                <a href="">
                                     <div
                                         class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                         <p class="font-[400] text-[18px] text-white">JOIN</p>
                                     </div>
                                 </a>
-                                @endauth
-
                             </div>
                         </div>
 
-                        @if (!$loop->last)
-                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                        @endif
-                    @endforeach
+                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
 
-                    {{-- List 1 --}}
-                    {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
-                                alt="">
-                        </div>
+                        {{-- List 3 --}}
+                        {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div
+                                class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                    alt="">
+                            </div>
 
-                        <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
-                                    class="font-[700]">BASA</span>dors Storytelling Webinar</p>
+                            <div class="w-full">
+                                <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
+                                        class="font-[700]">BASA</span>dors Storytelling Webinar</p>
 
-                            <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
+                                <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
 
-                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p class="font-[600]">DATE: Aug-27-2024</p>
-                                    <p class="font-[600]">2:00 PM - 6:00 PM</p>
-                                </div>
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
-                                        the
-                                        session</p>
-                                    <div class="flex items-center justify-start gap-4">
-                                        <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                        <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                                <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                    <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                        <p class="font-[600]">DATE: Aug-27-2024</p>
+                                        <p class="font-[600]">2:00 PM - 6:00 PM</p>
+                                    </div>
+                                    <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                        <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
+                                            the session</p>
+                                        <div class="flex items-center justify-start gap-4">
+                                            <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
+                                            <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="w-[200px]">
-                            <a href="">
-                                <div
-                                    class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                    <p class="font-[400] text-[18px] text-white">JOIN</p>
-                                </div>
-                            </a>
-                        </div>
+                            <div class="w-[200px]">
+                                <a href="">
+                                    <div
+                                        class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                        <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div> --}}
+
                     </div>
 
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
-
-                    {{-- List 2 --}}
-                    {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div
-                            class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
-                                alt="">
-                        </div>
-
-                        <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
-                                    class="font-[700]">BASA</span>dors Storytelling Webinar</p>
-
-                            <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-
-                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p class="font-[600]">DATE: Aug-27-2024</p>
-                                    <p class="font-[600]">2:00 PM - 6:00 PM</p>
-                                </div>
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
-                                        the session</p>
-                                    <div class="flex items-center justify-start gap-4">
-                                        <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                        <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="w-[200px]">
-                            <a href="">
-                                <div
-                                    class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                    <p class="font-[400] text-[18px] text-white">JOIN</p>
-                                </div>
-                            </a>
-                        </div>
+                    {{-- OPPORTUNITIES Calendar --}}
+                    <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
+                        @livewire(\App\Filament\Widgets\CalendarWidget::class)
                     </div>
 
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div> --}}
+                    {{-- Tab Scripts --}}
+                    <script>
+                        const opportunityList = document.getElementById("opportunityList");
+                        const opportunityCalendar = document.getElementById("opportunityCalendar");
+                        const iconList = document.getElementById("icon");
+                        const iconCalendar = document.getElementById("icon-calendar");
 
-                    {{-- List 3 --}}
-                    {{-- <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div
-                            class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
-                                alt="">
-                        </div>
+                        function changeTab(type) {
+                            if (type === "list") {
+                                opportunityList.classList.remove("hidden");
+                                opportunityCalendar.classList.add("hidden");
 
-                        <div class="w-full">
-                            <p class="text-[28px] font-[400] text-[#03498D]">Ayala Reading Am<span
-                                    class="font-[700]">BASA</span>dors Storytelling Webinar</p>
+                                // Set the list icon to active
+                                iconList.classList.add("active");
+                                iconCalendar.classList.remove("active");
+                            } else if (type === "calendar") {
+                                opportunityList.classList.add("hidden");
+                                opportunityCalendar.classList.remove("hidden");
 
-                            <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-
-                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p class="font-[600]">DATE: Aug-27-2024</p>
-                                    <p class="font-[600]">2:00 PM - 6:00 PM</p>
-                                </div>
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in
-                                        the session</p>
-                                    <div class="flex items-center justify-start gap-4">
-                                        <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                        <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="w-[200px]">
-                            <a href="">
-                                <div
-                                    class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                    <p class="font-[400] text-[18px] text-white">JOIN</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div> --}}
-
-                </div>
-
-                {{-- OPPORTUNITIES Calendar --}}
-                <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
-                    @livewire(\App\Filament\Widgets\CalendarWidget::class)
-                </div>
-
-                {{-- Tab Scripts --}}
-                <script>
-                    const opportunityList = document.getElementById("opportunityList");
-                    const opportunityCalendar = document.getElementById("opportunityCalendar");
-                    const iconList = document.getElementById("icon");
-                    const iconCalendar = document.getElementById("icon-calendar");
-
-                    function changeTab(type) {
-                        if (type === "list") {
-                            opportunityList.classList.remove("hidden");
-                            opportunityCalendar.classList.add("hidden");
-
-                            // Set the list icon to active
-                            iconList.classList.add("active");
-                            iconCalendar.classList.remove("active");
-                        } else if (type === "calendar") {
-                            opportunityList.classList.add("hidden");
-                            opportunityCalendar.classList.remove("hidden");
-
-                            // Set the calendar icon to active
-                            iconCalendar.classList.add("active");
-                            iconList.classList.remove("active");
+                                // Set the calendar icon to active
+                                iconCalendar.classList.add("active");
+                                iconList.classList.remove("active");
+                            }
                         }
-                    }
 
-                    setTimeout(() => {
-                        opportunityCalendar.classList.add("hidden");
-                    }, 2000);
-                </script>
+                        setTimeout(() => {
+                            opportunityCalendar.classList.add("hidden");
+                        }, 2000);
+                    </script>
+                </div>
+
+                    </div>
+                        @endif
+                    </div>
+
+            </div>
             </div>
         </div>
-
 
         {{--  --}}
         <div class="relative w-full">
@@ -506,7 +482,7 @@
                             <div class="swiper-slide">
                                 <div class="flex flex-col items-center gap-8">
                                     <div class="w-full min-h-[450px] flex flex-col items-start">
-                                    
+
                                         <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
                                         <p class="text-4xl md:text-5xl font-bold">Community Development</p>
                                         <p class="text-lg md:text-xl font-light">
@@ -695,7 +671,7 @@
                             Not only did I get to make a real difference in the lives of others,
                             but I also gained valuable skills and met incredible people who share my passion for giving back.
                             It’s a joy to be part of such a supportive and impactful community.</p>
-                            
+
                         <div class="w-8 md:w-16 h-full flex items-end">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
@@ -756,16 +732,16 @@
                                     <p class="text-lg font-normal text-white">{{$latestOpportunity->program->name}}</p>
                                 </div>
 
-                                <p class="text-4xl font-normal text-[#03498D]">{{$latestOpportunity->title}}</p>
+                                <p class="text-3xl md:text-4xl font-normal text-[#03498D] capitalize">{{$latestOpportunity->title}}</p>
 
-                                <p class="text-2xl font-normal">{{$latestOpportunity->location}}</p>
+                                <p class="text-xl md:text-2xl font-normal">{{$latestOpportunity->location}}</p>
 
-                                <p class="text-lg font-normal my-16 text-justify">
+                                <p class="text-lg font-normal my-8 md:my-16 text-justify">
                                     &emsp; &emsp;{!! strip_tags($latestOpportunity->description) !!}
                                 </p>
 
                                 <div
-                                    class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 my-16">
+                                    class="w-full flex flex-col items-start justify-start text-base md:text-xl font-normal gap-2 my-8 md:my-16">
                                     <p><span class="font-semibold">Date:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i:s A') }} - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i:s A') }}</p>
                                     <p><span class="font-semibold">SHIFTS:</span> {{$latestOpportunity->slots['0']->shift_name}}</p>
                                     <p><span class="font-semibold">BATCH:</span> {{$latestOpportunity->slots['0']->type->name}}</p>
@@ -775,8 +751,8 @@
                                     @guest
                                     <a href="\volunteer-registration">
                                         <div
-                                            class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-normal text-lg text-white">SIGN UP</p>
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-normal text-base md:text-lg text-white">SIGN UP</p>
                                         </div>
                                     </a>
                                     @endguest
@@ -785,16 +761,16 @@
                                     <a href="\admin/events">
                                     {{-- <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}"> --}}
                                         <div
-                                            class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-normal text-lg text-white">VIEW</p>
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-normal text-base md:text-lg text-white">VIEW</p>
                                         </div>
                                     </a>
                                     @endauth
 
                                     <a href="">
                                         <div
-                                            class="h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                                            <p class="font-normal text-lg text-white">FAVORITE</p>
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                            <p class="font-normal text-base md:text-lg text-white">FAVORITE</p>
                                         </div>
                                     </a>
                                 </div>
