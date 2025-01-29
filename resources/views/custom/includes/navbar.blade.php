@@ -74,11 +74,13 @@
 
     <a href="{{ route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
         {{-- If user is BPI User --}}
-        @if ($isBusinessUnit)
+        {{-- @if ($isBusinessUnit)
             <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
         @else
             <img class="w-full" src="{{ asset('img/logo-white.png') }}" alt="">
-        @endif
+        @endif --}}
+        <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
+
     </a>
 
     <a href="{{ route('main.homepage.view') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">

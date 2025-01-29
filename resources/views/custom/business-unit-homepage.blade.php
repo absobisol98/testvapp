@@ -207,7 +207,7 @@
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
 
                     {{-- OPPORTUNITIES List --}}
-                    <div 
+                    <div
                         class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
                         {{-- List --}}
                         @foreach ($opportunities as $index => $opportunity)
