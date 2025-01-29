@@ -32,12 +32,12 @@
 
 
     <div class="w-full flex flex-col items-center justify-center gap-8">
-        <a href="{{ asset('img/ayala-foundation-bg.jpg') }}"
+        {{-- <a href="{{ asset('img/ayala-foundation-bg.jpg') }}"
             class="glightbox flex items-center justify-between w-full gap-4 bg-cover bg-center" data-gallery="gallery1">
             <div class="flex items-center justify-center overflow-hidden w-full" style="height: 300px;">
                 <img class="object-cover w-full" src="{{ asset('img/ayala-foundation-bg.jpg') }}">
             </div>
-        </a>
+        </a> --}}
 
         <div class="w-full h-full flex flex-col items-end justify-end sm:justify-center gap-4 p-4">
             <div class="w-full grid grid-cols-5 gap-4" style="padding-bottom: 20px;">
@@ -81,61 +81,38 @@
                     <div
                         class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden rounded-full relative">
                         <img class="h-full w-full object-cover"
-                            src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
+                            src="{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}"
                             alt="User Profile Image">
                     </div>
-
+     
+           
                     <div>
-                        <p class="text-[20px] font-[500]">{{ auth()->user()->name }}</p>
+                        <p class="text-[20px] font-[500]">{{ $user->name }}</p>
                         <p class="text-[14px] font-[300]">Member Since:
-                            {{ auth()->user()->created_at->format('F j, Y') }}</p>
+                            {{ $user->created_at->format('F j, Y') }}</p>
                         <p class="text-[18px] font-bold text-[#F55E1D]">LEVEL: 1</p>
                     </div>
                 </div>
 
                 {{-- Badges Container --}}
                 <div class="swiper-container w-full max-w-[700px] overflow-hidden">
-                    <div class="swiper-wrapper">
-                        <!-- Badge 1 -->
-                        <div class="swiper-slide flex items-center justify-center w-auto">
-                            <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
-                                <img class="h-full w-full object-cover"
-                                    src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
-                                    alt="Badge 1">
+                    <div class="swiper-wrapper justify-end">
+                            <!-- Badge 1 -->
+                            <div class="swiper-slide flex items-center text-center w-auto">
+                                @if ($badges['current_rank'] !== null)
+
+                                <div>Your are now a <b>{{$badges['current_rank']['name']}} Member!</b></div>
+                                <div class="w-[120px] h-[120px] flex  justify-self-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{$badges['current_rank']['medal']}}"
+                                        alt="Badge 1">
+                                </div>
+                                @endif
+                                @if ($badges['next_rank'] !== null)
+                                    <span class="justify-self-center">{{$badges['points'] }}/{{$badges['next_rank']['pts_required']}}</span><br> 
+                                    <span>Next Tier: <b>{{$badges['next_rank']['name']}}</b></span>
+                                @endif
                             </div>
-                        </div>
-                        <!-- Badge 2 -->
-                        <div class="swiper-slide flex items-center justify-center w-auto">
-                            <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
-                                <img class="h-full w-full object-cover"
-                                    src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
-                                    alt="Badge 2">
-                            </div>
-                        </div>
-                        <!-- Badge 3 -->
-                        <div class="swiper-slide flex items-center justify-center w-auto">
-                            <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
-                                <img class="h-full w-full object-cover"
-                                    src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
-                                    alt="Badge 3">
-                            </div>
-                        </div>
-                        <!-- Badge 4 -->
-                        <div class="swiper-slide flex items-center justify-center w-auto">
-                            <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
-                                <img class="h-full w-full object-cover"
-                                    src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
-                                    alt="Badge 4">
-                            </div>
-                        </div>
-                        <!-- Badge 5 -->
-                        <div class="swiper-slide flex items-center justify-center w-auto ">
-                            <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
-                                <img class="h-full w-full object-cover"
-                                    src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
-                                    alt="Badge 5">
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -207,18 +184,18 @@
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">First Name</p>
-                                    <p class="text-xl">{{ auth()->user()->firstname }}</p>
+                                    <p class="text-xl">{{ $user->firstname }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Middle Name</p>
                                     <p class="text-xl">
-                                        {{ auth()->user()->middle_name ? auth()->user()->middle_name : 'N/A' }}</p>
+                                        {{ $user->middle_name ? $user->middle_name : 'N/A' }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Last Name</p>
-                                    <p class="text-xl">{{ auth()->user()->lastname }}</p>
+                                    <p class="text-xl">{{ $user->lastname }}</p>
                                 </div>
                             </div>
 
@@ -227,18 +204,18 @@
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Username</p>
-                                    <p class="text-xl">{{ auth()->user()->username }}</p>
+                                    <p class="text-xl">{{ $user->username }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Email</p>
-                                    <p class="text-xl">{{ auth()->user()->email }}</p>
+                                    <p class="text-xl">{{ $user->email }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Birthday</p>
                                     <p class="text-xl">
-                                        {{ auth()->user()->birthday ? auth()->user()->birthday : 'N/A' }}</p>
+                                        {{ $user->birthday ? $user->birthday : 'N/A' }}</p>
                                 </div>
                             </div>
 
@@ -254,13 +231,15 @@
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Company Name</p>
                                     <p class="text-xl">
-                                        {{ auth()->user()->company_name ? auth()->user()->company_name : 'N/A' }}</p>
+                                        {{ $user->company_name ? $user->company_name : 'N/A' }}</p>
                                 </div>
+
+                                
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Address</p>
                                     <p class="text-xl">
-                                        {{ auth()->user()->company_address ? auth()->user()->company_address : 'N/A' }}
+                                        {{ $user->company_address ? $user->company_address : 'N/A' }}
                                     </p>
                                 </div>
                             </div>
@@ -276,21 +255,15 @@
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Person</p>
                                     <p class="text-xl">
-                                        {{ auth()->user()->emergency_contact_name ? auth()->user()->emergency_contact_name : 'N/A' }}
+                                        {{ $user->emergency_contact_name ? $user->emergency_contact_name : 'N/A' }}
                                     </p>
                                 </div>
 
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Relationship</p>
-                                    <p class="text-xl">
-                                        {{ auth()->user()->affiliate_type_id ? auth()->user()->affiliate_type_id : 'N/A' }}
-                                    </p>
-                                </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Number</p>
                                     <p class="text-xl">
-                                        {{ auth()->user()->emergency_contact_number ? auth()->user()->emergency_contact_number : 'N/A' }}
+                                        {{ $user->emergency_contact_number ? $user->emergency_contact_number : 'N/A' }}
                                     </p>
                                 </div>
                             </div>
@@ -299,16 +272,20 @@
 
                     {{-- Interest --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-3xl mb-4">Interest</p>
+                        <p class="text-[#F55E1D] text-3xl mb-4">Program</p>
+                        @php
+                            if($user->program_id != null){
+                                $program_name = DB::table('programs')->where('id', $user->program_id)->first()->name;
+                            }else{
+                                $program_name = 'N/A';
+                            }
+                           
+                        @endphp
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-xl">Education</p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-xl">Health</p>
+                                    <p class="text-xl">{{ $program_name }}</p>
                                 </div>
                             </div>
                         </div>

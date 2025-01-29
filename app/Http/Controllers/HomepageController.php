@@ -30,7 +30,24 @@ class HomepageController extends Controller
             $opportunities = Event::with('slots')->get();
             $socials =   $business_unit->socials;
             $website = $socials->where('social','website')->first();
-            return view('custom.business-unit-homepage', compact('opportunities','business_unit','socials','website'));
+
+            $logo = $business_unit->getMedia('bu_logo')->first();
+            if($logo){
+                $logo = $logo->getUrl();
+            }
+            $eventCover = $business_unit->getMedia('bu_eventcover')->first();
+            if($eventCover){
+                $eventCover = $eventCover->getUrl();
+            }
+            $images = $business_unit->getMedia('bu_galleries');
+            $galleries = array();
+            if(!empty($images)){
+                foreach($images as $image){
+                    array_push( $galleries,$image->getUrl());
+                }
+            }
+
+            return view('custom.business-unit-homepage', compact('opportunities','business_unit','socials','website','logo','eventCover','galleries'));
         }
 
         Notification::make()
