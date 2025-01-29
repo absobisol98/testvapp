@@ -40,35 +40,30 @@
         </a> --}}
 
         <div class="w-full h-full flex flex-col items-end justify-end sm:justify-center gap-4 p-4">
-            <div class="w-full grid grid-cols-5 gap-4" style="padding-bottom: 20px;">
+            <div class="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" style="padding-bottom: 20px;">
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    {{-- <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalUpcoming }}</p> --}}
-                    <p class="text-[40px] font-[700] text-[#F55E1D]">90</p>
-                    <p class="text-[14px] font-[700] text-[#03498D]">UPCOMING</p>
+                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">90</p>
+                    <p class="text-sm font-bold text-[#03498D]">UPCOMING</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    {{-- <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalCertificates }}</p> --}}
-                    <p class="text-[40px] font-[700] text-[#F55E1D]">25</p>
-                    <p class="text-[14px] font-[700] text-[#03498D]">CERTIFICATES</p>
+                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">25</p>
+                    <p class="text-sm font-bold text-[#03498D]">CERTIFICATES</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    {{-- <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalApprovedHrs }}</p> --}}
-                    <p class="text-[40px] font-[700] text-[#F55E1D]">854</p>
-                    <p class="text-[14px] font-[700] text-[#03498D]">APPROVED HRS</p>
+                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">854</p>
+                    <p class="text-sm font-bold text-[#03498D]">APPROVED HRS</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    {{-- <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalRemainingHrs }}</p> --}}
-                    <p class="text-[40px] font-[700] text-[#F55E1D]">80</p>
-                    <p class="text-[14px] font-[700] text-[#03498D]">REMAINING HRS</p>
+                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">80</p>
+                    <p class="text-sm font-bold text-[#03498D]">REMAINING HRS</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    {{-- <p class="text-[40px] font-[700] text-[#F55E1D]">{{ $totalCancelled }}</p> --}}
-                    <p class="text-[40px] font-[700] text-[#F55E1D]">11</p>
-                    <p class="text-[14px] font-[700] text-[#03498D]">CANCELLED</p>
+                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">11</p>
+                    <p class="text-sm font-bold text-[#03498D]">CANCELLED</p>
                 </div>
             </div>
         </div>
@@ -84,12 +79,11 @@
                             src="{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}"
                             alt="User Profile Image">
                     </div>
-     
-           
+
+
                     <div>
                         <p class="text-[20px] font-[500]">{{ $user->name }}</p>
-                        <p class="text-[14px] font-[300]">Member Since:
-                            {{ $user->created_at->format('F j, Y') }}</p>
+                        <p class="text-[14px] font-[300]">Member Since: {{ $user->created_at->format('F j, Y') }}</p>
                         <p class="text-[18px] font-bold text-[#F55E1D]">LEVEL: 1</p>
                     </div>
                 </div>
@@ -109,7 +103,7 @@
                                 </div>
                                 @endif
                                 @if ($badges['next_rank'] !== null)
-                                    <span class="justify-self-center">{{$badges['points'] }}/{{$badges['next_rank']['pts_required']}}</span><br> 
+                                    <span class="justify-self-center">{{$badges['points'] }}/{{$badges['next_rank']['pts_required']}}</span><br>
                                     <span>Next Tier: <b>{{$badges['next_rank']['name']}}</b></span>
                                 @endif
                             </div>
@@ -156,14 +150,14 @@
         {{-- Profile Details Tabs --}}
         <div class="w-full px-8 flex flex-col lg:flex-row items-start justify-center gap-8">
             {{-- Tab Buttons --}}
-            <div class="w-full lg:max-w-[250px] flex flex-row lg:flex-col items-center justify-center text-white gap-4">
+            <div class="w-full lg:max-w-[250px] flex flex-col items-center justify-center text-white gap-4">
                 <button id="personal-info-btn" onclick="changeTab('personal-info')"
                     class="w-full p-4 text-start hover:!bg-[#1A67B1]" style="background: #005096;">
                     Personal Information
                 </button>
 
                 <button id="badges-achievements-btn" onclick="changeTab('badges-achievements')"
-                    class="w-full p-4 text-start hover:!bg-[#1A67B1] hidden" style="background: #9E9E9E;">
+                    class="w-full p-4 text-start hover:!bg-[#1A67B1]" style="background: #9E9E9E;">
                     Badges / Achievements
                 </button>
 
@@ -178,24 +172,24 @@
                 <div id="personal-info-content" class="w-full flex flex-col items-center justify-center gap-8">
                     {{-- Personal Information --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-3xl mb-4">Personal Infomation</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Personal Infomation</p>
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">First Name</p>
-                                    <p class="text-xl">{{ $user->firstname }}</p>
+                                    <p class="text-lg md:text-xl">{{ $user->firstname }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Middle Name</p>
-                                    <p class="text-xl">
+                                    <p class="text-lg md:text-xl">
                                         {{ $user->middle_name ? $user->middle_name : 'N/A' }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Last Name</p>
-                                    <p class="text-xl">{{ $user->lastname }}</p>
+                                    <p class="text-lg md:text-xl">{{ $user->lastname }}</p>
                                 </div>
                             </div>
 
@@ -204,17 +198,17 @@
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Username</p>
-                                    <p class="text-xl">{{ $user->username }}</p>
+                                    <p class="text-lg md:text-xl">{{ $user->username }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Email</p>
-                                    <p class="text-xl">{{ $user->email }}</p>
+                                    <p class="text-lg md:text-xl">{{ $user->email }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Birthday</p>
-                                    <p class="text-xl">
+                                    <p class="text-lg md:text-xl">
                                         {{ $user->birthday ? $user->birthday : 'N/A' }}</p>
                                 </div>
                             </div>
@@ -224,21 +218,21 @@
 
                     {{-- Company / School --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-3xl mb-4">Company / School</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Company / School</p>
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Company Name</p>
-                                    <p class="text-xl">
+                                    <p class="text-lg md:text-xl">
                                         {{ $user->company_name ? $user->company_name : 'N/A' }}</p>
                                 </div>
 
-                                
+
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Address</p>
-                                    <p class="text-xl">
+                                    <p class="text-lg md:text-xl">
                                         {{ $user->company_address ? $user->company_address : 'N/A' }}
                                     </p>
                                 </div>
@@ -248,13 +242,13 @@
 
                     {{-- In Case of Emergency --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-3xl mb-4">In Case of Emergency</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">In Case of Emergency</p>
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Person</p>
-                                    <p class="text-xl">
+                                    <p class="text-lg md:text-xl">
                                         {{ $user->emergency_contact_name ? $user->emergency_contact_name : 'N/A' }}
                                     </p>
                                 </div>
@@ -262,7 +256,7 @@
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Number</p>
-                                    <p class="text-xl">
+                                    <p class="text-lg md:text-xl">
                                         {{ $user->emergency_contact_number ? $user->emergency_contact_number : 'N/A' }}
                                     </p>
                                 </div>
@@ -272,20 +266,19 @@
 
                     {{-- Interest --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-3xl mb-4">Program</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
                         @php
                             if($user->program_id != null){
                                 $program_name = DB::table('programs')->where('id', $user->program_id)->first()->name;
                             }else{
                                 $program_name = 'N/A';
                             }
-                           
                         @endphp
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-xl">{{ $program_name }}</p>
+                                    <p class="text-lg md:text-xl">{{ $program_name }}</p>
                                 </div>
                             </div>
                         </div>
@@ -298,7 +291,7 @@
                 <div id="badges-achievements-content" class="w-full flex items-center justify-center gap-8 hidden">
                     {{-- Badges / Achievements --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-3xl mb-4">Badges / Achievements</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Badges / Achievements</p>
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -335,17 +328,17 @@
                 <div id="events-content" class="w-full flex items-center justify-center gap-8 hidden">
                     {{-- Events --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-3xl mb-4">Events</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Events</p>
 
                         {{-- Tab Buttons --}}
                         <div class="w-full flex items-center justify-start text-white gap-4 mb-4">
                             <button id="all-events-btn" onclick="changeEventsTab('all-events')"
-                                class="py-2 px-4 text-start bg-[#005096] hover:bg-[#1A67B1]">
+                                class="py-2 px-4 text-base md:text-lg text-start bg-[#005096] hover:bg-[#1A67B1]">
                                 ALL EVENTS
                             </button>
 
                             <button id="favorite-events-btn" onclick="changeEventsTab('favorite-events')"
-                                class="py-2 px-4 text-start bg-[#F55E1D] hover:bg-[#FF9141]">
+                                class="py-2 px-4 text-base md:text-lg text-start bg-[#F55E1D] hover:bg-[#FF9141]">
                                 FAVORITE EVENTS
                             </button>
                         </div>
@@ -354,76 +347,82 @@
                             {{-- All Events --}}
                             <div id="all-events-content" class="w-full flex flex-col items-center justify-center">
                                 {{-- List --}}
-                                @foreach ($allEvents as $index => $opportunity)
-                                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                                        <div
-                                            class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                            <img class="w-full h-full object-cover"
-                                                src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
-                                        </div>
-
-                                        <div class="w-full">
-                                            <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}
-                                            </p>
-
-                                            <p class="text-[18px] font-[400]">{{ $opportunity->location }}</p>
-                                            <p class="font-[600]">DATE:
-                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
-                                            </p>
-                                        </div>
-
-                                        <div class="w-[200px]">
-                                            <a href="">
-                                                <div
-                                                    class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                                    <p class="font-[400] text-[18px] text-white">Download QR</p>
-                                                </div>
-                                            </a>
-                                        </div>
+                                @if ($allEvents->isEmpty())
+                                    <div class="w-full flex items-center justify-center py-8">
+                                        <p class="text-[18px] text-gray-500">No opportunities available at the moment.</p>
                                     </div>
+                                @else
+                                    @foreach ($allEvents as $index => $opportunity)
+                                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                                            <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                                <img class="w-full h-full object-cover"
+                                                    src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                                            </div>
 
-                                    @if (!$loop->last)
-                                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                                    @endif
-                                @endforeach
+                                            <div class="w-full">
+                                                <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+                                                <p class="text-[18px] font-[400]">{{ $opportunity->location }}</p>
+                                                <p class="font-[600]">DATE:
+                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
+                                                </p>
+                                            </div>
+
+                                            <div class="w-[200px]">
+                                                <a href="">
+                                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                        <p class="font-[400] text-base md:text-[18px] text-white">Download QR</p>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        @if (!$loop->last)
+                                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                                        @endif
+                                    @endforeach
+                                @endif
+
                             </div>
 
                             {{-- Favorite Events --}}
                             <div id="favorite-events-content"
                                 class="w-full flex flex-col items-center justify-center hidden">
                                 {{-- List --}}
-                                @foreach ($favoriteEvents as $index => $opportunity)
-                                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                                        <div
-                                            class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                            <img class="w-full h-full object-cover"
-                                                src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
-                                        </div>
-
-                                        <div class="w-full">
-                                            <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}
-                                            </p>
-
-                                            <p class="text-[18px] font-[400]">{{ $opportunity->location }}</p>
-                                            <p class="font-[600]">DATE:
-                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
-                                            </p>
-                                        </div>
-
-                                        <div class="w-[200px]">
-                                            <a href="path/to/your-image.jpg" download="QR-Code.jpg">
-                                                <div
-                                                    class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                                    <p class="font-[400] text-[18px] text-white">Download QR</p>
-                                                </div>
-                                            </a>
-                                        </div>
+                                @if ($allEvents->isEmpty())
+                                    <div class="w-full flex items-center justify-center py-8">
+                                        <p class="text-[18px] text-gray-500">No favorite opportunities.</p>
                                     </div>
+                                @else
+                                    @foreach ($allEvents as $index => $opportunity)
+                                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                                            <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                                <img class="w-full h-full object-cover"
+                                                    src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                                            </div>
 
-                                    @if (!$loop->last)
-                                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                                    @endif
-                                @endforeach
+                                            <div class="w-full">
+                                                <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+                                                <p class="text-[18px] font-[400]">{{ $opportunity->location }}</p>
+                                                <p class="font-[600]">DATE:
+                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
+                                                </p>
+                                            </div>
+
+                                            <div class="w-[200px]">
+                                                <a href="">
+                                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                        <p class="font-[400] text-base md:text-[18px] text-white">Download QR</p>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        @if (!$loop->last)
+                                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                                        @endif
+                                    @endforeach
+                                @endif
+
                             </div>
                         </div>
 
