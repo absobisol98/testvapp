@@ -393,7 +393,9 @@ class EventResource extends Resource
                         Forms\Components\Select::make('tags')
                             ->selectablePlaceholder(false)
                             ->label('')
+                            ->searchable()
                             ->default('all')
+                            ->multiple()
                             ->options( function(){
                                     $option = array();
                                     $option['all'] = 'All tags';
@@ -406,7 +408,7 @@ class EventResource extends Resource
                     ->query(function (Builder $query, array $data): Builder {
                         if($data['tags'] !== 'all') {
                             $query->whereHas('tags', function (Builder $query) use($data) {
-                                $query->where('tag_id', $data['tags']);
+                                $query->whereIn('tag_id', $data['tags']);
                             });
                             return $query;
                         }

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use PDO;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -153,42 +154,39 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         foreach ($events as $evnt){
            $total_hrs = $evnt->get_totalHrs();
         }
-        $hours = [16,12,8,4];
-        $opportunities = [40,30,20,10];
+        $points = 0;
+        $hours = [4,8,12,16];
+        $opportunities = [10,20,30,40];
         $ranks = [
             [
-                'name' => 'plat',
-                'color'=> '#004d24'
+                'name' => 'Bronze',
+                'medal'=> asset('medals/bronze.png'),
+                'pts_required'=> 0,
             ],
 
             [
-                'name' => 'gold',
-                'color'=> '#D4AF37'
+                'name' => 'Silver',
+                'medal'=> asset('medals/silver.png'),
+                'pts_required'=> 2500,
             ],
             [
-                'name' => 'silver',
-                'color'=> '#c0c0c0'
+                'name' => 'Gold',
+                'medal'=> asset('medals/gold.png'),
+                'pts_required'=> 5000,
             ],
             [
-                'name' => 'bronze',
-                'color'=> '#CD7F32'
+                'name' => 'Platinum',
+                'medal'=> asset('medals/plat.png'),
+                'pts_required'=> 10000,
             ],
         ];
-        $mileStone = [
-            'first_time' => false,
-            'hours' => false,
-            'opportuninities' => false,
-            'streak' => true,
-        ];
-
+        
         foreach($hours as $key => $hr){
             if($total_hrs >= $hr){
-                $mileStone['hours'] = $ranks[$key];
-                $mileStone['hours']['count'] =$total_hrs;
-                $mileStone['hours']['desc'] = 'This volunteer successfully completed '.number_format($total_hrs,2).' Total Hours';
-                break;
+                $points += 50;
             }
         }
+
         $streak = 0;
         foreach($filteredEvents as $latestEvent){
             $test = $latestEvent->attendees->where('attendee_id',$this->id)->first();
@@ -200,20 +198,35 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             }
         }
         if($streak == 5){
-            $mileStone['streak'] = true;
+            $points += 50;
         }
         $total_events = 10;
         foreach($opportunities as $key => $opp){
             if($total_events >= $opp){
-                $mileStone['opportuninities'] = $ranks[$key];
-                $mileStone['opportuninities']['count'] = $total_events;
-                $mileStone['opportuninities']['desc'] = 'This volunteer successfully completed '.$total_events.' events.';
-                break;
+                $points += 50;
             }
         }
 
-        if($total_events == 1 ){
-            $mileStone['first_time'] = true;
+        if($total_events == 1 ){               
+            $points += 50;
+        }
+        $points = 0;
+
+        $cur_rank = null;
+        foreach( $ranks as $key => $rank){
+            if($rank['pts_required'] <= $points){
+                $cur_rank = $key;
+            }
+        }
+        $mileStone['points'] = $points;
+        $mileStone['current_rank'] =  ($cur_rank !== null) ? $ranks[$cur_rank] : null;
+        if($cur_rank === null){
+            $mileStone['next_rank'] = $ranks[0];
+        }
+        else if($cur_rank == 3){
+            $mileStone['next_rank']  = null;
+        }else{
+            $mileStone['next_rank'] = $ranks[$cur_rank+1];
         }
         return $mileStone;
     }
