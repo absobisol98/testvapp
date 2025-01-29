@@ -89,44 +89,53 @@
                     </div>
                 </div>
 
-                <div class="col-span-2 md:col-span-1 flex flex-col items-start justify-between gap-2">
+                <div class="col-span-2 md:col-span-1 flex flex-col items-start justify-start gap-2">
                     <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                    <p class="text-[40px] font-[700] text-[#D43F3F] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit
-                        dolor met.</p>
+                    <div class="flex flex-col items-start justify-between">
+                        <p class="text-[40px] font-[700] text-[#D43F3F] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit
+                            dolor met.</p>
 
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
+                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
-                    <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-                    <div class="w-full flex flex-row items-start justify-start text-[14px] font-[400] gap-4">
-                        <div class="w-fit flex flex-col items-start justify-between gap-2">
-                            <p class="font-[600]">DATE: Aug-27-2024</p>
-                            <p class="font-[600]">2:00 PM - 6:00 PM</p>
-                        </div>
-                        <div class="w-fit flex flex-col items-start justify-between gap-2">
-                            <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session
-                            </p>
-                            <div class="flex flex-col items-center justify-start">
-                                <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                        <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
+                        <div class="w-full flex flex-row items-start justify-start text-[14px] font-[400] gap-4">
+                            <div class="w-fit flex flex-col items-start justify-between gap-2">
+                                <p class="font-[600]">DATE: Aug-27-2024</p>
+                                <p class="font-[600]">2:00 PM - 6:00 PM</p>
                             </div>
+                            <div class="w-fit flex flex-col items-start justify-between gap-2">
+                                <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session
+                                </p>
+                                <div class="flex flex-col items-center justify-start">
+                                    <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
+                                    <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex items-center justify-start gap-4 mt-8 max-w-[416px]">
+                            <button onclick="openModal()" class="w-full">
+                                <div
+                                    class="h-[48px] w-full bg-[#272727] flex items-center justify-center p-2 hover:bg-[#595959]">
+                                    <p class="font-[400] text-[18px] text-white">VIEW DETAILS</p>
+                                </div>
+                            </button>
+
+                            <a href="" class="w-full">
+                                <div
+                                    class="h-[48px] w-full bg-[#D43F3F] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                                    <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
-                    <div class="w-full flex items-center justify-start gap-4 mt-8 max-w-[416px]">
-                        <button onclick="openModal()" class="w-full">
-                            <div
-                                class="h-[48px] w-full bg-[#272727] flex items-center justify-center p-2 hover:bg-[#595959]">
-                                <p class="font-[400] text-[18px] text-white">VIEW DETAILS</p>
-                            </div>
-                        </button>
-
-                        <a href="" class="w-full">
-                            <div
-                                class="h-[48px] w-full bg-[#D43F3F] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
-                                <p class="font-[400] text-[18px] text-white">JOIN</p>
-                            </div>
-                        </a>
-                    </div>
+                    {{-- nofeatured opportunity --}}
+                    {{-- <div class="flex flex-col items-center justify-center w-full" style="height: 100%;">
+                        <div class="bg-gray-100 w-full h-full flex items-center justify-center p-4">
+                            <p class="text-base text-black">No Featured Opportunity Available.</p>
+                        </div>
+                    </div> --}}
                 </div>
             </div>
 
@@ -162,11 +171,11 @@
                 <div class="col-span-3 md:col-span-2">
                     <div class="flex items-center justify-between gap-4 font-[400]">
                         <div class="w-fit">
-                            <p class="text-[32px] md:text-[40px]">OPPORTUNITIES</p>
+                            <p class="text-2xl md:text-[32px] md:text-[40px]">OPPORTUNITIES</p>
                         </div>
 
                         <div class="flex items-center justify-between gap-4 md:gap-8">
-                            <a class="text-[20px] font-[400] hover:underline" href="">VIEW</a>
+                            <a class="text-lg md:text-xl font-[400] hover:underline" href="">VIEW</a>
 
                             {{-- Style for the tabs --}}
                             <style>
@@ -219,9 +228,9 @@
                                 </div>
 
                                 <div class="w-full">
-                                    <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
+                                    <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
 
-                                    <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online,
+                                    <p class="text-[18px] font-[400] mb-3 capitalize">
                                         {{ $opportunity->location }}</p>
 
                                     <div
@@ -253,8 +262,8 @@
                                 <div class="w-[200px]">
                                     <a href="">
                                         <div
-                                            class="h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
-                                            <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                            class="h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
                                         </div>
                                     </a>
                                 </div>
@@ -436,11 +445,11 @@
                 <div class="h-[33px] w-full md:w-[20%] bg-[#F51D1D]"></div>
             </div>
 
-            <div class="h-fit md:h-[600px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
+            <div class="h-[600px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
                 style="background-image: url('{{ asset('img/bpi-bg-3.jpg') }}')">
                 <div class="h-full w-full px-20 py-12 flex flex-col items-start justify-center bg-[#2E2E2E96]">
-                    <p class="w-full text-[40px] text-center md:text-start">Mission Statement</p>
-                    <p class="w-full max-w-[600px] text-[50px] text-center md:text-start">Feed the Hungry! Walang
+                    <p class="w-full text-3xl md:text-[40px] text-center md:text-start">Mission Statement</p>
+                    <p class="w-full max-w-[600px] text-4xl md:text-[50px] text-center md:text-start">Feed the Hungry! Walang
                         Pilipinong Nagugutom!</p>
                 </div>
             </div>
@@ -497,9 +506,9 @@
             <!-- Right Section with Background and Overlay -->
             <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8">
                 <div class="w-full flex flex-col items-start gap-4 z-10 text-[#5B5B5B] font-[400]">
-                    <p class="text-[36px]">Recent Event Gallery</p>
-                    <p class="text-[48px]">JUST BRING YOUR HEARTS.</p>
-                    <p class="text-[24px] w-full max-w-[510px] text-[#494949]">Lorem Ipsum is simply dummy text of the
+                    <p class="text-2xl md:text-[36px]">Recent Event Gallery</p>
+                    <p class="text-3xl md:text-5xl">JUST BRING YOUR HEARTS.</p>
+                    <p class="text-xl md:text-2xl w-full max-w-[510px] text-[#494949]">Lorem Ipsum is simply dummy text of the
                         printing and typesetting industry. Lorem Ipsum has been the industry's standard</p>
                 </div>
                 <div class="w-full z-10">
