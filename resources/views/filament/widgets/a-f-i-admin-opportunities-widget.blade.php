@@ -45,7 +45,7 @@
                                     <p class="font-[700] text-black">PUBLISHED</p>
                                 @else --}}
                                     @include('custom.icons.admin-icons', ['icon' => 'for-review'])
-                                    <p class="font-[700] text-[#F55E1D]">{{$opportunity->status->name}}</p>
+                                    <p class="font-[700] text-[#F55E1D]">{{$opportunity->status?->name}}</p>
                                 {{-- @endif --}}
                             </div>
                         </div>

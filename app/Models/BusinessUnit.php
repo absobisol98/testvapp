@@ -68,6 +68,11 @@ class BusinessUnit extends Model implements HasMedia
         return $this->hasMany(BusinessUnitSocial::class, 'business_unit_id');
     }
 
+    public function admins()
+    {
+        return $this->belongsToMany(User::class, 'business_unit_has_external_admin','business_unit_id', 'user_id');
+    }
+
     // public function children()
     // {
     //     return $this->hasMany(BannerCategory::class, 'parent_id');
