@@ -4,11 +4,76 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< Updated upstream
     "content-hash": "c2bf8e011eeee543efe38dbeb79f1779",
+=======
+    "content-hash": "0e494187d2b80e98e0c63d6159cb282c",
+>>>>>>> Stashed changes
     "packages": [
         {
             "name": "amidesfahani/filament-tinyeditor",
             "version": "v2.1.0",
+<<<<<<< Updated upstream
+=======
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amidesfahani/filament-tinyeditor.git",
+                "reference": "a5eb14b3190366088ad1b1f44ee7d9d19d427619"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amidesfahani/filament-tinyeditor/zipball/a5eb14b3190366088ad1b1f44ee7d9d19d427619",
+                "reference": "a5eb14b3190366088ad1b1f44ee7d9d19d427619",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.16",
+                "tinymce/tinymce": "^7.3.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.13"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AmidEsfahani\\FilamentTinyEditor\\TinyeditorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AmidEsfahani\\FilamentTinyEditor\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Amid Esfahani",
+                    "email": "amid.esfahani@gmail.com"
+                }
+            ],
+            "description": "Filament TinyMce Editor v6",
+            "keywords": [
+                "filament",
+                "laravel",
+                "tinyeditor",
+                "tinymce"
+            ],
+            "support": {
+                "issues": "https://github.com/amidesfahani/filament-tinyeditor/issues",
+                "source": "https://github.com/amidesfahani/filament-tinyeditor/tree/v2.1.0"
+            },
+            "time": "2025-01-18T15:30:11+00:00"
+        },
+        {
+            "name": "anourvalar/eloquent-serialize",
+            "version": "1.2.27",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/amidesfahani/filament-tinyeditor.git",
@@ -1793,7 +1858,11 @@
         },
         {
             "name": "filament/actions",
+<<<<<<< Updated upstream
             "version": "v3.2.135",
+=======
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
@@ -1801,8 +1870,13 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< Updated upstream
                 "url": "https://api.github.com/repos/filamentphp/actions/zipball/dee2ca6d11e0ea3efb1190eabf6e483dbe2320ff",
                 "reference": "dee2ca6d11e0ea3efb1190eabf6e483dbe2320ff",
+=======
+                "url": "https://api.github.com/repos/filamentphp/actions/zipball/9b82b77efbd4c128a2d9915926832be0d9ed3858",
+                "reference": "9b82b77efbd4c128a2d9915926832be0d9ed3858",
+>>>>>>> Stashed changes
                 "shasum": ""
             },
             "require": {
@@ -1842,11 +1916,19 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
+<<<<<<< Updated upstream
             "time": "2025-01-24T09:27:43+00:00"
         },
         {
             "name": "filament/filament",
             "version": "v3.2.135",
+=======
+            "time": "2025-01-22T10:23:16+00:00"
+        },
+        {
+            "name": "filament/filament",
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
@@ -1911,7 +1993,11 @@
         },
         {
             "name": "filament/forms",
+<<<<<<< Updated upstream
             "version": "v3.2.135",
+=======
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
@@ -1919,8 +2005,13 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< Updated upstream
                 "url": "https://api.github.com/repos/filamentphp/forms/zipball/e17618c921cd0300341a53d0eb2174c51e649565",
                 "reference": "e17618c921cd0300341a53d0eb2174c51e649565",
+=======
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/47bc070cb7e919ecc01f42b25b5ad5b6d7c54488",
+                "reference": "47bc070cb7e919ecc01f42b25b5ad5b6d7c54488",
+>>>>>>> Stashed changes
                 "shasum": ""
             },
             "require": {
@@ -1963,7 +2054,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
+<<<<<<< Updated upstream
             "time": "2025-01-24T09:27:50+00:00"
+=======
+            "time": "2025-01-22T10:23:19+00:00"
+>>>>>>> Stashed changes
         },
         {
             "name": "filament/infolists",
@@ -1975,8 +2070,13 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< Updated upstream
                 "url": "https://api.github.com/repos/filamentphp/infolists/zipball/3330966b87da7d2078b62556428c279a6e8ff17c",
                 "reference": "3330966b87da7d2078b62556428c279a6e8ff17c",
+=======
+                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/162d2a9232e22310a7440a1c866b4359437ccae6",
+                "reference": "162d2a9232e22310a7440a1c866b4359437ccae6",
+>>>>>>> Stashed changes
                 "shasum": ""
             },
             "require": {
@@ -2014,7 +2114,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
+<<<<<<< Updated upstream
             "time": "2025-01-24T09:27:49+00:00"
+=======
+            "time": "2025-01-22T10:23:11+00:00"
+>>>>>>> Stashed changes
         },
         {
             "name": "filament/notifications",
@@ -2026,8 +2130,13 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< Updated upstream
                 "url": "https://api.github.com/repos/filamentphp/notifications/zipball/e864c50bc0b6e9eb46b5e3d93a672a66f80a0fbe",
                 "reference": "e864c50bc0b6e9eb46b5e3d93a672a66f80a0fbe",
+=======
+                "url": "https://api.github.com/repos/filamentphp/notifications/zipball/7f0f0e721a0cdb49b10f4d1b5b1fc435c35ea5df",
+                "reference": "7f0f0e721a0cdb49b10f4d1b5b1fc435c35ea5df",
+>>>>>>> Stashed changes
                 "shasum": ""
             },
             "require": {
@@ -2066,11 +2175,19 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
+<<<<<<< Updated upstream
             "time": "2025-01-24T09:27:49+00:00"
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
             "version": "v3.2.135",
+=======
+            "time": "2025-01-22T10:23:12+00:00"
+        },
+        {
+            "name": "filament/spatie-laravel-media-library-plugin",
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -2107,7 +2224,11 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
+<<<<<<< Updated upstream
             "version": "v3.2.135",
+=======
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -2154,7 +2275,11 @@
         },
         {
             "name": "filament/spatie-laravel-tags-plugin",
+<<<<<<< Updated upstream
             "version": "v3.2.135",
+=======
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-tags-plugin.git",
@@ -2191,7 +2316,11 @@
         },
         {
             "name": "filament/support",
+<<<<<<< Updated upstream
             "version": "v3.2.135",
+=======
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
@@ -2199,8 +2328,13 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< Updated upstream
                 "url": "https://api.github.com/repos/filamentphp/support/zipball/ca0ff1fa43d743e06de9c2f50ccea98e23785c7d",
                 "reference": "ca0ff1fa43d743e06de9c2f50ccea98e23785c7d",
+=======
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/9a537b6fb5426ef1b1d0bc324e3f6aaeba707533",
+                "reference": "9a537b6fb5426ef1b1d0bc324e3f6aaeba707533",
+>>>>>>> Stashed changes
                 "shasum": ""
             },
             "require": {
@@ -2246,7 +2380,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
+<<<<<<< Updated upstream
             "time": "2025-01-24T09:28:01+00:00"
+=======
+            "time": "2025-01-22T10:23:33+00:00"
+>>>>>>> Stashed changes
         },
         {
             "name": "filament/tables",
@@ -2258,8 +2396,13 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< Updated upstream
                 "url": "https://api.github.com/repos/filamentphp/tables/zipball/db63ab6fd7c2046dc9b1fc6fbd92df0a1aabb54e",
                 "reference": "db63ab6fd7c2046dc9b1fc6fbd92df0a1aabb54e",
+=======
+                "url": "https://api.github.com/repos/filamentphp/tables/zipball/a958263e4abc597aa2aed3f29506a20ab8ae4a2d",
+                "reference": "a958263e4abc597aa2aed3f29506a20ab8ae4a2d",
+>>>>>>> Stashed changes
                 "shasum": ""
             },
             "require": {
@@ -2298,11 +2441,19 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
+<<<<<<< Updated upstream
             "time": "2025-01-24T09:28:02+00:00"
         },
         {
             "name": "filament/widgets",
             "version": "v3.2.135",
+=======
+            "time": "2025-01-22T10:23:41+00:00"
+        },
+        {
+            "name": "filament/widgets",
+            "version": "v3.2.134",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
@@ -3314,8 +3465,13 @@
             "time": "2024-11-26T13:22:08+00:00"
         },
         {
+<<<<<<< Updated upstream
             "name": "laravel-notification-channels/discord",
             "version": "v1.6.0",
+=======
+            "name": "laravel/framework",
+            "version": "v11.39.1",
+>>>>>>> Stashed changes
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel-notification-channels/discord.git",
@@ -3323,6 +3479,7 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< Updated upstream
                 "url": "https://api.github.com/repos/laravel-notification-channels/discord/zipball/317117f22c6c2b9a4f78976f097c3082e40902da",
                 "reference": "317117f22c6c2b9a4f78976f097c3082e40902da",
                 "shasum": ""
@@ -3466,6 +3623,10 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/42d6ae000c868c2abfa946da46702f2358493482",
                 "reference": "42d6ae000c868c2abfa946da46702f2358493482",
+=======
+                "url": "https://api.github.com/repos/laravel/framework/zipball/3d693dd36e78121bcd51fc02eda4bc137d2a17f2",
+                "reference": "3d693dd36e78121bcd51fc02eda4bc137d2a17f2",
+>>>>>>> Stashed changes
                 "shasum": ""
             },
             "require": {
@@ -3667,7 +3828,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
+<<<<<<< Updated upstream
             "time": "2025-01-28T15:22:55+00:00"
+=======
+            "time": "2025-01-22T17:01:46+00:00"
+>>>>>>> Stashed changes
         },
         {
             "name": "laravel/helpers",
