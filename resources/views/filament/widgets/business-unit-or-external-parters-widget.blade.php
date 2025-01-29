@@ -7,14 +7,16 @@
                 </p>
             </div>
 
-            <button class="w-fit">
-                <div class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
-                    <p class="font-normal text-lg text-white hidden md:block">CREATE NEW PARTNER</p>
+            <a href="">
+                <button class="w-fit">
+                    <div class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                        <p class="font-normal text-lg text-white hidden md:block">CREATE NEW PARTNER</p>
 
-                    <!-- Tablet and Mobile text -->
-                    <p class="font-normal text-lg text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> PARTNER </p>
-                </div>
-            </button>
+                        <!-- Tablet and Mobile text -->
+                        <p class="font-normal text-base text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> PARTNER </p>
+                    </div>
+                </button>
+            </a>
         </div>
 
         <div class="w-full border-t border-[#E1E1E1] my-4"></div>

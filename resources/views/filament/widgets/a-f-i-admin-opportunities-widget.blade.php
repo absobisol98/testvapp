@@ -6,15 +6,17 @@
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Opportunities</p>
             </div>
 
-            <button class="w-fit">
-                <div
-                    class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
-                    <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
+            <a href="">
+                <button class="w-fit">
+                    <div
+                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                        <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
 
-                    <!-- Tablet and Mobile text -->
-                    <p class="font-normal text-lg text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> OPPORTUNITY </p>
-                </div>
-            </button>
+                        <!-- Tablet and Mobile text -->
+                        <p class="font-normal text-base text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> OPPORTUNITY </p>
+                    </div>
+                </button>
+            </a>
         </div>
 
         <div class="w-full border-t border-[#E1E1E1] my-4"></div>
@@ -85,7 +87,7 @@
                         </div>
                     </div>
 
-                    <div class="w-fit flex items-center justify-between gap-8 p-4">
+                    {{-- <div class="w-fit flex items-center justify-between gap-8 p-4">
                         <x-filament::icon-button icon="heroicon-s-pencil-square" wire:click="openNewUserModal"
                             size="xl" label="Edit" />
                         <x-filament::icon-button icon="heroicon-s-trash" wire:click="openDeleteConfirmation"
@@ -97,7 +99,7 @@
                                 class="w-11 h-6 bg-[#E6E0E9] rounded-full ring-2 ring-[#79747E] peer-checked:bg-[#65558F] peer-checked:ring-[#65558F] peer-checked:after:bg-white peer-checked:after:border-white peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-[#79747E] after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all">
                             </div>
                         </label>
-                    </div>
+                    </div> --}}
 
                 </div>
 

@@ -7,22 +7,26 @@
             </div>
 
             <div class="w-fit flex items-center justify-between gap-4">
-                <button class="w-fit">
-                    <div
-                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-6 hover:bg-[#1A67B1]">
-                        <p class="font-normal text-lg text-white hidden md:block">CREATE NEW VOLUNTEER</p>
+                <a href="">
+                    <button class="w-fit">
+                        <div
+                            class="h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-6 hover:bg-[#1A67B1]">
+                            <p class="font-normal text-lg text-white hidden md:block">CREATE NEW VOLUNTEER</p>
 
-                        <!-- Tablet and Mobile text -->
-                        <p class="font-normal text-lg text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> VOLUNTEER </p>
-                    </div>
-                </button>
+                            <!-- Tablet and Mobile text -->
+                            <p class="font-normal text-base text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> VOLUNTEER </p>
+                        </div>
+                    </button>
+                </a>
 
-                <button class="w-fit">
-                    <div
-                        class="h-auto md:h-[48px] w-full bg-[#F55E1D] flex items-center justify-center py-2 px-6 hover:bg-[#FF9141]">
-                        <p class="font-normal text-lg text-white">IMPORT</p>
-                    </div>
-                </button>
+                <a href="">
+                    <button class="w-fit">
+                        <div
+                            class="h-[48px] w-full bg-[#F55E1D] flex items-center justify-center py-2 px-6 hover:bg-[#FF9141]">
+                            <p class="font-normal text-base md:text-lg text-white">IMPORT</p>
+                        </div>
+                    </button>
+                </a>
             </div>
         </div>
 

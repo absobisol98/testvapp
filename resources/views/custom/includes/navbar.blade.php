@@ -112,7 +112,7 @@
         {{-- User Dropdown --}}
         @auth
         <a href="{{ route('filament.admin.pages.dashboard') }}">
-            <div class="h-[36px] md:h-[56px] w-[120px] md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+            <div class="h-auto md:h-[56px] w-auto md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                 <div class="w-[34px] h-[34px] inline-flex items-center justify-center">
                     @include('custom.icons.navbar-icons', [
                         'icon' => 'avatar',
