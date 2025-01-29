@@ -13,7 +13,10 @@ use App\Models\EventType;
 use App\Models\TagsEvent;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -22,6 +25,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Actions\Action;
 
 class EventResource extends Resource
 {
@@ -258,6 +262,25 @@ class EventResource extends Resource
                         ->required(),
                     ])->columnSpan(1),
 
+                Forms\Components\Radio::make('approval_type')
+                    ->options([
+                        'Automatic' => 'Automatic',
+                        'Requires Approval' => 'Requires Facilitator Approval',
+                    ])
+                    ->default(2)
+                    ->required(),
+
+                Repeater::make('other_fields')
+                    ->relationship()
+                    ->columnSpanFull()
+                    ->defaultItems(0)
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('label')->label('Field Label')->required(),
+                            TextInput::make('text')->required('Value')
+                        ]),
+                    ]),
+                    
                 Forms\Components\Section::make('Attachments')
                     ->schema([
                         Forms\Components\FileUpload::make('media')
@@ -269,10 +292,22 @@ class EventResource extends Resource
                             ->downloadable(),
                     ])
                     ->collapsible(),
+
+
+               
 //                        Forms\Components\TagsInput::make('required_document_types')
 //                            ->visible(fn ($get) => $get('requires_documents')),
             ]);
     }
+
+
+    public static function getWidgets(): array
+    {
+        return [
+            EventResource\Widgets\EventsToApprove::class,
+        ];
+    }
+
 
     public static function table(Table $table): Table
     {

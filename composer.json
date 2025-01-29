@@ -25,6 +25,7 @@
         "claviska/simpleimage": "^4.2",
         "codeat3/blade-fluentui-system-icons": "^1.32",
         "datlechin/filament-menu-builder": "^0.5.2",
+        "dotswan/filament-map-picker": "^1.7",
         "endroid/qr-code": "^6.0",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
@@ -45,7 +46,10 @@
         "riodwanto/filament-ace-editor": "^1.0",
         "saade/filament-fullcalendar": "^3.0",
         "stichoza/google-translate-php": "^5.2",
+        "tapp/filament-maillog": "^1.0",
         "tomatophp/filament-media-manager": "^1.1",
+        "visualbuilder/email-templates": "^3.1",
+        "vormkracht10/filament-mails": "^2.2",
         "ysfkaya/filament-phone-input": "^3.1",
         "z3d0x/filament-logger": "^0.7.2"
     },

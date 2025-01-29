@@ -21,6 +21,11 @@
             color:whitesmoke;
             padding-left:5px;
         }
+
+          /* Make selected text black */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            color: black !important;
+        }
     </style>
 
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
@@ -59,11 +64,11 @@
                                 <p class="text-2xl  mb-4">Ayala Corporate Citizenship and Volunteer Program</p>
                                 <p class="text-2xl mb-4">Start your registration here.</p>
 
-                                <div>
+                                {{-- <div>
                                     <label class="block text-sm font-semibold required">Username</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="username"/>
                                     <span class="text-danger text-red-400 text-sm username_err"></span>
-                                </div>
+                                </div> --}}
                                 <div>
                                     <label class="block text-sm font-semibold required">First Name</label>
                                     <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="firstname"/>
@@ -92,7 +97,7 @@
                                 <!-- Program Interest Dropdown -->
                                 <div class="mb-8">
                                     <label class="block mb-2 text-white font-semibold">What programs are you interested in?</label>
-                                    <select class="w-full p-2 bg-white text-gray-900 rounded" name="program_id">
+                                    <select id="program-select" class="w-full p-2 bg-white text-gray-900 rounded" name="program_id[]" multiple>
                                         @foreach($programs as $program)
                                             <option value="{{ $program->id }}">{{ $program->name }}</option>
                                         @endforeach
@@ -110,7 +115,7 @@
                             <!-- Right Side (Multi-Step Form) -->
                             <div class="p-8 lg:p-12 flex items-start justify-start">
                                 <div class="text-white w-full">
-                                    <h2 class="text-3xl font-normal mb-12">Personal Information</h2>
+                                    <h2 class="text-3xl font-normal mb-8">Personal Information</h2>
 
                                     <!-- Multi-Step Form Structure -->
 
@@ -178,8 +183,13 @@
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-semibold required">Company Contact Number</label>
-                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_contact_number" />
+                                                <label class="block text-sm font-semibold required">Company Contact
+                                                    Number</label>
+                                                <input type="text"
+                                                    class="w-full p-2 border border-gray-300 rounded text-black"
+                                                    name="company_contact_number" pattern="[0-9]*" inputmode="numeric"
+                                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
+                                                    required />
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-semibold required">Company Representative</label>
@@ -219,7 +229,11 @@
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Number</label>
-                                            <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_number"/>
+                                            <input type="text" class="w-full p-2 border border-gray-300 rounded text-black"
+                                                name="emergency_contact_number" pattern="[0-9]*" inputmode="numeric"
+                                                maxlength="15"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
+                                                required />
                                             <span class="text-danger text-red-400 text-sm emergency_contact_number_err"></span>
                                         </div>
                                         <div>
@@ -254,6 +268,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
     <script>
         function nextStep(step) {
             // Hide all steps
@@ -285,8 +303,23 @@
             }
         }
 
+        $(document).ready(function() {
+        $('#program-select').select2({
+            placeholder: "Select programs",
+            allowClear: true
+        });
+    });
+
+    //     $(document).ready(function() {
+    //     $('#program-select').select2({
+    //         placeholder: "Select programs",
+    //         allowClear: true
+    //     });
+    // });
+
         function updateDropdowns() {
             const selectedOrganization = document.querySelector('input[name="affiliate_type_id"]:checked')?.id;
+            const clusterSelect = document.getElementById('clusterSelect');
             const clusterSelectWrapper = document.getElementById('clusterSelectWrapper');
             const companySelect = document.getElementById('companySelect');
             const companySelectWrapper = document.getElementById('companySelectWrapper');
@@ -303,30 +336,36 @@
                 companySelectWrapper.style.display = 'none'; // Hide company dropdown
             } else {
                 companySelectWrapper.style.display = 'block'; // Show company dropdown
+            }
 
-                // Filter and show companies based on the selected organization
+            // Update company dropdown based on selected cluster
+            clusterSelect.addEventListener('change', function () {
+                const selectedClusterId = clusterSelect.value;
                 const allOptions = companySelect.querySelectorAll('option');
+
                 allOptions.forEach(option => {
                     const clusterId = option.getAttribute('data-cluster');
 
-                    if (selectedOrganization === 'ayala_employee' && clusterId == 1) {
-                        option.style.display = 'block'; // Show only cluster_id 1
-                    } else if (selectedOrganization === 'external_partner' && clusterId >= 2 && clusterId <= 8) {
-                        option.style.display = 'block'; // Show cluster_id between 2 and 8
+                    if (!selectedClusterId || clusterId === selectedClusterId) {
+                        option.style.display = 'block'; // Show matching companies
                     } else {
-                        option.style.display = 'none'; // Hide all other options
+                        option.style.display = 'none'; // Hide non-matching companies
                     }
                 });
-            }
-        }
 
-        // Add event listeners to update dropdowns when the organization changes
+                // Reset selected company
+                companySelect.value = '';
+        });
+    }
+
+    // Add event listeners to update dropdowns when the organization changes
         document.querySelectorAll('input[name="affiliate_type_id"]').forEach(radio => {
             radio.addEventListener('change', updateDropdowns);
-        });
+    });
 
-        // Call the function on page load to ensure the initial state is set correctly
+    // Call the function on page load to ensure the initial state is set correctly
         updateDropdowns();
+
 
         $(document).ready(function() {
             $("#btn-register").click(function(e) {
@@ -352,9 +391,9 @@
                     var emergency_contact_number = $("input[name='emergency_contact_number']").val();
                     var affiliate_type_id = $("input[name='affiliate_type_id']").val();
                     var company_id = $("select[name='company_id']").val();
-                    var program_id = $("select[name='program_id']").val();
+                    var program_id = $("select[name='program_id[]']").val();
                     var cluster_id = $("select[name='cluster_id']").val();
-
+                console.log(cluster_id)
                 $.ajax({
                     url: "{{ route('volunteer.form.store') }}",
                     type: 'POST',

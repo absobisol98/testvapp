@@ -13,13 +13,72 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
-
+use DateTime;
 class EventRegistrationTableAction
 {
 
     public function execute()
     {
         return [
+            \Filament\Tables\Actions\Action::make('generateUrl')
+                ->label('Add to Calendar')
+                ->action(function ($record) {
+                    // Generate the URL using the data from the row
+
+                    $base_url = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=";
+                    $title = $record->title;
+                    $start = $record->start_date;
+                    $end = $record->end_date;
+
+
+                    $start_date = new DateTime($start);
+                    $end_date = new DateTime($end);
+
+                    $formatted_start = $start_date->format('Ymd\THis');
+                    $formatted_end = $end_date->format('Ymd\THis');
+
+
+                        if($record->recurrence_type_id == 1){
+                            $freq = '';
+                        }else{
+                            $formatted_recurrence = new DateTime($record->repeat_until);
+
+                            $formatted_recurrence = $formatted_recurrence->format('Ymd');
+
+                            if($record->frequency == 'daily'){
+                                $freq = "&recur=RRULE:FREQ%3DDAILY;UNTIL%3D" . $formatted_recurrence;
+                            }elseif($record->frequency == 'weekly'){
+                                $freq = "&recur=RRULE:FREQ%3DWEEKLY;UNTIL%3D" . $formatted_recurrence;
+                            }elseif($record->frequency == 'monthly'){
+                                $freq = "&recur=RRULE:FREQ%3DMONTHLY;UNTIL%3D" . $formatted_recurrence;
+                            }elseif($record->frequency == 'yearly'){
+                                $freq = "&recur=RRULE:FREQ%3DYEARLY;UNTIL%3D" . $formatted_recurrence;
+                            }
+                        }
+
+                    $description = strip_tags($record->description);
+                    $formatted_description = str_replace(' ', '%20', $description);
+                    $final_url = $base_url . $formatted_description .'&dates=' .$formatted_start .'/'. $formatted_end . $freq . '&ctz=Asia/Tokyo';
+
+
+
+                    return redirect($final_url);
+                })
+
+                ->icon('heroicon-o-link')
+                ->visible(function (Event $record){
+
+                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
+
+                    if($registration && $registration->status_id == 1){
+                        return true;
+                    }
+
+                    return false;
+
+
+                }),
+
             \Filament\Tables\Actions\Action::make('Register')
                 ->color('primary')
                 ->button()

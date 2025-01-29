@@ -29,6 +29,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
+use Tapp\FilamentMailLog\FilamentMailLogPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -44,7 +45,6 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(fn (GeneralSettings $settings) => Storage::url($settings->site_favicon))
             ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
             ->brandLogo(fn (GeneralSettings $settings) => Storage::url($settings->brand_logo))
-            //->brandLogo(asset('img/logo-white.png'))
             ->darkMode(false)
             ->brandLogoHeight(fn (GeneralSettings $settings) => $settings->brand_logoHeight)
             ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
@@ -72,6 +72,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('fluentui-document-bullet-list-multiple-20-o')
                     ->group(__('menu.nav_group.activities'))
                     ->sort(99),
+
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -101,6 +102,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
+                FilamentMailLogPlugin::make(),
                 \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make(),
                 FilamentFullCalendarPlugin::make()
                     ->schedulerLicenseKey('')
@@ -110,7 +112,7 @@ class AdminPanelProvider extends PanelProvider
                     ->locale(config('app.locale'))
                     ->plugins(['dayGrid','timeGrid'])
                     ->config([]),
-//                EmailTemplatesPlugin::make(),
+               EmailTemplatesPlugin::make(),
 //                \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
 //                    ->allowSubFolders(),
                 \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),

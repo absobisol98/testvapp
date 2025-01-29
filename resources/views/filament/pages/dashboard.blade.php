@@ -21,10 +21,10 @@
 
     <div class="w-full flex flex-col gap-8">
         @livewire(\App\Filament\Widgets\HeroBannerWidget::class)
-        
+
         {{-- If the user is a Volunteer --}}
         @if (true)
-            @livewire(\App\Filament\Widgets\AdsWidget::class)
+            @livewire(\App\Filament\Widgets\AdsDashboardWidget::class)
             @livewire(\App\Filament\Widgets\UpcomingOpportunityWidget::class)
             @livewire(\App\Filament\Widgets\RecentOpportunitiesWidget::class)
         @endif
