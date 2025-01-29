@@ -3,10 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\Conversions\Manipulations;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class BusinessUnit extends Model
+class BusinessUnit extends Model implements HasMedia
 {
 
+    use InteractsWithMedia;
+    
     protected $table = 'business_units';
 
     protected $fillable = [
@@ -25,6 +31,31 @@ class BusinessUnit extends Model
     /**
      * @var array<string, string>
      */
+
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('preview')
+            // ->crop(Manipulations, 400, 400)
+            ->performOnCollections('bu_logo')
+            ->format('webp')
+            ->sharpen(10);
+
+
+        $this->addMediaConversion('gallery')
+            // ->fit(Manipulations::FIT_CROP, 400, 350)
+            ->performOnCollections('bu_galleries')
+            ->format('webp')
+            ->sharpen(10);
+
+        $this->addMediaConversion('cover')
+            ->performOnCollections('bu_eventcover')
+            // ->fit(Manipulations::FIT_CONTAIN, 1500, 2000)
+            ->format('webp')
+            ->sharpen(10);
+    }
+ 
+ 
 
     public function createdBy()
     {

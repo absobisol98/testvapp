@@ -9,6 +9,7 @@ use App\Filament\Resources\EventResource\RelationManagers\AttendeesRelationManag
 use App\Models\Cluster;
 use App\Models\Event;
 use App\Models\EventSlotType;
+use App\Models\EventTag;
 use App\Models\EventType;
 use App\Models\TagsEvent;
 use App\Models\User;
@@ -383,6 +384,32 @@ class EventResource extends Resource
                             $query->where('start_date', '>', now()->subDay());
                         }
 
+                        return $query;
+                    }),
+
+                Filter::make('tags')
+                    ->label('Tags')
+                    ->form([
+                        Forms\Components\Select::make('tags')
+                            ->selectablePlaceholder(false)
+                            ->label('')
+                            ->default('all')
+                            ->options( function(){
+                                    $option = array();
+                                    $option['all'] = 'All tags';
+                                    foreach(TagsEvent::orderBy('name')->get() as $tag){
+                                        $option[$tag->id] = $tag->name;
+                                    }
+                                    return $option;
+                            } ),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if($data['tags'] !== 'all') {
+                            $query->whereHas('tags', function (Builder $query) use($data) {
+                                $query->where('tag_id', $data['tags']);
+                            });
+                            return $query;
+                        }
                         return $query;
                     }),
             ],layout: FiltersLayout::AboveContent)
