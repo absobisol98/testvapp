@@ -26,6 +26,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\Action;
+use Tapp\FilamentGoogleAutocomplete\Forms\Components\GoogleAutocomplete;
 
 class EventResource extends Resource
 {
@@ -187,8 +188,19 @@ class EventResource extends Resource
 //                                                $get('frequency') == 'monthly'
 //                                            ),
                             ]),
-                            Forms\Components\TextInput::make('location')
-                            ->required(),
+                            GoogleAutocomplete::make('google_search')
+                            ->label('Search Location')
+                            ->countries([
+                                'PH',
+                            ])
+                            ->withFields([
+                                Forms\Components\TextInput::make('location')
+                                    ->extraInputAttributes([
+                                        'data-google-field' => '{formatted_address}',
+                                    ])->columnSpan('full')
+                                    ->disabled(),
+
+                            ]),
 
                             Forms\Components\TagsInput::make('tags')
                             ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray()),
@@ -280,7 +292,7 @@ class EventResource extends Resource
                             TextInput::make('text')->required('Value')
                         ]),
                     ]),
-                    
+
                 Forms\Components\Section::make('Attachments')
                     ->schema([
                         Forms\Components\FileUpload::make('media')
@@ -294,7 +306,7 @@ class EventResource extends Resource
                     ->collapsible(),
 
 
-               
+
 //                        Forms\Components\TagsInput::make('required_document_types')
 //                            ->visible(fn ($get) => $get('requires_documents')),
             ]);
