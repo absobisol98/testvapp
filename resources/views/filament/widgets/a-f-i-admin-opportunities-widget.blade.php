@@ -65,7 +65,6 @@
 
                                 <p><span class="font-semibold">SHIFTS:</span> {{$opportunity->slots['0']->shift_name}}</p>
                                     <p><span class="font-semibold">BATCH</span> {{ $opportunity->slots['0']->type->name }}</p>
-                                @endforeach
 
                             </div>
 
