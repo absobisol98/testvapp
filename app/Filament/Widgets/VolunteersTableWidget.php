@@ -25,9 +25,9 @@ class VolunteersTableWidget extends BaseWidget
                     ->searchable()->sortable(),
                 TextColumn::make('email')
                     ->searchable()->sortable(),
-                ToggleColumn::make('is_active')
-                    ->onColor('success')
-                    ->offColor('danger')
+                // ToggleColumn::make('is_active')
+                //     ->onColor('success')
+                //     ->offColor('danger')
             ])
             ->actions([
                 Action::make('view')
