@@ -16,7 +16,7 @@ class VolunteersTableWidget extends BaseWidget
     {
         return $table
             ->query(
-                User::query()
+                User::role('volunteer')
             )
             ->columns([
                 TextColumn::make('firstname')

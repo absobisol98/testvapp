@@ -75,7 +75,7 @@ class VolunteerResource extends Resource
                         Forms\Components\Section::make()
                             ->schema([
 
-                                Placeholder::make('badges')            
+                                Placeholder::make('badges')
                                     ->content(new HtmlString('<span></span>')),
                                 Forms\Components\Placeholder::make('email_verified_at')
                                     ->label(__('resource.general.email_verified_at'))
