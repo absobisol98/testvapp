@@ -6,7 +6,7 @@ use App\Http\Controllers\QrController;
 use App\Livewire\VolunteerRegistration;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VolunteerRegistrationController;
-
+use App\Http\Controllers\ArticleController;
 
 
 
@@ -28,13 +28,21 @@ use App\Http\Controllers\VolunteerRegistrationController;
 
 
 Route::get('/', [HomepageController::class, 'mainHomepageView'])->name('main.homepage.view');
-Route::get('/business-unit', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
+Route::get('/business-unit/{slug}', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
 
+
+Route::get('/article/{slug}',[ArticleController::class,'viewArticle']);
 
 Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'view'])->name('volunteer.form.view');
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
 
 Route::get('/qr/{event_id}/{attendee_id}', [QrController::class, 'scan_qr'])->name('qr.scan');
+
+// Route::get('/event-modal/{record}', fn ($record) => view('custom.event-modal', ['record' => $record]))->name('event.modal');
+
+Route::get('/registration-confirmation', function () {
+    return view('registration-confirmation');
+});
 
 
 Route::get('/exports/volunteer-list/{event_id}' , [ExportController::class, 'exportVolunteer'])->name('volunteer.export');
