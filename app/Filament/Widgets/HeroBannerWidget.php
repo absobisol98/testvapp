@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\BusinessUnit;
 use App\Models\Event;
 use App\Models\User;
 use Filament\Widgets\Widget;
@@ -13,6 +14,7 @@ class HeroBannerWidget extends Widget
     protected function getViewData(): array
     {
         $volunteer = User::role('volunteer')->count();
+        $businessunit = BusinessUnit::count();
         $opportunity = Event::with('slots', 'tags', 'program')
             ->orderBy('created_at', 'desc')
             ->first();
@@ -56,6 +58,7 @@ class HeroBannerWidget extends Widget
 
         return [
             'opportunity' => $opportunity,
+            'businessunit' => $businessunit,
             'volunteer' => $volunteer,
             'bgImg' => $bgImg,
         ];
