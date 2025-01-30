@@ -8,6 +8,7 @@ namespace App\Models;
 
 use App\Models\Scopes\PublishedEventScope;
 use App\Filament\Resources\EventResource\Pages\EventPage;
+use App\Models\Scopes\ExternalAdminFilter;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Collection;
@@ -52,6 +53,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  // scopes
 
  #[ScopedBy([PublishedEventScope::class])]
+ #[ScopedBy([ExternalAdminFilter::class])]
+
 
 class Event extends Model implements HasMedia
 {
