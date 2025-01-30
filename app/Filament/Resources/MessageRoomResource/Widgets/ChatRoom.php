@@ -32,6 +32,7 @@ class ChatRoom extends Widget
         $this->room = MessageRoom::find($this->record->id);
     }
 
+    protected int | string | array $columnSpan = 'full';
 
 
     public function sendMessage()
@@ -81,7 +82,8 @@ class ChatRoom extends Widget
         return $this->room->messages()
             ->with('user')
             ->latest()
-            ->get(); // Preserve pagination
+            ->get();
+             // Preserve pagination
              // Reverse order;
     }
 
