@@ -61,9 +61,11 @@
             </div>
             <div class="flex flex-col justify-start items-start gap-2">
                 <p class="text-md md:text-lg lg:text-base font-normal capitalize">{!! strip_tags($record->description) !!}</p>
-                <div class="py-2 px-4 flex items-center justify-center bg-[#FF781E] rounded-md">
-                    <p class="text-md md:text-lg lg:text-base font-normal text-white capitalize">Sign In</p>
-                </div>
+                <a href="/admin/events">
+                    <div class="py-2 px-4 flex items-center justify-center bg-[#FF781E] rounded-md">
+                        <p class="text-md md:text-lg lg:text-base font-normal text-white capitalize">REGISTER</p>
+                    </div>
+                </a>
             </div>
         </div>
     </div>

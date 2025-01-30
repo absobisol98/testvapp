@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\User;
+use App\Models\BusinessUnit;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
@@ -16,7 +16,7 @@ class PartnersTableWidget extends BaseWidget
     {
         return $table
         ->query(
-            User::query()
+            BusinessUnit::query()
         )
         ->columns([
             TextColumn::make('name')
