@@ -71,28 +71,21 @@
                             <div class="hidden md:block h-full min-h-[118px] max-h-[118px] border-l border-[#B6B6B6] mx-4"></div>
 
 
-                            <div class="w-full md:w-fit grid grid-cols-2 gap-8">
+                            {{-- <div class="w-full md:w-fit grid grid-cols-2 gap-8">
                                 <div
                                     class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-4">
-                                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">140</p>
+                                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
                                     <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
                                 </div>
-
-                                <div
-                                    class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-4">
-                                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">5</p>
-                                    <p class="text-sm font-bold text-[#03498D]">HOURS</p>
-                                </div>
-
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
                     <div class="w-fit flex items-center justify-between gap-8 p-4">
-                        <a href="\admin/events">
+                        <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
                             <div
                                 class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                <p class="font-[400] text-[18px] text-white">VIEW</p>
                             </div>
                         </a>
                     </div>

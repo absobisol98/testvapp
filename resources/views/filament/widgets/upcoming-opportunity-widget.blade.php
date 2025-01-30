@@ -79,9 +79,9 @@
                     </div>
 
                     <div style="width:200px">
-                        <a href="\admin/events">
+                        <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
                             <div class="h-[36px] md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-normal text-lg text-white">REGISTER</p>
+                                <p class="font-normal text-lg text-white">VIEW</p>
                             </div>
                         </a>
                     </div>

@@ -42,28 +42,28 @@
         <div class="w-full h-full flex flex-col items-end justify-end sm:justify-center gap-4 p-4">
             <div class="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" style="padding-bottom: 20px;">
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">90</p>
-                    <p class="text-sm font-bold text-[#03498D]">UPCOMING</p>
+                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
+                    <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">25</p>
-                    <p class="text-sm font-bold text-[#03498D]">CERTIFICATES</p>
+                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
+                    <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">854</p>
-                    <p class="text-sm font-bold text-[#03498D]">APPROVED HRS</p>
+                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
+                    <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">80</p>
-                    <p class="text-sm font-bold text-[#03498D]">REMAINING HRS</p>
+                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Company::count() }}</p>
+                    <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">11</p>
-                    <p class="text-sm font-bold text-[#03498D]">CANCELLED</p>
+                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\EventFacilitator::count() }}</p>
+                    <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
                 </div>
             </div>
         </div>
@@ -83,7 +83,8 @@
 
                     <div>
                         <p class="text-[20px] font-[500]">{{ $user->name }}</p>
-                        <p class="text-[14px] font-[300]">Member Since: {{ $user->created_at->format('F j, Y') }}</p>
+                        <p><span class="text-[14px] font-[300] font-bold">Member Since:</span>
+                            {{ $user->created_at->format('F j, Y') }}</p>
                         <p class="text-[18px] font-bold text-[#F55E1D]">LEVEL: 1</p>
                     </div>
                 </div>
@@ -228,6 +229,8 @@
                                         {{ $user->company_name ? $user->company_name : 'N/A' }}</p>
                                 </div>
 
+
+
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Address</p>
                                     <p class="text-lg md:text-xl">
@@ -270,6 +273,7 @@
                             }else{
                                 $program_name = 'N/A';
                             }
+
                         @endphp
 
                         <div class="shadow-md p-8">
@@ -298,24 +302,10 @@
                                     <div
                                         class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
                                         <img class="h-full w-full object-cover"
-                                            src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
-                                            alt="Badge 1">
+                                        src="{{$badges['current_rank']['medal']}}"
+                                        alt="Badge 1">
                                     </div>
                                 </div>
-
-
-                                {{-- Badge 2 --}}
-                                <div
-                                    class="col-span-1 flex items-center justify-center gap-1 {{ false ? '' : 'opacity-50' }}">
-                                    <div
-                                        class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
-                                        <img class="h-full w-full object-cover"
-                                            src="{{ \Filament\Facades\Filament::getUserAvatarUrl(auth()->user()) }}"
-                                            alt="Badge 1">
-                                    </div>
-                                </div>
-
-
                             </div>
                         </div>
                     </div>
@@ -365,7 +355,8 @@
                                             </div>
 
                                             <div class="w-[200px]">
-                                                <a href="">
+                                                <img onerror="this.src='{{url('images/error-image.jpeg')}}'; this.onerror=null;" class="w-full" src="{{Storage::url($user->id.'-qr-code.png')}}">
+                                                <a href="{{Storage::url($user->id.'-qr-code.png')}}" download="{{ $user->id.'-qr-code.png' }}">
                                                     <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                                         <p class="font-[400] text-base md:text-[18px] text-white">Download QR</p>
                                                     </div>

@@ -71,7 +71,7 @@
                 {{-- STATS --}}
                 <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5">
                     {{-- For Volunteers --}}
-                    @if (false)
+                    {{-- @if (false)
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
                             <p class="text-sm font-bold text-[#03498D]">UPCOMING</p>
@@ -97,10 +97,10 @@
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat5 }}</p>
                             <p class="text-sm font-bold text-[#03498D]">CANCELLED</p>
                         </div>
-                    @endif
+                    @endif --}}
 
                     {{-- For AFI Admins --}}
-                    @if (false)
+                    {{-- @if (false)
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
 
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
@@ -126,12 +126,12 @@
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat5 }}</p>
                             <p class="text-sm font-bold text-[#03498D]">PARTNERS</p>
                         </div>
-                    @endif
+                    @endif --}}
 
                     {{-- For Partners --}}
                     @if (true)
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\User::count() }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
                             <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
                         </div>
 

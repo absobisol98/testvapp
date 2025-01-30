@@ -194,7 +194,7 @@
                                     @endguest
 
                                     @auth
-                                    <a href="\admin/events">
+                                    <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
                                         <div
                                             class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                             <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
