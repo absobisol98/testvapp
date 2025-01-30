@@ -37,6 +37,8 @@ Route::post('/volunteer-registration-store', [VolunteerRegistrationController::c
 
 Route::get('/qr/{event_id}/{attendee_id}', [QrController::class, 'scan_qr'])->name('qr.scan');
 
+// Route::get('/event-modal/{record}', fn ($record) => view('custom.event-modal', ['record' => $record]))->name('event.modal');
+
 Route::get('/registration-confirmation', function () {
     return view('registration-confirmation');
 });

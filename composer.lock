@@ -4,7 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3a5af89d06fe66cc48712d9c79c4c13",
+
+    "content-hash": "0e494187d2b80e98e0c63d6159cb282c",
+
     "packages": [
         {
             "name": "amidesfahani/filament-tinyeditor",
@@ -10945,6 +10947,7 @@
             "time": "2025-01-13T01:28:02+00:00"
         },
         {
+
             "name": "tapp/filament-maillog",
             "version": "v1.0.5",
             "source": {
@@ -11029,6 +11032,7 @@
             "time": "2025-01-09T12:45:38+00:00"
         },
         {
+
             "name": "tijsverkoyen/css-to-inline-styles",
             "version": "v2.3.0",
             "source": {
@@ -14188,12 +14192,14 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+
 }

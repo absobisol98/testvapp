@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\User;
+use App\Models\BusinessUnit;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
@@ -16,18 +16,24 @@ class PartnersTableWidget extends BaseWidget
     {
         return $table
         ->query(
-            User::query()
+            BusinessUnit::query()
         )
         ->columns([
-            TextColumn::make('id'),
-            TextColumn::make('firstname')
+            TextColumn::make('name')
                 ->label('Partner')
                 ->searchable()->sortable(),
-            TextColumn::make('email')
+            TextColumn::make('address')
+                ->label('Address')
                 ->searchable()->sortable(),
-            // ToggleColumn::make('is_active')
-            //     ->onColor('success')
-            //     ->offColor('danger')
+            TextColumn::make('nickname')
+                ->label('Abbreviation')
+                ->searchable()->sortable(),
+            TextColumn::make('created_by')
+                ->label('Created By')
+                ->searchable()->sortable(),
+            TextColumn::make('created_at')
+                ->label('Created At')
+                ->searchable()->sortable(),
         ])
         ->actions([
             Action::make('view')

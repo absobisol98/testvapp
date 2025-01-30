@@ -4,7 +4,12 @@ namespace App\Filament\Resources\VolunteerResource\Pages;
 
 use App\Filament\Resources\VolunteerResource;
 use App\Models\Event;
+use App\Models\EventAttendee;
+use Filament\Actions;
 use Filament\Resources\Pages\Page;
+use Filament\Actions\EditAction;
+use App\Models\User;
+use App\Actions\GenerateEventQRCode;
 
 class ViewVolunteer extends Page
 {
@@ -13,11 +18,10 @@ class ViewVolunteer extends Page
     protected static string $view = 'filament.resources.volunteer-resource.pages.view-volunteer';
 
 
-
-
+    public $record;
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['user_id'] = auth()->id();
+        $data['user_id'] = $this->record;
         $data['badges'] = $this->record->getBadges();
         return $data;
     }
@@ -26,36 +30,40 @@ class ViewVolunteer extends Page
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
+
     }
 
     protected function getViewData(): array
     {
+        $volunteer = User::role('volunteer')->count();
+        $user = User::where('id', $this->record)->first();
         $opportunity = Event::with('slots', 'tags', 'program')
             ->orderBy('created_at', 'desc')
             ->first();
 
         $allEvents = Event::with('slots')
             ->whereHas('attendees', function ($query) {
-                $query->where('attendee_id', auth()->user()->id);
+                $query->where('attendee_id', $this->record);
             })
             ->get();
         $favoriteEvents = Event::with('slots')
             ->whereHas('attendees', function ($query) {
-                $query->where('attendee_id', auth()->user()->id);
+                $query->where('attendee_id', $this->record);
             })
             ->get();
 
         $bgImg = 'img/ayala-foundation-bg-2.jpg';
 
-        // dd($favoriteEvents);
-
         return [
+            'user' => $user,
+            'volunteer' => $volunteer,
             'opportunity' => $opportunity,
             'allEvents' => $allEvents,
             'favoriteEvents' => $favoriteEvents,
             'bgImg' => $bgImg,
+            'badges' => $user->getBadges(),
         ];
     }
 

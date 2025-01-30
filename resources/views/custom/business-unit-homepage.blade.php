@@ -8,8 +8,8 @@
         {{-- Desktop: Hero Banner Section --}}
         <section class="hidden lg:block h-fit w-full bg-[#03498D] mt-[128px]">
             <div class="h-[90vh] w-full p-8 flex flex-col justify-center items-center gap-4 text-white"
-                style="background: url('{{ asset('img/bpi-homepage-bg.png') }}') no-repeat center center; background-size: cover;">
-                <img class="w-[280px]" src="{{ asset('img/bpi-logo.png') }}" alt="bpi-logo">
+                style="background: url('{{$eventCover }}') no-repeat center center; background-size: cover;">
+                <img class="w-[280px]" src="{{ $logo }}" alt="bpi-logo">
                 <p class="font-[700] text-[50px] text-center">{{$business_unit->header_tagline}}</p>
                 <p class="font-medium text-center text-lg max-w-[900px]">
                     {{$business_unit->header_description}}
@@ -207,7 +207,7 @@
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
 
                     {{-- OPPORTUNITIES List --}}
-                    <div 
+                    <div
                         class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
                         {{-- List --}}
                         @foreach ($opportunities as $index => $opportunity)
@@ -333,15 +333,12 @@
                 class="col-span-1 h-full min-h-[740px] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D] relative">
                 <div class="program-swiper-container h-full w-full overflow-hidden z-0">
                     <div class="swiper-wrapper w-full">
-                        <!-- Slide 1 -->
-                        <div class="swiper-slide w-full h-full"
-                            style="background: url('{{ asset('img/bpi-bg-4.jpg') }}') no-repeat center center; background-size: cover;">
-                        </div>
-
-                        <!-- Slide 2 -->
-                        <div class="swiper-slide w-full h-full"
-                            style="background: url('{{ asset('img/bpi-bg-3.jpg') }}') no-repeat center center; background-size: cover;">
-                        </div>
+                        @foreach ($galleries as  $gallery)
+                                  <!-- Slide 1 -->
+                            <div class="swiper-slide w-full h-full"
+                                style="background: url('{{ $gallery }}') no-repeat center center; background-size: cover;">
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
