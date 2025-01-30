@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use PDO;
 use Spatie\Image\Enums\Fit;
@@ -140,7 +141,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         }
         return $totalHrs;
     }
-
+    public function currentBU(){
+        if($this->hasRole('External Partner')){
+            $id = DB::table('business_unit_has_external_admin')->where('user_id',$this->id)->first();
+            if($id){
+                return BusinessUnit::find($id->business_unit_id);
+            }
+        }
+        return null;
+    }
 
     public function getBadges()
     {

@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\EventResource\Widgets;
 
 use App\Models\Event;
+use App\Models\Scopes\PublishedEventScope;
 use App\Models\User;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
@@ -23,9 +25,17 @@ class EventsToApprove extends BaseWidget
 
         return $table
             ->query(
-                Event::query()->orderBy('is_published')->whereIn('created_by',$ext_partner)
+                Event::query()->withoutGlobalScope(PublishedEventScope::class)->where('is_published',false)->orderBy('is_published')->whereIn('created_by',$ext_partner)
             )
             ->columns([
+                Tables\Columns\TextColumn::make('created_by_user.id')
+                    ->label('Business Unit Name')
+                    ->formatStateUsing( function ($state){
+                        $user = User::find($state);
+                        return $user->currentBU()?->name;
+                    })
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('recurrence_type_id')
@@ -52,24 +62,29 @@ class EventsToApprove extends BaseWidget
                 Tables\Columns\TextColumn::make('program.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status.name')
-                    ->sortable(),
                 Tables\Columns\IconColumn::make('sign_up_approval_required')
                     ->boolean(),
                 Tables\Columns\IconColumn::make('attachment_required')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_by_user.firstname')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('updated_by_user.firstname')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('M d, Y h:i A')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime('M d, Y h:i A')
-                    ->sortable(),
-                    
                 // ...
+            ])
+            ->actions([
+                Action::make('approve_events')
+                    ->label('Approve')
+                    ->modalDescription('Approve this business unit event? ')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(function ($record){
+                        // $record->is_published
+                        dd($record);
+                    })
+
+
             ]);
     }
 }
