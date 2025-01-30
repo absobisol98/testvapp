@@ -10,6 +10,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Actions\EditAction;
 use App\Models\User;
 use App\Actions\GenerateEventQRCode;
+use App\Models\BusinessUnit;
 
 class ViewVolunteer extends Page
 {
@@ -37,6 +38,7 @@ class ViewVolunteer extends Page
 
     protected function getViewData(): array
     {
+        $businessunit = BusinessUnit::count();
         $volunteer = User::role('volunteer')->count();
         $user = User::where('id', $this->record)->first();
         $opportunity = Event::with('slots', 'tags', 'program')
@@ -57,6 +59,7 @@ class ViewVolunteer extends Page
         $bgImg = 'img/ayala-foundation-bg-2.jpg';
 
         return [
+            'businessunit' => $businessunit,
             'user' => $user,
             'volunteer' => $volunteer,
             'opportunity' => $opportunity,

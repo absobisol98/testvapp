@@ -57,7 +57,7 @@
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Company::count() }}</p>
+                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $businessunit }}</p>
                     <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
                 </div>
 
@@ -353,15 +353,24 @@
                                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
                                                 </p>
                                             </div>
+                                            @php
 
-                                            <div class="w-[200px]">
-                                                <img onerror="this.src='{{url('images/error-image.jpeg')}}'; this.onerror=null;" class="w-full" src="{{Storage::url($user->id.'-qr-code.png')}}">
-                                                <a href="{{Storage::url($user->id.'-qr-code.png')}}" download="{{ $user->id.'-qr-code.png' }}">
-                                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                                        <p class="font-[400] text-base md:text-[18px] text-white">Download QR</p>
-                                                    </div>
-                                                </a>
-                                            </div>
+                                                $att_details = $opportunity->attendees->where('attendee_id',$user->id)->first();
+
+                                            @endphp
+                                            @if ($att_details)
+                                                <div class="w-[200px]">
+                                                    <img onerror="this.src='{{url('images/error-image.jpeg')}}'; this.onerror=null;" class="w-full" src="{{Storage::url($att_details->id.'-qr-code.png')}}">
+                                                    <a href="{{ secure_asset(Storage::url($att_details->id . '-qr-code.png')) }}"
+                                                        onclick="event.preventDefault(); forceDownload(this)"
+                                                        data-filename="qr-code.png"
+                                                        class="cursor-pointer">
+                                                         <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                                             <p class="font-medium text-base md:text-[18px] text-white">Download QR</p>
+                                                         </div>
+                                                     </a>
+                                                </div>
+                                            @endif
                                         </div>
 
                                         @if (!$loop->last)
@@ -443,6 +452,26 @@
             </div>
 
             {{-- Tab Scripts --}}
+            <script>
+                function forceDownload(link) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", link.href, true);
+                    xhr.responseType = "blob";
+
+                    xhr.onload = function() {
+                        var blob = xhr.response;
+                        var a = document.createElement('a');
+                        a.href = window.URL.createObjectURL(blob);
+                        a.download = link.getAttribute('data-filename');
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(a.href);
+                    };
+
+                    xhr.send();
+                }
+                </script>
             <script>
                 // Get button and content elements
                 const personalInfoBtn = document.getElementById('personal-info-btn');
