@@ -18,6 +18,16 @@ class EventsToApprove extends BaseWidget
     protected static ?string $heading = 'External Partners Events';
 
 
+    public static function canView(): bool
+    {
+        if (auth()->user()->hasRole('super_admin')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     public function table(Table $table): Table
     {
         $ext_partner = User::role('External Partner')->get()->pluck('id');
