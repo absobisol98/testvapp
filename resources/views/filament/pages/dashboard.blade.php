@@ -38,7 +38,7 @@
         @endif
 
         {{-- If the user is a Partner --}}
-        @if (false)
+        @if (auth()->user()->hasRole('External Partner'))
             @livewire(\App\Filament\Widgets\PartnersOnGoingOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\PartnersMyOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\FacilitatorWidget::class)

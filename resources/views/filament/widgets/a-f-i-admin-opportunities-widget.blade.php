@@ -63,8 +63,19 @@
                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
                                     {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
 
-                                <p><span class="font-semibold">SHIFTS:</span> {{$opportunity->slots['0']->shift_name}}</p>
-                                    <p><span class="font-semibold">BATCH</span> {{ $opportunity->slots['0']->type->name }}</p>
+
+
+                                     @if($opportunity->slots?->first())
+                                     <p><span class="font-semibold">SHIFTS:</span> {{$opportunity->slots['0']->shift_name}}</p>
+                                     <p><span class="font-semibold">BATCH</span> {{ $opportunity->slots['0']->type->name }}</p>
+                                     @else
+                                     <p><span class="font-semibold">SHIFTS:</span></p>
+                                     <p><span class="font-semibold">BATCH</span></p>
+                                     @endif
+
+
+
+
 
                             </div>
 
