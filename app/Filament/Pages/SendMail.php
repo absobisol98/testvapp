@@ -111,7 +111,6 @@ class SendMail extends Page implements HasForms
                         ->label('Send To')
                         ->options([
                             '1' => 'All Volunteers',
-                            '2' => 'Specific Business Unit',
                             '3' => 'Specific Event',
                         ])
                         ->reactive()
