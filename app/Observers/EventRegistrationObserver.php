@@ -3,6 +3,9 @@
 namespace App\Observers;
 
 use App\Models\EventRegistration;
+use App\Models\MessageRoom;
+use App\Models\MessageRoomParticipant;
+
 
 class EventRegistrationObserver
 {
@@ -12,6 +15,18 @@ class EventRegistrationObserver
     public function created(EventRegistration $eventRegistration): void
     {
         //
+
+
+        $room = MessageRoom::where([
+            'event_id' => $eventRegistration->event_id,
+        ])->first();
+
+        // Add event owner as participant
+        MessageRoomParticipant::create([
+            'message_room_id' => $room->id,
+            'user_id' => $eventRegistration->volunteer_id,
+        ]);
+
     }
 
     /**
