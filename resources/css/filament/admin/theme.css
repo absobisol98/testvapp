@@ -23,7 +23,7 @@
 .fi-sidebar-group > .fi-sidebar-group-items { @apply gap-y-2; }
 
 .fi-topbar nav {
-    @apply !ring-0 py-2 !border-none bg-gray-50 dark:bg-gray-950 !shadow-none;
+    @apply !ring-0 py-2 !border-none bg-gray-950 !shadow-none;
 }
 
 
@@ -107,10 +107,14 @@
 }
 
 .fi-topbar .ms-auto .fi-user-menu,
-.fi-topbar .ms-auto .fi-global-search {
-    @apply hidden;
+{
+    @apply !important;
 }
 
+.fi-topbar .ms-auto .fi-global-search
+{
+    @apply hidden;
+}
 
 .fi-sidebar-nav {
     overflow-y: hidden;
