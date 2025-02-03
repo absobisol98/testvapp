@@ -1,4 +1,5 @@
-<a class="w-full" href="https://phplaravel-970963-4908828.cloudwaysapps.com/admin/volunteers/9d701be3-bf0e-40f8-ad32-0d84268629d6">
+@if (auth()->user()?->hasRole('Volunteer'))
+<a class="w-full" href="/admin/volunteers/{{ auth()->user()->id }}/edit">
     <div class="w-full flex flex-col items-center justify-center text-center gap-2">
         <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden rounded-full relative">
             <img class="h-full w-full object-cover"
@@ -12,6 +13,22 @@
         </div>
     </div>
 </a>
+@else
+<a class="w-full">
+    <div class="w-full flex flex-col items-center justify-center text-center gap-2">
+        <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden rounded-full relative">
+            <img class="h-full w-full object-cover"
+                src="{{\Filament\Facades\Filament::getUserAvatarUrl(auth()->user())}}"
+                alt="User Profile Image">
+        </div>
+
+        <div>
+            <p class="text-[20px] font-[500]">{{ auth()->user()->name }}</p>
+            <p class="text-[14px] font-[300]">Member Since: {{ auth()->user()->created_at->format('F j, Y') }}</p>
+        </div>
+    </div>
+</a>
+@endif
 
 <div class="w-full border-t border-[#E1E1E1] mt-3"></div>
 
