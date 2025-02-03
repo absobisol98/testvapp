@@ -17,15 +17,13 @@ class EventRegistrationObserver
         //
 
 
-        $room = MessageRoom::where([
-            'event_id' => $eventRegistration->event_id,
-        ])->first();
+        // $room = MessageRoom::where('event_id',$eventRegistration->event_id)->first();
 
-        // Add event owner as participant
-        MessageRoomParticipant::create([
-            'message_room_id' => $room->id,
-            'user_id' => $eventRegistration->volunteer_id,
-        ]);
+        // // Add event owner as participant
+        // MessageRoomParticipant::create([
+        //     'message_room_id' => $room->id,
+        //     'user_id' => $eventRegistration->volunteer_id,
+        // ]);
 
     }
 
