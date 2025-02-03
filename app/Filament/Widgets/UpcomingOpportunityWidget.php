@@ -11,7 +11,7 @@ class UpcomingOpportunityWidget extends Widget
 
     protected function getViewData(): array
     {
-        $opportunities = Event::with('slots')->get();
+        $opportunities = Event::with('slots')->orderBy('created_at','desc')->get();
 
         // dd($opportunities);
 
