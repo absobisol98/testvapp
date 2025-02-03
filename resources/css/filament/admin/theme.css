@@ -70,9 +70,6 @@
     @apply my-4 pb-4 bg-white dark:bg-gray-900 rounded-3xl shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px];
 }
 
-.fi-simple-main {
-    @apply bg-[url(/public/img/login-bg.jpg)] bg-cover text-primary-400;
-}
 .fi-section,
 .fi-ta-ctn,
 .fi-fo-tabs,

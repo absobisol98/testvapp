@@ -136,11 +136,6 @@
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
                         </div>
@@ -153,6 +148,11 @@
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\EventFacilitator::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
                         </div>
                     @endif
                 </div>
