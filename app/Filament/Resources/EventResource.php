@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\Action;
 use Tapp\FilamentGoogleAutocomplete\Forms\Components\GoogleAutocomplete;
+use Filament\Infolists\Components\TextEntry;
 
 class EventResource extends Resource
 {
@@ -49,28 +50,44 @@ class EventResource extends Resource
                             ->maxFiles(1)
                             ->label('')
                             ->openable()
-                            ->downloadable(),
+                            ->downloadable()
+                            ->helpertext('Upload an event banner (Recommended: 1200x500px, Max: 100MB). Drag & drop or click Browse.')
+                            ->extraAttributes([
+                                'title' => 'Upload event banner here'
+                            ]),
                     ])
                     ->collapsible(),
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->columnSpanFull()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->extraAttributes([
+                        'title' => 'Enter event title'
+                    ]),
 
                 Forms\Components\RichEditor::make('description')
                     ->columnSpanFull()
-                    ->required(),
+                    ->required()
+                    ->extraAttributes([
+                        'title' => 'Enter event description'
+                    ]),
 
                 Forms\Components\Grid::make()
                     ->columns(3)
                     ->schema([
                         Forms\Components\Select::make('program_id')
                             ->relationship('program', 'name')
-                            ->required(),
+                            ->required()
+                            ->extraAttributes([
+                                'title' => 'Please select program in the list'
+                            ]),
                         Forms\Components\Select::make('point_of_contact_id')
                             ->label('HR Representative (Point-of-contact)')
                             ->required()
                             ->preload()
+                            ->extraAttributes([
+                                'title' => 'Please select representative in the list'
+                            ])
                             ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
                             ->relationship(
                                 name: 'point_of_contact',
@@ -80,6 +97,9 @@ class EventResource extends Resource
                         Forms\Components\Select::make('event_type_id')
                         ->relationship('event_type', 'name')
                         ->required()
+                        ->extraAttributes([
+                            'title' => 'Please select event in the list'
+                        ])
                         ->reactive(),
                             ]),
 
@@ -111,16 +131,25 @@ class EventResource extends Resource
                                     ->required()
                                     ->live()
                                     ->minDate(now()->startOfDay())
-                                    ->default(now()),
+                                    ->default(now())
+                                    ->extraAttributes([
+                                        'title' => 'Please select event date'
+                                    ]),
                                 Forms\Components\TimePicker::make('start_time')
 
                                     ->label('Start')
                                     ->default('08:00')
-                                    ->seconds(false),
+                                    ->seconds(false)
+                                    ->extraAttributes([
+                                        'title' => 'Event start schedule'
+                                    ]),
                                 Forms\Components\TimePicker::make('end_time')
                                     ->label('End')
                                     ->default('17:00')
-                                    ->seconds(false),
+                                    ->seconds(false)
+                                    ->extraAttributes([
+                                        'title' => 'Event end schedule'
+                                    ]),
                             ]),
                         Forms\Components\Grid::make(3)
                             ->schema([
@@ -132,7 +161,10 @@ class EventResource extends Resource
                                     ])
                                     ->required()
                                     ->live()
-                                    ->default(1),
+                                    ->default(1)
+                                    ->extraAttributes([
+                                        'title' => 'Select event recurrence type'
+                                    ]),
 
                                 Forms\Components\Select::make('frequency')
                                     ->label('Frequency')
@@ -191,6 +223,9 @@ class EventResource extends Resource
                             ]),
                             GoogleAutocomplete::make('google_search')
                             ->label('Search Location')
+                            ->extraAttributes([
+                                'title' => 'Search event location'
+                            ])
                             ->countries([
                                 'PH',
                             ])
@@ -204,7 +239,10 @@ class EventResource extends Resource
                             ]),
 
                             Forms\Components\TagsInput::make('tags')
-                            ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray()),
+                            ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray())
+                            ->extraAttributes([
+                                'title' => 'Input event tags'
+                            ]),
 
                     ]),
 
@@ -218,12 +256,18 @@ class EventResource extends Resource
                                 Forms\Components\TextInput::make('shift_name')
                                     ->required()
                                     ->minValue(0)
-                                    ->label('Shift name'),
+                                    ->label('Shift name')
+                                    ->extraAttributes([
+                                        'title' => 'Enter shift name'
+                                    ]),
                                 Forms\Components\TextInput::make('total_slots')
                                     ->required()
                                     ->label('Number of Volunteer')
                                     ->minValue(0)
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->extraAttributes([
+                                        'title' => 'Enter number of volunteer'
+                                    ]),
                             ]),
                         Forms\Components\Select::make('slot_type_id')
                             ->label('Type')
@@ -242,7 +286,10 @@ class EventResource extends Resource
                             ->seconds(false),
                         Forms\Components\Textarea::make('responsibilities')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->extraAttributes([
+                                'title' => 'Enter volunteer responsibilities'
+                            ]),
                     ])
                     ->columnSpanFull()
                     ->columns(3),
@@ -258,10 +305,16 @@ class EventResource extends Resource
                             name: 'facilitators',
                             modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
                         )
+                        ->extraAttributes([
+                            'title' => 'Please select facilitator in the list'
+                        ])
                         ->searchable(['firstname','middle_name', 'lastname']),
 
                         Forms\Components\Toggle::make('attachment_required')
-                        ->reactive(),
+                        ->reactive()
+                        ->extraAttributes([
+                            'title' => 'toggle button if attachment is required'
+                        ]),
                     ])->columnSpan(1),
 
                     Forms\Components\Section::make()
@@ -294,7 +347,10 @@ class EventResource extends Resource
                             ->maxFiles(5)
                             ->label('')
                             ->openable()
-                            ->downloadable(),
+                            ->downloadable()
+                            ->extraAttributes([
+                                'title' => 'Upload attachments here'
+                            ]),
                     ])
                     ->collapsible(),
 

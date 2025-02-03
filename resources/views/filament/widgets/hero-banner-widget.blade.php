@@ -11,7 +11,7 @@
                     </div>
 
                     {{-- featured opportunity --}}
-
+{{--
                     @php
                         $latestOpportunity = $opportunity->get()->sortByDesc('created_at')->first();
                     @endphp
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    @endif --}}
                 </div>
 
                 {{-- STATS --}}
