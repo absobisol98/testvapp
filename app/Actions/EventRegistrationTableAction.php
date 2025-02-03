@@ -266,13 +266,17 @@ class EventRegistrationTableAction
                 })
                 ->visible(function (Event $record){
 
+                    if(!$record->start_date->gte(now())){
+                        return false;
+                    }
+                    
                     if(!$record->registrations->where('volunteer_id',auth()->user()->id)->first() && auth()->user()->hasRole(['super_admin'])){
                         return true;
                     }
                     if($record->registrations->where('volunteer_id',auth()->user()->id)->first()){
                         return false;
                     }
-
+                   
                     return (new EventRegistrationButtonVisibilityAction())->execute($record);
 
                 }),
@@ -290,10 +294,10 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-
+                    
                     $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
 
-                    if($registration && $registration->status_id == 1){
+                    if($registration && $registration->status_id == 1 && $registration->start_date->gte(now())){
                         return true;
                     }
 
@@ -308,17 +312,18 @@ class EventRegistrationTableAction
                 ->label('Export')
                 ->url(fn (Event $record): string => route('volunteer.export', $record))
                 ->visible(function (Event $record){
-
+                    $option = false;
                     if(is_null($record->event)){
-                        return true;
+                        $option = true;
                     };
                     $user = auth()->user();
                     if($user->can('export')){
-                        return true;
+                        $option = true;
                     }
                     else {
-                        return false;
+                        $option = false;
                     }
+                    return $option;
 
                 }),
                 
