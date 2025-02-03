@@ -30,6 +30,9 @@ use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
 use Tapp\FilamentMailLog\FilamentMailLogPlugin;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use Tapp\FilamentFormBuilder\FilamentFormBuilderPlugin;
+
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -44,13 +47,12 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification(EmailVerification::class)
             ->favicon(fn (GeneralSettings $settings) => Storage::url($settings->site_favicon))
             ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
-            ->brandLogo(fn (GeneralSettings $settings) => Storage::url($settings->brand_logo))
+            ->brandLogo(fn() => $this->getLogo())
             ->darkMode(false)
             ->brandLogoHeight(fn (GeneralSettings $settings) => $settings->brand_logoHeight)
             ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            // ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 Navigation\NavigationGroup::make()
                     ->label('Content') // !! To-Do: lang
@@ -102,6 +104,12 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
+                FilamentFormBuilderPlugin::make(),
+                AuthUIEnhancerPlugin::make()
+                ->mobileFormPanelPosition('bottom')
+                ->showEmptyPanelOnMobile(true)
+                ->emptyPanelBackgroundImageOpacity('100%')
+                ->emptyPanelBackgroundImageUrl('https://scontent.fmnl9-5.fna.fbcdn.net/v/t39.30808-6/473671794_1028215809349776_8606581255995698286_n.jpg?stp=dst-jpg_p552x414_tt6&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=CWUqDoLrESwQ7kNvgFPAMZB&_nc_zt=23&_nc_ht=scontent.fmnl9-5.fna&_nc_gid=AwhmjLt0BxU68LlYA0i0c8V&oh=00_AYAec2Qk0Y20Los3C8jYRL9QzSg239XiJQshwXNWhU4qLw&oe=67A661EF'),
                 FilamentMailLogPlugin::make(),
                 \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make(),
                 FilamentFullCalendarPlugin::make()
@@ -158,5 +166,16 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make()
 
             ]);
+    }
+
+
+    public function getLogo(): ?string
+    {
+        if(request()->routeIs('filament.admin.auth.login')) {
+            return asset('img/logo-colored.png');
+        }else{
+             return Storage::url(app(GeneralSettings::class)->brand_logo) ?? null;;
+        }
+
     }
 }

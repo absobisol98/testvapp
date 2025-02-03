@@ -21,6 +21,7 @@ class MessageRoomResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
+    protected static bool $shouldRegisterNavigation = false;
     public static function form(Form $form): Form
     {
 

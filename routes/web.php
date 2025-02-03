@@ -42,3 +42,13 @@ Route::get('/exports/volunteer-list/{event_id}' , [ExportController::class, 'exp
 Route::get('/registration-confirmation', function () {
     return view('registration-confirmation');
 });
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/email/verify', [VolunteerRegistrationController::class, 'sendVerificationEmail'])
+        ->name('verification.send');
+
+    Route::get('/email/verify/{id}', [VolunteerRegistrationController::class, 'verify'])
+        ->name('verification.verify')
+        ->middleware('signed');
+});

@@ -97,7 +97,7 @@
                                 <!-- Program Interest Dropdown -->
                                 <div class="mb-8">
                                     <label class="block mb-2 text-white font-semibold">What programs are you interested in?</label>
-                                    <select id="program-select" class="w-full p-2 bg-white text-gray-900 rounded" name="program_id[]" multiple>
+                                    <select id="program-select" class="w-full p-2 bg-white text-gray-900 rounded" name="program_id" >
                                         @foreach($programs as $program)
                                             <option value="{{ $program->id }}">{{ $program->name }}</option>
                                         @endforeach
@@ -391,7 +391,7 @@
                     var emergency_contact_number = $("input[name='emergency_contact_number']").val();
                     var affiliate_type_id = $("input[name='affiliate_type_id']").val();
                     var company_id = $("select[name='company_id']").val();
-                    var program_id = $("select[name='program_id[]']").val();
+                    var program_id = $("select[name='program_id']").val();
                     var cluster_id = $("select[name='cluster_id']").val();
                 console.log(cluster_id)
                 $.ajax({
@@ -423,22 +423,32 @@
                         cluster_id: cluster_id
                     },
                     success: function (data) {
-                        if ($.isEmptyObject(data.error)) {
+                        // Check if data itself exists and has an error property
+                        if (data && data.error && $.isEmptyObject(data.error)) {
                             window.location.href = '{{route("filament.admin.auth.login")}}';
-
-                        } else {
-                            // Handling errors in the `else` block
-                            var formErr = data.error;
+                        } else if (data && data.errors) {
+                            // Some APIs return 'errors' instead of 'error'
+                            var formErr = data.errors;
                             for (var err in formErr) {
-                                $('.' + err + '_err').html(formErr[err][0]); // Display errors dynamically
+                                $('.' + err + '_err').html(formErr[err][0]);
                             }
+                        } else {
+                            console.log('Unexpected response structure:', data);
                         }
                     },
-                    error: function (error) {
-                        console.log(error); // Debugging
-                        var formErr = error.responseJSON.errors;
-                        for (var err in formErr) {
-                            $('.' + err + '_err').html(formErr[err][0]); // Handle server-side errors
+                    error: function (xhr, status, error) {
+                        // More robust error handling
+                        try {
+                            var formErr = xhr.responseJSON && xhr.responseJSON.errors;
+                            if (formErr) {
+                                for (var err in formErr) {
+                                    $('.' + err + '_err').html(formErr[err][0]);
+                                }
+                            } else {
+                                console.log('No error details found:', xhr.responseText);
+                            }
+                        } catch (e) {
+                            console.error('Error processing error response:', e);
                         }
                     }
                 });
