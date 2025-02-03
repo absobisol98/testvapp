@@ -90,6 +90,7 @@ class PostResource extends Resource
                             )
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->firstname} {$record->lastname}")
                             ->searchable(['firstname', 'lastname'])
+                            ->preload()
                             ->required()
                             ->extraAttributes([
                                 'title' => 'Select author'
@@ -98,6 +99,7 @@ class PostResource extends Resource
                         Forms\Components\Select::make('blog_category_id')
                             ->relationship('category', 'name')
                             ->searchable()
+                            ->preload()
                             ->required()
                             ->extraAttributes([
                                 'title' => 'Select article category'

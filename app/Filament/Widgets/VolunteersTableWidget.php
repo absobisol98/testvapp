@@ -22,7 +22,7 @@ class VolunteersTableWidget extends BaseWidget
                 TextColumn::make('firstname')
                     ->label('First Name')
                     ->searchable()->sortable(),
-                    TextColumn::make('lastname')
+                TextColumn::make('lastname')
                     ->label('Last Name')
                     ->searchable()->sortable(),
                 TextColumn::make('email')
@@ -31,21 +31,19 @@ class VolunteersTableWidget extends BaseWidget
                 TextColumn::make('birthday')
                     ->label('Birthday')
                     ->searchable()->sortable(),
-                    TextColumn::make('created_by')
-                    ->label('Created By')
-                    ->searchable()->sortable(),
-                    TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Created At')
                     ->searchable()->sortable(),
 
             ])
             ->actions([
                 Action::make('view')
-                    ->icon('heroicon-s-eye')
-                    ->action(function (User $record) {}),
-                Action::make('edit')
-                    ->icon('heroicon-s-pencil')
-                    ->action(function (User $record) {}),
+                ->label('View')
+                ->icon('heroicon-s-pencil')
+                ->url(fn ($record) => route('filament.admin.resources.volunteers.view', $record)),
+                // Action::make('edit')
+                //     ->icon('heroicon-s-pencil')
+                //     ->action(function (User $record) {}),
             ]);
     }
 }

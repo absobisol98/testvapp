@@ -46,6 +46,7 @@ class BannerResource extends Resource
                                             ->label('Position')
                                             ->relationship('category', 'name')
                                             ->searchable()
+                                            ->preLoad()
                                             ->required(),
                                         Forms\Components\Select::make('is_visible')
                                             ->label('Is Visible')

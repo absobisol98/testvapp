@@ -395,12 +395,12 @@
                 <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
                     <div class="flex flex-col md:flex-row items-center justify-center gap-12">
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold"> {{ \App\Models\User::count() }}</p>
+                            <p class="text-[80px] font-bold"> {{ \App\Models\User::role('volunteer')->count() }}</p>
                             <p class="text-[20px] font-medium">Volunteer</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ \App\Models\Company::count() }}</p>
-                            <p class="text-[20px] font-medium">Company</p>
+                            <p class="text-[80px] font-bold">{{ \App\Models\BusinessUnit::count() }}</p>
+                            <p class="text-[20px] font-medium">Business Unit</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
                             <p class="text-[80px] font-bold">{{ \App\Models\Program::count() }}</p>
@@ -767,12 +767,14 @@
                                     </a>
                                     @endauth
 
+                                    @auth
                                     <a href="">
                                         <div
                                             class="h-auto md:h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                                             <p class="font-normal text-base md:text-lg text-white">FAVORITE</p>
                                         </div>
                                     </a>
+                                    @endauth
                                 </div>
                             </div>
                             @endif
