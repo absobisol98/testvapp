@@ -301,6 +301,27 @@ class EventRegistrationTableAction
 
 
                 }),
+
+                \Filament\Tables\Actions\Action::make('export')
+                ->color('secondary')
+                ->button()
+                ->label('Export')
+                ->url(fn (Event $record): string => route('volunteer.export', $record))
+                ->visible(function (Event $record){
+
+                    if(is_null($record->event)){
+                        return true;
+                    };
+                    $user = auth()->user();
+                    if($user->can('export')){
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }),
+                
             \Filament\Tables\Actions\Action::make('Edit')
                 ->icon('heroicon-o-pencil-square')
                 ->tooltip('Edit registration')
