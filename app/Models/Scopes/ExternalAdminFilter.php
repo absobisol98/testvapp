@@ -14,7 +14,7 @@ class ExternalAdminFilter implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        if(auth()->user()->hasRole('External Partner')){
+        if(auth()->user()?->hasRole('External Partner')){
             $currentBU = auth()->user()->currentBU();
             if(  $currentBU){
                 $admins = $currentBU->admins->pluck('id');
