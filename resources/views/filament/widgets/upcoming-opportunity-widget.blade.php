@@ -7,7 +7,7 @@
             </div>
 
             <div class="flex items-center justify-between gap-4 md:gap-8">
-                <a class="text-[20px] font-[400]">VIEW</a>
+                <a class="text-[20px] font-[400] hover:underline" href="{{route('filament.admin.resources.events.index')}}" target="_blank">VIEW</a>
 
                 {{-- Style for the tabs --}}
                 <style>
@@ -57,7 +57,8 @@
                     </div>
 
                     <div class="w-full">
-                        <p class="text-2xl font-[700] text-[#03498D] mr-[12px] mb-[4px] cursor-pointer capitalize leading-none">{{ $opportunity->title }}</p>
+                        <p class="text-2xl font-[700] text-[#03498D] mr-[12px] mb-[4px] cursor-pointer capitalize leading-none">{{ $opportunity->title }}
+                        </p>
                         <p class="text-lg font-[400] mb-[12px]">{{ $opportunity->location }}</p>
 
                         <div class="w-full flex items-center justify-start text-[14px] font-[400] gap-4">
@@ -97,6 +98,9 @@
                             </div>
                         </a>
                     </div>
+
+
+
                 </div>
 
                 @if (!$loop->last)

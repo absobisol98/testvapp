@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Actions\EventsGetTableQueryAction;
+use App\Models\Scopes\FilterVolunteerForExternalAdmin;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,8 +23,22 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
+
+// #[ScopedBy([FilterVolunteerForExternalAdmin::class])]
+
+
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail, HasAvatar, HasName, HasMedia
 {
+
+    // protected static function booted() : void
+    // {
+    //     $authUser = auth()->check() :  ?? null;
+
+        
+    //     static::addGlobalScope(new FilterVolunteerForExternalAdmin($authUser));
+    // }
+
+
     use InteractsWithMedia;
     use HasUuids, HasRoles;
     use HasApiTokens, HasFactory, Notifiable;

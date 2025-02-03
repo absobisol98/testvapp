@@ -22,4 +22,5 @@ class ExternalAdminFilter implements Scope
             }
         }
     }
+      
 }
