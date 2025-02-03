@@ -11,6 +11,8 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/views/custom/**/*.blade.php',
         './resources/js/**/*.js',
+        './vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php',
+        "./vendor/tapp/**/*.blade.php",
     ],
 
     theme: {

@@ -99,6 +99,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $this->username  ?? 'No Name';
     }
 
+
+
+
+    // Custom method to generate verification token
+    public function generateVerificationToken()
+    {
+        return hash_hmac('sha256', $this->email, config('app.key'));
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         // if ($panel->getId() === 'admin') {
@@ -205,7 +214,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
                 'pts_required'=> 10000,
             ],
         ];
-        
+
         foreach($hours as $key => $hr){
             if($total_hrs >= $hr){
                 $points += 50;
@@ -232,7 +241,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             }
         }
 
-        if($total_events == 1 ){               
+        if($total_events == 1 ){
             $points += 50;
         }
         $points = 0;

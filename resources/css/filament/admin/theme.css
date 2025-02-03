@@ -130,5 +130,13 @@
 .custom-auth-empty-panel {
     width: 100%;
 }
+.custom-auth-form-panel {
+    margin:auto;
+    width: 40%;
+}
+.custom-auth-form-wrapper {
+    min-width: 50%;
+}
+
 
 

@@ -1,17 +1,5 @@
 <x-filament-widgets::widget>
-    <div
-        class="flex flex-col h-[800px] col-span-full"
-        x-data="{
-            init() {
-                this.$nextTick(() => this.scrollToBottom());
-                this.$watch('$wire.messageContent', () => this.scrollToBottom());
-            },
-            scrollToBottom() {
-                const container = this.$refs.messageContainer;
-                container.scrollTop = container.scrollHeight;
-            }
-        }"
-    >
+
         <div
             x-ref="messageContainer"
             class="flex-1 overflow-y-auto p-4 space-y-4  "

@@ -67,6 +67,7 @@
                                     {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
                             </div>
                             <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                @if($opportunity->slots?->first())
                                 <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots[0]->shift_name}}</p>
                                 <div class="flex items-center justify-start gap-4">
                                         <p>
@@ -74,6 +75,17 @@
                                             {{$opportunity->slots['0']->type->name}}
                                         </p>
                                 </div>
+                                @else
+                                <p><span class="font-[600]">SHIFTS:</span></p>
+                                <div class="flex items-center justify-start gap-4">
+                                        <p>
+                                            <span class="font-[600]">BATCH:</span>
+
+                                        </p>
+                                </div>
+                                @endif
+
+
                             </div>
                         </div>
                     </div>
