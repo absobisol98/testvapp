@@ -11,6 +11,12 @@ use App\Models\Program;
 use App\Models\Cluster;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
+use Filament\Notifications\Auth\VerifyEmail;
+use Filament\Notifications\Notification;
+use Filament\Facades\Filament;
+use App\Settings\MailSettings;
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\VerifyEmailNotification;
 
 class VolunteerRegistrationController extends Controller
 {
@@ -51,7 +57,7 @@ class VolunteerRegistrationController extends Controller
             'school_address' => 'nullable|string|max:255',
             'affiliate_type_id' => 'nullable|integer',
             'company_id' => 'nullable|integer',
-            'program_id' => 'nullable|array',
+            'program_id' => 'nullable|integer',
             'cluster_id' => 'nullable|integer',
         ];
 
@@ -62,12 +68,13 @@ class VolunteerRegistrationController extends Controller
             return response()->json(['error' => $validator->errors()]);
         }else
         {
+
+
             $input = $request->all();
             // Save data if validation passes
         $user = User::create([
-            'email_verified_at' => now(), // Temporary;for testing only
             'volunteer' => 1, // Volunteer
-            'username' => $input['username']?? null,
+            'username'=> $input['username']?? null,
             'email' => $input['email'],
             'firstname' => $input['firstname'],
             'lastname' => $input['lastname'],
@@ -84,11 +91,12 @@ class VolunteerRegistrationController extends Controller
             'emergency_contact_number' => $input['emergency_contact_number'],
             'affiliate_type_id' => $input['affiliate_type_id'],
             'company_id' => $input['company_id'],
-            // 'program_id' =>  $input['program_id'],
+            'program_id' => $input['program_id'] ?? null,
             'cluster_id' =>  $input['cluster_id'] ?? null,
         ]);
 
             $role = Role::where('name','volunteer')->first();
+
 
             DB::table('model_has_roles')->insert([
                 'role_id' => $role->id,
@@ -97,17 +105,23 @@ class VolunteerRegistrationController extends Controller
             ]);
 
             // Save selected programs in `volunteer_interests`
-        if (!empty($input['program_id'])) {
-            foreach ($input['program_id'] as $program) {
-                DB::table('volunteer_interests')->insert([
-                    'program_id' => $program,
-                    'volunteer_id' => $user->id
-                ]);
-            }
-        }
+        // if (!empty($input['program_id'])) {
+        //     foreach ($input['program_id'] as $program) {
+        //         DB::table('volunteer_interests')->insert([
+        //             'program_id' => $program,
+        //             'volunteer_id' => $user->id
+        //         ]);
+        //     }
+        // }
 
-            // Return success response
-            return response()->json(['success' => 'Volunteer registration completed successfully.']);
+        // Send verification email immediately
+        $user->notify(new VerifyEmailNotification());
+
+        return response()->json([
+            'message' => 'User registered successfully. Verification email sent.',
+            'user' => $user
+        ], 201);
+
         }
 
 
@@ -121,5 +135,39 @@ class VolunteerRegistrationController extends Controller
     public function success()
     {
         return view('volunteer-registration-success');
+    }
+
+
+    public function sendVerificationEmail(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified']);
+        }
+
+        $user->notify(new VerifyEmailNotification());
+
+        return response()->json(['message' => 'Verification email sent']);
+    }
+
+    public function verify(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Verify the signed URL and hash
+        if (! hash_equals(
+            hash_hmac('sha256', $user->email, config('app.key')),
+            $request->route('hash')
+        )) {
+            return response()->json(['message' => 'Invalid verification link'], 403);
+        }
+
+        // Mark email as verified
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        return redirect('/dashboard')->with('status', 'Email verified successfully!');
     }
 }
