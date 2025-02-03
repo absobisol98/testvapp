@@ -454,19 +454,19 @@ class EventResource extends Resource
                             ->selectablePlaceholder(false)
                             ->label('')
                             ->searchable()
-                            ->default('all')
+                            ->placeholder('All Tags')
+                            ->selectablePlaceholder(false)
                             ->multiple()
                             ->options( function(){
-                                    $option = array();
-                                    $option['all'] = 'All tags';
-                                    foreach(TagsEvent::orderBy('name')->get() as $tag){
-                                        $option[$tag->id] = $tag->name;
-                                    }
-                                    return $option;
+                                $option = array();
+                                foreach(TagsEvent::orderBy('name')->get() as $tag){
+                                    $option[$tag->id] = $tag->name;
+                                }
+                                return $option;
                             } ),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if($data['tags'] !== 'all') {
+                        if(!empty($data['tags'])) {
                             $query->whereHas('tags', function (Builder $query) use($data) {
                                 $query->whereIn('tag_id', $data['tags']);
                             });

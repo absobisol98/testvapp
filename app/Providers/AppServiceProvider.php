@@ -76,9 +76,7 @@ class AppServiceProvider extends ServiceProvider
 
         FilamentAsset::register([
             Css::make('example-external-stylesheet', 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css'),
-            Css::make('example-local-stylesheet', asset('css/local.css')),
             Js::make('example-external-script', 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js'),
-            Js::make('example-local-script', asset('js/local.js')),
         ]);
         
     }
