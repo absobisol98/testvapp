@@ -114,6 +114,9 @@ class SendMail extends Page implements HasForms
                             '3' => 'Specific Event',
                         ])
                         ->reactive()
+                        ->extraAttributes([
+                            'title' => 'Select receiver in the list'
+                        ])
                         ->required(),
 
 
@@ -134,11 +137,17 @@ class SendMail extends Page implements HasForms
 
                     TextInput::make('subject')
                         ->label('Subject')
-                        ->required(),
+                        ->required()
+                        ->extraAttributes([
+                            'title' => 'Enter mail subject'
+                        ]),
 
                     Textarea::make('message')
                         ->label('Message')
                         ->required()
+                        ->extraAttributes([
+                            'title' => 'Input message here'
+                        ])
                         ->rows(5),
                 ])
                 ->columnSpanFull(), // Makes the card span full width

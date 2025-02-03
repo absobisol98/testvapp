@@ -43,7 +43,10 @@ class PostResource extends Resource
                             ->schema([
                             ])
                             ->defaultItems(1)
-                            ->minItems(1),
+                            ->minItems(1)
+                            ->extraAttributes([
+                                'title' => 'Upload article banner here'
+                            ]),
                     ])
                     ->collapsible(),
                 Forms\Components\Section::make()
@@ -52,21 +55,33 @@ class PostResource extends Resource
                             ->required()
                             ->live(onBlur: true)
                             ->maxLength(255)
-                            ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                            ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null)
+                            ->extraAttributes([
+                                'title' => 'Input article title'
+                            ]),
 
                         Forms\Components\TextInput::make('slug')
                             ->disabled()
                             ->dehydrated()
                             ->required()
                             ->maxLength(255)
-                            ->unique(Post::class, 'slug', ignoreRecord: true),
+                            ->unique(Post::class, 'slug', ignoreRecord: true)
+                            ->extraAttributes([
+                                'title' => 'generate slug base on article title'
+                            ]),
 
-                        Forms\Components\Toggle::make('is_featured')
-                            ->required(),
+                        // Forms\Components\Toggle::make('is_featured')
+                        //     ->required()
+                        //     ->extraAttributes([
+                        //         'title' => 'Toggle button to feature the article'
+                        //     ]),
 
                         Forms\Components\MarkdownEditor::make('content')
                             ->required()
-                            ->columnSpan('full'),
+                            ->columnSpan('full')
+                            ->extraAttributes([
+                                'title' => 'Input article content'
+                            ]),
 
                         Forms\Components\Select::make('blog_author_id')
                             ->relationship(
@@ -75,17 +90,29 @@ class PostResource extends Resource
                             )
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->firstname} {$record->lastname}")
                             ->searchable(['firstname', 'lastname'])
-                            ->required(),
+                            ->required()
+                            ->extraAttributes([
+                                'title' => 'Select author'
+                            ]),
 
                         Forms\Components\Select::make('blog_category_id')
                             ->relationship('category', 'name')
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->extraAttributes([
+                                'title' => 'Select article category'
+                            ]),
 
                         Forms\Components\DatePicker::make('published_at')
-                            ->label('Published Date'),
+                            ->label('Published Date')
+                            ->extraAttributes([
+                                'title' => 'Select a publish date'
+                            ]),
 
-                        SpatieTagsInput::make('tags'),
+                        SpatieTagsInput::make('tags')
+                        ->extraAttributes([
+                            'title' => 'Input article tags'
+                        ]),
                     ])
                     ->columns(2),
             ]);

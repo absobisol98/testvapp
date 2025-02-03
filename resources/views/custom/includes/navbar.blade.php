@@ -99,7 +99,7 @@
 
             <a href="{{route('filament.admin.auth.login')}}">
                 <div
-                    class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                    class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-full md:rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                     <p class="font-medium text-base text-white">LOG IN</p>
                 </div>
             </a>
@@ -114,7 +114,7 @@
                         'icon' => 'avatar',
                     ])
                 </div>
-                <p class="font-medium text-base text-white">DASHBOARD</p>
+                <p class="font-medium text-base text-white hidden md:block">DASHBOARD</p>
             </div>
         </a>
             {{-- <div>

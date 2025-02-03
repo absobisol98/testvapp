@@ -19,6 +19,12 @@
 
 </style>
 <div class="max-w-screen-xl mx-auto relative flex flex-col gap-8 " style="padding-top:10%; padding-bottom:5%; padding-right:5%; padding-left:5%">
+    <div class="w-full flex items-center justify-end">
+        <button onclick="history.back()" class="rounded-lg py-2 px-4 flex items-center justify-center bg-[#F55E1D] hover:bg-[#FF9141]">
+            <p class="text-base md:text-lg font-normal text-white">Home</p>
+        </button>
+    </div>
+
     <!-- Hero Section -->
     <div class="bg-cover h-auto text-center overflow-hidden"
         style="height: 550px; background-image: url('https://api.time.com/wp-content/uploads/2020/07/never-trumpers-2020-election-01.jpg?quality=85&amp;w=1201&amp;h=676&amp;crop=1'); background-position: center center;">

@@ -9,11 +9,11 @@
             <a href="/admin/events/create">
                 <button class="w-fit">
                     <div
-                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center rounded-full md:rounded-none justify-center py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
                         <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
 
                         <!-- Tablet and Mobile text -->
-                        <p class="font-normal text-base text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> OPPORTUNITY </p>
+                        <p class="text-white whitespace-nowrap block md:hidden text-2xl font-bold">+</p>
                     </div>
                 </button>
             </a>
@@ -95,8 +95,8 @@
                     <div class="w-fit flex items-center justify-between gap-8 p-4">
                         <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
                             <div
-                                class="h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                <p class="font-[400] text-[18px] text-white">VIEW</p>
+                                class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                <p class="font-normal text-base md:text-lg text-white">VIEW</p>
                             </div>
                         </a>
                     </div>

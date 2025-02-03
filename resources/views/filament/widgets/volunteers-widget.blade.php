@@ -1,7 +1,7 @@
 <x-filament-widgets::widget>
     {{-- Volunteers --}}
     <div class="w-full px-8">
-        <div class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="w-full flex flex-row items-start md:items-center justify-between gap-4">
             <div class="w-fit">
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Volunteers</p>
             </div>
@@ -10,12 +10,11 @@
                 <a href="/admin/volunteers/create">
                     <button class="w-fit">
                         <div
-                            class="h-[48px] w-full bg-[#005096] flex items-center justify-center py-2 px-6 hover:bg-[#1A67B1]">
+                            class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center rounded-full md:rounded-none justify-center py-0 md:py-2 px-2 md:px-6  hover:bg-[#1A67B1]">
                             <p class="font-normal text-lg text-white hidden md:block">CREATE NEW VOLUNTEER</p>
 
                             <!-- Tablet and Mobile text -->
-                            <p class="font-normal text-base text-white whitespace-nowrap block md:hidden"><span class="text-2xl font-bold">+</span> VOLUNTEER </p>
-                        </div>
+                            <p class="text-white whitespace-nowrap block md:hidden text-2xl font-bold">+</p>
                     </button>
                 </a>
 
