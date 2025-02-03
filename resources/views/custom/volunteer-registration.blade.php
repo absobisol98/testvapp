@@ -393,7 +393,6 @@
                     var company_id = $("select[name='company_id']").val();
                     var program_id = $("select[name='program_id']").val();
                     var cluster_id = $("select[name='cluster_id']").val();
-                console.log(cluster_id)
                 $.ajax({
                     url: "{{ route('volunteer.form.store') }}",
                     type: 'POST',
@@ -433,6 +432,7 @@
                                 $('.' + err + '_err').html(formErr[err][0]);
                             }
                         } else {
+                            window.location.href = '{{route("filament.admin.auth.login")}}';
                             console.log('Unexpected response structure:', data);
                         }
                     },

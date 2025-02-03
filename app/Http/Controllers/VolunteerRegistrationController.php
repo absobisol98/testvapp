@@ -154,11 +154,10 @@ class VolunteerRegistrationController extends Controller
     public function verify(Request $request, $id)
     {
         $user = User::findOrFail($id);
-
         // Verify the signed URL and hash
         if (! hash_equals(
             hash_hmac('sha256', $user->email, config('app.key')),
-            $request->route('hash')
+            $request->query('hash')
         )) {
             return response()->json(['message' => 'Invalid verification link'], 403);
         }
@@ -168,6 +167,11 @@ class VolunteerRegistrationController extends Controller
             $user->markEmailAsVerified();
         }
 
-        return redirect('/dashboard')->with('status', 'Email verified successfully!');
+        Notification::make()
+            ->title('You have successfully registered.')
+            ->success()
+            ->send();
+            
+        return redirect()->route('filament.admin.pages.dashboard')->with('status', 'Email verified successfully!');
     }
 }
