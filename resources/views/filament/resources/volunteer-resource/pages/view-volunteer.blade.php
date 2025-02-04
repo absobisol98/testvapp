@@ -339,7 +339,7 @@
                                         <p class="text-[18px] text-gray-500">No opportunities available at the moment.</p>
                                     </div>
                                 @else
-                                    @foreach ($allEvents as $index => $opportunity)
+                                    @foreach ($favoriteEvents as $index => $opportunity)
                                         <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                                             <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                                 <img class="w-full h-full object-cover"

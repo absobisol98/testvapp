@@ -36,12 +36,10 @@ class PartnersTableWidget extends BaseWidget
                 ->searchable()->sortable(),
         ])
         ->actions([
-            Action::make('view')
-                ->icon('heroicon-s-eye')
-                ->action(function (User $record) {}),
             Action::make('edit')
+                ->label('Edit')
                 ->icon('heroicon-s-pencil')
-                ->action(function (User $record) {}),
+                ->url(fn ($record) => route('filament.admin.resources.business-units.edit', ['record' => $record])),
         ]);
     }
 }
