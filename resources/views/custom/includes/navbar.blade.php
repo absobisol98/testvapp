@@ -92,15 +92,30 @@
         @guest
             <a href="{{ route('volunteer.form.view') }}">
                 <div
-                    class="h-auto md:h-[56px] w-auto md:w-[244px] rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                    <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
+                    class="h-auto md:h-[56px] w-auto md:w-[244px] rounded-full md:rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                    <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="31" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-plus">
+                            <path d="M2 21a8 8 0 0 1 13.292-6"/>
+                            <circle cx="10" cy="8" r="5"/>
+                            <path d="M19 16v6"/>
+                            <path d="M22 19h-6"/>
+                        </svg>
+                    </div>
+                    <p class="font-medium text-base text-white hidden md:block">BECOME A VOLUNTEER</p>
                 </div>
             </a>
 
             <a href="{{route('filament.admin.auth.login')}}">
                 <div
                     class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-full md:rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                    <p class="font-medium text-base text-white">LOG IN</p>
+                    <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
+                        <svg width="31" height="32" viewBox="0 0 31 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M11.6265 4.83138H6.4602C5.77507 4.83138 5.11807 5.10353 4.63364 5.58796C4.14921 6.07239 3.87703 6.72943 3.87703 7.41452V25.4965C3.87703 26.1816 4.14921 26.8386 4.63364 27.3231C5.11807 27.8075 5.77507 28.0796 6.4602 28.0796H11.6265M18.0843 22.9134L11.6265 16.4555M11.6265 16.4555L18.0843 9.99766M11.6265 16.4555H27.1253"
+                                stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <p class="font-medium text-base text-white hidden md:block">LOG IN</p>
                 </div>
             </a>
         @endguest
@@ -109,7 +124,7 @@
         @auth
         <a href="{{ route('filament.admin.pages.dashboard') }}">
             <div class="h-auto md:h-[56px] w-auto md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                <div class="w-[34px] h-[34px] inline-flex items-center justify-center">
+                <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
                     @include('custom.icons.navbar-icons', [
                         'icon' => 'avatar',
                     ])
