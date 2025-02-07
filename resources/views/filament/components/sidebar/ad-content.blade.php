@@ -2,7 +2,7 @@
     {{-- If user is a Volunteer this is the sidebar links --}}
     @if (true)
         <div class="adsSection w-full">
-            @livewire(\App\Filament\Widgets\AdsWidget::class)
+            @livewire(\App\Filament\Widgets\AdsWidget::class,['type' => 'side'])
         </div>
     @endif
 

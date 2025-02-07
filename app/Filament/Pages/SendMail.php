@@ -17,10 +17,13 @@ use App\Models\Event;
 use App\Models\EventAttendee;
 use App\Models\User;
 use App\Mail\AnnouncementMail;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Illuminate\Support\Facades\Mail;
 use Filament\Notifications\Notification;
 class SendMail extends Page implements HasForms
 {
+    use HasPageShield;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.send-mail';

@@ -25,7 +25,7 @@
 
         {{-- If the user is a Volunteer --}}
         @if (auth()->user()->hasRole('Volunteer'))
-            @livewire(\App\Filament\Widgets\AdsWidget::class)
+            @livewire(\App\Filament\Widgets\AdsWidget::class,['type' => 'volunteerDash'])
             @livewire(\App\Filament\Widgets\UpcomingOpportunityWidget::class)
             {{-- @livewire(\App\Filament\Widgets\RecentOpportunitiesWidget::class) --}}
         @endif
