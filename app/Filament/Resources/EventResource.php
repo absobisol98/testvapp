@@ -497,9 +497,9 @@ class EventResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEvents::route('/'),
+            'index' => Pages\ListEvents::route('/list'),
             'calendar' => Pages\Calendar::route('/calendar'),
-            'thumbnail' => Pages\Thumbnail::route('/thumbnail'),
+            'thumbnail' => Pages\Thumbnail::route('/'),
             'create' => Pages\CreateEvent::route('/create'),
             'view' => Pages\EventPage::route('/view/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
