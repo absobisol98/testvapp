@@ -11,8 +11,10 @@ use Filament\Tables\Table;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Opcodes\LogViewer\Facades\LogViewer;
+use Tapp\FilamentFormBuilder\FilamentFormBuilderServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(\Tapp\FilamentFormBuilder\Models\FilamentForm::class, \App\Policies\FilamentFormPolicy::class);
+        Gate::policy(\TomatoPHP\FilamentMediaManager\Models\Folder::class, \App\Policies\MediaPolicy::class);
+        Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplate::class, \App\Policies\EmailTemplatePolicy::class);
+        Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplateTheme::class, \App\Policies\EmailTemplateThemePolicy::class);
+        Gate::policy(\Tapp\FilamentMailLog\Models\MailLog::class, \App\Policies\MailLogPolicy::class);
+        Gate::policy(\Datlechin\FilamentMenuBuilder\Models\Menu::class, \App\Policies\MenuPolicy::class);
+
         Table::configureUsing(function (Table $table): void {
             $table
                 ->emptyStateHeading('No data yet')
