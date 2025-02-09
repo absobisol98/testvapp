@@ -33,4 +33,5 @@ class CalendarWidget extends FullCalendarWidget
             )
             ->all();
     }
+    
 }
