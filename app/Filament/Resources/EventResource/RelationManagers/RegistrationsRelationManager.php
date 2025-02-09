@@ -53,6 +53,9 @@ class RegistrationsRelationManager extends RelationManager
     {
         return $table
             ->modifyQueryUsing(function (Builder $query){
+                if(auth()->user()->hasRole('External Partner')){ // If not super_admin
+                    return $query;
+                }
                 if(!auth()->user()->hasRole('super_admin')){ // If not super_admin
                     $query = $query->where('volunteer_id',auth()->user()->id);
                 }
@@ -139,7 +142,13 @@ class RegistrationsRelationManager extends RelationManager
                             ->sendToDatabase($record->volunteer);
 
                     })
-                    ->visible(fn($record) => $record->status_id == 1 && auth()->user()->hasRole('super_admin')),
+                    ->visible(function ($record){
+                        if($record->status_id == 1){
+                            if(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner')){
+                                return true;
+                            }
+                        }
+                    }),
                 Action::make('reject')
                     ->color('danger')
                     ->button()
@@ -173,7 +182,13 @@ class RegistrationsRelationManager extends RelationManager
                             ->success()
                             ->send();
                     })
-                    ->visible(fn($record) => $record->status_id == 1 && auth()->user()->hasRole('super_admin')),
+                    ->visible(function ($record){
+                        if($record->status_id == 1){
+                            if(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner')){
+                                return true;
+                            }
+                        }
+                    }),
                 Action::make('Cancel')
                     ->color('warning')
                     ->button()
