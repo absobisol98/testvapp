@@ -49,14 +49,14 @@ final class UserCreateField
                             ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
                             ->dehydrated(fn(?string $state): bool => filled($state))
                             ->revealable()
-                            ->required(),
+                            ->helperText(fn (string $context) => ($context === 'edit') ? 'Leave it blank if the password is same as before'  : null )
+                            ->required(fn (string $context) => $context === 'create'),
                         TextInput::make('passwordConfirmation')
                             ->password()
                             ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
                             ->dehydrated(fn(?string $state): bool => filled($state))
                             ->revealable()
-                            ->same('password')
-                            ->required(),
+                            ->same('password')->required(fn (string $context) => $context === 'create'),
                     ])
                     ->compact()
                     ->visible(fn(): bool => auth()->user()->can('update_user')),

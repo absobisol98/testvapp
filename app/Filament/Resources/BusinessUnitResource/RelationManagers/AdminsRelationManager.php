@@ -22,7 +22,7 @@ class AdminsRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form
-            ->schema((new UserCreateField)->execute(true));
+            ->schema((new UserCreateField)->execute(true))->columns(1);
     }
 
     public function table(Table $table): Table
