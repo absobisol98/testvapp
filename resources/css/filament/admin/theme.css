@@ -128,9 +128,16 @@
     width: 100%;
 }
 .custom-auth-form-panel {
-    margin:auto;
-    width: 40%;
+    margin: auto;
+    width: 40%;  /* Mobile first approach */
 }
+
+@media (max-width: 575px) {
+    .custom-auth-form-panel {
+        width: 100%;
+    }
+}
+
 .custom-auth-form-wrapper {
     min-width: 50%;
 }

@@ -5,6 +5,8 @@ namespace App\Observers;
 use App\Models\Event;
 use App\Models\MessageRoom;
 use App\Models\MessageRoomParticipant;
+use Tapp\FilamentFormBuilder\Models\FilamentForm;
+use Tapp\FilamentFormBuilder\Models\FilamentFormField;
 
 class EventObserver
 {
@@ -24,6 +26,29 @@ class EventObserver
             'message_room_id' => $room->id,
             'user_id' => $event->created_by,
         ]);
+
+
+        $record = FilamentForm::first();
+
+        $formCopy = FilamentForm::create([
+            'name' => $event->title . ' Survey Form',
+            'permit_guest_entries' => $record->permit_guest_entries,
+            'redirect_url' => $record->redirect_url,
+            'description' => $record->description,
+        ]);
+
+        $record->filamentFormFields->each(function ($field) use ($formCopy) {
+            FilamentFormField::create([
+                'filament_form_id' => $formCopy->id,
+                'label' => $field->label,
+                'type' => $field->type,
+                'required' => $field->required,
+                'order' => $field->order,
+                'hint' => $field->hint,
+                'options' => $field->options,
+                'rules' => $field->rules,
+            ]);
+        });
     }
 
     /**

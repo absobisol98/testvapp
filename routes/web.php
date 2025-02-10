@@ -44,6 +44,9 @@ Route::get('/registration-confirmation', function () {
     return view('registration-confirmation');
 });
 
+Route::get('/email/verify/sent', [VolunteerRegistrationController::class, 'verificationSent'])
+    ->name('verification.sent');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [VolunteerRegistrationController::class, 'sendVerificationEmail'])
@@ -56,3 +59,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/volunteer/certificate/{event_id}/{attendee_id}', [PDFController::class, 'generateCertificate'])
         ->name('volunteer.certificate');
 });
+
+
