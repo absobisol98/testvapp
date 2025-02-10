@@ -222,6 +222,14 @@
                                                     class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Register
                                             </button>
                                         </div>
+
+                                        <div>
+                                            <input id="checkbox" type="checkbox" required />
+                                            <label class="text-color" for="checkbox">
+                                                &nbsp; I agree to these
+                                                <a href="{{ route('data-privacy-policy') }}" class="hover:underline text-color">Terms and Conditions</a>.
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

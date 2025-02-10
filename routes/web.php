@@ -47,6 +47,9 @@ Route::get('/registration-confirmation', function () {
 Route::get('/email/verify/sent', [VolunteerRegistrationController::class, 'verificationSent'])
     ->name('verification.sent');
 
+Route::get('/data-privacy-policy', function () {
+    return view('data-privacy-policy');
+})->name('data-privacy-policy');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [VolunteerRegistrationController::class, 'sendVerificationEmail'])

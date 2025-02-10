@@ -18,18 +18,21 @@
     }
 
 </style>
+@php
+    $article_banner = $article->media->first();
+@endphp
 <div class="max-w-screen-xl mx-auto relative flex flex-col gap-8 " style="padding-top:10%; padding-bottom:5%; padding-right:5%; padding-left:5%">
     <div class="w-full flex items-center justify-end">
         <button onclick="history.back()" class="rounded-lg py-2 px-4 flex items-center justify-center bg-[#F55E1D] hover:bg-[#FF9141]">
             <p class="text-base md:text-lg font-normal text-white">Home</p>
         </button>
     </div>
-
     <!-- Hero Section -->
-    <div class="bg-cover h-auto text-center overflow-hidden"
-        style="height: 550px; background-image: url('https://api.time.com/wp-content/uploads/2020/07/never-trumpers-2020-election-01.jpg?quality=85&amp;w=1201&amp;h=676&amp;crop=1'); background-position: center center;">
-    </div>
-
+    @isset($article_banner)
+        <div class="bg-cover h-auto text-center overflow-hidden">
+            <img src="{{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }}" alt="">
+        </div>
+    @endisset
     <!-- Article Content -->
     <div class="bg-white flex flex-col gap-4 leading-normal">
         <div class="flex flex-col gap-0">
@@ -83,9 +86,7 @@
             <div class="w-full p-2 bg-white">
                 <div class="stories-swiper-container w-full overflow-hidden">
                     <div class="swiper-wrapper w-full">
-
-                        @foreach ($articles as $item)
-
+                        @foreach ($articles->where('id', '!=', $article->id) as $item)
                             <div class="swiper-slide">
                                 <div class="w-full min-h-[200px] flex flex-row items-start gap-4">
                                     <div class="w-fit min-w-[90px] p-4 bg-white shadow-md flex flex-col items-center">
@@ -95,7 +96,7 @@
                                     <div class="w-full text-[#03498D] flex flex-col gap-4">
                                         <p class="text-xl font-semibold leading-none">{{ $item->title }}</p>
                                         <p class="text-[14px] line-clamp-1">{{ $item->description }}</p>
-                                        <a href="#">
+                                        <a href="{{ url('/article'). '/' . $item->slug }}">
                                             <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
                                                 <p class="font-medium text-base text-white">READ MORE</p>
                                             </div>

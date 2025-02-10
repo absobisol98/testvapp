@@ -13,6 +13,7 @@ use App\Models\EventTag;
 use App\Models\EventType;
 use App\Models\TagsEvent;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
@@ -30,7 +31,7 @@ use Filament\Tables\Actions\Action;
 use Tapp\FilamentGoogleAutocomplete\Forms\Components\GoogleAutocomplete;
 use Filament\Infolists\Components\TextEntry;
 
-class EventResource extends Resource
+class EventResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Event::class;
 
@@ -39,6 +40,20 @@ class EventResource extends Resource
     protected static ?string $navigationLabel = 'Volunteer Opportunities';
 
     protected static ?string $label = 'Opportunity';
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish',
+            'export'
+        ];
+    }
 
     public static function form(Form $form): Form
     {
