@@ -5,6 +5,7 @@ namespace App\Filament\Resources\EventResource\Widgets;
 use App\Models\Event;
 use App\Models\Scopes\PublishedEventScope;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
@@ -90,8 +91,15 @@ class EventsToApprove extends BaseWidget
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(function ($record){
-                        // $record->is_published
-                        dd($record);
+                        $record->is_published = true;
+                        $record->updated_by = auth()->user()->id;
+                        $record->update();
+
+                        
+                        Notification::make()
+                            ->title('External Partner Event Approve.')
+                            ->success()
+                            ->send();
                     })
 
 

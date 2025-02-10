@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Actions\UserCreateField;
 use App\Filament\Resources\BusinessUnitResource\Pages;
 use App\Filament\Resources\BusinessUnitResource\RelationManagers;
+use App\Filament\Resources\BusinessUnitResource\RelationManagers\AdminsRelationManager;
 use App\Models\BusinessUnit;
-use App\Models\Role;
 use App\Models\User;
 use App\Settings\MailSettings;
 use Filament\Forms;
@@ -29,12 +30,24 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
+use Spatie\Permission\Models\Role;
 
 class BusinessUnitResource extends Resource
 {
     protected static ?string $model = BusinessUnit::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    public static function getNavigationLabel(): string
+    {
+        if(auth()->user()->hasRole('External Partner')){
+            return 'My Business Unit';
+        }
+        return 'Business Units';
+
+    }
+
+
 
     public static function form(Form $form): Form
     {
@@ -46,7 +59,7 @@ class BusinessUnitResource extends Resource
                         ->collection('bu_logo')
                         ->required()
                         ->conversion('preview')
-                        ->maxSize(5000)
+                        ->maxSize(10000)
                         ->acceptedFileTypes([
                                 'image/apng',
                                 'image/avif',
@@ -57,7 +70,7 @@ class BusinessUnitResource extends Resource
                                 'image/webp',
                         ])
                         ->imageResizeMode('cover')
-                        ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only.')
+                        ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Max. 10MB')
                         ->image()
                         ->openable()
                         ->downloadable()
@@ -104,15 +117,16 @@ class BusinessUnitResource extends Resource
                     ->columnSpanFull()
                     ->options(function (){
                         $has_admin_in_other_BU = DB::table('business_unit_has_external_admin')->get()->pluck('user_id');
-                        return User::whereNotIn('id', $has_admin_in_other_BU)->orderBy('firstname')->get()->pluck('name','id');
+                        return User::role('External Partner')->whereNotIn('id', $has_admin_in_other_BU)->orderBy('firstname')->get()->pluck('name','id');
                     })
                     ->createOptionUsing(function ($data, $form) { 
                         $data['email_verified_at'] = now();
                         $supplier = User::create($data);
                         $form->model($supplier)->saveRelationships($supplier);
+                        $role = Role::where('name','External Partner')->first();
 
                         DB::table('model_has_roles')->insert([
-                            'role_id' => 5,
+                            'role_id' =>  $role->id,
                             'model_id' => $supplier->id,
                             'model_type' => 'App\Models\User',
                         ]);
@@ -125,88 +139,9 @@ class BusinessUnitResource extends Resource
                         return $supplier->id;
                     })
 
-                    ->createOptionForm([
-                        Forms\Components\Group::make()
-                        ->schema([ 
-                            
-                            SpatieMediaLibraryFileUpload::make('media')
-                                ->hiddenLabel()
-                                ->avatar()
-                                ->collection('avatars')
-                                ->alignCenter()
-                                ->columnSpanFull(),
-    
-                            Forms\Components\Tabs::make()
-                            ->schema([
-                                Forms\Components\Tabs\Tab::make('Details')
-                                    ->icon('heroicon-o-information-circle')
-                                    ->schema([
-                                        Forms\Components\TextInput::make('username')
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->live()
-                                            ->rules(function ($record) {
-                                                $userId = $record?->id;
-                                                return $userId
-                                                    ? ['unique:users,username,' . $userId]
-                                                    : ['unique:users,username'];
-                                            }),
-        
-                                        Forms\Components\TextInput::make('email')
-                                            ->email()
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->rules(function ($record) {
-                                                $userId = $record?->id;
-                                                return $userId
-                                                    ? ['unique:users,email,' . $userId]
-                                                    : ['unique:users,email'];
-                                            }),
-        
-                                        Forms\Components\TextInput::make('firstname')
-                                            ->required()
-                                            ->maxLength(255),
-        
-                                        Forms\Components\TextInput::make('lastname')
-                                            ->required()
-                                            ->maxLength(255),
-                                    ])
-                                    ->columns(2),
-        
-                            ])
-                            ->columnSpan([
-                                'sm' => 1,
-                                'lg' => 2
-                            ]),
+                    ->createOptionForm( (new UserCreateField())->execute(true) ),
 
-                            Forms\Components\Section::make()
-                                ->schema([
-                                    Forms\Components\TextInput::make('password')
-                                        ->password()
-                                        ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                                        ->dehydrated(fn(?string $state): bool => filled($state))
-                                        ->revealable()
-                                        ->required(),
-                                    Forms\Components\TextInput::make('passwordConfirmation')
-                                        ->password()
-                                        ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                                        ->dehydrated(fn(?string $state): bool => filled($state))
-                                        ->revealable()
-                                        ->same('password')
-                                        ->required(),
-                                ])
-                                ->compact()
-                                ->hidden(fn(string $operation): bool => $operation === 'edit'),
-    
-                        ])
-                        ->columnSpan(1),
-    
-                    
-                    ])
-
-                    ->searchable(),
-
-                Fieldset::make('Header')
+                    Fieldset::make('Header')
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('cover')
                             ->label('Cover')
@@ -241,7 +176,31 @@ class BusinessUnitResource extends Resource
                             ->required()
                             ->rows(3)
                             ->columnSpanFull(),
-                    ]),
+
+                        
+                    //     SpatieMediaLibraryFileUpload::make('header_gallery')
+                    //         ->label('Gallery Header')
+                    //         ->collection('bu_galleries_head')
+                    //         ->conversion('preview')
+                    //         ->maxSize(10000)
+                    //         ->multiple()
+                    //         ->maxFiles(3)
+                    //         ->acceptedFileTypes([
+                    //                 'image/apng',
+                    //                 'image/avif',
+                    //                 'image/png',
+                    //                 'image/jpg',
+                    //                 'image/jpeg',
+                    //                 'image/svg',
+                    //                 'image/webp',
+                    //         ])
+                    //         ->imageResizeMode('cover')
+                    //         ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Maximum of 3 files with 10MB of max file size ')
+                    //         ->image()
+                    //         ->openable()
+                    //         ->downloadable()
+                    //         ->columnSpan(3),
+                ]),
     
                 Repeater::make('socials')
                     ->relationship()
@@ -300,6 +259,7 @@ class BusinessUnitResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
+
             ])->columns(3);
     }
 
@@ -348,7 +308,7 @@ class BusinessUnitResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AdminsRelationManager::class
         ];
     }
 

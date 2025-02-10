@@ -453,7 +453,6 @@ class EventResource extends Resource
                         Forms\Components\Select::make('tags')
                             ->selectablePlaceholder(false)
                             ->label('')
-                            ->searchable()
                             ->placeholder('All Tags')
                             ->selectablePlaceholder(false)
                             ->multiple()
@@ -472,6 +471,7 @@ class EventResource extends Resource
                             });
                             return $query;
                         }
+                        // dd($query->get());
                         return $query;
                     }),
             ],layout: FiltersLayout::AboveContent)
