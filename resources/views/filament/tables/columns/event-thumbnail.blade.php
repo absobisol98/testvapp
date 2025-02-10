@@ -1,10 +1,17 @@
 @php
     $record = $getRecord();
+    $banner = $record->media->first();
 @endphp
     <div class="rounded">
-        <div class="overflow-hidden mb-2 w-full h-[50%]">
-            <img class="w-full" src="{{ asset('img/ayala-foundation-bg.jpg') }}">
-        </div>
+        @isset($banner)
+            <div class="overflow-hidden mb-2 w-full h-[50%]">
+                <img src="{{ asset('storage/event-banner-attachments/' . $banner->file_name) }}" alt="">
+            </div>
+        @else
+            <div class="overflow-hidden mb-2 w-full h-[50%] flex items-center justify-center bg-gray-200">
+                <img src="{{ asset('img/logo-colored.png') }}" alt="Placeholder Image" class="w-full h-auto">
+            </div>
+        @endisset
         <div class="font-bold text-2xl mb-2 truncate event-title capitalize"  >{{$record->title}}</div>
         <div class="text-sm">
             <span class="uppercase tracking-wide text-indigo-500 font-semibold">

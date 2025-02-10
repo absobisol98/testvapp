@@ -485,11 +485,22 @@
                                 <!-- Slide 1 -->
                                 @foreach ($articles as $article)
 
+                                @php
+                                    $article_banner = $article->media->first();
+                                @endphp
+
+                                {{-- @php
+                                    dd($article_banner);
+                                @endphp --}}
+
                                 <div class="swiper-slide">
-                                    <div class="flex items-center justify-between rounded-xl h-[509px] gap-4 bg-cover bg-center"
-                                        style="background-image: url('{{ asset('img/ayala-foundation-bg-3.jpg') }}');">
-                                        <div class="h-full w-full flex items-end rounded-xl p-4 bg-gradient-to-t from-[#03498D] to-transparent"></div>
-                                    </div>
+                                    @if ($article_banner)
+                                        <div class="flex items-center justify-between rounded-xl h-[509px] gap-4 bg-cover bg-center"
+                                            style="background-image: url('{{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }}');">
+                                            <div class="h-full w-full flex items-end rounded-xl p-4 bg-gradient-to-t from-[#03498D] to-transparent"></div>
+                                        </div>
+                                    @endif
+                                    {{-- @endisset --}}
                                     <div class="w-full md:w-[80%] p-10 min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4 bg-white">
                                         <div class="w-fit min-w-[104px] p-4 bg-white rounded-xl shadow-md flex flex-col items-center">
                                             <p class="text-lg font-medium">{{ \Carbon\Carbon::parse($article->published_at)->format('M j, Y') }}                                            </p>

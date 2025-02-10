@@ -36,12 +36,21 @@
         </button>
     </div>
 
+    @php
+        $banner = $record->media->first();
+    @endphp
+
     <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="w-full col-span-2 space-y-4">
-            <div class="flex items-center justify-center rounded-md w-full">
-                <img class="object-cover w-full h-auto rounded-md" src="{{ asset('img/ayala-foundation-bg.jpg') }}">
-            </div>
-
+            @isset($banner)
+                <div class="flex items-center justify-center rounded-md w-full">
+                    <img src="{{ asset('storage/event-banner-attachments/' . $banner->file_name)}}" alt="">
+                </div>
+            @else
+                <div class="flex items-center justify-center rounded-md w-full">
+                    <img src="{{ asset('img/logo-colored.png') }}" alt="Placeholder Image">
+                </div>
+            @endisset
             <div class="flex items-start justify-start gap-2">
                 <div class="inline-flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#03498D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tags"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3a1 1 0 0 0-1 1v5.172a2 2 0 0 0 .586 1.414L8.29 18.29a2.426 2.426 0 0 0 3.42 0l3.58-3.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="6.5" cy="9.5" r=".5" fill="currentColor"/></svg>
@@ -122,6 +131,7 @@
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Facilitator/s:</p>
                         @foreach ($record->facilitators as $facilitator)
                                 {{$facilitator->name}}
+                                @if( !$loop->last),@endif
                             @endforeach
                         <br>
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
@@ -151,13 +161,14 @@
         <div class="px-4 py-4 space-y-4">
 
         <div class="w-full flex items-center justify-center overflow-hidden relative" style="height: 50vh;">
-            <a href="{{ asset('img/ayala-foundation-bg.jpg') }}" class="glightbox flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center" data-gallery="gallery1">
+            <a href="{{ asset('storage/event-banner-attachments/' . $banner->file_name)}}" class="glightbox flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center" data-gallery="gallery1">
                 <div class="flex items-center justify-center overflow-hidden w-full">
-                    <img class="object-cover w-full h-[580px]" src="{{ asset('img/ayala-foundation-bg.jpg') }}">
+                    <img src="{{ asset('storage/event-banner-attachments/' . $banner->file_name)}}" alt="">
                 </div>
             </a>
-
         </div>
+        @endisset
+
 
             <div class="flex flex-col justify-start items-start gap-2">
                 <div class="py-2 px-4 flex items-center justify-center bg-[#005096] rounded-md">
@@ -227,6 +238,7 @@
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Facilitator/s:</p>
                         @foreach ($record->facilitators as $facilitator)
                                 {{$facilitator->name}}
+                                @if( !$loop->last),@endif
                             @endforeach
                         <br>
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
@@ -275,123 +287,39 @@
 
         <div class="stories-swiper-container w-full overflow-hidden">
             <div class="swiper-wrapper flex w-full">
+                {{-- @php
+                    dd($record->slots)
+                @endphp --}}
                 {{-- volunteer positions --}}
-                <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
-                    <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
-                        <div class="flex-grow flex flex-col gap-4">
-                            <p class="text-xl font-semibold leading-none">{{$record->slots[0]->shift_name}}</p>
-                            <p class="text-[#03498D] text-md inline-flex items-center">
-                                <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"> <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
-                                19 of 20 slots left
-                                {{-- @foreach ($record->slots as $slot)
-                                    {{ $slot->total_slots }}
-                                @endforeach --}}
-                            </p>
+                @foreach ($record->slots as $slot)
+                    <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
+                        <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
+                            <div class="flex-grow flex flex-col gap-4">
+                                <p class="text-xl font-semibold leading-none">{{$slot->shift_name}}</p>
+                                <p class="text-[#03498D] text-md inline-flex items-center">
+                                    <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"> <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
+                                    {{-- @foreach ($record->slots as $slot) --}}
+                                        {{ $slot->total_slots }}
+                                    {{-- @endforeach --}}
+                                </p>
+                                <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
+                                    &emsp; &emsp;
+                                    {{-- @foreach ($record->slots as $slots) --}}
+                                        {{ $slot->responsibilities }}
+                                    {{-- @endforeach --}}
+                                </p>
+                            </div>
 
-                            <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
-                                &emsp; &emsp;
-                                @foreach ($record->slots as $slots)
-                                    {{ $slots->responsibilities }}
-                                @endforeach
-                            </p>
-                        </div>
-
-                        <div class="w-full flex items-center justify-center mt-auto">
-                            <a href="#">
-                                <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
-                                    <p class="font-medium text-base text-white">Volunteer for this</p>
-                                </div>
-                            </a>
+                            <div class="w-full flex items-center justify-center mt-auto">
+                                <a href="#">
+                                    <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
+                                        <p class="font-medium text-base text-white">Volunteer for this</p>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {{-- volunteer positions --}}
-                <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
-                    <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
-                        <div class="flex-grow flex flex-col gap-4">
-                            <p class="text-xl font-semibold leading-none">{{$record->slots[0]->shift_name}}</p>
-                            <p class="text-[#03498D] text-md inline-flex items-center">
-                                <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"> <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
-                                19 of 20 slots left
-                                {{-- @foreach ($record->slots as $slot)
-                                    {{ $slot->total_slots }}
-                                @endforeach --}}
-                            </p>
-                            <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
-                                &emsp; &emsp;
-                                @foreach ($record->slots as $slots)
-                                    {{ $slots->responsibilities }}
-                                @endforeach
-                            </p>
-                        </div>
-
-                        <div class="w-full flex items-center justify-center mt-auto">
-                            <a href="#">
-                                <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
-                                    <p class="font-medium text-base text-white">Volunteer for this</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {{-- volunteer positions --}}
-                <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
-                    <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
-                        <div class="flex-grow flex flex-col gap-4">
-                            <p class="text-xl font-semibold leading-none">{{$record->slots[0]->shift_name}}</p>
-                            <p class="text-[#03498D] text-md inline-flex items-center">
-                                <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"> <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
-                                19 of 20 slots left
-                                {{-- @foreach ($record->slots as $slot)
-                                    {{ $slot->total_slots }}
-                                @endforeach --}}
-                            </p>
-                            <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
-                                &emsp; &emsp;
-                                @foreach ($record->slots as $slots)
-                                    {{ $slots->responsibilities }}
-                                @endforeach
-                            </p>
-                        </div>
-
-                        <div class="w-full flex items-center justify-center mt-auto">
-                            <a href="#">
-                                <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
-                                    <p class="font-medium text-base text-white">Volunteer for this</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {{-- volunteer positions --}}
-                <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
-                    <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
-                        <div class="flex-grow flex flex-col gap-4">
-                            <p class="text-xl font-semibold leading-none">{{$record->slots[0]->shift_name}}</p>
-                            <p class="text-[#03498D] text-md inline-flex items-center">
-                                <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"> <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
-                                19 of 20 slots left
-                                {{-- @foreach ($record->slots as $slot)
-                                    {{ $slot->total_slots }}
-                                @endforeach --}}
-                            </p>
-                            <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
-                                &emsp; &emsp;
-                                @foreach ($record->slots as $slots)
-                                    {{ $slots->responsibilities }}
-                                @endforeach
-                            </p>
-                        </div>
-
-                        <div class="w-full flex items-center justify-center mt-auto">
-                            <a href="#">
-                                <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
-                                    <p class="font-medium text-base text-white">Volunteer for this</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
