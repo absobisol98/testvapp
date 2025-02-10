@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VolunteerRegistrationController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\PDFController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,4 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify/{id}', [VolunteerRegistrationController::class, 'verify'])
         ->name('verification.verify')
         ->middleware('signed');
+
+    Route::get('/volunteer/certificate/{event_id}/{attendee_id}', [PDFController::class, 'generateCertificate'])
+        ->name('volunteer.certificate');
 });

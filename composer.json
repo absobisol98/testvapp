@@ -20,6 +20,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-snappy": "^1.0",
         "bezhansalleh/filament-exceptions": "^2.1",
         "bezhansalleh/filament-shield": "^3.2",
         "claviska/simpleimage": "^4.2",
@@ -34,6 +35,8 @@
         "filament/spatie-laravel-tags-plugin": "^3.2",
         "flowframe/laravel-trend": "^0.3.0",
         "guzzlehttp/guzzle": "^7.2",
+        "h4cc/wkhtmltoimage-amd64": "0.12.x",
+        "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "jeffgreco13/filament-breezy": "^2.2",
         "josespinal/filament-record-navigation": "^2.0",
         "khanamiryan/qrcode-detector-decoder": "^2.0",
@@ -47,6 +50,7 @@
         "opcodesio/log-viewer": "^3.11",
         "owenvoke/blade-fontawesome": "^2.6",
         "riodwanto/filament-ace-editor": "^1.0",
+        "spatie/icalendar-generator": "^2.9",
         "saade/filament-fullcalendar": "^3.2",
         "stichoza/google-translate-php": "^5.2",
         "tapp/filament-form-builder": "^1.31",
@@ -54,6 +58,7 @@
         "tapp/filament-maillog": "^1.0",
         "tomatophp/filament-media-manager": "^1.1",
         "visualbuilder/email-templates": "^3.1",
+        "wemersonjanuario/wkhtmltopdf-windows": "0.12.2.3",
         "ysfkaya/filament-phone-input": "^3.1",
         "z3d0x/filament-logger": "^0.7.2"
     },
