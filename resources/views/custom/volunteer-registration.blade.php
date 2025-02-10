@@ -178,23 +178,7 @@
                                                 <label class="block text-sm font-semibold required">Company Name</label>
                                                 <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_name" />
                                             </div> --}}
-                                            <div>
-                                                <label class="block text-sm font-semibold required">Company Address</label>
-                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-semibold required">Company Contact
-                                                    Number</label>
-                                                <input type="text"
-                                                    class="shadow-lg w-full p-2 border border-gray-300 rounded text-black"
-                                                    name="company_contact_number" pattern="[0-9]*" inputmode="numeric"
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
-                                                    required />
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-semibold required">Company Representative</label>
-                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="company_representative" />
-                                            </div>
+
                                         </div>
 
                                         <!-- School Fields -->
@@ -208,20 +192,6 @@
                                                 <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="school_address" />
                                             </div>
                                         </div>
-                                        <button type="button" onclick="nextStep(2)" class="w-full mt-8 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">
-                                            Next
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="step-2" class="hidden">
-                            <div   class="p-8 lg:p-12 flex items-start justify-start">
-                                <div class="text-white w-full">
-                                    <!-- Step 2 -->
-                                    <div class="md:w-1/2 w-full">
-                                        <h3 class="text-4xl font-bold mb-4">In Case of Emergency Contact Details</h3>
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Name</label>
                                             <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
@@ -246,16 +216,23 @@
                                             <input type="password" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="passwordConfirmation"/>
                                             <span class="text-danger text-red-400 text-sm password_err"></span>
                                         </div>
-
-                                        <div class="flex justify-between">
-                                            <button type="button" onclick="nextStep(1)" class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Previous</button>
-                                        </div>
                                         <div class="flex justify-between">
                                             <button id="btn-register"
                                                     wire:confirm="Are you sure you want to save this form?"
                                                     class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Register
                                             </button>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="step-2" class="hidden">
+                            <div   class="p-8 lg:p-12 flex items-start justify-start">
+                                <div class="text-white w-full">
+                                    <!-- Step 2 -->
+                                    <div class="md:w-1/2 w-full">
+
                                     </div>
                                 </div>
                             </div>
@@ -381,10 +358,6 @@
                     var birthday = $("input[name='birthday']").val();
                     var is_company = $("input[name='is_company']").prop("checked") ? 1 : 0;
                     var company_name = $("input[name='company_name']").val();
-                    var company_address = $("input[name='company_address']").val();
-                    var company_contact_number = $("input[name='company_contact_number']").val();
-                    var company_representative = $("input[name='company_representative']").val();
-                    var company_email = $("input[name='company_email']").val();
                     var school = $("input[name='school']").val();
                     var school_address = $("input[name='school_address']").val();
                     var emergency_contact_name = $("input[name='emergency_contact_name']").val();
@@ -408,10 +381,6 @@
                         birthday: birthday,
                         is_company: is_company,
                         company_name: company_name,
-                        company_address: company_address,
-                        company_contact_number: company_contact_number,
-                        company_representative: company_representative,
-                        company_email: company_email,
                         school: school,
                         school_address: school_address,
                         emergency_contact_name: emergency_contact_name,
@@ -422,18 +391,15 @@
                         cluster_id: cluster_id
                     },
                     success: function (data) {
-                        // Check if data itself exists and has an error property
                         if (data && data.error && $.isEmptyObject(data.error)) {
-                            window.location.href = '{{route("filament.admin.auth.login")}}';
+                            window.location.href = '{{ route("verification.sent") }}';
                         } else if (data && data.errors) {
-                            // Some APIs return 'errors' instead of 'error'
                             var formErr = data.errors;
                             for (var err in formErr) {
                                 $('.' + err + '_err').html(formErr[err][0]);
                             }
                         } else {
-                            window.location.href = '{{route("filament.admin.auth.login")}}';
-                            console.log('Unexpected response structure:', data);
+                            window.location.href = '{{ route("verification.sent") }}';
                         }
                     },
                     error: function (xhr, status, error) {

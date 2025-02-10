@@ -83,8 +83,6 @@ class VolunteerRegistrationController extends Controller
             'birthday' => $input['birthday'],
             'is_company' => $input['is_company'],
             'company_name' => $input['company_name'] ?? null,
-            'company_address' => $input['company_address'],
-            'company_contact_number' => $input['company_contact_number'],
             'school' => $input['school'],
             'school_address' => $input['school_address'],
             'emergency_contact_name' => $input['emergency_contact_name'],
@@ -117,16 +115,21 @@ class VolunteerRegistrationController extends Controller
         // Send verification email immediately
         $user->notify(new VerifyEmailNotification());
 
-        return response()->json([
-            'message' => 'User registered successfully. Verification email sent.',
-            'user' => $user
-        ], 201);
+        // return response()->json([
+        //     'message' => 'User registered successfully. Verification email sent.',
+        //     'user' => $user
+        // ], 201);
 
         }
 
 
+        return redirect()->route('verification.sent');
 
+    }
 
+    public function verificationSent()
+    {
+        return view('custom.verification-sent');
     }
 
     /**
@@ -171,7 +174,7 @@ class VolunteerRegistrationController extends Controller
             ->title('You have successfully registered.')
             ->success()
             ->send();
-            
+
         return redirect()->route('filament.admin.pages.dashboard')->with('status', 'Email verified successfully!');
     }
 }

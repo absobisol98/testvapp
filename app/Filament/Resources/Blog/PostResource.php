@@ -83,18 +83,9 @@ class PostResource extends Resource
                                 'title' => 'Input article content'
                             ]),
 
-                        Forms\Components\Select::make('blog_author_id')
-                            ->relationship(
-                                name: 'author',
-                                modifyQueryUsing: fn(Builder $query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'admin'),
-                            )
-                            ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->firstname} {$record->lastname}")
-                            ->searchable(['firstname', 'lastname'])
-                            ->preload()
-                            ->required()
-                            ->extraAttributes([
-                                'title' => 'Select author'
-                            ]),
+                        Forms\Components\TextInput::make('blog_author')
+                            ->label('Author')
+                            ->required(),
 
                         Forms\Components\Select::make('blog_category_id')
                             ->relationship('category', 'name')

@@ -109,7 +109,7 @@ class AdminPanelProvider extends PanelProvider
                 ->mobileFormPanelPosition('bottom')
                 ->showEmptyPanelOnMobile(true)
                 ->emptyPanelBackgroundImageOpacity('100%')
-                ->emptyPanelBackgroundImageUrl('https://scontent.fmnl9-5.fna.fbcdn.net/v/t39.30808-6/473671794_1028215809349776_8606581255995698286_n.jpg?stp=dst-jpg_p552x414_tt6&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=CWUqDoLrESwQ7kNvgFPAMZB&_nc_zt=23&_nc_ht=scontent.fmnl9-5.fna&_nc_gid=AwhmjLt0BxU68LlYA0i0c8V&oh=00_AYAec2Qk0Y20Los3C8jYRL9QzSg239XiJQshwXNWhU4qLw&oe=67A661EF'),
+                ->emptyPanelBackgroundImageUrl(asset('img/ayala-login-bg.png')),
                 FilamentMailLogPlugin::make(),
                 \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make(),
                 FilamentFullCalendarPlugin::make()
@@ -141,7 +141,7 @@ class AdminPanelProvider extends PanelProvider
                     ]),
                 \Jeffgreco13\FilamentBreezy\BreezyCore::make()
                     ->myProfile(
-                        shouldRegisterUserMenu: true,
+                        shouldRegisterUserMenu: false,
                         shouldRegisterNavigation: false,
                         navigationGroup: 'Settings',
                         hasAvatars: true,

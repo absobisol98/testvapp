@@ -30,21 +30,21 @@ class ListUsers extends ListRecords
         return static::$resource::getWidgets();
     }
 
-    public function getTabs(): array
-    {
-        $user = auth()->user();
-        $tabs = [
-            null => Tab::make('All'),
-            'admin' => Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'admin')),
-            'author' => Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'author')),
-        ];
+    // public function getTabs(): array
+    // {
+    //     $user = auth()->user();
+    //     $tabs = [
+    //         null => Tab::make('All'),
+    //         'admin' => Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'admin')),
+    //         'author' => Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'author')),
+    //     ];
 
-        if ($user->isSuperAdmin()) {
-            $tabs['superadmin'] = Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', config('filament-shield.super_admin.name')));
-        }
+    //     if ($user->isSuperAdmin()) {
+    //         $tabs['superadmin'] = Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', config('filament-shield.super_admin.name')));
+    //     }
 
-        return $tabs;
-    }
+    //     return $tabs;
+    // }
 
     protected function getTableQuery(): Builder
     {

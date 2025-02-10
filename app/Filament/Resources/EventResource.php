@@ -36,7 +36,9 @@ class EventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-calendar-date-range';
 
-    protected static ?string $navigationLabel = 'Volunteer Events';
+    protected static ?string $navigationLabel = 'Volunteer Opportunities';
+
+    protected static ?string $label = 'Opportunity';
 
     public static function form(Form $form): Form
     {
@@ -46,8 +48,8 @@ class EventResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('media_banner')
                             ->directory('event-banner-attachments')
-                            ->multiple()
                             ->maxFiles(1)
+                            ->multiple()
                             ->label('')
                             ->openable()
                             ->downloadable()
@@ -353,6 +355,21 @@ class EventResource extends Resource
                             ]),
                     ])
                     ->collapsible(),
+                    Forms\Components\Section::make('Event Certificate')
+                    ->schema([
+                            Forms\Components\FileUpload::make('certificate_background')
+                            ->directory('certificate_background')
+                            ->multiple()
+                            ->maxFiles(1)
+                            ->label('')
+                            ->openable()
+                            ->downloadable()
+                            ->helpertext('Upload an event certificate background (Recommended: 1200x500px, Max: 100MB). Drag & drop or click Browse.')
+                            ->extraAttributes([
+                                'title' => 'Upload certificate background here'
+                            ]),
+                    ])
+                    ->collapsible(),
 
 
 
@@ -379,6 +396,11 @@ class EventResource extends Resource
 //                Tables\Columns\TextColumn::make('event_type_id')
 //                    ->numeric()
 //                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Date')
+                    ->date('M d, Y')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('recurrence_type_id')
                     ->label('Recurrence type')
                     ->formatStateUsing(function (Event $record,string $state){
@@ -388,10 +410,6 @@ class EventResource extends Resource
                         }
                         return $record->event_recurrence_type->name;
                     })
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('start_date')
-                    ->label('Date')
-                    ->date('M d, Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('point_of_contact_id')
                     ->label('HR Representative (Point-of-contact)')
@@ -403,22 +421,14 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('program.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status.name')
-                    ->sortable(),
                 Tables\Columns\IconColumn::make('sign_up_approval_required')
+                    ->label('Approval Required')
                     ->boolean(),
                 Tables\Columns\IconColumn::make('attachment_required')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_by_user.firstname')
+                    ->label('Opportunity By')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('updated_by_user.firstname')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('M d, Y h:i A')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime('M d, Y h:i A')
-                    ->sortable(),
             ])
             ->filters([
                 Filter::make('status')
