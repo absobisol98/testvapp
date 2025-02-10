@@ -16,4 +16,15 @@ class ListBusinessUnits extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    public function mount(): void
+    {
+        $this->verifyuser();
+    }
+
+    public function verifyuser(){
+        if(auth()->user()->hasRole('External Partner')){
+            redirect()->route('filament.admin.resources.business-units.edit',['record' => auth()->user()->currentBU()->id]);
+        }
+    }
 }

@@ -453,7 +453,6 @@ class EventResource extends Resource
                         Forms\Components\Select::make('tags')
                             ->selectablePlaceholder(false)
                             ->label('')
-                            ->searchable()
                             ->placeholder('All Tags')
                             ->selectablePlaceholder(false)
                             ->multiple()
@@ -472,6 +471,7 @@ class EventResource extends Resource
                             });
                             return $query;
                         }
+                        // dd($query->get());
                         return $query;
                     }),
             ],layout: FiltersLayout::AboveContent)
@@ -497,9 +497,10 @@ class EventResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\Thumbnail::route('/'),
+
+            'index' => Pages\ListEvents::route('/list'),
             'calendar' => Pages\Calendar::route('/calendar'),
-            'thumbnail' => Pages\ListEvents::route('/thumbnail'),
+            'thumbnail' => Pages\Thumbnail::route('/'),
             'create' => Pages\CreateEvent::route('/create'),
             'view' => Pages\EventPage::route('/view/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),

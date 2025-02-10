@@ -178,8 +178,8 @@
             </div>
         </div>
 
-        <div class="w-full flex items-center justify-end">
+        {{-- <div class="w-full flex items-center justify-end">
             <div class="w-[95%] h-[30px] bg-[#F55E1D]"></div>
-        </div>
+        </div> --}}
     </div>
 </x-filament-widgets::widget>

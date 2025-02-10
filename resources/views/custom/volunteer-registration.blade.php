@@ -53,7 +53,7 @@
             </div>
         </section>
 
-        <div class=" bg-[#FFFFFFE5] m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] sm:w-[95%] z-10 bg-[#F55E1D] bg-cover lg:bg-right"  style="background: url('{{ asset('img/registration-bg.png') }}');">
+        <div class="bg-[#FFFFFFE5] m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] z-10 bg-[#F55E1D] bg-cover" style="background: url('{{ asset('img/registration-bg.png') }}') no-repeat right center; background-size: cover;">
                 <div class="items-start justify-center min-h-[756px]">
                     <!-- Left Side -->
                     <form  action="{{ route('volunteer.form.store') }}" method="POST">
@@ -71,33 +71,33 @@
                                 </div> --}}
                                 <div>
                                     <label class="block text-sm font-semibold required">First Name</label>
-                                    <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="firstname"/>
+                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="firstname"/>
                                     <span class="text-danger text-red-400 text-sm firstname_err"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold">Middle Name</label>
-                                    <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="middle_name"/>
+                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="middle_name"/>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold required">Last Name</label>
-                                    <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="lastname"/>
+                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="lastname"/>
                                     <span class="text-danger text-red-400 text-sm lastname_err"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold required">Email</label>
-                                    <input type="email" class="w-full p-2 border border-gray-300 rounded text-black" name="email"/>
+                                    <input type="email" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="email"/>
                                     <span class="text-danger text-red-400 text-sm email_err"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold required">Birthday</label>
-                                    <input type="date" class="w-full p-2 border border-gray-300 rounded text-black" name="birthday"/>
+                                    <input type="date" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="birthday"/>
                                     <span class="text-danger text-red-400 text-sm birthday_err"></span>
                                 </div>
 
                                 <!-- Program Interest Dropdown -->
                                 <div class="mb-8">
                                     <label class="block mb-2 text-white font-semibold">What programs are you interested in?</label>
-                                    <select id="program-select" class="w-full p-2 bg-white text-gray-900 rounded" name="program_id" >
+                                    <select id="program-select" class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="program_id" >
                                         @foreach($programs as $program)
                                             <option value="{{ $program->id }}">{{ $program->name }}</option>
                                         @endforeach
@@ -156,7 +156,7 @@
 
                                             <div class="" id="clusterSelectWrapper">
                                                 <label class="block text-sm font-semibold required">Cluster</label>
-                                                <select required class="w-full p-2 bg-white text-gray-900 rounded" name="cluster_id" id="clusterSelect" class="form-select">
+                                                <select required class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="cluster_id" id="clusterSelect" class="form-select">
                                                     <option value="" disabled selected></option>
                                                     @foreach ($clusters as $cluster)
                                                         <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
@@ -167,7 +167,7 @@
                                             <!-- Company Select Dropdown -->
                                             <div class="" id="companySelectWrapper">
                                                 <label class="block text-sm font-semibold required">Company Name</label>
-                                                <select required class="w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect" class="form-select">
+                                                <select required class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect" class="form-select">
                                                     <option value="" disabled selected></option>
                                                     @foreach ($companies as $company)
                                                         <option value="{{ $company->id }}" data-cluster="{{ $company->cluster_id }}">{{ $company->name }}</option>
@@ -180,20 +180,20 @@
                                             </div> --}}
                                             <div>
                                                 <label class="block text-sm font-semibold required">Company Address</label>
-                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
+                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="company_address" />
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-semibold required">Company Contact
                                                     Number</label>
                                                 <input type="text"
-                                                    class="w-full p-2 border border-gray-300 rounded text-black"
+                                                    class="shadow-lg w-full p-2 border border-gray-300 rounded text-black"
                                                     name="company_contact_number" pattern="[0-9]*" inputmode="numeric"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
                                                     required />
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-semibold required">Company Representative</label>
-                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_representative" />
+                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="company_representative" />
                                             </div>
                                         </div>
 
@@ -201,11 +201,11 @@
                                         <div id="school_fields" class="hidden">
                                             <div>
                                                 <label class="block text-sm font-semibold required">School Name</label>
-                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school" />
+                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="school" />
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-semibold required">School Address</label>
-                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="school_address" />
+                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="school_address" />
                                             </div>
                                         </div>
                                         <button type="button" onclick="nextStep(2)" class="w-full mt-8 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">
@@ -224,12 +224,12 @@
                                         <h3 class="text-4xl font-bold mb-4">In Case of Emergency Contact Details</h3>
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Name</label>
-                                            <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
+                                            <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
                                             <span class="text-danger text-red-400 text-sm text-sm emergency_contact_name_err"></span>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Number</label>
-                                            <input type="text" class="w-full p-2 border border-gray-300 rounded text-black"
+                                            <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black"
                                                 name="emergency_contact_number" pattern="[0-9]*" inputmode="numeric"
                                                 maxlength="15"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
@@ -238,12 +238,12 @@
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Password</label>
-                                            <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="password"/>
+                                            <input type="password" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="password"/>
                                             <span class="text-danger text-red-400 text-sm password_err"></span>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Confirm Password</label>
-                                            <input type="password" class="w-full p-2 border border-gray-300 rounded text-black" name="passwordConfirmation"/>
+                                            <input type="password" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="passwordConfirmation"/>
                                             <span class="text-danger text-red-400 text-sm password_err"></span>
                                         </div>
 

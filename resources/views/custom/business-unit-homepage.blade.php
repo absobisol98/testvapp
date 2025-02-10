@@ -24,12 +24,12 @@
 
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-12">
                     <div class="col-span-1 flex flex-col items-center justify-center">
-                        <p class="font-[700] text-[40px] text-center">500k+</p>
+                        <p class="font-[700] text-[40px] text-center">{{$opportunities->count()}}</p>
                         <p class="font-medium text-center text-sm text-[#FDFDFD]">Number of Opportunities</p>
                     </div>
 
                     <div class="col-span-1 flex flex-col items-center justify-center">
-                        <p class="font-[700] text-[40px] text-center">150k</p>
+                        <p class="font-[700] text-[40px] text-center">{{$total_volunteers}}</p>
                         <p class="font-medium text-center text-sm text-[#FDFDFD]">All of Volunteers</p>
                     </div>
                 </div>
@@ -38,8 +38,8 @@
         {{-- Tablet & mobile: Hero Banner Section --}}
         <section
             class="h-fit w-full flex lg:hidden flex-col items-center justify-center p-[5%] text-white relative mt-[87px] gap-4 py-8"
-            style="background: url('{{ asset('img/bpi-homepage-bg.png') }}') no-repeat center center; background-size: cover;">
-            <img class="w-[60%] max-w-[220px]" src="{{ asset('img/bpi-logo.png') }}" alt="bpi-logo">
+            style="background: url('{{ $eventCover }}') no-repeat center center; background-size: cover;">
+            <img class="w-[60%] max-w-[220px]" src="{{ $logo }}" alt="bpi-logo">
             <p class="font-[700] text-[40px] text-center">{{$business_unit->header_tagline}}</p>
             <p class="font-medium text-center text-lg max-w-[700px]">
                 {{$business_unit->header_description}}
@@ -54,12 +54,12 @@
 
             <div class="grid grid-cols-2 gap-4 md:gap-12 justify-center">
                 <div class="col-span-1 flex flex-col items-center justify-center">
-                    <p class="font-[700] text-[40px] text-center">500k+</p>
+                    <p class="font-[700] text-[40px] text-center">{{$opportunities->count()}}</p>
                     <p class="font-medium text-center text-sm text-[#FDFDFD]">Number of Opportunities</p>
                 </div>
 
                 <div class="col-span-1 flex flex-col items-center justify-center">
-                    <p class="font-[700] text-[40px] text-center">150k</p>
+                    <p class="font-[700] text-[40px] text-center">{{$total_volunteers}}</p>
                     <p class="font-medium text-center text-sm text-[#FDFDFD]">All of Volunteers</p>
                 </div>
             </div>
@@ -82,52 +82,54 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1 flex flex-col items-start justify-start gap-2">
-                    <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                    <div class="flex flex-col items-start justify-between">
-                        <p class="text-[40px] font-[700] text-[#D43F3F] mt-3 leading-none">Lorem ipsum sit dolorem ipsum sit
-                            dolor met.</p>
+                    @if ($upcoming)
+                        {{-- @dd($upcoming) --}}
+                        <p class="text-[18px] font-[400]">UPCOMING OPPORTUNITY</p>
+                        <div class="flex flex-col items-start justify-between">
+                            <p class="text-[40px] font-[700] text-[#D43F3F] mt-3 leading-none">{{$upcoming->title}}</p>
 
-                        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
+                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
-                        <p class="text-[18px] font-[400] mb-3">Zoom Webinar Online, National Capital Region</p>
-                        <div class="w-full flex flex-row items-start justify-start text-[14px] font-[400] gap-4">
-                            <div class="w-fit flex flex-col items-start justify-between gap-2">
-                                <p class="font-[600]">DATE: Aug-27-2024</p>
-                                <p class="font-[600]">2:00 PM - 6:00 PM</p>
-                            </div>
-                            <div class="w-fit flex flex-col items-start justify-between gap-2">
-                                <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session
-                                </p>
-                                <div class="flex flex-col items-center justify-start">
-                                    <p><span class="font-[600]">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                    <p><span class="font-[600]">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
+                            <p class="text-[18px] font-[400] mb-3">{{$upcoming?->location}}</p>
+                            <div class="w-full flex flex-row items-start justify-start text-[14px] font-[400] gap-4">
+                                <div class="w-fit flex flex-col items-start justify-between gap-2">
+                                    <p class="font-[600]">DATE: {{\Carbon\Carbon::parse($upcoming?->start_date)->isoFormat('MMMM DD, YYYY')}}</p>
+                                    <p class="font-[600]">{{\Carbon\Carbon::parse($upcoming?->start_date)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($upcoming?->end_date)->isoFormat('hh:mm A')}}</p>
+                                </div>
+                                <div class="w-fit flex flex-col items-start justify-between gap-2">
+                                    <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
+                                        <div class="flex flex-col items-center justify-start">
+                                            @foreach ($upcoming->slots as $key => $slot)
+                                                <p><span class="font-[600]">BATCH {{$key+1}}: ({{$slot->shift_name}}) - </span> {{\Carbon\Carbon::parse($slot?->start_time)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($slot?->end_time)->isoFormat('hh:mm A')}}</p>
+                                            @endforeach
+
+                                        </div>
                                 </div>
                             </div>
+
+                            <div class="w-full flex items-center justify-start gap-4 mt-8 max-w-[416px]">
+                                <button onclick="openModal()" class="w-full">
+                                    <div
+                                        class="h-[48px] w-full bg-[#272727] flex items-center justify-center p-2 hover:bg-[#595959]">
+                                        <p class="font-[400] text-[18px] text-white">VIEW DETAILS</p>
+                                    </div>
+                                </button>
+                                <a href="{{route('filament.admin.resources.events.view',['record' => $upcoming->id])}}" class="w-full">
+                                    <div
+                                        class="h-[48px] w-full bg-[#D43F3F] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                                        <p class="font-[400] text-[18px] text-white">JOIN</p>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
 
-                        <div class="w-full flex items-center justify-start gap-4 mt-8 max-w-[416px]">
-                            <button onclick="openModal()" class="w-full">
-                                <div
-                                    class="h-[48px] w-full bg-[#272727] flex items-center justify-center p-2 hover:bg-[#595959]">
-                                    <p class="font-[400] text-[18px] text-white">VIEW DETAILS</p>
-                                </div>
-                            </button>
-
-                            <a href="" class="w-full">
-                                <div
-                                    class="h-[48px] w-full bg-[#D43F3F] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
-                                    <p class="font-[400] text-[18px] text-white">JOIN</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-                    {{-- nofeatured opportunity --}}
-                    {{-- <div class="flex flex-col items-center justify-center w-full" style="height: 100%;">
-                        <div class="bg-gray-100 w-full h-full flex items-center justify-center p-4">
-                            <p class="text-base text-black">No Featured Opportunity Available.</p>
-                        </div>
-                    </div> --}}
+                    @else
+                        <div class="flex flex-col items-center justify-center w-full" style="height: 100%;">
+                            <div class="bg-gray-100 w-full h-full flex items-center justify-center p-4">
+                                <p class="text-base text-black">This Business Unit has no Upcoming Opportunity.</p>
+                            </div>
+                        </div> 
+                    @endif
                 </div>
             </div>
 
@@ -211,11 +213,15 @@
                         class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
                         {{-- List --}}
                         @foreach ($opportunities as $index => $opportunity)
+                            @php
+                                $ban = $upcoming->getMedia('event-banner-attachments')->first();
+                                $upp_ban = ($ban) ? $ban->getUrl() : $logo;
+                            @endphp
                             <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                                 <div
-                                    class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                    <img class="w-full h-full object-cover"
-                                        src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                                    class="w-contain h-contain md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ $upp_ban }}" alt="">
                                 </div>
 
                                 <div class="w-full">
@@ -251,12 +257,21 @@
                                 </div>
 
                                 <div class="w-[200px]">
-                                    <a href="">
+                                    @if ( \Carbon\Carbon::parse($opportunity->created_at)->lt(now()))
+                                        <a href="{{route('filament.admin.resources.events.view',['record' => $opportunity->id])}}">
+                                            <div
+                                                class="h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                            </div>
+                                        </a>
+                                    @else
+
                                         <div
-                                            class="h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
-                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                            class="opacity-50 h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2">
+                                            <p class="font-[400] text-base md:text-[18px] text-white ">Event Done</p>
                                         </div>
-                                    </a>
+
+                                    @endif
                                 </div>
                             </div>
 
@@ -389,79 +404,75 @@
 
 
         {{-- Featured Opportunity Modal --}}
+      
         <div class="w-full h-fit">
-            <div id="featuredImageModal"
-                class="fixed inset-0 flex justify-center items-center z-50 hidden transition-opacity duration-300 bg-black bg-opacity-50"
-                onclick="closeModal(event)">
-                <!-- Modal Content -->
-                <div
-                    class="modal-content bg-white shadow-lg max-w-[80%] w-full p-8 transform transition-all duration-300 scale-95 opacity-0">
-                    <div class="w-full flex justify-end items-end p-4">
-                        <button id="closeModal"
-                            class="text-2xl font-semibold text-black hover:bg-gray-100 focus:outline-none">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
-                        </button>
-                    </div>
-
-                    <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
-                        <div class="flex flex-col  items-center justify-center">
-                            <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center"
-                                style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
-                                <div
-                                    class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
-                                    <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
-                                </div>
-                            </div>
-
-                            <div class="w-full p-4">
-                                <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
-                                    <p class="text-lg font-normal text-white">EDUCATION</p>
+            @if ($upcoming)
+            {{-- @dd($upcoming) --}}
+                <div id="featuredImageModal"
+                    class="fixed inset-0 flex justify-center items-center z-50 hidden transition-opacity duration-300 bg-black bg-opacity-50"
+                    onclick="closeModal(event)">
+                    <!-- Modal Content -->
+                    <div
+                        class="modal-content bg-white shadow-lg max-w-[80%] w-full p-8 transform transition-all duration-300 scale-95 opacity-0">
+                        <div class="w-full flex justify-end items-end p-4">
+                            <button id="closeModal"
+                                class="text-2xl font-semibold text-black hover:bg-gray-100 focus:outline-none">
+                                @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
+                            </button>
+                        </div>
+                        <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
+                            <div class="flex flex-col  items-center justify-center">
+                                <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center"
+                                    style="background-image: url('{{  $upcoming_banner}}');">
+                                    <div
+                                        class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
+                                        <img class="w-[30%]" src="{{ $logo }}" alt="Logo">
+                                    </div>
                                 </div>
 
-                                <p class="text-4xl font-normal text-[#03498D]">Ayala Reading Am<span
-                                        class="font-bold">BASA</span>dors Storytelling Webinar</p>
 
-                                <p class="text-2xl font-normal">Zoom Webinar Online, National Capital Region</p>
+                                <div class="w-full p-4">
+                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
+                                        <p class="text-lg font-normal text-white">{{$upcoming->event_type->name}}</p>
+                                    </div>
 
-                                <p class="text-lg font-normal my-16 text-justify">
-                                    &emsp; &emsp;Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-                                    unknown printer took a galley of type and scrambled it to make a type specimen book. It
-                                    has survived not only five centuries, but also the leap into electronic typesetting,
-                                    remaining essentially unchanged. It was popularised in the 1960s with the release of
-                                    Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-                                    publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                                </p>
+                                    <p class="text-4xl font-normal text-[#03498D]">{{$upcoming->title}}</p>
 
-                                <div
-                                    class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 my-16">
-                                    <p class="font-semibold">DATE: Aug-27-2024 | 2:00 PM - 6:00 PM</p>
-                                    <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage actively in
-                                        the session</p>
-                                    <p><span class="font-semibold">BATCH 1:</span> 2:00 PM - 4:00 PM</p>
-                                    <p><span class="font-semibold">BATCH 2:</span> 2:00 PM - 4:00 PM</p>
-                                </div>
+                                    <p class="text-2xl font-normal">{{$upcoming?->location}}</p>
 
-                                <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
-                                    <a href="">
-                                        <div
-                                            class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-normal text-lg text-white">SIGN UP</p>
-                                        </div>
-                                    </a>
+                                    <p class="text-lg font-normal my-16 text-justify">
+                                        {!! nl2br($upcoming->description ?? 'No description created') !!}
+                                    </p>
 
-                                    <a href="">
-                                        <div
-                                            class="h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                                            <p class="font-normal text-lg text-white">FAVORITE</p>
-                                        </div>
-                                    </a>
+                                    <div
+                                        class="w-full flex flex-col items-start justify-start text-xl font-normal gap-2 my-16">
+                                        <p class="font-semibold">DATE: {{\Carbon\Carbon::parse($upcoming?->start_date)->isoFormat('MMMM DD, YYYY')}} | {{\Carbon\Carbon::parse($upcoming?->start_date)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($upcoming?->end_date)->isoFormat('hh:mm A')}}</p>
+                                        <p><span class="font-semibold">SHIFTS:</span> Listen attentively and engage actively in
+                                            the session</p>
+
+                                        @foreach ($upcoming->slots as $key => $slot)
+                                            <p><span class="font-semibold">BATCH {{$key+1}}: ({{$slot->shift_name}}) - </span> {{\Carbon\Carbon::parse($slot?->start_time)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($slot?->end_time)->isoFormat('hh:mm A')}}</p>
+                                        @endforeach
+
+                                    </div>
+
+                                    <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
+                                        <a href="{{route('filament.admin.resources.events.view',['record' => $opportunity->id])}}">
+                                            <div
+                                                class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                <p class="font-normal text-lg text-white">SIGN UP</p>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+            
+            @endif
+            
 
             {{-- Modal Scripts --}}
             <script>

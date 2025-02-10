@@ -305,7 +305,11 @@ class EventRegistrationTableAction
                     $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
 
 
+
                     if ($registration?->status_id == 1 && $registration?->start_date && Carbon::parse($registration->start_date)->gte(now())) {
+
+                    if($registration && $registration->status_id == 1 && $record->start_date->gte(now())){
+
                         return true;
                     }
 
