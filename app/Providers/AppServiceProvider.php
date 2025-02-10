@@ -13,6 +13,7 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\ServiceProvider;
 use Opcodes\LogViewer\Facades\LogViewer;
+use App\Services\IcsGeneratorService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->singleton(IcsGeneratorService::class, function ($app) {
+            return new IcsGeneratorService();
+        });
     }
 
     /**

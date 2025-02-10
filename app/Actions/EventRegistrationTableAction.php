@@ -14,70 +14,77 @@ use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
 use DateTime;
+use Spatie\IcalendarGenerator\Components\Calendar;
+use Spatie\IcalendarGenerator\Components\Event as IcsEvent;
+use Spatie\IcalendarGenerator\ValueObjects\RRule;
+use Spatie\IcalendarGenerator\Enums\RecurrenceFrequency;
+
 class EventRegistrationTableAction
 {
 
     public function execute()
     {
         return [
-            \Filament\Tables\Actions\Action::make('generateUrl')
-                ->label('Add to Calendar')
-                ->action(function ($record) {
-                    // Generate the URL using the data from the row
+            \Filament\Tables\Actions\Action::make('downloadIcs')
+            ->label('Add to Calendar')
+            ->action(function ($record) {
+                // Create event
+                $event = IcsEvent::create($record->title)
+                    ->description(strip_tags($record->description))
+                    ->startsAt(Carbon::parse($record->start_date))
+                    ->endsAt(Carbon::parse($record->end_date));
 
-                    $base_url = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=";
-                    $title = $record->title;
-                    $start = $record->start_date;
-                    $end = $record->end_date;
+        // Handle recurring events
+        if ($record->recurrence_type_id != 1 && $record->repeat_until) {
+            $repeatRule = match($record->frequency) {
+                'daily' => 'daily',
+                'weekly' =>  'weekly',
+                'monthly' => 'monthly',
+                'yearly' =>  'yearly',
+                default => null
+            };
 
-
-                    $start_date = new DateTime($start);
-                    $end_date = new DateTime($end);
-
-                    $formatted_start = $start_date->format('Ymd\THis');
-                    $formatted_end = $end_date->format('Ymd\THis');
-
-
-                        if($record->recurrence_type_id == 1){
-                            $freq = '';
-                        }else{
-                            $formatted_recurrence = new DateTime($record->repeat_until);
-
-                            $formatted_recurrence = $formatted_recurrence->format('Ymd');
-
-                            if($record->frequency == 'daily'){
-                                $freq = "&recur=RRULE:FREQ%3DDAILY;UNTIL%3D" . $formatted_recurrence;
-                            }elseif($record->frequency == 'weekly'){
-                                $freq = "&recur=RRULE:FREQ%3DWEEKLY;UNTIL%3D" . $formatted_recurrence;
-                            }elseif($record->frequency == 'monthly'){
-                                $freq = "&recur=RRULE:FREQ%3DMONTHLY;UNTIL%3D" . $formatted_recurrence;
-                            }elseif($record->frequency == 'yearly'){
-                                $freq = "&recur=RRULE:FREQ%3DYEARLY;UNTIL%3D" . $formatted_recurrence;
-                            }
-                        }
-
-                    $description = strip_tags($record->description);
-                    $formatted_description = str_replace(' ', '%20', $description);
-                    $final_url = $base_url . $formatted_description .'&dates=' .$formatted_start .'/'. $formatted_end . $freq . '&ctz=Asia/Tokyo';
-
-
-
-                    return redirect($final_url);
-                })
-
-                ->icon('heroicon-o-link')
-                ->visible(function (Event $record){
-
-                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
-
-                    if($registration && $registration->status_id == 1){
-                        return true;
+                if ($repeatRule) {
+                    if($repeatRule == 'daily'){
+                        $repeatRule = RRule::frequency(RecurrenceFrequency::daily());
+                    }elseif($repeatRule == 'weekly'){
+                        $repeatRule = RRule::frequency(RecurrenceFrequency::weekly());
+                    }elseif($repeatRule == 'monthly'){
+                        $repeatRule = RRule::frequency(RecurrenceFrequency::monthly());
+                    }elseif($repeatRule == 'yearly'){
+                        $repeatRule = RRule::frequency(RecurrenceFrequency::yearly());
                     }
 
-                    return false;
+                    $event->rrule(
+                        $repeatRule->until(Carbon::parse($record->repeat_until))
+                    );
+                }
+            }
 
 
-                }),
+
+            $calendar_title = $record->title . ' Calendar';
+            // Create calendar and add event
+            $calendar = Calendar::create()
+                ->name($calendar_title)
+                ->event($event);
+
+            // Generate and return file download
+            return response()->streamDownload(function () use ($calendar) {
+                echo $calendar->get();
+            }, $calendar_title . '.ics', [
+                'Content-Type' => 'text/calendar; charset=utf-8',
+                'Content-Disposition' => 'attachment; filename="my-awesome-calendar.ics"',
+            ]);
+        })
+        ->icon('heroicon-o-calendar')
+        ->visible(function (Event $record) {
+            $registration = $record->registrations
+                ->where('volunteer_id', auth()->user()->id)
+                ->first();
+
+            return $registration && $registration->status_id == 1;
+        }),
 
             \Filament\Tables\Actions\Action::make('Register')
                 ->color('primary')
@@ -269,14 +276,14 @@ class EventRegistrationTableAction
                     if(!$record->start_date->gte(now())){
                         return false;
                     }
-                    
+
                     if(!$record->registrations->where('volunteer_id',auth()->user()->id)->first() && auth()->user()->hasRole(['super_admin'])){
                         return true;
                     }
                     if($record->registrations->where('volunteer_id',auth()->user()->id)->first()){
                         return false;
                     }
-                   
+
                     return (new EventRegistrationButtonVisibilityAction())->execute($record);
 
                 }),
@@ -294,10 +301,11 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-                    
+
                     $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
 
-                    if($registration && $registration->status_id == 1 && $registration->start_date->gte(now())){
+
+                    if ($registration?->status_id == 1 && $registration?->start_date && Carbon::parse($registration->start_date)->gte(now())) {
                         return true;
                     }
 
@@ -326,7 +334,7 @@ class EventRegistrationTableAction
                     return $option;
 
                 }),
-                
+
             \Filament\Tables\Actions\Action::make('Edit')
                 ->icon('heroicon-o-pencil-square')
                 ->tooltip('Edit registration')

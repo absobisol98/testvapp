@@ -370,6 +370,13 @@
                                                          </div>
                                                      </a>
                                                 </div>
+                                                <div class="w-[200px]">
+                                                   <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id ]) }}" class="cursor-pointer">
+                                                         <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                                             <p class="font-medium text-base md:text-[18px] text-white">Download Certificate</p>
+                                                         </div>
+                                                     </a>
+                                                </div>
                                             @endif
                                         </div>
 

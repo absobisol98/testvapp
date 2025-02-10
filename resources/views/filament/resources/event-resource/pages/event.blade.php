@@ -100,7 +100,7 @@
                         {{-- {{$record->slots[0]->total_slots}} --}}
                     </p>
                     <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
-                        <svg class="w-8 h-4 mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 10.59l3.29 3.3a1 1 0 0 1-1.42 1.42l-3.3-3.29a1 1 0 0 1-.29-.7V7a1 1 0 0 1 2 0v5.59z"></path></svg><strong>Shift: &nbsp;</strong>{{$record->slots[0]->shift_name}}
+                        <svg class="w-8 h-4 mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 10.59l3.29 3.3a1 1 0 0 1-1.42 1.42l-3.3-3.29a1 1 0 0 1-.29-.7V7a1 1 0 0 1 2 0v5.59z"></path></svg><strong>Shift: &nbsp;</strong>{{$record->slots[0]->shift_name ?? '' }}
                     </p>
                     <br>
                     <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center font-bold">Volunteer Responsibility</p>
