@@ -50,9 +50,6 @@ Route::get('/email/verify/sent', [VolunteerRegistrationController::class, 'verif
 Route::get('/data-privacy-policy', function () {
     return view('data-privacy-policy');
 })->name('data-privacy-policy');
-Route::get('/data-privacy-policy', function () {
-    return view('data-privacy-policy');
-})->name('data-privacy-policy');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [VolunteerRegistrationController::class, 'sendVerificationEmail'])
