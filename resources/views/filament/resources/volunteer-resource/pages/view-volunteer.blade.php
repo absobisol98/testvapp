@@ -360,7 +360,7 @@
                                             @endphp
                                             @if ($att_details)
                                                 <div class="w-[200px]">
-                                                    <img onerror="this.src='{{url('images/error-image.jpeg')}}'; this.onerror=null;" class="w-full" src="{{Storage::url($att_details->id.'-qr-code.png')}}">
+                                                    {{-- <img onerror="this.src='{{url('images/error-image.jpeg')}}'; this.onerror=null;" class="w-full" src="{{Storage::url($att_details->id.'-qr-code.png')}}"> --}}
                                                     <a href="{{ secure_asset(Storage::url($att_details->id . '-qr-code.png')) }}"
                                                         onclick="event.preventDefault(); forceDownload(this)"
                                                         data-filename="qr-code.png"

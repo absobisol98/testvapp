@@ -48,8 +48,8 @@ class EventResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('media_banner')
                             ->directory('event-banner-attachments')
-                            ->multiple()
                             ->maxFiles(1)
+                            ->multiple()
                             ->label('')
                             ->openable()
                             ->downloadable()
@@ -352,6 +352,21 @@ class EventResource extends Resource
                             ->downloadable()
                             ->extraAttributes([
                                 'title' => 'Upload attachments here'
+                            ]),
+                    ])
+                    ->collapsible(),
+                    Forms\Components\Section::make('Event Certificate')
+                    ->schema([
+                            Forms\Components\FileUpload::make('certificate_background')
+                            ->directory('certificate_background')
+                            ->multiple()
+                            ->maxFiles(1)
+                            ->label('')
+                            ->openable()
+                            ->downloadable()
+                            ->helpertext('Upload an event certificate background (Recommended: 1200x500px, Max: 100MB). Drag & drop or click Browse.')
+                            ->extraAttributes([
+                                'title' => 'Upload certificate background here'
                             ]),
                     ])
                     ->collapsible(),
