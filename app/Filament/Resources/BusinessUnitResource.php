@@ -38,6 +38,17 @@ class BusinessUnitResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    public static function getNavigationLabel(): string
+    {
+        if(auth()->user()->hasRole('External Partner')){
+            return 'My Business Unit';
+        }
+        return 'Business Units';
+
+    }
+
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -48,7 +59,7 @@ class BusinessUnitResource extends Resource
                         ->collection('bu_logo')
                         ->required()
                         ->conversion('preview')
-                        ->maxSize(5000)
+                        ->maxSize(10000)
                         ->acceptedFileTypes([
                                 'image/apng',
                                 'image/avif',
@@ -59,7 +70,7 @@ class BusinessUnitResource extends Resource
                                 'image/webp',
                         ])
                         ->imageResizeMode('cover')
-                        ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only.')
+                        ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Max. 10MB')
                         ->image()
                         ->openable()
                         ->downloadable()
@@ -129,6 +140,125 @@ class BusinessUnitResource extends Resource
                     })
 
                     ->createOptionForm( (new UserCreateField())->execute(true) ),
+
+                    Fieldset::make('Header')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('cover')
+                            ->label('Cover')
+                            ->collection('bu_eventcover')
+                            ->required()
+                            ->conversion('preview')
+                            ->maxSize(5000)
+                            ->acceptedFileTypes([
+                                    'image/apng',
+                                    'image/avif',
+                                    'image/png',
+                                    'image/jpg',
+                                    'image/jpeg',
+                                    'image/svg',
+                                    'image/webp',
+                            ])
+                            ->imageResizeMode('cover')
+                            ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only.')
+                            ->image()
+                            ->openable()
+                            ->downloadable()
+                            ->columnSpan(3),
+
+                        Forms\Components\TextInput::make('header_tagline')
+                            ->label('Tagline')
+                            ->required()
+                            ->columnSpanFull()
+                            ->maxLength(100),
+
+                        Forms\Components\Textarea::make('header_description')
+                            ->label('Description')
+                            ->required()
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                        
+                    //     SpatieMediaLibraryFileUpload::make('header_gallery')
+                    //         ->label('Gallery Header')
+                    //         ->collection('bu_galleries_head')
+                    //         ->conversion('preview')
+                    //         ->maxSize(10000)
+                    //         ->multiple()
+                    //         ->maxFiles(3)
+                    //         ->acceptedFileTypes([
+                    //                 'image/apng',
+                    //                 'image/avif',
+                    //                 'image/png',
+                    //                 'image/jpg',
+                    //                 'image/jpeg',
+                    //                 'image/svg',
+                    //                 'image/webp',
+                    //         ])
+                    //         ->imageResizeMode('cover')
+                    //         ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Maximum of 3 files with 10MB of max file size ')
+                    //         ->image()
+                    //         ->openable()
+                    //         ->downloadable()
+                    //         ->columnSpan(3),
+                ]),
+    
+                Repeater::make('socials')
+                    ->relationship()
+                    ->addActionLabel('Add Socials')
+                    ->schema([
+                        Select::make('social')
+                            ->options([
+                                'instagram' => 'Instagram',
+                                'facebook' => 'Facebook',
+                                'linkedin' => 'Linked In',
+                                'website' => 'Website',
+                                'youtube' => 'Youtube',
+                                'tiktok' => 'Tiktok',
+                            ])
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                            ->required(),
+                        TextInput::make('link')->placeholder('https://ayala.com/')->required(),
+                    ])
+                    ->defaultItems(3)
+                    ->columns(2)
+                    ->columnSpanFull(),
+
+
+                Fieldset::make('Events')
+                    ->schema([
+                        Forms\Components\TextInput::make('event_heading')
+                            ->label('Heading')
+                            ->required()
+                            ->columnSpanFull()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('event_description')
+                            ->label('Description')
+                            ->required()
+                            ->rows(3)
+                            ->columnSpanFull()
+                            ->maxLength(255),
+
+                        SpatieMediaLibraryFileUpload::make('gallery')
+                            ->collection('bu_galleries')
+                            ->image()
+                            ->acceptedFileTypes([
+                                    'image/apng',
+                                    'image/avif',
+                                    'image/png',
+                                    'image/jpg',
+                                    'image/jpeg',
+                                    'image/svg',
+                                    'image/webp',
+                            ])
+                            ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only.')
+                            ->multiple()
+                            ->maxFiles(50)
+                            ->maxSize(5000)
+                            ->reorderable()
+                            ->downloadable()
+                            ->columnSpanFull(),
+                    ]),
+
 
             ])->columns(3);
     }
