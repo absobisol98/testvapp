@@ -31,7 +31,6 @@ use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
 use Tapp\FilamentMailLog\FilamentMailLogPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-use Tapp\FilamentFormBuilder\FilamentFormBuilderPlugin;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -104,7 +103,6 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                FilamentFormBuilderPlugin::make(),
                 AuthUIEnhancerPlugin::make()
                 ->mobileFormPanelPosition('bottom')
                 ->showEmptyPanelOnMobile(true)
