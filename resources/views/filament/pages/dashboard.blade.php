@@ -37,6 +37,12 @@
             @livewire(\App\Filament\Widgets\VolunteersWidget::class)
         @endif
 
+        @if (auth()->user()->hasRole('Ayala Super Admin'))
+        @livewire(\App\Filament\Widgets\AFIAdminOpportunitiesWidget::class)
+        @livewire(\App\Filament\Widgets\BusinessUnitOrExternalPartersWidget::class)
+        @livewire(\App\Filament\Widgets\VolunteersWidget::class)
+        @endif
+
         {{-- If the user is a Partner --}}
         @if (auth()->user()->hasRole('External Partner'))
             @livewire(\App\Filament\Widgets\PartnersOnGoingOpportunitiesWidget::class)

@@ -155,7 +155,7 @@
 
                     {{-- OPPORTUNITIES List --}}
                     <div id="opportunityList"
-                        class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
+                        class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-scroll custom-scrollbar">
                         {{-- List --}}
                         @foreach ($opportunities as $index => $opportunity)
                             <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
@@ -495,15 +495,22 @@
 
                                 <div class="swiper-slide">
                                     @if ($article_banner)
-                                        <div class="flex items-center justify-between rounded-xl h-[509px] gap-4 bg-cover bg-center"
-                                            style="background-image: url('{{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }}');">
-                                            <div class="h-full w-full flex items-end rounded-xl p-4 bg-gradient-to-t from-[#03498D] to-transparent"></div>
+                                    <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4" style="background-image: url({{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
+                                        <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
+                                            {{-- <img class="w-[30%]" src="img/logo-colored.png" alt=""> --}}
                                         </div>
+                                    </div>
+                                    @else
+                                    <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4"  style="background-image: url({{ asset('/img/ayala-foundation-bg-3.jpg') }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
+                                        <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
+                                            <img class="w-[30%]" src="img/logo-white.png" alt="">
+                                        </div>
+                                    </div>
                                     @endif
                                     {{-- @endisset --}}
-                                    <div class="w-full md:w-[80%] p-10 min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4 bg-white">
+                                    <div class="w-full md:w-[80%] p-10 min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white rounded-xl shadow-md flex flex-col items-center">
-                                            <p class="text-lg font-medium">{{ \Carbon\Carbon::parse($article->published_at)->format('M j, Y') }}                                            </p>
+                                            <p class="text-lg text-center font-medium">{{ \Carbon\Carbon::parse($article->published_at)->format('M j, Y') }}</p>
                                         </div>
                                         <div class="w-full text-[#03498D] flex flex-col gap-4">
                                             <p class="text-2xl md:text-[32px] font-semibold leading-none capitalize">{{ $article->title }}
@@ -608,7 +615,7 @@
 
                             @if($latestOpportunity)
                             <div class="w-full p-4">
-                                <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
+                                <div class="w-fit py-2 px-4 rounded-xl flex items-center justify-center bg-[#F55E1D]">
                                     <p class="text-lg font-normal text-white">{{$latestOpportunity->program->name}}</p>
                                 </div>
 
@@ -631,7 +638,7 @@
                                     @guest
                                     <a href="\volunteer-registration">
                                         <div
-                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                             <p class="font-normal text-base md:text-lg text-white">SIGN UP</p>
                                         </div>
                                     </a>
@@ -641,7 +648,7 @@
                                     <a href="\admin/events">
                                     {{-- <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}"> --}}
                                         <div
-                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                             <p class="font-normal text-base md:text-lg text-white">VIEW</p>
                                         </div>
                                     </a>
@@ -650,7 +657,7 @@
                                     @auth
                                     <a href="">
                                         <div
-                                            class="h-auto md:h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#005096] rounded-xl flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                                             <p class="font-normal text-base md:text-lg text-white">FAVORITE</p>
                                         </div>
                                     </a>

@@ -10,7 +10,7 @@
                 <a href="/admin/volunteers/create">
                     <button class="w-fit">
                         <div
-                            class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center rounded-full md:rounded-none justify-center py-0 md:py-2 px-2 md:px-6  hover:bg-[#1A67B1]">
+                            class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center rounded-full justify-center py-0 md:py-2 px-2 md:px-6  hover:bg-[#1A67B1]">
                             <p class="font-normal text-lg text-white hidden md:block">CREATE NEW VOLUNTEER</p>
 
                             <!-- Tablet and Mobile text -->
