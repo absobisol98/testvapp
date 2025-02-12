@@ -21,7 +21,7 @@ class EventsToApprove extends BaseWidget
 
     public static function canView(): bool
     {
-        if (auth()->user()->hasRole('super_admin')) {
+        if (auth()->user()->can('publish_event')) {
             return true;
         } else {
             return false;

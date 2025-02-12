@@ -25,7 +25,7 @@ class EventRegistrationTableAction
     public function execute()
     {
         return [
-            \Filament\Tables\Actions\Action::make('Make it is featured')
+            \Filament\Tables\Actions\Action::make('Make it as featured')
                 ->color('success')
                 ->button()
                 ->requiresConfirmation()
@@ -41,8 +41,8 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-
-                    if (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner') &&  ($record->is_featured == false)) {
+                    
+                    if (auth()->user()->can('set_featured_event') &&  ($record->is_featured == false)) {
 
                         return true;
                     }
@@ -62,13 +62,12 @@ class EventRegistrationTableAction
 
 
                     Notification::make()
-                        ->title('Event has been renove to as featured.')
+                        ->title('Event has been remove to as featured.')
                         ->success()
                         ->send();
                 })
                 ->visible(function (Event $record){
-
-                    if (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner') &&  ($record->is_featured == true)) {
+                    if (auth()->user()->can('set_featured_event') &&  ($record->is_featured == true)) {
 
                         return true;
                     }

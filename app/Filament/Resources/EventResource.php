@@ -54,6 +54,7 @@ class EventResource extends Resource implements HasShieldPermissions
             'export',
             'manage_attendees',
             'manage_registrations',
+            'set_featured',
         ];
     }
 
@@ -447,7 +448,7 @@ class EventResource extends Resource implements HasShieldPermissions
 
                 Tables\Columns\IconColumn::make('is_featured')
                     ->label('Featured')
-                    ->visible(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner'))
+                    ->visible(auth()->user()->can('set_featured_event'))
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('created_by_user.firstname')
