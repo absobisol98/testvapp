@@ -88,6 +88,20 @@
         <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
     </a>
 
+    <div class="flex items-center justify-center gap-4">
+        <a href="{{ route('main.homepage.view') }}">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">HOME</p>
+        </a>
+
+        <a href="{{ route('stories.view') }}">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">STORIES</p>
+        </a>
+
+        <a href="{{ route('ourpartners.view') }}">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">OUR PARTNERS</p>
+        </a>
+    </div>
+
     <div class="h-full flex items-center justify-between gap-4">
         @guest
             <a href="{{ route('volunteer.form.view') }}">
