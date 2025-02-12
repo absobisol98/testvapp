@@ -67,23 +67,52 @@
 
 
         {{-- Opportunity Section --}}
+        
         <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] py-4 mb-8 px-[16px] xl:px-[80px] gap-8"  id="opportunity-list">
             <div class="grid grid-cols-2 lg:grid-cols-3 w-full gap-4">
-                <div class="col-span-2 xl:col-span-1 lg:col-span-3 min-h-[300px] flex items-center justify-between gap-4"
-                    style="background: url('{{ asset('img/bpi-bg-1.jpg') }}') no-repeat center center; background-size: cover;">
-                </div>
+                @if (count($galleries) > 0)
+                    <div class="w-full program-swiper-container2 col-span-2  h-full w-full overflow-hidden ">
+                        <div class="swiper-wrapper">                
+                            @foreach ($galleries as $chunk_gallery)
+                                <div class="swiper-slide">
+                                    <div class="grid grid-cols-2 lg:grid-cols-2 gap-4">
 
-                <div class="col-span-2 md:col-span-1 flex items-center justify-between h-full min-h-[300px] gap-4"
-                    style="background: url('{{ asset('img/bpi-bg-2.png') }}') no-repeat center center; background-size: cover;">
-                    <div class="h-full w-full flex items-end justify-start p-4"
-                        style="background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));">
-                        <img class="w-[20%]" src="{{ asset('img/bpi-logo.png') }}" alt="">
+                                        @foreach ( $chunk_gallery as $gallery )
+                                            <div class="col-span-1 flex items-center justify-between h-full min-h-[300px] gap-4"
+                                                style="background: url('{{ $gallery}}') no-repeat center center; background-size: contain;">
+                                                <div class="h-full w-full flex items-end justify-start p-4"
+                                                    style="background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));">
+                                                    <img class="w-[20%]" src="{{ $logo }}" alt="">
+                                                </div>
+                                            </div>    
+                                        @endforeach
+                                
+                                        <div class="w-full h-full p-4 col-span-2 flex items-center justify-between gap-4 absolute">
+                                            <div
+                                                class="program-button-36-prev2 w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
+                                                @include('custom.icons.landing-page-icons', ['icon' => 'arrow-left'])
+                                            </div>
+                                            <div
+                                                class="program-button-36-next2 w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
+                                                @include('custom.icons.landing-page-icons', ['icon' => 'arrow-right'])
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
+                @else
+                    <div class="w-full h-[300px] bg-gray-100 flex items-center justify-center col-span-2">
+                        <p class="text-base text-black">This Business Unit has no Event Gallery.</p>
+                    </div>
+                @endif
+                
+
 
                 <div class="col-span-2 md:col-span-1 flex flex-col items-start justify-start gap-2">
                     @if ($upcoming)
-                        {{-- @dd($upcoming) --}}
                         <p class="text-[18px] font-[400]">UPCOMING OPPORTUNITY</p>
                         <div class="flex flex-col items-start justify-between">
                             <p class="text-[40px] font-[700] text-[#D43F3F] mt-3 leading-none">{{$upcoming->title}}</p>
@@ -213,15 +242,11 @@
                         class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-auto">
                         {{-- List --}}
                         @foreach ($opportunities as $index => $opportunity)
-                            @php
-                                $ban = $upcoming->getMedia('event-banner-attachments')->first();
-                                $upp_ban = ($ban) ? $ban->getUrl() : $logo;
-                            @endphp
                             <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                                 <div
                                     class="w-contain h-contain md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                     <img class="w-full h-full object-contain"
-                                        src="{{ $upp_ban }}" alt="">
+                                        src="{{  $opportunity->getBanner() }}" alt="">
                                 </div>
 
                                 <div class="w-full">
@@ -319,95 +344,60 @@
             </div>
         </div>
 
+        <h2 class="text-2xl md:text-[36px] font-semibold m-3">Recent Event Gallery</h2>
+        <div class="w-full program-swiper-container">
 
-        {{--  --}}
-        <div class="relative w-full">
-            <div class="absolute w-full z-10 flex items-center justify-start">
-                <div class="h-[33px] w-full md:w-[20%] bg-[#F51D1D]"></div>
-            </div>
-
-            <div class="h-[600px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
-                style="background-image: url('{{ asset('img/bpi-bg-3.jpg') }}')">
-                <div class="h-full w-full px-20 py-12 flex flex-col items-start justify-center bg-[#2E2E2E96]">
-                    <p class="w-full text-3xl md:text-[40px] text-center md:text-start">Mission Statement</p>
-                    <p class="w-full max-w-[600px] text-4xl md:text-[50px] text-center md:text-start">Feed the Hungry! Walang
-                        Pilipinong Nagugutom!</p>
-                </div>
-            </div>
-
-            <div class="absolute w-full z-10 mt-[-17px] flex items-center justify-end">
-                <div class="h-[33px] w-full md:w-[80%] bg-[#F51D1D]"></div>
-            </div>
-        </div>
-
-
-        {{-- Recent Event Gallery Section --}}
-        <div class="w-full grid grid-cols-1 lg:grid-cols-2">
-            <!-- Program Section with Swiper -->
-            <div
-                class="col-span-1 h-full min-h-[740px] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D] relative">
-                <div class="program-swiper-container h-full w-full overflow-hidden z-0">
-                    <div class="swiper-wrapper w-full">
-                        @foreach ($galleries as  $gallery)
-                                  <!-- Slide 1 -->
-                            <div class="swiper-slide w-full h-full"
-                                style="background: url('{{ $gallery }}') no-repeat center center; background-size: cover;">
+            <div class="swiper-wrapper">
+                @foreach ($featuredEvents as $featured)
+                    <div class="swiper-slide relative">
+                        <div class="grid grid-cols-2 lg:grid-cols-2 ">
+                            <div class="col-span-1 h-full min-h-[500px] gap-8 font-medium text-white bg-[#F55E1D]">
+                                <img src="{{  $featured->getBanner() }}" alt="" class="object-fit w-full h-full">
                             </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="w-full h-full p-4 flex items-center justify-between gap-4 absolute z-10">
-                    <div
-                        class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
-                        @include('custom.icons.landing-page-icons', ['icon' => 'arrow-left'])
-                    </div>
-                    <div
-                        class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
-                        @include('custom.icons.landing-page-icons', ['icon' => 'arrow-right'])
-                    </div>
-                </div>
-
-                <!-- Swiper Script -->
-                <script>
-                    const programSwiper = new Swiper('.program-swiper-container', {
-                        loop: true,
-                        slidesPerView: 1,
-                        navigation: {
-                            nextEl: '.program-button-36-next',
-                            prevEl: '.program-button-36-prev',
-                        },
-                    });
-                </script>
-            </div>
-
-            <!-- Right Section with Background and Overlay -->
-            <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8">
-                <div class="w-full flex flex-col items-start gap-4 z-10 text-[#5B5B5B] font-[400]">
-
-                    <p class="text-2xl md:text-[36px]">Recent Event Gallery</p>
-                    <p class="text-3xl md:text-5xl">JUST BRING YOUR HEARTS.</p>
-                    <p class="text-xl md:text-2xl w-full max-w-[510px] text-[#494949]">  {!! nl2br($business_unit->event_description ?? "Here's where your about us displayed") !!}
-                    </p>
-
-                </div>
-                <div class="w-full z-10">
-                    <a href="{{ route('volunteer.form.view') }}">
-                        <div
-                            class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
-                            <p class="font-[800] text-sm text-[#D43F3F]">SIGN UP NOW!</p>
+                            <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8 z-1">
+                                <div class="w-full flex flex-col items-start gap-4 z-10 text-[#5B5B5B] font-[400]">
+                                    <p class="text-3xl md:text-5xl">{{$featured->title}}</p>
+                                    <p class="text-xl md:text-2xl w-full max-w-[510px] text-[#494949]"> 
+                                        {!! nl2br($featured->description ?? "Here's where your about us displayed") !!}
+                                    </p>
+                                </div>
+                                <div class="w-full z-50">
+                                    @if (auth()->check())
+                                        <a href="{{ route('filament.admin.resources.events.view',['record' => $featured->id]) }}">
+                                            <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
+                                                <p class="font-[800] text-sm text-[#D43F3F]">View Event</p>
+                                            </div>
+                                        </a>
+                                    @else 
+                                        <a href="{{ route('volunteer.form.view') }}">
+                                            <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
+                                                <p class="font-[800] text-sm text-[#D43F3F]">SIGN UP NOW!</p>
+                                            </div>
+                                        </a>
+                                    @endif
+                                
+                                </div>
+                            </div>
+                            <div class="w-full h-full p-4 col-span-2 flex items-center justify-between gap-4 absolute">
+                                <div
+                                    class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
+                                    @include('custom.icons.landing-page-icons', ['icon' => 'arrow-left'])
+                                </div>
+                                <div
+                                    class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
+                                    @include('custom.icons.landing-page-icons', ['icon' => 'arrow-right'])
+                                </div>
+                            </div>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                @endforeach
             </div>
         </div>
-
 
         {{-- Featured Opportunity Modal --}}
       
         <div class="w-full h-fit">
             @if ($upcoming)
-            {{-- @dd($upcoming) --}}
                 <div id="featuredImageModal"
                     class="fixed inset-0 flex justify-center items-center z-50 hidden transition-opacity duration-300 bg-black bg-opacity-50"
                     onclick="closeModal(event)">
@@ -503,6 +493,30 @@
                         }, 300); // delay for the transition to complete
                     }
                 }
+                // slider
+                const programSwiper = new Swiper('.program-swiper-container', {
+                        loop: true,
+                        slidesPerView: 1,
+
+                        navigation: {
+                            nextEl: '.program-button-36-next',
+                            prevEl: '.program-button-36-prev',
+                        },
+                    });
+
+                const programSwiper2 = new Swiper('.program-swiper-container2', {
+                        loop: true,
+                        autoplay: {
+                            delay: 3000,
+                        },
+                        slidesPerView: 1,
+                        navigation: {
+                            nextEl: '.program-button-36-next2',
+                            prevEl: '.program-button-36-prev2',
+                        },
+                    });
+
+
 
                 // Example: Open modal on page load (or use your own trigger)
                 // window.onload = openModal; // You might want to change this to a specific trigger

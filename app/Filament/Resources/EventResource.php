@@ -51,7 +51,9 @@ class EventResource extends Resource implements HasShieldPermissions
             'delete',
             'delete_any',
             'publish',
-            'export'
+            'export',
+            'manage_attendees',
+            'manage_registrations',
         ];
     }
 
@@ -416,6 +418,7 @@ class EventResource extends Resource implements HasShieldPermissions
                     ->label('Date')
                     ->date('M d, Y')
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('recurrence_type_id')
                     ->label('Recurrence type')
                     ->formatStateUsing(function (Event $record,string $state){
@@ -441,6 +444,12 @@ class EventResource extends Resource implements HasShieldPermissions
                     ->boolean(),
                 Tables\Columns\IconColumn::make('attachment_required')
                     ->boolean(),
+
+                Tables\Columns\IconColumn::make('is_featured')
+                    ->label('Featured')
+                    ->visible(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner'))
+                    ->boolean(),
+
                 Tables\Columns\TextColumn::make('created_by_user.firstname')
                     ->label('Opportunity By')
                     ->searchable(),
