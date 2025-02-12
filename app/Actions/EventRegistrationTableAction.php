@@ -154,7 +154,6 @@ class EventRegistrationTableAction
                         $description = '';
                         $visible = false;
                     }
-
                     return [
                         Radio::make('slot_type_id')
                             ->label('')
@@ -172,7 +171,6 @@ class EventRegistrationTableAction
                                 return $option;
                             }),
                         Section::make('Attachments')
-                            ->description($description)
                             ->visible($visible)
                             ->schema([
                                 FileUpload::make('media')
@@ -181,6 +179,12 @@ class EventRegistrationTableAction
                                     ->maxFiles(5)
                                     ->label('')
                                     ->openable()
+                                    ->required( function() use ($visible){ 
+                                        return $visible;
+                                    })
+                                    ->validationMessages([
+                                        'required' => $description,
+                                    ])
                                     ->downloadable(),
                             ])
                             ->collapsible(),

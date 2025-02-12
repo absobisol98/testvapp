@@ -463,7 +463,7 @@ class EventResource extends Resource implements HasShieldPermissions
                         Forms\Components\Select::make('status')
                             ->selectablePlaceholder(false)
                             ->label('')
-                            ->default('upcoming_events')
+                            ->default('all')
                             ->options([
                                 'all' => 'All Events',
                                 'upcoming_events' => 'Upcoming Events',

@@ -32,11 +32,18 @@
 </style>
 
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
+    
     <div class="w-full flex items-center justify-between">
-        <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E] font-extrabold capitalize">{{ $record->title }}</h2>
-        <a href="{{route('filament.admin.resources.events.index')}}" class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
-            <p class="text-base font-normal text-white">Event List</p>
-        </a>
+        <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
+        <div class="grid grid-cols-2 gap-2">
+            <a href="{{route('filament.admin.resources.events.edit',['record' => $record->id])}}" class="py-2 px-2 flex items-center justify-center rounded-md bg-[#0000FF]">
+                <p class="text-base font-normal text-white">Edit</p>
+            </a>
+            <a href="{{route('filament.admin.resources.events.index')}}" class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+                <p class="text-base font-normal text-white">Event List</p>
+            </a>
+        </div>
+
     </div>
 
     <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
