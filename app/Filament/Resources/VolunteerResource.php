@@ -30,6 +30,16 @@ class VolunteerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bell';
 
+
+    public static function getNavigationLabel(): string
+    {
+        if(auth()->user()?->hasRole('Volunteer')){
+            return 'My Opppurtunities';
+        }
+        return 'Volunteers';
+    }
+
+
     public static function form(Form $form): Form
     {
         return $form

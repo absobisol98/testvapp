@@ -71,7 +71,8 @@ class Event extends Model implements HasMedia
 		'approval_status_id' => 'int',
 		'sign_up_approval_required' => 'bool',
 		'attachment_required' => 'bool',
-		'is_published' => 'bool'
+		'is_published' => 'bool',
+		'is_featured' => 'bool'
 
 	];
 
@@ -99,7 +100,8 @@ class Event extends Model implements HasMedia
         'updated_by',
         'created_at',
         'updated_at',
-		'is_published'
+		'is_published',
+		'is_featured'
 	];
 
 	public function event_type()
@@ -206,5 +208,12 @@ class Event extends Model implements HasMedia
 		}
 		return $notifiable;
     }
+
+	public function getBanner(){
+
+		$ban = $this->getMedia('event-banner-attachments')->first();
+		return ($ban) ? $ban->getUrl() : asset('img/ayala-foundation-bg.jpg');
+
+	}
 
 }

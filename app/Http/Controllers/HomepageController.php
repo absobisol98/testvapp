@@ -28,17 +28,18 @@ class HomepageController extends Controller
         $business_unit = BusinessUnit::where('slug',$slug)->first();
         if($business_unit){
             $total_volunteers = 0;
-            $opportunities = Event::with('slots')->get();
+
+            $opportunities = Event::whereIn('created_by', $business_unit->admins->pluck('id'))->with('slots')->get();
             foreach($opportunities as $opp){
                 $total_volunteers+=$opp->attendees->count();
             }
 
-            $upcoming = Event::with('slots')->whereDate('start_date','>=',now())->orderBy('start_date','desc')->first();
-            $ban = $upcoming->getMedia('event-banner-attachments')->first();
-            $upcoming_banner = ($ban) ? $ban->getUrl() : asset('img/ayala-foundation-bg.jpg');
+            $upcoming = Event::whereIn('created_by', $business_unit->admins->pluck('id'))->whereDate('start_date','>=',now())->orderBy('start_date','desc')->first();
+            $upcoming_banner = $upcoming->getBanner();
+            
             $socials =   $business_unit->socials;
             $website = $socials->where('social','website')->first();
-
+            $featuredEvents = $opportunities->where('is_featured');
             $logo = $business_unit->getMedia('bu_logo')->first();
             if($logo){
                 $logo = $logo->getUrl();
@@ -54,8 +55,8 @@ class HomepageController extends Controller
                     array_push( $galleries,$image->getUrl());
                 }
             }
-
-            return view('custom.business-unit-homepage', compact('opportunities','business_unit','socials','website','logo','eventCover','galleries','upcoming','upcoming_banner','total_volunteers'));
+            $galleries = array_chunk($galleries, 2);
+            return view('custom.business-unit-homepage', compact('opportunities','business_unit','socials','website','logo','eventCover','galleries','upcoming','upcoming_banner','total_volunteers','featuredEvents'));
         }
 
         Notification::make()

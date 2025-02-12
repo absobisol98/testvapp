@@ -70,6 +70,7 @@ class BusinessUnitResource extends Resource
                                 'image/webp',
                         ])
                         ->imageResizeMode('cover')
+                        ->hint('Please upload a high resolution image for better quality with no background.')
                         ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Max. 10MB')
                         ->image()
                         ->openable()
@@ -99,11 +100,6 @@ class BusinessUnitResource extends Resource
                             ->maxLength(100),
                     ]),
               
-
-                Forms\Components\TextInput::make('address')
-                    ->required()
-                    ->columnSpan(3)
-                    ->maxLength(255),
    
                 Forms\Components\Textarea::make('about')
                     ->rows(5)
@@ -176,30 +172,6 @@ class BusinessUnitResource extends Resource
                             ->required()
                             ->rows(3)
                             ->columnSpanFull(),
-
-                        
-                    //     SpatieMediaLibraryFileUpload::make('header_gallery')
-                    //         ->label('Gallery Header')
-                    //         ->collection('bu_galleries_head')
-                    //         ->conversion('preview')
-                    //         ->maxSize(10000)
-                    //         ->multiple()
-                    //         ->maxFiles(3)
-                    //         ->acceptedFileTypes([
-                    //                 'image/apng',
-                    //                 'image/avif',
-                    //                 'image/png',
-                    //                 'image/jpg',
-                    //                 'image/jpeg',
-                    //                 'image/svg',
-                    //                 'image/webp',
-                    //         ])
-                    //         ->imageResizeMode('cover')
-                    //         ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Maximum of 3 files with 10MB of max file size ')
-                    //         ->image()
-                    //         ->openable()
-                    //         ->downloadable()
-                    //         ->columnSpan(3),
                 ]),
     
                 Repeater::make('socials')
@@ -224,19 +196,8 @@ class BusinessUnitResource extends Resource
                     ->columnSpanFull(),
 
 
-                Fieldset::make('Events')
+                Fieldset::make('Gallery')
                     ->schema([
-                        Forms\Components\TextInput::make('event_heading')
-                            ->label('Heading')
-                            ->required()
-                            ->columnSpanFull()
-                            ->maxLength(255),
-                        Forms\Components\Textarea::make('event_description')
-                            ->label('Description')
-                            ->required()
-                            ->rows(3)
-                            ->columnSpanFull()
-                            ->maxLength(255),
 
                         SpatieMediaLibraryFileUpload::make('gallery')
                             ->collection('bu_galleries')
@@ -252,7 +213,8 @@ class BusinessUnitResource extends Resource
                             ])
                             ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only.')
                             ->multiple()
-                            ->maxFiles(50)
+                            ->minFiles(2)
+                            ->maxFiles(20)
                             ->maxSize(5000)
                             ->reorderable()
                             ->downloadable()
@@ -268,8 +230,6 @@ class BusinessUnitResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('address')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
