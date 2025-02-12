@@ -29,8 +29,10 @@ use App\Http\Controllers\SurveyResponseController;
 Route::get('/', [HomepageController::class, 'mainHomepageView'])->name('main.homepage.view');
 Route::get('/business-unit/{slug}', [HomepageController::class, 'businessUnitHomepageView'])->name('businessunit.homepage.view');
 
+Route::get('/stories',[ArticleController::class,'viewStories'])->name('stories.view');
+Route::get('/article/{slug}',[ArticleController::class,'viewArticle'])->name('article.view');
 
-Route::get('/article/{slug}',[ArticleController::class,'viewArticle']);
+Route::get('/our-partners', [HomepageController::class, 'ourPartnersView'])->name('ourpartners.view');
 
 Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'view'])->name('volunteer.form.view');
 Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');

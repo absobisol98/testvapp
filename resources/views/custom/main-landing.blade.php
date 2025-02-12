@@ -9,6 +9,11 @@
             flex-grow: 1;
             min-width: 50%;
         }
+
+        #ourPartnersSection .swiper-slide {
+            flex-grow: 0;
+            min-width: auto;
+        }
     </style>
 
 
@@ -256,6 +261,125 @@
                     </div>
 
             </div>
+            </div>
+        </div>
+
+        {{-- Our Partners Section --}}
+        <div id="ourPartnersSection" class="w-full h-fit my-4">
+            <div class="flex items-center justify-center">
+                <p class="text-2xl md:text-4xl font-bold text-[#03498D]">Our Partners</p>
+            </div>
+
+            <div class="w-full p-2 lg:p-8 relative flex items-center justify-between gap-4">
+                <div
+                    class="our-partners-button-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
+                </div>
+
+                <div class="our-partners-swiper-container swiper w-full overflow-hidden">
+                    <div class="swiper-wrapper w-full">
+    
+                        {{-- Partner Slide Item 1 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/bronze.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 2 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/silver.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 3 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/gold.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 4 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/plat.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+
+                        {{-- Partner Slide Item 5 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/bronze.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 6 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/silver.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+    
+                    </div>
+                </div>
+
+                <div
+                    class="our-partners-button-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
+                </div>
+    
+                <!-- Swiper Script -->
+                <script>
+                     const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
+                        loop: true,
+                        slidesPerView: 'auto',
+                        spaceBetween: 1, // Adjust spacing if needed
+                        // centeredSlides: true,
+                        autoplay: {
+                            delay: 3000,
+                            disableOnInteraction: false
+                        },
+                        grabCursor: true, // Makes it feel draggable
+                        autoHeight: false,
+                        freeMode: true,
+                        navigation: {
+                            nextEl: '.our-partners-button-next',
+                            prevEl: '.our-partners-button-prev',
+                        },
+                        breakpoints: {
+                            1024: { slidesPerView: 5, },
+                            640: { slidesPerView: 3, },
+                            320: { slidesPerView: 1, }
+                        }
+                    });
+                </script>
             </div>
         </div>
 
