@@ -34,6 +34,8 @@ final class EventFillFormAction
         // attachments
         $media = [];
         $media_banner = [];
+        $certificate_background = [];
+
 
         foreach ($record->getMedia('event-attachments') as $media_item) {
             $index = strlen(storage_path('app/public/'));
@@ -44,8 +46,15 @@ final class EventFillFormAction
             $media_banner[] = substr($media_item->getPath(), $index);
         }
 
+        foreach ($record->getMedia('certificate_background') as $media_item) {
+            $index = strlen(storage_path('app/public/'));
+            $certificate_background[] = substr($media_item->getPath(), $index);
+        }
+
         $data['media'] = $media;
         $data['media_banner'] = $media_banner;
+        $data['certificate_background'] = $certificate_background;
+
 
         return $data;
     }

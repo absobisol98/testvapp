@@ -73,6 +73,14 @@ final class EventCreateAction
                         }
                     }
 
+                    if ($data['certificate_background']) {
+                        foreach ($data['certificate_background'] as $media) {
+                            $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
+                                'certificate_background'
+                            );
+                        }
+                    }
+
                     if ($data['media']) {
                         foreach ($data['media'] as $media) {
                             $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
@@ -106,6 +114,14 @@ final class EventCreateAction
                         }
                     }
 
+                    if ($data['certificate_background']) {
+                        foreach ($data['certificate_background'] as $media) {
+                            $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
+                                'certificate_background'
+                            );
+                        }
+                    }
+
                     if ($data['media']) {
                         foreach ($data['media'] as $media) {
                             $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
@@ -131,6 +147,14 @@ final class EventCreateAction
                 foreach ($data['media_banner'] as $media) {
                     $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
                         'event-banner-attachments'
+                    );
+                }
+            }
+
+            if ($data['certificate_background']) {
+                foreach ($data['certificate_background'] as $media) {
+                    $event->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
+                        'certificate_background'
                     );
                 }
             }
