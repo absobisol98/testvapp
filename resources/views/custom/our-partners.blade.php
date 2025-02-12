@@ -8,7 +8,7 @@
             <!-- Our Program Section -->
             <div
                 class="col-span-1 flex flex-col items-center justify-between gap-8 font-medium bg-[#03498D]">
-                
+
             </div>
 
             <!-- Become a Volunteer Section -->
@@ -28,12 +28,16 @@
                 {{-- Search Bar --}}
                 <div class="w-full mb-12">
                     <p class="text-xl font-bold text-black mb-4">Search Business Partner Unit </p>
-                    <form class="w-full mx-auto">
+                    <form action="{{ route('ourpartners.view') }}" method="GET" class="w-full mx-auto">
                         <div class="flex">
                             <div class="relative w-full">
-                                <input type="search" id="our-partners-search"
+                                <input
+                                    type="search"
+                                    name="search"
+                                    value="{{ request('search') }}"
                                     class="block p-2.5 w-full z-20 text-lg bg-[#ffffff] border-0 shadow-md rounded-lg placeholder-[#B6B6B6] focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="Search by request, organisation name or category" required />
+                                    placeholder="Search by request, organisation name or category"
+                                />
 
                                 <button type="submit"
                                     class="absolute top-0 end-0 h-full p-2.5 text-sm font-medium text-white rounded-e-lg">
@@ -51,61 +55,49 @@
 
                 {{-- Partners List --}}
                 <div class="w-full flex flex-col items-center justify-between gap-8 max-h-[1000px] overflow-y-auto">
-
-                    {{-- Partner 1 --}}
-                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="w-fit h-fit md:w-[300px] md:h-[180px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-contain" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
-                                alt="">
-                        </div>
-
-                        <div class="w-full flex flex-col items-start justify-center gap-2">
-                            <p class="text-[28px] font-bold text-[#03498D]">Bank of the Philippine Islands</p>
-                            <p class="font-normal text-black">BANKING AND FINANCE</p>
-                            <p class="font-normal text-[#7A7A7A]">
-                                We believe in contributing to the nation’s development goals by adapting the evolving needs
-                                of stakeholders so we can remain relevant and responsive. Through our programs, we affirm
-                                our commitment to aligning, giving focus, and making an impact in the lives of people in our
-                                conglomerate, communities, and country.
+                    @if($partners->isEmpty())
+                        <div class="w-full text-center py-8">
+                            <p class="text-gray-500 text-lg">
+                                @if(request('search'))
+                                    No partners found for "{{ request('search') }}"
+                                @else
+                                    No partners available
+                                @endif
                             </p>
                         </div>
+                    @else
+                        @foreach($partners as $partner)
 
-                        <a href="" class="cursor-pointer">
-                            <div
-                                class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 rounded-3xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
-                                <p class="font-medium text-base md:text-[18px] text-white">EXPLORE</p>
+                            <div class="w-full flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div class="w-fit h-fit md:w-[300px] md:h-[180px] flex items-center justify-center overflow-hidden">
+                                    <img class="w-full h-full object-contain"
+                                         src="{{ $partner->getMedia('bu_logo')->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg') }}"
+                                         alt="{{ $partner->name }}">
+                                </div>
+
+                                <div class="w-full flex flex-col items-start justify-center gap-2">
+                                    <p class="text-[28px] font-bold text-[#03498D]">{{ $partner->name }}</p>
+                                    <p class="font-normal text-black">{{ strtoupper($partner->category) }}</p>
+                                    <p class="font-normal text-[#7A7A7A]">{{ $partner->description }}</p>
+                                </div>
+
+                                <a href="{{ route('businessunit.homepage.view', $partner->slug) }}" class="cursor-pointer">
+                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 rounded-3xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                        <p class="font-medium text-base md:text-[18px] text-white">EXPLORE</p>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
 
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                            @unless($loop->last)
+                                <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                            @endunless
+                        @endforeach
 
-                    {{-- Partner 1 --}}
-                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="w-fit h-fit md:w-[300px] md:h-[180px] flex items-center justify-center overflow-hidden">
-                            <img class="w-full h-full object-contain" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
-                                alt="">
+                        {{-- Pagination --}}
+                        <div class="mt-8 w-full">
+                            {{ $partners->links() }}
                         </div>
-
-                        <div class="w-full flex flex-col items-start justify-center gap-2">
-                            <p class="text-[28px] font-bold text-[#03498D]">Bank of the Philippine Islands</p>
-                            <p class="font-normal text-black">BANKING AND FINANCE</p>
-                            <p class="font-normal text-[#7A7A7A]">
-                                We believe in contributing to the nation’s development goals by adapting the evolving needs
-                                of stakeholders so we can remain relevant and responsive. Through our programs, we affirm
-                                our commitment to aligning, giving focus, and making an impact in the lives of people in our
-                                conglomerate, communities, and country.
-                            </p>
-                        </div>
-
-                        <a href="" class="cursor-pointer">
-                            <div
-                                class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 rounded-3xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
-                                <p class="font-medium text-base md:text-[18px] text-white">EXPLORE</p>
-                            </div>
-                        </a>
-                    </div>
-
+                    @endif
                 </div>
             </div>
         </div>

@@ -7,11 +7,23 @@ use App\Models\Blog\Post;
 
 class ArticleController extends Controller
 {
-    public function viewStories(){
+    public function viewStories(Request $request){
 
-        $articles = Post::orderBy('created_at', 'desc')->get();
+            $search = $request->input('search');
 
-        return view('articles.view-stories', ['articles' => $articles]);
+            $articles = Post::query()
+                ->when($search, function ($query, $search) {
+                    return $query->where('title', 'like', '%' . $search . '%');
+                })
+                ->latest()
+                ->paginate(7)
+                ->withQueryString(); // This preserves the search parameter in pagination links
+
+            return view('articles.view-stories', compact('articles'));
+
+
+
+
     }
 
 

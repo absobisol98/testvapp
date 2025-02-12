@@ -75,12 +75,3 @@ Route::middleware(['auth'])->group(function () {
 
 //Test Routes
 
-Route::get('/test-reminder/{registration}', function (\App\Models\EventRegistration $registration) {
-
-    $event = $registration->event;
-    $registration->notify(new \App\Notifications\PreEventReminder($event));
-
-    return "Reminder sent to " . $registration->volunteer->email;
-});
-
-
