@@ -127,7 +127,7 @@
 
                     @endphp
                     <div class="w-full flex flex-col">
-                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Point-of-Contact:</p>{{$record->point_of_contact->firstname}} {{$record->point_of_contact->lastname}}
+                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Point-of-Contact:</p>{{$record->point_of_contact?->firstname}} {{$record->point_of_contact?->lastname}}
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Facilitator/s:</p>
                         @foreach ($record->facilitators as $facilitator)
                                 {{$facilitator->name}}

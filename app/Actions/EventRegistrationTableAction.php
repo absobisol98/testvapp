@@ -25,6 +25,59 @@ class EventRegistrationTableAction
     public function execute()
     {
         return [
+            \Filament\Tables\Actions\Action::make('Make it is featured')
+                ->color('success')
+                ->button()
+                ->requiresConfirmation()
+                ->action(function (Event $record){
+
+                    $record->is_featured = true;
+                    $record->update();
+
+
+                    Notification::make()
+                        ->title('Event has been mark as featured.')
+                        ->success()
+                        ->send();
+                })
+                ->visible(function (Event $record){
+
+                    if (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner') &&  ($record->is_featured == false)) {
+
+                        return true;
+                    }
+
+                    return false;
+
+                }),
+
+            \Filament\Tables\Actions\Action::make('Remove as is featured')
+                ->color('danger')
+                ->button()
+                ->requiresConfirmation()
+                ->action(function (Event $record){
+
+                    $record->is_featured = false;
+                    $record->update();
+
+
+                    Notification::make()
+                        ->title('Event has been renove to as featured.')
+                        ->success()
+                        ->send();
+                })
+                ->visible(function (Event $record){
+
+                    if (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner') &&  ($record->is_featured == true)) {
+
+                        return true;
+                    }
+
+                    return false;
+
+                }),
+
+
             \Filament\Tables\Actions\Action::make('downloadIcs')
             ->label('Add to Calendar')
             ->action(function ($record) {

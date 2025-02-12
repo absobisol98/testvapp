@@ -63,7 +63,7 @@ class EventPolicy
      */
     public function forceDelete(User $user, Event $event): bool
     {
-        return $user->can('force_delete_event');
+        return $user->can('{{ ForceDelete }}');
     }
 
     /**
@@ -71,7 +71,7 @@ class EventPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_event');
+        return $user->can('{{ ForceDeleteAny }}');
     }
 
     /**
@@ -79,7 +79,7 @@ class EventPolicy
      */
     public function restore(User $user, Event $event): bool
     {
-        return $user->can('restore_event');
+        return $user->can('{{ Restore }}');
     }
 
     /**
@@ -87,7 +87,7 @@ class EventPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_event');
+        return $user->can('{{ RestoreAny }}');
     }
 
     /**
@@ -95,7 +95,7 @@ class EventPolicy
      */
     public function replicate(User $user, Event $event): bool
     {
-        return $user->can('replicate_event');
+        return $user->can('{{ Replicate }}');
     }
 
     /**
@@ -103,6 +103,6 @@ class EventPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_event');
+        return $user->can('{{ Reorder }}');
     }
 }

@@ -18,13 +18,10 @@ class BusinessUnit extends Model implements HasMedia
     protected $fillable = [
         'name',
         'nickname',
-        'address',
         'slug',
         'about',
         'header_tagline',
         'header_description',
-        'event_heading',
-        'event_description',
         'created_by',
     ];
 
@@ -51,6 +48,12 @@ class BusinessUnit extends Model implements HasMedia
         $this->addMediaConversion('cover')
             ->performOnCollections('bu_eventcover')
             // ->fit(Manipulations::FIT_CONTAIN, 1500, 2000)
+            ->format('webp')
+            ->sharpen(10);
+
+        $this->addMediaConversion('gallery')
+            // ->fit(Manipulations::FIT_CROP, 400, 350)
+            ->performOnCollections('bu_galleries_head')
             ->format('webp')
             ->sharpen(10);
     }
