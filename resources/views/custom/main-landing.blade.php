@@ -179,9 +179,9 @@
                                                 {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</pclass=>
                                         </div>
                                         <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                            <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots[0]->shift_name}}</p>
+                                            <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots[0]->shift_name ?? ''}}</p>
                                             <div class="flex items-center justify-start gap-4">
-                                            <p><span class="font-[600]">BATCH:</span> {{$opportunity->slots['0']->type->name}}</p>
+                                            <p><span class="font-[600]">BATCH:</span> {{$opportunity->slots[0]->type->name ?? ''}}</p>
                                             </div>
                                         </div>
                                     </div>
