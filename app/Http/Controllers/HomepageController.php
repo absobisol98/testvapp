@@ -66,4 +66,11 @@ class HomepageController extends Controller
 
         return redirect()->back();
     }
+
+    public function ourPartnersView()
+    {
+        $partners = Event::with('slots')->get();
+
+        return view('custom.our-partners', compact('partners'));
+    }
 }

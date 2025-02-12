@@ -7,7 +7,12 @@ use App\Models\Blog\Post;
 
 class ArticleController extends Controller
 {
-    //
+    public function viewStories(){
+
+        $articles = Post::orderBy('created_at', 'desc')->get();
+
+        return view('articles.view-stories', ['articles' => $articles]);
+    }
 
 
     public function viewArticle($slug){
