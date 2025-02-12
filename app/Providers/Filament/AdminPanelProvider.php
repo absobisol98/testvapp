@@ -31,7 +31,7 @@ use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
 use Tapp\FilamentMailLog\FilamentMailLogPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-
+use Filament\Navigation\MenuItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -41,6 +41,10 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->userMenuItems([
+                'profile' => MenuItem::make()->icon('heroicon-s-pencil-square')->label('Edit profile')->url(fn (): string => route('filament.admin.resources.users.edit',['record' => auth()->user()->id])),
+                // ...
+            ])
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->emailVerification(EmailVerification::class)
@@ -66,6 +70,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label(__('menu.nav_group.activities'))
                     ->collapsed(),
             ])
+            
             ->navigationItems([
                 Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang
                     ->visible(fn(): bool => auth()->user()->can('access_log_viewer'))
