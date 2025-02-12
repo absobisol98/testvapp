@@ -325,6 +325,9 @@ class EventRegistrationTableAction
                 })
                 ->visible(function (Event $record){
 
+                    if(!auth()->user()->can('register_event')){
+                        return false;
+                    }
                     if(!$record->start_date->gte(now())){
                         return false;
                     }

@@ -55,6 +55,7 @@ class EventResource extends Resource implements HasShieldPermissions
             'manage_attendees',
             'manage_registrations',
             'set_featured',
+            'register',
         ];
     }
 
