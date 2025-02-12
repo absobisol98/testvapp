@@ -56,31 +56,29 @@
                     </div>
                 </div>
 
-                @php
-                    $latestOpportunity = $opportunities?->sortByDesc('created_at')->first();
-                @endphp
-
-
-                    @if ($latestOpportunity)
+                    @if ($featuredOpportunity)
                         <div class="w-[100%] md:w-[60%]">
                             <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                            <p class="text-3xl md:text-[40px] font-[700] text-[#03498D] mt-3 leading-none">{{$latestOpportunity->title}}</p>
+                            <p class="text-3xl md:text-[40px] font-[700] text-[#03498D] mt-3 leading-none">{{$featuredOpportunity->title ?? 'No Title'}}</p>
 
                             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
-                            <p class="text-[18px] font-[400] mb-3">{{$latestOpportunity->location}}</p>
+                            <p class="text-[18px] font-[400] mb-3">{{$latestOpporfeaturedOpportunitytunity->location ?? 'No Location'}}</p>
                             <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">DATE:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }}</p>
-                                    <p><span class="font-[600]"></span>{{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i A') }}
-                                        - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i A') }}</p>
+                                    <p><span class="font-[600]">DATE:</span> {{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('M-d-Y') ?? 'No Date Available'}}</p>
+                                    <p><span class="font-[600]"></span>{{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('h:i A') }}
+                                        - {{ \Carbon\Carbon::parse($featuredOpportunity->end_date)->format('h:i A') }}</p>
                                 </div>
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">SHIFTS:</span> {{$latestOpportunity->slots['0']->shift_name}}</p>
+                                    <p><span class="font-[600]">NUMBER OF SHIFTS:</span> {{$featuredOpportunity->slots->count()}}
+                                    </p>
                                     <div class="flex items-center justify-start gap-4">
-                                        <p><span class="font-[600]">BATCH:</span>{{$latestOpportunity->slots['0']->type->name}}</p>
+                                        @foreach ($featuredOpportunity->slots as $key => $opportunity)
+                                        <p><span class="font-[600]">BATCH {{$key+1}}:</span>  {{ $opportunity->type->name }}
+                                        @endforeach
+                                        </p>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
@@ -90,16 +88,16 @@
                                     </div>
                                 </button>
 
-                                @guest
+                                {{-- @guest
                                     <a href="\volunteer-registration" class="w-full">
                                         <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                             <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
                                         </div>
                                     </a>
-                                @endguest
+                                @endguest --}}
 
                                 @auth
-                                    <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}" class="w-full">
+                                    <a href="{{ url('/admin/events/view/' . $featuredOpportunity->id) }}" class="w-full">
                                         <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                             <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
                                         </div>
@@ -107,6 +105,7 @@
                                 @endauth
                             </div>
                         </div>
+                        @endif
                     </div>
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
                                     {{-- OPPORTUNITIES --}}
@@ -184,9 +183,13 @@
                                                 {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</pclass=>
                                         </div>
                                         <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                            <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots[0]->shift_name ?? ''}}</p>
+                                            <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{ $opportunity->slots->count() }}</p>
                                             <div class="flex items-center justify-start gap-4">
-                                            <p><span class="font-[600]">BATCH:</span> {{$opportunity->slots[0]->type->name ?? ''}}</p>
+                                            @foreach ($opportunity->slots as $key=> $slot)
+                                            <p><span class="font-[600]">BATCH {{$key+1}}:</span>
+                                                    {{ $slot->type->name }}
+                                                @endforeach
+                                            </p>
                                             </div>
                                         </div>
                                     </div>
@@ -206,7 +209,7 @@
                                     <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
                                         <div
                                             class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                            <p class="font-[400] text-base md:text-[18px] text-white">VIEW</p>
                                         </div>
                                     </a>
                                     @endauth
@@ -257,7 +260,7 @@
                 </div>
 
                     </div>
-                        @endif
+
                     </div>
 
             </div>
@@ -727,7 +730,7 @@
                             @endphp
 
                             {{-- @php
-                                dd($latestOpportunity->program);
+                                dd($latestOpportunity);
                             @endphp --}}
 
                             @if($latestOpportunity)
@@ -747,8 +750,13 @@
                                 <div
                                     class="w-full flex flex-col items-start justify-start text-base md:text-xl font-normal gap-2 my-8 md:my-16">
                                     <p><span class="font-semibold">Date:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i:s A') }} - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i:s A') }}</p>
-                                    <p><span class="font-semibold">SHIFTS:</span> {{$latestOpportunity->slots['0']->shift_name}}</p>
-                                    <p><span class="font-semibold">BATCH:</span> {{$latestOpportunity->slots['0']->type->name}}</p>
+                                    <p><span class="font-semibold"> NUMBER OF SHIFTS:</span>
+                                        {{$latestOpportunity->slots->count()}}
+                                    </p>
+                                    @foreach ($latestOpportunity->slots as $key => $opportunity)
+                                    <p><span class="font-semibold">BATCH {{$key+1}}:</span>  {{ $opportunity->type->name }} - {{\Carbon\Carbon::parse($latestOpportunity?->start_date)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($latestOpportunity?->end_date)->isoFormat('hh:mm A')}}
+                                    @endforeach
+                                    </p>
                                 </div>
 
                                 <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">

@@ -34,7 +34,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     // {
     //     $authUser = auth()->check() :  ?? null;
 
-        
+
     //     static::addGlobalScope(new FilterVolunteerForExternalAdmin($authUser));
     // }
 
@@ -156,6 +156,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     public function eventAttended()
     {
         return $this->hasMany(EventAttendee::class, 'attendee_id');
+    }
+
+    public function eventFacilitator()
+    {
+        return $this->hasOne(EventFacilitator::class, 'facilitator_id');
     }
 
     public function getTotalHours()

@@ -17,9 +17,11 @@ class HomepageController extends Controller
 
         $articles = Post::latest()->get();
 
+        $upcoming = Event::with('slots')->whereDate('start_date','>=',now())->orderBy('start_date','desc')->first();
+        $ban = $upcoming->getMedia('event-banner-attachments')->first();
 
 
-        return view('custom.main-landing', compact('opportunities', 'articles'));
+        return view('custom.main-landing', compact('opportunities', 'articles', 'featuredOpportunity'));
     }
 
     public function businessUnitHomepageView($slug)

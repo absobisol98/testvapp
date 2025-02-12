@@ -41,7 +41,7 @@
                 <p class="text-gray-600 text-xs">Written By:
                     <a href="#"
                         class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
-                        {{ $article->author->name ?? 'Unknown' }}
+                        {{ $article->blog_author ?? 'N/A' }}
                     </a>
                 </p>
                 <p class="text-gray-600 text-xs">Date:
@@ -86,21 +86,47 @@
             <div class="w-full p-2 bg-white">
                 <div class="stories-swiper-container w-full overflow-hidden">
                     <div class="swiper-wrapper w-full">
-                        @foreach ($articles->where('id', '!=', $article->id) as $item)
+                    @foreach ($articles->where('id', '!=', $article->id) as $item)
+                    @php
+                        $banner = $item->media->first();
+                    @endphp
                             <div class="swiper-slide">
                                 <div class="w-full min-h-[200px] flex flex-row items-start gap-4">
-                                    <div class="w-fit min-w-[90px] p-4 bg-white shadow-md flex flex-col items-center">
-                                        <p>{{ \Carbon\Carbon::parse($item->date)->format('M') }}</p>
-                                        <p>{{ \Carbon\Carbon::parse($item->date)->format('d') }}</p>
-                                    </div>
-                                    <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                        <p class="text-xl font-semibold leading-none">{{ $item->title }}</p>
-                                        <p class="text-[14px] line-clamp-1">{{ $item->description }}</p>
-                                        <a href="{{ url('/article'). '/' . $item->slug }}">
-                                            <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
-                                                <p class="font-medium text-base text-white">READ MORE</p>
+                                    <div class="w-full flex flex-col gap-4">
+                                        @if($banner && $banner->file_name)
+                                            <div class="bg-cover text-center overflow-hidden bg-white rounded-xl" style="height: 200px;">
+                                                <img src="{{ asset('storage/' . $banner->id . '/' . $banner->file_name) }}" alt="">
                                             </div>
-                                        </a>
+                                        @else
+                                        <div class="flex items-center rounded-xl justify-between w-full  gap-4"  style="height: 200px; background-image: url({{ asset('/img/ayala-foundation-bg-3.jpg') }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
+                                            <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
+                                                <img class="w-full" src="img/logo-white.png" alt="">
+                                            </div>
+                                        </div>
+                                        @endif
+                                        <p class="text-xl text-[#03498D] font-bold leading-none">{{ $item->title }}</p>
+                                        <div class="flex flex-row gap-1">
+                                            <p class="text-gray-600 text-xs">Written By:
+                                                <a href="#"
+                                                    class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
+                                                    {{ $item->author->name ?? 'Unknown' }} |
+                                                </a>
+                                            </p>
+                                            <p class="text-gray-600 text-xs">Date:
+                                                <a href="#"
+                                                    class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
+                                                    {{ $item->created_at->format('M j, Y') ?? 'N/A' }}
+                                                </a>
+                                            </p>
+                                        </div>
+                                        <p class="text-[14px]">{{ $item->content_overview }}</p>
+                                        <div class="w-full flex justify-center items-center">
+                                            <a href="{{ url('/article'). '/' . $item->slug }}">
+                                                <div class="h-10 w-[200px] rounded-full bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
+                                                    <p class="font-medium text-base text-white">READ MORE</p>
+                                                </div>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

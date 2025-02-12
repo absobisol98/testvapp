@@ -39,7 +39,7 @@
             </div>
         </a> --}}
 
-        <div class="w-full h-full flex flex-col items-end justify-end sm:justify-center gap-4 p-4">
+        {{-- <div class="w-full h-full flex flex-col items-end justify-end sm:justify-center gap-4 p-4">
             <div class="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" style="padding-bottom: 20px;">
                 <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
                     <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
@@ -66,7 +66,7 @@
                     <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- Profile Badge --}}
         <div class="w-full px-8">

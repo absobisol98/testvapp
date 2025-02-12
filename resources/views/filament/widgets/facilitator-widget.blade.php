@@ -6,7 +6,7 @@
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Facilitator</p>
             </div>
 
-            <a href="">
+            {{-- <a href="">
                 <div class="w-fit flex items-center justify-between gap-4">
                     <button class="w-fit">
                         <div
@@ -18,7 +18,7 @@
                         </div>
                     </button>
                 </div>
-            </a>
+            </a> --}}
         </div>
 
         <div class="w-full border-t border-[#E1E1E1] my-4"></div>

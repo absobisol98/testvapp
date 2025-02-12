@@ -6,7 +6,7 @@
                 <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">My Opportunities</p>
             </div>
 
-            <a href="">
+            {{-- <a href="">
                 <div class="w-fit flex items-center justify-between gap-4">
                     <button class="w-fit">
                         <div
@@ -15,13 +15,13 @@
                         </div>
                     </button>
                 </div>
-            </a>
+            </a> --}}
         </div>
 
         <div class="w-full border-t border-[#E1E1E1] my-4"></div>
 
         {{-- STATS --}}
-        <div class="w-full grid grid-cols-2 gap-4 mb-8 mx-auto sm:grid-cols-3 lg:grid-cols-5">
+        {{-- <div class="w-full grid grid-cols-2 gap-4 mb-8 mx-auto sm:grid-cols-3 lg:grid-cols-5">
             <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                 <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
                 <p class="text-sm font-bold text-[#03498D]">OPPORTUNITY</p>
@@ -46,7 +46,7 @@
                 <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">{{ $totalStat5 }}</p>
                 <p class="text-sm font-bold text-[#03498D]">CANCELLED</p>
             </div>
-        </div>
+        </div> --}}
 
         <div class="w-full">
             @livewire(\App\Filament\Widgets\MyOpportunitiesTableWidget::class)

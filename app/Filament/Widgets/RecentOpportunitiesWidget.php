@@ -11,7 +11,11 @@ class RecentOpportunitiesWidget extends Widget
 
     protected function getViewData(): array
     {
+
+        $currentDate = now();
+
         $opportunities = Event::with('slots', 'tags', 'program')
+            ->where('start_date', '<=', $currentDate)
             ->orderBy('created_at', 'desc')
             ->take(3)
             ->get();
