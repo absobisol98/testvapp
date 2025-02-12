@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class EventRegistration
@@ -30,7 +31,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class EventRegistration extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use InteractsWithMedia, Notifiable;
     protected $table = 'event_registrations';
 
 	protected $casts = [
