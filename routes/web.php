@@ -8,6 +8,7 @@ use App\Http\Controllers\VolunteerRegistrationController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\SurveyResponseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,12 @@ Route::get('/data-privacy-policy', function () {
     return view('data-privacy-policy');
 })->name('data-privacy-policy');
 
+
+Route::get('/survey/{survey}/{token}', [SurveyResponseController::class, 'show'])
+    ->name('survey.respond');
+Route::post('/survey/{survey}', [SurveyResponseController::class, 'store'])
+    ->name('survey.submit');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [VolunteerRegistrationController::class, 'sendVerificationEmail'])
         ->name('verification.send');
@@ -61,6 +68,17 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/volunteer/certificate/{event_id}/{attendee_id}', [PDFController::class, 'generateCertificate'])
         ->name('volunteer.certificate');
+});
+
+
+//Test Routes
+
+Route::get('/test-reminder/{registration}', function (\App\Models\EventRegistration $registration) {
+
+    $event = $registration->event;
+    $registration->notify(new \App\Notifications\PreEventReminder($event));
+
+    return "Reminder sent to " . $registration->volunteer->email;
 });
 
 
