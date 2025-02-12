@@ -24,47 +24,95 @@ class HomepageController extends Controller
 
     public function businessUnitHomepageView($slug)
     {
+        $business_unit = BusinessUnit::where('slug', $slug)->first();
 
-        $business_unit = BusinessUnit::where('slug',$slug)->first();
-        if($business_unit){
-            $total_volunteers = 0;
+        if (!$business_unit) {
+            Notification::make()
+                ->title('This business unit not found')
+                ->icon('far-bell')
+                ->danger()
+                ->send();
 
-            $opportunities = Event::whereIn('created_by', $business_unit->admins->pluck('id'))->with('slots')->get();
-            foreach($opportunities as $opp){
-                $total_volunteers+=$opp->attendees->count();
-            }
-
-            $upcoming = Event::whereIn('created_by', $business_unit->admins->pluck('id'))->whereDate('start_date','>=',now())->orderBy('start_date','desc')->first();
-            $upcoming_banner = $upcoming->getBanner();
-            
-            $socials =   $business_unit->socials;
-            $website = $socials->where('social','website')->first();
-            $featuredEvents = $opportunities->where('is_featured');
-            $logo = $business_unit->getMedia('bu_logo')->first();
-            if($logo){
-                $logo = $logo->getUrl();
-            }
-            $eventCover = $business_unit->getMedia('bu_eventcover')->first();
-            if($eventCover){
-                $eventCover = $eventCover->getUrl();
-            }
-            $images = $business_unit->getMedia('bu_galleries');
-            $galleries = array();
-            if(!empty($images)){
-                foreach($images as $image){
-                    array_push( $galleries,$image->getUrl());
-                }
-            }
-            $galleries = array_chunk($galleries, 2);
-            return view('custom.business-unit-homepage', compact('opportunities','business_unit','socials','website','logo','eventCover','galleries','upcoming','upcoming_banner','total_volunteers','featuredEvents'));
+            return redirect()->back();
         }
 
-        Notification::make()
-            ->title('This business unit not found')
-            ->icon('far-bell')
-            ->danger()
-            ->send();
+        // Initialize default values
+        $total_volunteers = 0;
+        $opportunities = collect();
+        $upcoming = null;
+        $upcoming_banner = null;
+        $socials = collect();
+        $website = null;
+        $featuredEvents = collect();
+        $logo = null;
+        $eventCover = null;
+        $galleries = [];
 
-        return redirect()->back();
+        // Get opportunities if they exist
+        $opportunities = Event::whereIn('created_by', $business_unit->admins->pluck('id'))->with('slots')->get();
+
+        if ($opportunities->isNotEmpty()) {
+            $total_volunteers = $opportunities->sum(function($opp) {
+                return $opp->attendees->count();
+            });
+
+            $upcoming = Event::whereIn('created_by', $business_unit->admins->pluck('id'))
+                ->whereDate('start_date', '>=', now())
+                ->orderBy('start_date', 'desc')
+                ->first();
+
+            $upcoming_banner = $upcoming?->getBanner();
+            $featuredEvents = $opportunities->where('is_featured');
+        }
+
+        // Get socials if they exist
+        $socials = $business_unit->socials ?? collect();
+        $website = $socials->where('social', 'website')->first();
+
+        // Get media if they exist
+        if ($business_unit->hasMedia('bu_logo')) {
+            $logo = $business_unit->getFirstMediaUrl('bu_logo');
+        }
+
+        if ($business_unit->hasMedia('bu_eventcover')) {
+            $eventCover = $business_unit->getFirstMediaUrl('bu_eventcover');
+        }
+
+        // Get galleries if they exist
+        if ($business_unit->hasMedia('bu_galleries')) {
+            $galleries = $business_unit->getMedia('bu_galleries')
+                ->map(fn($image) => $image->getUrl())
+                ->toArray();
+            $galleries = array_chunk($galleries, 2);
+        }
+
+        return view('custom.business-unit-homepage', compact(
+            'opportunities',
+            'business_unit',
+            'socials',
+            'website',
+            'logo',
+            'eventCover',
+            'galleries',
+            'upcoming',
+            'upcoming_banner',
+            'total_volunteers',
+            'featuredEvents'
+        ));
+    }
+
+    public function ourPartnersView(Request $request)
+    {
+
+        $partners = BusinessUnit::query()
+        ->when($request->search, function($query, $search) {
+            $query->where('name', 'like', "%{$search}%");
+        })
+        ->latest()
+        ->paginate(10);
+
+    return view('custom.our-partners', compact('partners'));
+
+
     }
 }
