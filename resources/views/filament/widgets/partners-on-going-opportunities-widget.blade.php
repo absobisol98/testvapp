@@ -9,7 +9,7 @@
             <a href="/admin/events/create">
                 <button class="w-fit">
                     <div
-                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center rounded-full md:rounded-none py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center rounded-full rounded-none py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
                         <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
 
                         <!-- Tablet and Mobile text -->
@@ -21,7 +21,7 @@
 
         <div class="w-full border-t border-[#E1E1E1] my-4"></div>
 
-        <div class="w-full flex flex-col items-center justify-between gap-4">
+        <div class="w-full overflow-y-scroll h-[500px] custom-scrollbar flex flex-col items-center justify-between gap-4">
             {{-- List --}}
             @foreach ($opportunities as $opportunity)
                 <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
@@ -40,7 +40,7 @@
                                     <p class="font-[700] text-[#F55E1D]">{{$opportunity->status?->name}}</p>
                             </div>
                         </div>
-                        <p class="text-[28px] font-normal font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
+                        <p class="text-[28px] font-bold font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
 
                         <p class="text-xl font-normal mb-3">{{ $opportunity->location }}
                         </p>
@@ -54,6 +54,7 @@
                                         {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
                                         {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}
                                     </p>
+
                                 </div>
 
                                 <p><span class="font-semibold">NUMBER OF SHIFTS:</span> {{$opportunity->slots->count()}}</p>
@@ -67,6 +68,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 @if (!$loop->last)

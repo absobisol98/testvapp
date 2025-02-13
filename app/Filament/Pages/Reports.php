@@ -5,11 +5,16 @@ namespace App\Filament\Pages;
 use App\Filament\Widgets\VolunteerSignupPerMonth;
 use App\Filament\Widgets\VolunteerUsageWidgetByDepartment;
 use App\Filament\Widgets\VolunteerUsageWidgetByProgram;
+use App\Models\Event;
+use App\Models\EventAttendee;
 use App\Models\EventType;
 use App\Models\Program;
+use App\Models\User;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Reports extends Page
 {
@@ -22,7 +27,8 @@ class Reports extends Page
     protected static ?int $contentHeight = 300; //px
 
 
-    public function mount() :void {
+    public function mount() :void {   
+        
         $progNames = array();
         $count = array();
         $overall_hrs = 0;

@@ -46,7 +46,7 @@ class RegistrationsRelationManager extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return auth()->user()->can('manage_attendees');
+        return auth()->user()->can('manage_registrations_event');
     }
     
 
@@ -145,7 +145,7 @@ class RegistrationsRelationManager extends RelationManager
                     })
                     ->visible(function ($record){
                         if($record->status_id == 1){
-                            if(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner')){
+                            if(auth()->user()->can('manage_registrations_event')){
                                 return true;
                             }
                         }
@@ -185,7 +185,7 @@ class RegistrationsRelationManager extends RelationManager
                     })
                     ->visible(function ($record){
                         if($record->status_id == 1){
-                            if(auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('External Partner')){
+                            if(auth()->user()->can('manage_registrations_event')){
                                 return true;
                             }
                         }

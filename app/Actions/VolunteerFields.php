@@ -19,45 +19,6 @@ final class VolunteerFields
     public function execute()
     {
         return [
-            Grid::make(3)
-                ->schema([
-                    TextInput::make('firstname')
-                        ->required()
-                        ->maxLength(255),
-
-                    TextInput::make('middle_name')
-                        ->maxLength(255),
-
-                    TextInput::make('lastname')
-                        ->required()
-                        ->maxLength(255),
-
-                    TextInput::make('username')
-                        ->required()
-                        ->maxLength(255)
-                        ->live()
-                        ->rules(function ($record) {
-                            $userId = $record?->id;
-                            return $userId
-                                ? ['unique:users,username,' . $userId]
-                                : ['unique:users,username'];
-                        }),
-
-                    TextInput::make('email')
-                        ->email()
-                        ->required()
-                        ->maxLength(255)
-                        ->rules(function ($record) {
-                            $userId = $record?->id;
-                            return $userId
-                                ? ['unique:users,email,' . $userId]
-                                : ['unique:users,email'];
-                        }),
-
-                    DatePicker::make('birthday')
-                        ->required(),
-                ]),
-
             ToggleButtons::make('is_company')
                 ->label('')
                 ->default(1)

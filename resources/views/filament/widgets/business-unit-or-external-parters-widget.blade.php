@@ -9,7 +9,7 @@
 
             <a href="/admin/business-units/create">
                 <button class="w-fit">
-                    <div class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center rounded-full md:rounded-none  py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                    <div class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center rounded-full py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
                         <p class="font-normal text-lg text-white hidden md:block">CREATE NEW PARTNER</p>
 
                         <!-- Tablet and Mobile text -->

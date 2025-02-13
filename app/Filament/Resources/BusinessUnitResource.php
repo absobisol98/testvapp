@@ -213,6 +213,7 @@ class BusinessUnitResource extends Resource
                             ])
                             ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only.')
                             ->multiple()
+                            ->required()
                             ->minFiles(2)
                             ->maxFiles(20)
                             ->maxSize(5000)

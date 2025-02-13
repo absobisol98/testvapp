@@ -90,6 +90,7 @@ class AppServiceProvider extends ServiceProvider
         FilamentAsset::register([
             Css::make('example-external-stylesheet', 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css'),
             Js::make('example-external-script', 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js'),
+            Js::make('example-external-script', 'https://platform-api.sharethis.com/js/sharethis.js#property=67acd1165a9d7b0012f84b26&product=inline-share-buttons&source=platform'),
         ]);
 
     }
