@@ -97,11 +97,17 @@
                                 <!-- Program Interest Dropdown -->
                                 <div class="mb-8">
                                     <label class="block mb-2 text-white font-semibold">What programs are you interested in?</label>
-                                    <select id="program-select" class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="program_id" >
-                                        @foreach($programs as $program)
-                                            <option value="{{ $program->id }}">{{ $program->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <select id="program-select" class="shadow-lg w-full p-2 bg-white text-gray-900 rounded"
+                                    name="program_ids[]"
+                                    multiple
+                                    required>
+                                <option value="">Select programs</option>
+                                @foreach($programs as $program)
+                                    <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                @endforeach
+                            </select>
+                            <span class="text-danger program_ids_err"></span>
+
                                 </div>
 
                                 <!-- Privacy and Terms Notice -->
@@ -139,15 +145,15 @@
                                             <div class="mb-4">
                                                 <label class="block mb-2 text-white font-semibold required">Please select your organization</label>
                                                 <div class="flex items-center mb-2">
-                                                    <input type="radio" id="ayala_employee" name="affiliate_type_id" checked value="1" class="mr-2" onchange="updateCompanies()" />
+                                                    <input type="radio" id="ayala_employee" name="affiliate_type_id" checked value="1" class="mr-2" onchange="updateDropdowns()" />
                                                     <label for="ayala_employee" class="text-white">Ayala Employee</label>
                                                 </div>
                                                 <div class="flex items-center mb-2">
-                                                    <input type="radio" id="external_partner" name="affiliate_type_id" value="2" class="mr-2" onchange="updateCompanies()" />
+                                                    <input type="radio" id="external_partner" name="affiliate_type_id" value="2" class="mr-2" onchange="updateDropdowns()" />
                                                     <label for="external_partner" class="text-white">Accredited External Partner</label>
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <input type="radio" id="non_ayala" name="affiliate_type_id" value="3" class="mr-2" onchange="updateCompanies()" />
+                                                    <input type="radio" id="non_ayala" name="affiliate_type_id" value="3" class="mr-2" onchange="updateDropdowns()" />
                                                     <label for="non_ayala" class="text-white">Non-Ayala Group</label>
                                                 </div>
                                             </div>
@@ -353,88 +359,201 @@
 
 
         $(document).ready(function() {
+            // Prevent default form submission
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+            });
+
             $("#btn-register").click(function(e) {
                 e.preventDefault();
-                    var _token = $("input[name='_token']").val();
-                    var username = $("input[name='username']").val();
-                    var email = $("input[name='email']").val();
-                    var firstname = $("input[name='firstname']").val();
-                    var lastname = $("input[name='lastname']").val();
-                    var password = $("input[name='password']").val();
-                    var volunteer = $("input[name='volunteer']").val();
-                    var middle_name = $("input[name='middle_name']").val();
-                    var birthday = $("input[name='birthday']").val();
-                    var is_company = $("input[name='is_company']").prop("checked") ? 1 : 0;
-                    var company_name = $("input[name='company_name']").val();
-                    var school = $("input[name='school']").val();
-                    var school_address = $("input[name='school_address']").val();
-                    var emergency_contact_name = $("input[name='emergency_contact_name']").val();
-                    var emergency_contact_number = $("input[name='emergency_contact_number']").val();
-                    var affiliate_type_id = $("input[name='affiliate_type_id']").val();
-                    var company_id = $("select[name='company_id']").val();
-                    var program_id = $("select[name='program_id']").val();
-                    var cluster_id = $("select[name='cluster_id']").val();
+                let isValid = validateForm();
+
+                if (isValid) {
+                    submitForm();
+                }
+            });
+
+            function validateForm() {
+                // Clear previous errors
+                $('.text-danger').html('');
+                $('.invalid-field').removeClass('invalid-field');
+
+                let isValid = true;
+                const requiredFields = {
+                    firstname: 'First Name',
+                    lastname: 'Last Name',
+                    email: 'Email',
+                    birthday: 'Birthday',
+                    emergency_contact_name: 'Emergency Contact Name',
+                    emergency_contact_number: 'Emergency Contact Number',
+                    password: 'Password',
+                    passwordConfirmation: 'Confirm Password'
+                };
+
+                // Check toggle type
+                const isCompany = $('#company_toggle').is(':checked');
+                if (isCompany) {
+                    if ($('#ayala_employee').is(':checked')) {
+                        if (!$('select[name="cluster_id"]').val()) {
+                            $('.cluster_id_err').html('Cluster is required');
+                            $('select[name="cluster_id"]').addClass('invalid-field');
+                            isValid = false;
+                        }
+                    }
+                    if (!$('#non_ayala').is(':checked')) {
+                        if (!$('select[name="company_id"]').val()) {
+                            $('.company_id_err').html('Company is required');
+                            $('select[name="company_id"]').addClass('invalid-field');
+                            isValid = false;
+                        }
+                    }
+                } else {
+                    requiredFields.school = 'School Name';
+                    requiredFields.school_address = 'School Address';
+                }
+
+                // Validate required fields
+                Object.entries(requiredFields).forEach(([field, label]) => {
+                    const element = $(`[name="${field}"]`);
+                    const value = element.val();
+
+                    if (!value || value.trim() === '') {
+                        element.addClass('invalid-field');
+                        $(`.${field}_err`).html(`${label} is required`);
+                        isValid = false;
+                    }
+                });
+
+                //Validate program select
+                const selectedPrograms = $('#program-select').val();
+                if (!selectedPrograms || selectedPrograms.length === 0) {
+                    $('#program-select').addClass('invalid-field');
+                    $('.program_ids_err').html('Please select at least one program');
+                    isValid = false;
+                }
+
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test($('[name="email"]').val())) {
+                    $('[name="email"]').addClass('invalid-field');
+                    $('.email_err').html('Please enter a valid email address');
+                    isValid = false;
+                }
+
+                // Password validation
+                if ($('[name="password"]').val() !== $('[name="passwordConfirmation"]').val()) {
+                    $('[name="password"], [name="passwordConfirmation"]').addClass('invalid-field');
+                    $('.password_err').html('Passwords do not match');
+                    isValid = false;
+                }
+
+                // Terms checkbox
+                if (!$('#checkbox').is(':checked')) {
+                    $('.terms_err').html('Please agree to the Terms and Conditions');
+                    isValid = false;
+                }
+
+                // Scroll to first error if validation fails
+                if (!isValid) {
+                    const firstError = $('.invalid-field').first();
+                    if (firstError.length) {
+                        $('html, body').animate({
+                            scrollTop: firstError.offset().top - 100
+                        }, 500);
+                    }
+                }
+
+                return isValid;
+            }
+
+            function submitForm() {
+                const affiliateTypeId = $("input[type=radio][name=affiliate_type_id]:checked").val();
+
+                const formData = {
+                    _token: $("input[name='_token']").val(),
+                    email: $("input[name='email']").val(),
+                    firstname: $("input[name='firstname']").val(),
+                    lastname: $("input[name='lastname']").val(),
+                    middle_name: $("input[name='middle_name']").val(),
+                    password: $("input[name='password']").val(),
+                    birthday: $("input[name='birthday']").val(),
+                    emergency_contact_name: $("input[name='emergency_contact_name']").val(),
+                    emergency_contact_number: $("input[name='emergency_contact_number']").val(),
+                    affiliate_type_id: parseInt(affiliateTypeId),
+                    program_ids: $('#program-select').val(),
+                    is_company: affiliateTypeId !== '3' ? true : false, // Explicitly set boolean
+                };
+
+                $("#btn-register").prop('disabled', true).text('Registering...');
+
+                // Log the form data being sent
+                console.log('Submitting form data:', formData);
+
                 $.ajax({
                     url: "{{ route('volunteer.form.store') }}",
                     type: 'POST',
-                    data: {
-                        _token: _token,
-                        username: username,
-                        email: email,
-                        firstname: firstname,
-                        lastname: lastname,
-                        password: password,
-                        volunteer: volunteer,
-                        middle_name: middle_name,
-                        birthday: birthday,
-                        is_company: is_company,
-                        company_name: company_name,
-                        school: school,
-                        school_address: school_address,
-                        emergency_contact_name: emergency_contact_name,
-                        emergency_contact_number: emergency_contact_number,
-                        affiliate_type_id: $("input[type=radio][name=affiliate_type_id]:checked").val(),
-                        company_id: company_id,
-                        program_id: program_id,
-                        cluster_id: cluster_id
-                    },
-                    success: function (data) {
-                        if (data && data.error && $.isEmptyObject(data.error)) {
+                    data: formData,
+                    success: function(response) {
+                        console.log('Success response:', response);
+                        if (response.success) {
                             window.location.href = '{{ route("verification.sent") }}';
-                        } else if (data && data.errors) {
-                            var formErr = data.errors;
-                            for (var err in formErr) {
-                                $('.' + err + '_err').html(formErr[err][0]);
-                            }
                         } else {
-                            window.location.href = '{{ route("verification.sent") }}';
+                            $("#btn-register").prop('disabled', false).text('Register');
+                            console.error('Server returned error:', response);
+                            handleErrors(response.errors || {});
                         }
                     },
-                    error: function (xhr, status, error) {
-                        // More robust error handling
-                        try {
-                            var formErr = xhr.responseJSON && xhr.responseJSON.errors;
-                            if (formErr) {
-                                for (var err in formErr) {
-                                    $('.' + err + '_err').html(formErr[err][0]);
-                                }
-                            } else {
-                                console.log('No error details found:', xhr.responseText);
+                    error: function(xhr, status, error) {
+                        $("#btn-register").prop('disabled', false).text('Register');
+                        console.error('Ajax error:', {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            responseText: xhr.responseText,
+                            error: error
+                        });
+
+                        if (xhr.status === 422) {
+                            handleErrors(xhr.responseJSON.errors);
+                        } else {
+                            // Show more detailed error message
+                            let errorMessage = 'An error occurred. ';
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                errorMessage += response.message || xhr.statusText;
+                            } catch (e) {
+                                errorMessage += xhr.statusText || 'Please try again later.';
                             }
-                        } catch (e) {
-                            console.error('Error processing error response:', e);
+                            alert(errorMessage);
                         }
+                    },
+                    complete: function() {
+                        console.log('Ajax request completed');
                     }
                 });
-            });
+            }
 
+            function handleErrors(errors) {
+                console.log('Handling errors:', errors);
 
-            function printErrorMsg(msg) {
-                    $(".print-error-msg").find("ul").html('');
-                    $(".print-error-msg").css('display', 'block');
-                    $.each(msg, function(key, value) {
-                        $(".print-error-msg").find("ul").append('<li>' + value + '</li>');
+                if (!errors) {
+                    console.error('No errors object provided to handleErrors');
+                    return;
+                }
+
+                Object.entries(errors).forEach(([field, messages]) => {
+                    console.log(`Setting error for ${field}:`, messages);
+                    $(`.${field}_err`).html(messages[0]);
+                    $(`[name="${field}"]`).addClass('invalid-field');
                 });
+
+                // Scroll to first error
+                const firstError = $('.invalid-field').first();
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+                }
             }
         });
     </script>

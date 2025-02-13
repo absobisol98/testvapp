@@ -38,7 +38,7 @@
 
                     <div class="w-full">
                         <div class="flex items-center justify-start gap-4 text-sm font-[400]">
-                            <p>Created by: <span class="font-[700]">{{$opportunity->created_by_user->firstname}} {{$opportunity->created_by_user->lastname}}</span></p>
+                            <p>Created by: <span class="font-[700]">{{$opportunity->created_by_user->firstname ?? ''}} {{$opportunity->created_by_user->lastname ?? ''}}</span></p>
 
                             <div class="flex items-center justify-start gap-2">
                                 @include('custom.icons.admin-icons', ['icon' => 'for-review'])

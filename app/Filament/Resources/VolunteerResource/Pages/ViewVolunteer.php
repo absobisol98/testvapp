@@ -31,7 +31,12 @@ class ViewVolunteer extends Page
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            Actions\EditAction::make()
+            ->label('Edit Profile')
+            ->icon('heroicon-o-pencil')
+            ->url(fn () => VolunteerResource::getUrl('edit', ['record' => $this->record]))
+            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasRole('Super Admin'))
+            ->color('warning'),
         ];
 
     }

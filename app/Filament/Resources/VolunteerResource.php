@@ -30,11 +30,20 @@ class VolunteerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bell';
 
+    public static function getNavigationUrl(): string
+    {
+        if (auth()->user()?->hasRole('Volunteer')) {
+            $volunteerId = auth()->id();
+            return static::getUrl('view', ['record' => $volunteerId]);
+        }
+
+        return static::getUrl('index');
+    }
 
     public static function getNavigationLabel(): string
     {
         if(auth()->user()?->hasRole('Volunteer')){
-            return 'My Opppurtunities';
+            return 'My Volunteer Profile';
         }
         return 'Volunteers';
     }
