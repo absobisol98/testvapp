@@ -67,12 +67,12 @@
 
 
         {{-- Opportunity Section --}}
-        
+
         <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] py-4 mb-8 px-[16px] xl:px-[80px] gap-8"  id="opportunity-list">
             <div class="grid grid-cols-2 lg:grid-cols-3 w-full gap-4">
                 @if (count($galleries) > 0)
                     <div class="w-full program-swiper-container2 col-span-2  h-full w-full overflow-hidden ">
-                        <div class="swiper-wrapper">                
+                        <div class="swiper-wrapper">
                             @foreach ($galleries as $chunk_gallery)
                                 <div class="swiper-slide">
                                     <div class="grid grid-cols-2 lg:grid-cols-2 gap-4">
@@ -84,9 +84,9 @@
                                                     style="background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));">
                                                     <img class="w-[20%]" src="{{ $logo }}" alt="">
                                                 </div>
-                                            </div>    
+                                            </div>
                                         @endforeach
-                                
+
                                         <div class="w-full h-full p-4 col-span-2 flex items-center justify-between gap-4 absolute">
                                             <div
                                                 class="program-button-36-prev2 w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
@@ -97,7 +97,7 @@
                                                 @include('custom.icons.landing-page-icons', ['icon' => 'arrow-right'])
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             @endforeach
@@ -108,7 +108,7 @@
                         <p class="text-base text-black">This Business Unit has no Event Gallery.</p>
                     </div>
                 @endif
-                
+
 
 
                 <div class="col-span-2 md:col-span-1 flex flex-col items-start justify-start gap-2">
@@ -157,7 +157,7 @@
                             <div class="bg-gray-100 w-full h-full flex items-center justify-center p-4">
                                 <p class="text-base text-black">This Business Unit has no Upcoming Opportunity.</p>
                             </div>
-                        </div> 
+                        </div>
                     @endif
                 </div>
             </div>
@@ -357,7 +357,7 @@
                             <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8 z-1">
                                 <div class="w-full flex flex-col items-start gap-4 z-10 text-[#5B5B5B] font-[400]">
                                     <p class="text-3xl md:text-5xl">{{$featured->title}}</p>
-                                    <p class="text-xl md:text-2xl w-full max-w-[510px] text-[#494949]"> 
+                                    <p class="text-xl md:text-2xl w-full max-w-[510px] text-[#494949]">
                                         {!! nl2br($featured->description ?? "Here's where your about us displayed") !!}
                                     </p>
                                 </div>
@@ -368,14 +368,14 @@
                                                 <p class="font-[800] text-sm text-[#D43F3F]">View Event</p>
                                             </div>
                                         </a>
-                                    @else 
+                                    @else
                                         <a href="{{ route('volunteer.form.view') }}">
                                             <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
                                                 <p class="font-[800] text-sm text-[#D43F3F]">SIGN UP NOW!</p>
                                             </div>
                                         </a>
                                     @endif
-                                
+
                                 </div>
                             </div>
                             <div class="w-full h-full p-4 col-span-2 flex items-center justify-between gap-4 absolute">
@@ -395,7 +395,7 @@
         </div>
 
         {{-- Featured Opportunity Modal --}}
-      
+
         <div class="w-full h-fit">
             @if ($upcoming)
                 <div id="featuredImageModal"
@@ -460,9 +460,9 @@
                     </div>
                 </div>
 
-            
+
             @endif
-            
+
 
             {{-- Modal Scripts --}}
             <script>
