@@ -106,6 +106,7 @@
                                 <strong>Volunteer Slot: &nbsp; </strong>
                                 @foreach ($record->slots as $slot)
                                     {{ $slot->total_slots }}
+                                    @if( !$loop->last),@endif
                                 @endforeach
                             </p>
 
@@ -142,12 +143,10 @@
                         </div>
                         <br>
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Tags:</p>
-                        <div
-                        class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[70%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-blue-200">
-
+                        <div class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[70%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-blue-200">
                         @foreach ($record->tags as $tag)
                             <div class="w-fit px-2 py-1" style="background:#03498D; border-radius: 10px;">
-                                <p class="text-white">{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center text-white justify-center cursor-pointer hover:font-[700]">X</span></p>
+                                <p class="text-white">{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center text-white justify-center cursor-pointer hover:font-[700]"></span></p>
                             </div>
                         @endforeach
                     </div>

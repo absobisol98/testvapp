@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\EventFacilitator;
 use App\Models\User;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -15,27 +16,30 @@ class FacilitatorsTableWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(
-                User::query()
-            )
+        ->query(
+            User::query()
+                ->whereHas('eventFacilitator')
+        )
             ->columns([
-                TextColumn::make('id'),
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->searchable()->sortable(),
                 TextColumn::make('firstname')
-                    ->label('Partner')
+                    ->label('First Name')
+                    ->searchable()->sortable(),
+                TextColumn::make('lastname')
+                    ->label('Last Name')
                     ->searchable()->sortable(),
                 TextColumn::make('email')
                     ->searchable()->sortable(),
-                // ToggleColumn::make('is_active')
-                //     ->onColor('success')
-                //     ->offColor('danger')
             ])
             ->actions([
-                Action::make('view')
-                    ->icon('heroicon-s-eye')
-                    ->action(function (User $record) {}),
-                Action::make('edit')
-                    ->icon('heroicon-s-pencil')
-                    ->action(function (User $record) {}),
+                // Action::make('view')
+                //     ->icon('heroicon-s-eye')
+                //     ->action(function (User $record) {}),
+                // Action::make('edit')
+                //     ->icon('heroicon-s-pencil')
+                //     ->action(function (User $record) {}),
             ]);
     }
 }

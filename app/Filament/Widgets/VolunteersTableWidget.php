@@ -32,6 +32,7 @@ class VolunteersTableWidget extends BaseWidget
                     ->label('Birthday')
                     ->searchable()->sortable(),
                 TextColumn::make('created_at')
+                    ->dateTime('M d, Y')
                     ->label('Created At')
                     ->searchable()->sortable(),
 

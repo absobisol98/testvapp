@@ -69,12 +69,13 @@
                             </div>
                             <div class="w-fit flex flex-col items-start justify-between gap-1">
                                 @if($opportunity->slots?->first())
-                                <p><span class="font-[600]">SHIFTS:</span> {{$opportunity->slots[0]->shift_name}}</p>
+                                <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{$opportunity->slots->count()}}</p>
                                 <div class="flex items-center justify-start gap-4">
-                                        <p>
-                                            <span class="font-[600]">BATCH:</span>
-                                            {{$opportunity->slots['0']->type->name}}
+                                    @foreach ($opportunity->slots as $key=> $slot)
+                                        <p><span class="font-[600]">BATCH {{$key+1}}:</span>
+                                            {{$slot->type->name}}
                                         </p>
+                                    @endforeach
                                 </div>
                                 @else
                                 <p><span class="font-[600]">SHIFTS:</span></p>

@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\BusinessUnit;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Program;
 use Filament\Widgets\Widget;
 
 class HeroBannerWidget extends Widget
@@ -19,13 +20,43 @@ class HeroBannerWidget extends Widget
             ->orderBy('created_at', 'desc')
             ->first();
 
-        // $totalStat1 = 0;
-        // $totalStat2 = 0;
-        // $totalStat3 = 0;
-        // $totalStat4 = 0;
-        // $totalStat5 = 0;
-
         $bgImg = '';
+
+        $progNames = array();
+        $count = array();
+        $overall_hrs = 0;
+        $programs = Program::all();
+        foreach ($programs as $program){
+            $tot_hrs = 0;
+            if(!empty( $program->events)){
+                foreach($program->events as $event){
+                    if(!empty( $event->attendees)){
+                        foreach ($event->attendees as $attendee){
+                            if($attendee->time_in && $attendee->time_out){
+                                if($attendee->is_approve){
+                                    $tot_hrs += $attendee->get_totalHrs();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if($tot_hrs > 0){
+                $single_count = (double)number_format($tot_hrs,1);
+                array_push($progNames, $program->name .': '. $single_count .' Hrs');
+                array_push($count,$single_count);
+            }
+            $overall_hrs += $tot_hrs;
+        }
+
+        $currentDate = now();
+
+        $upcoming = Event::query()
+        ->where('start_date', '>=', $currentDate)
+        ->orderBy('start_date', 'asc')
+        ->get();
+
+        $opportunities = Event::with('slots')->orderBy('created_at','desc')->get();
 
         // For Volunteer
         if (false) {
@@ -61,6 +92,9 @@ class HeroBannerWidget extends Widget
             'businessunit' => $businessunit,
             'volunteer' => $volunteer,
             'bgImg' => $bgImg,
+            'overall_hrs' =>  number_format($overall_hrs,1),
+            'opportunities' => $opportunities,
+            'upcoming' => $upcoming,
         ];
     }
 }

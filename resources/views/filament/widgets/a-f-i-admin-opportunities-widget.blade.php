@@ -31,22 +31,14 @@
                         <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
                             alt="">
                     </div>
-                    {{-- @php
-                        dd($opportunity);
-                    @endphp --}}
 
                     <div class="w-full">
                         <div class="flex items-center justify-start gap-4 text-sm font-[400]">
                             <p>Created by: <span class="font-[700]">{{$opportunity->created_by_user->firstname}} {{$opportunity->created_by_user->lastname}}</span></p>
 
                             <div class="flex items-center justify-start gap-2">
-                                {{-- @if(rand(0, 1))
-                                    @include('custom.icons.admin-icons', ['icon' => 'published'])
-                                    <p class="font-[700] text-black">PUBLISHED</p>
-                                @else --}}
-                                    @include('custom.icons.admin-icons', ['icon' => 'for-review'])
-                                    <p class="font-[700] text-[#F55E1D]">{{$opportunity->status?->name}}</p>
-                                {{-- @endif --}}
+                                @include('custom.icons.admin-icons', ['icon' => 'for-review'])
+                                <p class="font-[700] text-[#F55E1D]">{{$opportunity->status?->name}}</p>
                             </div>
                         </div>
                         <p class="text-[28px] font-bold font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
@@ -57,29 +49,31 @@
                         <div
                             class="w-full h-fit flex flex-col md:flex-row items-center justify-start text-[14px] font-[400] gap-4">
                             <div class="w-full md:w-fit flex flex-col items-start justify-between gap-0">
-                                <p class="font-semibold">DATE:
-                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
-                                <p class="font-semibold">
-                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
-                                    {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
+                                <div class="flex w-full gap-2" >
+                                    <p class="font-semibold">DATE: {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }} |</p>
+                                    <p class="font-semibold">
+                                        {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
+                                        {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}
+                                    </p>
+                                </div>
 
+                                @if($opportunity->slots?->first())
+                                    <p><span class="font-semibold">NUMBER OF SHIFTS:</span> {{$opportunity->slots->count()}}</p>
 
-
-                                     @if($opportunity->slots?->first())
-                                     <p><span class="font-semibold">SHIFTS:</span> {{$opportunity->slots['0']->shift_name}}</p>
-                                     <p><span class="font-semibold">BATCH</span> {{ $opportunity->slots['0']->type->name }}</p>
-                                     @else
+                                        <div class="flex w-full gap-2">
+                                            @foreach ($opportunity->slots as $key=> $slot)
+                                            <p><span class="font-semibold">BATCH {{$key+1}}:</span>
+                                                {{$slot->type->name}}
+                                            </p>
+                                            @endforeach
+                                        </div>
+                                @else
                                      <p><span class="font-semibold">SHIFTS:</span></p>
-                                     <p><span class="font-semibold">BATCH</span></p>
-                                     @endif
-
-
-
-
+                                     <p><span class="font-semibold">BATCH:</span></p>
+                                @endif
 
                             </div>
 
-                            <div class="hidden md:block h-full min-h-[118px] max-h-[118px] border-l border-[#B6B6B6] mx-4"></div>
 
 
                             {{-- <div class="w-full md:w-fit grid grid-cols-2 gap-8">

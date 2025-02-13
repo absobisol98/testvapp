@@ -42,6 +42,7 @@
                 {{-- <img class="w-full" src="img/logo-white.png" alt=""> --}}
             </div>
         </div>
+
         @endisset
         <!-- Article Content -->
         <div class="bg-white flex flex-col gap-4 leading-normal">
@@ -93,6 +94,7 @@
                     </div>
                 </div>
 
+
                 <div class="w-full p-2 bg-white">
                     <div class="stories-swiper-container w-full overflow-hidden">
                         <div class="swiper-wrapper w-full">
@@ -138,7 +140,31 @@
                                             <div class="h-10 w-[200px] rounded-full bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
                                                 <p class="font-medium text-base text-white">READ MORE</p>
                                             </div>
-                                        </a>
+                                        </div>
+                                        @endif
+                                        <p class="text-xl text-[#03498D] font-bold leading-none">{{ $item->title }}</p>
+                                        <div class="flex flex-row gap-1">
+                                            <p class="text-gray-600 text-xs">Written By:
+                                                <a href="#"
+                                                    class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
+                                                    {{ $item->author->name ?? 'Unknown' }} |
+                                                </a>
+                                            </p>
+                                            <p class="text-gray-600 text-xs">Date:
+                                                <a href="#"
+                                                    class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
+                                                    {{ $item->created_at->format('M j, Y') ?? 'N/A' }}
+                                                </a>
+                                            </p>
+                                        </div>
+                                        <p class="text-[14px]">{{ $item->content_overview }}</p>
+                                        <div class="w-full flex justify-center items-center">
+                                            <a href="{{ url('/article'). '/' . $item->slug }}">
+                                                <div class="h-10 w-[200px] rounded-full bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
+                                                    <p class="font-medium text-base text-white">READ MORE</p>
+                                                </div>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

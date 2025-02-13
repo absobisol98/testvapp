@@ -69,67 +69,69 @@
                 </div>
 
                 {{-- STATS --}}
+                {{-- @php
+                    dd($opportunities)
+                @endphp --}}
                 <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5">
                     {{-- For Volunteers --}}
-                    {{-- @if (false)
+                    @if (auth()->user()->hasRole('Volunteer'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">UPCOMING</p>
-
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat2 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">CERTIFICATES</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat3 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">APPROVED HRS</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat4 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">REMAINING HRS</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat5 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">CANCELLED</p>
-                        </div>
-                    @endif --}}
-
-                    {{-- For AFI Admins --}}
-                    {{-- @if (false)
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat2 }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$opportunities->count()}}</p>
                             <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat3 }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$upcoming->count()}}</p>
+                            <p class="text-sm font-bold text-[#03498D]">UPCOMING</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL HOURS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">0</p>
+                            <p class="text-sm font-bold text-[#03498D]">CERTIFICATE</p>
+                        </div>
+                    @endif
+
+                    {{-- For AFI Admins --}}
+                    {{-- @if (auth()->user()->hasRole('External Partner'))
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
+                            <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
+                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
                             <p class="text-sm font-bold text-[#03498D]">ON GOING</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat4 }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
                             <p class="text-sm font-bold text-[#03498D]">HRS RENDERED</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat5 }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
                             <p class="text-sm font-bold text-[#03498D]">PARTNERS</p>
                         </div>
                     @endif --}}
 
                     {{-- For Partners --}}
-                    @if (true)
+                    @if (auth()->user()->hasRole('super_admin'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
                             <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
