@@ -37,9 +37,16 @@ class EventResource extends Resource implements HasShieldPermissions
 
     protected static ?string $navigationIcon = 'heroicon-s-calendar-date-range';
 
-    protected static ?string $navigationLabel = 'Volunteer Opportunities';
-
     protected static ?string $label = 'Opportunity';
+
+    public static function getNavigationLabel(): string
+    {
+        if(auth()->user()->hasRole('Volunteer')){
+            return 'My Volunteer Opportunities';
+        }
+        return 'Volunteer Opportunities';
+
+    }
 
     public static function getPermissionPrefixes(): array
     {

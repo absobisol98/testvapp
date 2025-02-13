@@ -281,7 +281,7 @@
 
                 <div class="our-partners-swiper-container swiper w-full overflow-hidden">
                     <div class="swiper-wrapper w-full">
-    
+
                         {{-- Partner Slide Item 1 --}}
                         <div class="swiper-slide">
                             <a href="">
@@ -349,7 +349,7 @@
                             </a>
                         </div>
 
-    
+
                     </div>
                 </div>
 
@@ -357,7 +357,7 @@
                     class="our-partners-button-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
                     @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
                 </div>
-    
+
                 <!-- Swiper Script -->
                 <script>
                      const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
