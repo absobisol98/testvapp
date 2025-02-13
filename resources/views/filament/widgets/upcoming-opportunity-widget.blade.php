@@ -51,9 +51,14 @@
         <div id="opportunityList" class="w-full overflow-y-scroll h-[500px] custom-scrollbar flex flex-col items-center justify-between gap-4 p-4 duration-300 text-[#000000]">
             {{-- List --}}
             @foreach ($opportunities as $index => $opportunity)
+
+            @php
+                $mediaItems = $opportunity->getMedia('event-banner-attachments')?->first()?->getUrl();
+            @endphp
+
                 <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                     <div class="h-fit md:w-[200px] flex items-center justify-center overflow-hidden" style="width: max-content">
-                        <img class="w-[auto] md:w-[200px] h-[220px] md:h-[140px] object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                        <img class="w-[auto] md:w-[200px] h-[220px] md:h-[140px] object-cover" src="{{ $mediaItems ?? url('img/ayala-foundation-bg.jpg') }}" alt="">
                     </div>
 
                     <div class="w-full">

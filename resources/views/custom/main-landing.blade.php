@@ -47,12 +47,14 @@
         {{-- Opportunity Section --}}
         <div class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] rounded-xl px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
             {{-- Featured Opportunity --}}
+                    @php
+                        $mediaItems = $featuredOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl();
+                    @endphp
             <div class="flex flex-col md:flex-row items-center justify-center gap-4">
                 <div class="flex items-center justify-between h-[400px] w-[100%] md:w-[40%]  gap-4"
-                    style="background: url('{{ asset('img/ayala-foundation-bg.jpg') }}') no-repeat center center; background-size: cover;">
+                    style="background: url('{{ url($mediaItems) }}') no-repeat center center; background-size: cover;">
                     <div class="h-full w-full flex items-end justify-start p-4"
                         style="background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));">
-                        <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="">
                     </div>
                 </div>
 
@@ -162,10 +164,15 @@
                         class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-scroll custom-scrollbar">
                         {{-- List --}}
                         @foreach ($opportunities as $index => $opportunity)
+
+                        @php
+                            $mediaItems = $opportunity->getMedia('event-banner-attachments')?->first()?->getUrl();
+                        @endphp
                             <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                                 <div
                                     class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                    <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
+                                    <img class="w-full h-full object-cover" src="{{ $mediaItems ?? url('img/ayala-foundation-bg.jpg') }}"
+
                                         alt="">
                                 </div>
 
@@ -281,7 +288,7 @@
 
                 <div class="our-partners-swiper-container swiper w-full overflow-hidden">
                     <div class="swiper-wrapper w-full">
-    
+
                         {{-- Partner Slide Item 1 --}}
                         <div class="swiper-slide">
                             <a href="">
@@ -349,7 +356,7 @@
                             </a>
                         </div>
 
-    
+
                     </div>
                 </div>
 
@@ -357,7 +364,7 @@
                     class="our-partners-button-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
                     @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
                 </div>
-    
+
                 <!-- Swiper Script -->
                 <script>
                      const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
