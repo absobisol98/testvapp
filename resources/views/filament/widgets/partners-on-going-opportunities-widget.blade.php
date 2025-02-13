@@ -38,26 +38,26 @@
 
                     <div class="w-full">
                         <div class="flex items-center justify-start gap-4 text-sm font-[400]">
-                            <p>Created by: <span class="font-[700]">{{$opportunity->created_by_user->firstname}} {{$opportunity->created_by_user->lastname}}</span></p>
+                            <p>Created by: <span class="font-[700]">{{$opportunity?->created_by_user?->firstname ?? 'N/A'}} {{$opportunity?->created_by_user?->lastname ?? ''}}</span></p>
 
                             <div class="flex items-center justify-start gap-2">
                                     @include('custom.icons.admin-icons', ['icon' => 'for-review'])
                                     <p class="font-[700] text-[#F55E1D]">{{$opportunity->status?->name}}</p>
                             </div>
                         </div>
-                        <p class="text-[28px] font-bold font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
+                        <p class="text-[28px] font-bold font-bold capitalize text-[#03498D]">{{ $opportunity?->title }}</p>
 
-                        <p class="text-xl font-normal mb-3">{{ $opportunity->location }}
+                        <p class="text-xl font-normal mb-3">{{ $opportunity?->location }}
                         </p>
 
                         <div
                             class="w-full h-fit flex flex-col md:flex-row items-center justify-start text-[14px] font-[400] gap-4">
                             <div class="w-full md:w-fit flex flex-col items-start justify-between gap-0">
                                 <div class="flex w-full gap-2" >
-                                    <p class="font-semibold">DATE: {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }} |</p>
+                                    <p class="font-semibold">DATE: {{ \Carbon\Carbon::parse($opportunity?->start_date)->format('M-d-Y') }} |</p>
                                     <p class="font-semibold">
-                                        {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
-                                        {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}
+                                        {{ \Carbon\Carbon::parse($opportunity?->start_date)->format('g:i A') }} -
+                                        {{ \Carbon\Carbon::parse($opportunity?->end_date)->format('g:i A') }}
                                     </p>
 
                                 </div>

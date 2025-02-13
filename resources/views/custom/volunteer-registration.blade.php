@@ -223,13 +223,15 @@
                                             </button>
                                         </div>
 
-                                        <div>
-                                            <input id="checkbox" type="checkbox" required />
-                                            <label class="text-color" for="checkbox">
-                                                &nbsp; I agree to these
-                                                <a href="{{ route('data-privacy-policy') }}" class="hover:underline text-color">Terms and Conditions</a>.
+                                        {{-- <div>
+                                            <label class="text-color flex items-center space-x-2">
+                                                <input id="checkbox" type="checkbox" required />
+                                                <span>
+                                                    I agree to these
+                                                    <a href="{{ route('data-privacy-policy') }}" class="hover:underline text-color">Terms and Conditions</a>.
+                                                </span>
                                             </label>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
