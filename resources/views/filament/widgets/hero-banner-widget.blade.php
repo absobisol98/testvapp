@@ -102,36 +102,63 @@
                     @endif
 
                     {{-- For AFI Admins --}}
-                    {{-- @if (auth()->user()->hasRole('External Partner'))
+                    @if (auth()->user()->hasRole('External Partner'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
 
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
                             <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $upcoming->count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">ON GOING</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
                             <p class="text-sm font-bold text-[#03498D]">HRS RENDERED</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"></p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"> {{$businessunit}}</p>
                             <p class="text-sm font-bold text-[#03498D]">PARTNERS</p>
                         </div>
-                    @endif --}}
+                    @endif
 
                     {{-- For Partners --}}
                     @if (auth()->user()->hasRole('super_admin'))
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $businessunit }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\EventFacilitator::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
+                        </div>
+                    @endif
+
+                    @if (auth()->user()->hasRole('Ayala Super Admin'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
                             <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>

@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 use App\Models\Blog\Post;
 use App\Models\BusinessUnit;
 use Filament\Notifications\Notification;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class HomepageController extends Controller
+
+class HomepageController extends Controller implements HasMedia
 {
+
+    Use InteractsWithMedia;
+    
     public function mainHomepageView()
     {
         $opportunities = Event::with('slots')->get();
