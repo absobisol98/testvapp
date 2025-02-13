@@ -9,7 +9,7 @@
             <a href="#">
                 <button class="w-fit">
                     <div
-                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center rounded-full md:rounded-none py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center rounded-full rounded-none py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
                         <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
 
                         <!-- Tablet and Mobile text -->
@@ -21,7 +21,7 @@
 
         <div class="w-full border-t border-[#E1E1E1] my-4"></div>
 
-        <div class="w-full flex flex-col items-center justify-between gap-4">
+        <div class="w-full overflow-y-scroll h-[500px] custom-scrollbar flex flex-col items-center justify-between gap-4">
             {{-- List --}}
             @foreach ($opportunities as $opportunity)
                 <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
@@ -45,7 +45,7 @@
                                 @endif
                             </div>
                         </div>
-                        <p class="text-[28px] font-normal font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
+                        <p class="text-[28px] font-bold font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
 
                         <p class="text-xl font-normal mb-3">{{ $opportunity->location }}
                         </p>
@@ -72,7 +72,7 @@
                             <div class="hidden md:block h-full min-h-[118px] max-h-[118px] border-l border-[#B6B6B6] mx-4"></div>
 
                             <div class="w-full md:w-fit grid grid-cols-2 gap-8">
-                                <div
+                                {{-- <div
                                     class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-4">
                                     <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">140</p>
                                     <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
@@ -82,24 +82,21 @@
                                     class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-4">
                                     <p class="text-3xl md:text-4xl font-bold text-[#F55E1D]">5</p>
                                     <p class="text-sm font-bold text-[#03498D]">HOURS</p>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
 
-                    {{-- <div class="w-fit flex items-center justify-between gap-8 p-4">
-                        <x-filament::icon-button icon="heroicon-s-pencil-square" wire:click="openNewUserModal"
-                            size="xl" label="Edit" />
-                        <x-filament::icon-button icon="heroicon-s-trash" wire:click="openDeleteConfirmation"
-                            size="xl" label="Delete" />
-
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" wire:model="status" />
-                            <div
-                                class="w-11 h-6 bg-[#E6E0E9] rounded-full ring-2 ring-[#79747E] peer-checked:bg-[#65558F] peer-checked:ring-[#65558F] peer-checked:after:bg-white peer-checked:after:border-white peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-[#79747E] after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all">
-                            </div>
-                        </label>
-                    </div> --}}
+                    <div class="w-fit flex items-center justify-between gap-8 p-4">
+                        <div class="w-fit flex items-center justify-between gap-8 p-4">
+                            <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
+                                <div
+                                    class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center rounded-full justify-center p-2 hover:bg-[#FF9141]">
+                                    <p class="font-normal text-base md:text-lg text-white">VIEW</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
 
                 </div>
 

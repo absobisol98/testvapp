@@ -48,7 +48,7 @@
         <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
 
         {{-- OPPORTUNITIES List --}}
-        <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-4 p-4 duration-300 text-[#000000]">
+        <div id="opportunityList" class="w-full overflow-y-scroll h-[500px] custom-scrollbar flex flex-col items-center justify-between gap-4 p-4 duration-300 text-[#000000]">
             {{-- List --}}
             @foreach ($opportunities as $index => $opportunity)
                 <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
@@ -93,14 +93,11 @@
 
                     <div style="width:200px">
                         <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
-                            <div class="h-[36px] md:h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                            <div class="h-[36px] md:h-[48px] w-full bg-[#FF781E] rounded-full flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                 <p class="font-normal text-lg text-white">VIEW</p>
                             </div>
                         </a>
                     </div>
-
-
-
                 </div>
 
                 @if (!$loop->last)

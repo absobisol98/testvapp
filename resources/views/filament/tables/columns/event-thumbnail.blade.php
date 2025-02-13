@@ -2,17 +2,19 @@
     $record = $getRecord();
     $banner = $record->media->first();
 @endphp
-    <div class="rounded">
-        @isset($banner)
-            <div class="overflow-hidden mb-2 w-full h-[50%]">
-                <img src="{{ asset('storage/event-banner-attachments/' . $banner->file_name) }}" alt="">
-            </div>
-        @else
-            <div class="overflow-hidden mb-2 w-full h-[50%] flex items-center justify-center bg-gray-200">
-                <img src="{{ asset('img/logo-colored.png') }}" alt="Placeholder Image" class="w-full h-auto">
-            </div>
-        @endisset
-        <div class="font-bold text-2xl mb-2 truncate event-title capitalize"  >{{$record->title}}</div>
+<div class="max-h-[300px] h-[300px] flex flex-col">
+    @isset($banner)
+        <div class="overflow-hidden mb-2 w-full h-[60%] bg-cover bg-center bg-no-repeat rounded-xl"
+            style="background-image: url('{{ asset('storage/event-banner-attachments/' . $banner->file_name) }}');">
+        </div>
+    @else
+        <div class="overflow-hidden mb-2 w-full h-[60%] bg-cover bg-center bg-no-repeat rounded-xl"
+        style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
+    </div>
+    @endisset
+
+    <div class="flex flex-col flex-grow">
+        <div class="font-bold text-2xl mb-2 truncate event-title capitalize">{{$record->title}}</div>
         <div class="text-sm">
             <span class="uppercase tracking-wide text-indigo-500 font-semibold">
                 {{ \Carbon\Carbon::parse($record->start_date)->format('F d, Y') }}
@@ -22,19 +24,27 @@
                 {{ \Carbon\Carbon::parse($record->end_date)->format('h:i A') }}
             </span>
         </div>
-        <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
-        {{-- <div>
+        {{--
+        <div>
             <b>Slot: </b>
             @foreach($record->slots as $slot)
                 @php
-                    $registion_count = $record->registrations->where('slot_type_id',$slot->id)->where('status_id','!=',3)->count();
+                    $registration_count = $record->registrations->where('slot_type_id',$slot->id)->where('status_id','!=',3)->count();
                 @endphp
-               <span class="text-sm"><b>({{$slot->total_slots - $registion_count}})</b> {{$slot->type->name}}: {{Carbon\Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('h:i')}} - {{Carbon\Carbon::parse(now()->format('Y-m-d').$slot->end_time)->format('h:i')}}</span>
+                <span class="text-sm"><b>({{ $slot->total_slots - $registration_count }})</b>
+                {{$slot->type->name}}:
+                {{ Carbon\Carbon::parse(now()->format('Y-m-d') . $slot->start_time)->format('h:i A') }} -
+                {{ Carbon\Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('h:i A') }}
+                </span>
             @endforeach
-        </div> --}}
-        {{-- <div class="mt-2 !text-gray-500 custom-scrollbar overflow-y-auto max-h-12 h-12">{!! $record->description !!}</div> --}}
+        </div>
+        --}}
+
+        {{-- <div class="mt-2 text-gray-500 custom-scrollbar overflow-y-auto max-h-12 h-12">{!! $record->description !!}</div> --}}
     </div>
+</div>
+
 @push('scripts')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script>
