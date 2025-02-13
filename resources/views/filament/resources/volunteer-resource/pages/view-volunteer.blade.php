@@ -30,6 +30,11 @@
         /* For Profile Page Container(End) */
     </style>
 
+    <div class="flex justify-end mb-8 pt-8 mr-8">
+        @foreach($this->getHeaderActions() as $action)
+            {{ $action }}
+        @endforeach
+    </div>
 
     <div class="w-full flex flex-col items-center justify-center gap-8">
         {{-- <a href="{{ asset('img/ayala-foundation-bg.jpg') }}"
@@ -101,6 +106,7 @@
                                     <img class="h-full w-full object-cover"
                                         src="{{$badges['current_rank']['medal']}}"
                                         alt="Badge 1">
+
                                 </div>
                                 @endif
                                 @if ($badges['next_rank'] !== null)
@@ -304,6 +310,10 @@
                                         <img class="h-full w-full object-cover"
                                         src="{{$badges['current_rank']['medal']}}"
                                         alt="Badge 1">
+
+                                        @php
+                                            dd($badges);
+                                        @endphp
                                     </div>
                                 </div>
                             </div>

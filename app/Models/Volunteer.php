@@ -21,4 +21,24 @@ class Volunteer extends User
     {
         return $this->BelongsToMany(Event::class, 'event_attendees', 'attendee_id', 'event_id');
     }
+
+    public function programs()
+    {
+        return $this->belongsToMany(Program::class, 'program_volunteer')
+                    ->withPivot('is_primary')
+                    ->withTimestamps();
+    }
+
+    public function primaryProgram()
+    {
+        return $this->belongsToMany(Program::class, 'program_volunteer')
+                    ->wherePivot('is_primary', true)
+                    ->first();
+    }
+
+    // Maintain backwards compatibility
+    public function getProgramIdAttribute()
+    {
+        return $this->primaryProgram()?->id;
+    }
 }
