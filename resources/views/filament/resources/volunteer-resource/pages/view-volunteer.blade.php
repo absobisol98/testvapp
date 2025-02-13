@@ -4,6 +4,7 @@
         <!-- Include Swiper CSS and JS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     </head>
 
     <style>
@@ -28,6 +29,15 @@
         }
 
         /* For Profile Page Container(End) */
+
+        .badge-overlay {
+            background-color: rgba(31, 41, 55, 0.7); /* This is equivalent to bg-gray-800 with 70% opacity */
+        }
+
+        .badge-overlay:hover {
+            background-color: rgba(31, 41, 55, 0.5); /* Optional: lighter on hover */
+            transition: background-color 0.3s ease;
+        }
     </style>
 
     <div class="flex justify-end mb-8 pt-8 mr-8">
@@ -302,18 +312,42 @@
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                                {{-- Badge 1 --}}
-                                <div
-                                    class="col-span-1 flex items-center justify-center gap-1 {{ true ? '' : 'opacity-50' }}">
-                                    <div
-                                        class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden relative">
-                                        <img class="h-full w-full object-cover"
-                                        src="{{$badges['current_rank']['medal']}}"
-                                        alt="Badge 1">
+                                <!-- Current Rank Badge -->
+                                <div class="col-span-1 flex items-center justify-center gap-1">
+                                    <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden">
+                                        @if($badges['current_rank'])
+                                            <img class="h-full w-full object-cover" src="{{$badges['current_rank']['medal']}}" alt="Current Badge">
+                                        @endif
+                                    </div>
+                                </div>
 
-                                        @php
-                                            dd($badges);
-                                        @endphp
+                                <!-- Silver Badge (Locked) -->
+                                <div class="col-span-1 flex items-center justify-center gap-1">
+                                    <div class="w-[120px] h-[120px] relative">
+                                        <img class="h-full w-full object-cover" src="{{asset('medals/silver.png')}}" alt="Silver Badge">
+                                        <div class="absolute inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
+                                            <i class="fas fa-lock text-white text-2xl"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gold Badge (Locked) -->
+                                <div class="col-span-1 flex items-center justify-center gap-1">
+                                    <div class="w-[120px] h-[120px] relative">
+                                        <img class="h-full w-full object-cover" src="{{asset('medals/gold.png')}}" alt="Gold Badge">
+                                        <div class="absolute inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
+                                            <i class="fas fa-lock text-white text-2xl"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Platinum Badge (Locked) -->
+                                <div class="col-span-1 flex items-center justify-center gap-1">
+                                    <div class="w-[120px] h-[120px] relative">
+                                        <img class="h-full w-full object-cover" src="{{asset('medals/plat.png')}}" alt="Platinum Badge">
+                                        <div class="absolute inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
+                                            <i class="fas fa-lock text-white text-2xl"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

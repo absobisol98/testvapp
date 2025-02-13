@@ -114,6 +114,11 @@ class VolunteerRegistrationController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
+
+                    if($index ===0)
+                    {
+                    DB::table('users')->where('id', $user->id)->update(['program_id' => $programId]);
+                    }
                 }
 
 
