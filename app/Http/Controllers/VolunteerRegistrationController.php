@@ -119,7 +119,7 @@ class VolunteerRegistrationController extends Controller
                     {
                     DB::table('users')->where('id', $user->id)->update(['program_id' => $programId]);
                     }
-                }
+
 
 
                 $user->notify(new VerifyEmailNotification());

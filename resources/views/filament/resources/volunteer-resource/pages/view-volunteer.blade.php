@@ -312,6 +312,7 @@
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
                                 <!-- Current Rank Badge -->
                                 <div class="col-span-1 flex items-center justify-center gap-1">
                                     <div class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden">
@@ -348,6 +349,7 @@
                                         <div class="absolute inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
                                             <i class="fas fa-lock text-white text-2xl"></i>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
