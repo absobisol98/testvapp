@@ -52,9 +52,14 @@ class ListUsers extends ListRecords
         $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id)->where('volunteer',0);
 
         if (!$user->isSuperAdmin()) {
-            $model = $model->whereDoesntHave('roles', function ($query) {
-                $query->where('name', '=', config('filament-shield.super_admin.name'))->where('volunteer',0);
-            });
+            if(auth()->user()->hasRole('Ayala Super Admin')){
+                $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id)->where('volunteer',0);
+            }
+            else{
+                $model = $model->whereDoesntHave('roles', function ($query) {
+                    $query->where('name', '=', config('filament-shield.super_admin.name'))->where('volunteer',0);
+                });
+            }
         }
 
         return $model;

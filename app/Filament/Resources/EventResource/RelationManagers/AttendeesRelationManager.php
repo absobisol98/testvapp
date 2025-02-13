@@ -43,7 +43,7 @@ class AttendeesRelationManager extends RelationManager
     
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return auth()->user()->can('manage_registrations');
+        return auth()->user()->can('manage_attendees_event');
     }
     
 
