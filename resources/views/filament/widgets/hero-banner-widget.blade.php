@@ -9,86 +9,26 @@
                         <p class="text-xl md:text-3xl font-bold mb-4">Welcome {{ auth()->user()->name }}</p>
                         <p class="text-3xl md:text-5xl font-bold">Your involvement <br> is important to us!</p>
                     </div>
-
-                    {{-- featured opportunity --}}
-{{--
-                    @php
-                        $latestOpportunity = $opportunity->get()->sortByDesc('created_at')->first();
-                    @endphp
-
-
-                    @if ($opportunity)
-                        <div class="col-span-1 flex items-center justify-between gap-4 bg-[#FFFFFF] p-4">
-                            <div
-                                class="w-full h-full min-h-[160px] max-w-[150px] flex items-center justify-center overflow-hidden rounded-[20px] shadow-md">
-                                <img class="w-full h-full object-cover" src="{{ asset('img/ayala-foundation-bg.jpg') }}"
-                                    alt="">
-                            </div>
-
-                            <div class="w-full">
-                                <div class="w-full">
-                                    <p class="capitalize text-[28px] font-bold text-[#03498D] mb-2">
-                                        {{ $latestOpportunity->title }}</p>
-
-                                    <div
-                                        class="w-full flex flex-row items-center justify-start text-[14px] font-[400] text-[#000000] mb-6 gap-4">
-                                        <div class="w-fit">
-                                            <p><span class="font-[600]">DATE:</span>
-                                                {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }}
-                                            </p>
-                                        </div>
-                                        <div class="w-fit">
-                                                    <p>
-                                                        <span class="font-[600]">BATCH:</span>
-                                                        {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i A') }}
-                                                        -
-                                                        {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i A') }}
-                                                    </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                    <a class="w-full" href="\admin/events">
-                                        <div
-                                            class="h-[40px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-[400] text-[18px] text-white">REGISTER</p>
-                                        </div>
-                                    </a>
-
-                                    <a class="w-full" href="">
-                                        <div
-                                            class="h-[40px] w-full bg-[#FFFFFF] flex items-center justify-center p-2 hover:bg-[#f1f1f1]">
-                                            <p class="font-[400] text-[18px] text-black">CANCEL</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endif --}}
                 </div>
 
                 {{-- STATS --}}
-                {{-- @php
-                    dd($opportunities)
-                @endphp --}}
-                <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5">
+                <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-4">
                     {{-- For Volunteers --}}
                     @if (auth()->user()->hasRole('Volunteer'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$opportunities->count()}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
+                            <p class="text-sm font-bold text-[#03498D]">AVAILABLE OPPORTUNITIES</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$upcoming->count()}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">UPCOMING</p>
+                            <p class="text-sm font-bold text-[#03498D]">MY UPCOMING OPPORTUNITIES</p>
                         </div>
 
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                        {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
-                        </div>
+                        </div> --}}
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
@@ -97,9 +37,13 @@
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">0</p>
-                            <p class="text-sm font-bold text-[#03498D]">CERTIFICATE</p>
+                            <p class="text-sm font-bold text-[#03498D]">MY VOLUNTEER CERTIFICATES</p>
                         </div>
                     @endif
+                </div>
+
+
+                <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5">
 
                     {{-- For AFI Admins --}}
                     @if (auth()->user()->hasRole('External Partner'))

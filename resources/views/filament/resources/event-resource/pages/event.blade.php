@@ -32,7 +32,7 @@
 </style>
 
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
-    
+
     <div class="w-full flex items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
         <div class="grid grid-cols-2 gap-2">
@@ -51,16 +51,19 @@
             <div class="flex items-center justify-center rounded-md w-full">
                 <img src="{{ $record->getBanner()}}" alt="">
             </div>
-            <div class="flex items-start justify-start gap-2">
-                <div class="inline-flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#03498D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tags"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3a1 1 0 0 0-1 1v5.172a2 2 0 0 0 .586 1.414L8.29 18.29a2.426 2.426 0 0 0 3.42 0l3.58-3.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="6.5" cy="9.5" r=".5" fill="currentColor"/></svg>
+            <div>
+                <p class="text-black md:pl-10 lg:pl-0 text-lg text-start font-extrabold">Supported Program</p>
+                <div class="flex items-start justify-start gap-2">
+                    <div class="inline-flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#03498D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tags"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3a1 1 0 0 0-1 1v5.172a2 2 0 0 0 .586 1.414L8.29 18.29a2.426 2.426 0 0 0 3.42 0l3.58-3.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="6.5" cy="9.5" r=".5" fill="currentColor"/></svg>
+                    </div>
+                    <p class="text-md md:text-lg lg:text-base font-normal text-[#03498D] capitalize">{{$record->program->name}}</p>
                 </div>
-                <p class="text-md md:text-lg lg:text-base font-normal text-[#03498D] capitalize">{{$record->program->name}}</p>
             </div>
 
             <div>
                 <p class="text-xl font-bold">About the Opportunity</p>
-                <p class="text-md md:text-lg lg:text-base font-normal text-justify capitalize">{!! strip_tags($record->description) !!}</p>
+                <p class="text-md md:text-lg lg:text-base font-normal text-justify whitespace-pre-wrap capitalize">{!! strip_tags($record->description) !!}</p>
             </div>
             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
         </div>
@@ -69,7 +72,7 @@
             <div class="w-full flex flex-col bg-white rounded-xl shadow-lg">
                 <div class="px-4 py-4 space-y-4">
                     <h2 class="text-black md:pl-10 lg:pl-0 text-lg text-start font-extrabold">
-                        Event Details
+                        Volunteer Opportunity Details
                     </h2>
 
                     <div class="w-full flex flex-col md:flex-row space-y-4">
@@ -78,6 +81,9 @@
                                 <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
                                     <svg class="w-8 h-4 " fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"> <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"></path></svg>
                                 </span>
+                                {{-- @php
+                                dd($record->location)
+                                @endphp --}}
                                 <strong>Location: &nbsp;</strong>{{$record->location}}
                             </p>
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
@@ -86,7 +92,7 @@
                                         <path d="M19 3h-1V2a1 1 0 1 0-2 0v1H8V2a1 1 0 1 0-2 0v1H5a3 3 0 0 0-3 3v13a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10h16v9zM4 8V6a1 1 0 0 1 1-1h1v1a1 1 0 1 0 2"></path>
                                     </svg>
                                 </span>
-                                <strong>Schedule: &nbsp;</strong>{{ \Carbon\Carbon::parse($record->start_date)->format('M-d-Y') }}
+                                <strong>Schedule: &nbsp;</strong>{{ \Carbon\Carbon::parse($record->start_date)->format('F d, Y') }}
                             </p>
 
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
@@ -96,12 +102,10 @@
                                 <strong>Recurrence Type: &nbsp;</strong>{{$record->event_recurrence_type->name}}
                             </p>
 
-
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
                                 <span class="w-8 h-8 flex items-center justify-center  bg-blue-200 text-[#03498D] rounded-full mr-4">
                                     <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                                        <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path>
-                                    </svg>
+                                        <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
                                 </span>
                                 <strong>Volunteer Slot: &nbsp; </strong>
                                 @foreach ($record->slots as $slot)
@@ -128,27 +132,32 @@
 
                     @endphp
                     <div class="w-full flex flex-col">
-                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Point-of-Contact:</p>{{$record->point_of_contact?->firstname}} {{$record->point_of_contact?->lastname}}
+                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Point of Contact:</p>{{$record->point_of_contact?->firstname}} {{$record->point_of_contact?->lastname}}
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Facilitator/s:</p>
                         @foreach ($record->facilitators as $facilitator)
                                 {{$facilitator->name}}
                                 @if( !$loop->last),@endif
                             @endforeach
                         <br>
-                        <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
-                        <div class="flex items-center justify-start">
-                            <a href="#" class="text-black text-base font-normal underline">
-                                Download PDF
-                            </a>
-                        </div>
-                        <br>
-                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Tags:</p>
-                        <div class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[70%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-blue-200">
-                        @foreach ($record->tags as $tag)
-                            <div class="w-fit px-2 py-1" style="background:#03498D; border-radius: 10px;">
-                                <p class="text-white">{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center text-white justify-center cursor-pointer hover:font-[700]"></span></p>
+                        <div>
+                            <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
+                            <div class="flex items-center justify-start">
+                                <a href="#" class="text-black text-base font-normal underline">
+                                    Download PDF
+                                </a>
                             </div>
-                        @endforeach
+                        </div>
+
+                        <br>
+                        <div class="{{ $record->tags->isEmpty() ? 'hidden' : '' }}">
+                            <p class="text-md md:text-lg lg:text-base text-start font-bold">Tags:</p>
+                            <div class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[70%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-blue-200">
+                            @foreach ($record->tags as $tag)
+                                <div class="w-fit px-2 py-1" style="background:#03498D; border-radius: 10px;">
+                                    <p class="text-white">{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center text-white justify-center cursor-pointer hover:font-[700]"></span></p>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -188,36 +197,43 @@
         </div>
 
         <div class="stories-swiper-container w-full overflow-hidden">
-            <div class="swiper-wrapper flex w-full">
-                {{-- @php
-                    dd($record->slots)
-                @endphp --}}
-                {{-- volunteer positions --}}
+            <div class="swiper-wrapper flex w-full h-full">
                 @foreach ($record->slots as $slot)
-                    <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
-                        <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
-                            <div class="flex-grow flex flex-col gap-4">
-                                <p class="text-xl font-semibold leading-none">{{$slot->shift_name}}</p>
-                                <p class="text-[#03498D] text-md inline-flex items-center">
-                                    <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"> <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
-                                    {{-- @foreach ($record->slots as $slot) --}}
+                    <div class="swiper-slide h-full">
+                        <div class="bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl h-full flex flex-col">
+                            <!-- Fixed height container with scrollable content -->
+                            <div class="flex flex-col h-[300px]">
+                                <!-- Header Section - Fixed Height -->
+                                <div class="flex-none">
+                                    <p class="text-xl font-semibold leading-none mb-4">{{$slot->shift_name}}</p>
+                                    <p class="text-[#03498D] text-md inline-flex items-center mb-4">
+                                        <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                            <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path>
+                                        </svg>
                                         {{ $slot->total_slots }}
-                                    {{-- @endforeach --}}
-                                </p>
-                                <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
-                                    &emsp; &emsp;
-                                    {{-- @foreach ($record->slots as $slots) --}}
-                                        {{ $slot->responsibilities }}
-                                    {{-- @endforeach --}}
-                                </p>
-                            </div>
+                                    </p>
+                                </div>
 
-                            <div class="w-full flex items-center justify-center mt-auto">
-                                <a href="#">
-                                    <div class="h-10 w-[200px] bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
-                                        <p class="font-medium text-base text-white">Volunteer for this</p>
+                                <!-- Content Section - Scrollable -->
+                                <div class="flex-grow overflow-y-scrollcustom-scrollbar">
+                                    <p class="text-md md:text-lg lg:text-base text-start font-bold mb-2">Key Responsibility</p>
+                                    <div class="pr-2">
+                                        <p class="text-md md:text-lg lg:text-base whitespace-pre-wrap font-normal">
+                                            {!! nl2br($slot->responsibilities) !!}
+                                        </p>
                                     </div>
-                                </a>
+                                </div>
+
+                                <!-- Footer Section - Fixed Height -->
+                                <div class="flex-none mt-4">
+                                    <div class="w-full flex items-center justify-center">
+                                        <a href="#" class="w-full">
+                                            <div class="h-10 w-full max-w-[200px] mx-auto bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
+                                                <p class="font-medium text-base text-white">Volunteer for this</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

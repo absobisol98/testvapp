@@ -15,17 +15,19 @@ class HomepageController extends Controller implements HasMedia
 {
 
     Use InteractsWithMedia;
-    
+
     public function mainHomepageView()
     {
         $opportunities = Event::with('slots')->get();
         $featuredOpportunity = Event::latest()->first();
-
         $articles = Post::latest()->get();
 
-        $upcoming = Event::with('slots')->whereDate('start_date','>=',now())->orderBy('start_date','desc')->first();
-        $ban = $upcoming->getMedia('event-banner-attachments')->first();
+        $upcoming = Event::with('slots')
+            ->whereDate('start_date', '>=', now())
+            ->orderBy('start_date', 'desc')
+            ->first();
 
+        $ban = $upcoming ? $upcoming->getMedia('event-banner-attachments')->first() : null;
 
         return view('custom.main-landing', compact('opportunities', 'articles', 'featuredOpportunity'));
     }
