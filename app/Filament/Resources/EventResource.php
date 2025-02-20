@@ -541,6 +541,7 @@ class EventResource extends Resource implements HasShieldPermissions
     {
         return [
 
+
             'index' => Pages\ListEvents::route('/list'),
             'calendar' => Pages\Calendar::route('/calendar'),
             'thumbnail' => Pages\Thumbnail::route('/'),

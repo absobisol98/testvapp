@@ -115,12 +115,10 @@ class VolunteerRegistrationController extends Controller
                         'updated_at' => now(),
                     ]);
 
-                    if($index ===0)
-                    {
-                    DB::table('users')->where('id', $user->id)->update(['program_id' => $programId]);
+                    if ($index === 0) {
+                        DB::table('users')->where('id', $user->id)->update(['program_id' => $programId]);
                     }
-
-
+                }
 
                 $user->notify(new VerifyEmailNotification());
 

@@ -74,7 +74,7 @@
     <div class="w-full flex flex-col bg-white rounded-xl shadow" style="width:100%">
         <div class="px-4 py-4 space-y-4">
             <h2 class="text-black md:pl-10 lg:pl-0 text-lg text-start font-extrabold">
-                Event Details
+                Volunteer Opportunities Details
             </h2>
             {{-- @php
                 dd($record->facilitators);
@@ -86,7 +86,7 @@
                         {{$record->location}}
                     </p>
                     <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
-                        <svg class="w-8 h-4 mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M19 3h-1V2a1 1 0 1 0-2 0v1H8V2a1 1 0 1 0-2 0v1H5a3 3 0 0 0-3 3v13a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10h16v9zM4 8V6a1 1 0 0 1 1-1h1v1a1 1 0 1 0 2"></path></svg><strong>Schedule: &nbsp;</strong>{{ \Carbon\Carbon::parse($record->start_date)->format('M-d-Y') }}
+                        <svg class="w-8 h-4 mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M19 3h-1V2a1 1 0 1 0-2 0v1H8V2a1 1 0 1 0-2 0v1H5a3 3 0 0 0-3 3v13a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10h16v9zM4 8V6a1 1 0 0 1 1-1h1v1a1 1 0 1 0 2"></path></svg><strong>Schedule: &nbsp;</strong>{{ \Carbon\Carbon::parse($record->start_date)->format('F d, Y') }}
                     </p>
                     <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
                         <svg class="w-8 h-4 mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 10.59l3.29 3.3a1 1 0 0 1-1.42 1.42l-3.3-3.29a1 1 0 0 1-.29-.7V7a1 1 0 0 1 2 0v5.59z"></path></svg><strong>Recurrence Type: &nbsp;</strong>
@@ -118,7 +118,7 @@
                         Contact Information
                     </h2>
                     <div class="w-full flex flex-col">
-                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Point-of-Contact:</p>{{$record->point_of_contact->firstname}} {{$record->point_of_contact->lastname}}
+                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Point of Contact:</p>{{$record->point_of_contact->firstname}} {{$record->point_of_contact->lastname}}
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Facilitator/s:</p>
                         @foreach ($record->facilitators as $facilitator)
                                 {{$facilitator->name}}
