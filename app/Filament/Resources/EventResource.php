@@ -540,10 +540,9 @@ class EventResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
-
-            'index' => Pages\Thumbnail::route('/'),
+            'thumbnail' => Pages\Thumbnail::route('/'),
+            'index' => Pages\ListEvents::route('/list'),
             'calendar' => Pages\Calendar::route('/calendar'),
-            'thumbnail' => Pages\ListEvents::route('/thumbnail'),
             'create' => Pages\CreateEvent::route('/create'),
             'view' => Pages\EventPage::route('/view/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),

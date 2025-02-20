@@ -47,42 +47,6 @@
     </div>
 
     <div class="w-full flex flex-col items-center justify-center gap-8">
-        {{-- <a href="{{ asset('img/ayala-foundation-bg.jpg') }}"
-            class="glightbox flex items-center justify-between w-full gap-4 bg-cover bg-center" data-gallery="gallery1">
-            <div class="flex items-center justify-center overflow-hidden w-full" style="height: 300px;">
-                <img class="object-cover w-full" src="{{ asset('img/ayala-foundation-bg.jpg') }}">
-            </div>
-        </a> --}}
-
-        {{-- <div class="w-full h-full flex flex-col items-end justify-end sm:justify-center gap-4 p-4">
-            <div class="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" style="padding-bottom: 20px;">
-                <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
-                    <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
-                </div>
-
-                <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
-                    <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
-                </div>
-
-                <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
-                    <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
-                </div>
-
-                <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $businessunit }}</p>
-                    <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
-                </div>
-
-                <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8 shadow-lg">
-                    <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\EventFacilitator::count() }}</p>
-                    <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
-                </div>
-            </div>
-        </div> --}}
-
         {{-- Profile Badge --}}
         <div class="w-full px-8">
             <div class="w-full flex flex-col lg:flex-row items-center justify-between gap-8">
@@ -168,25 +132,25 @@
         <div class="w-full px-8 flex flex-col lg:flex-row items-start justify-center gap-8">
             {{-- Tab Buttons --}}
             <div class="w-full lg:max-w-[250px] flex flex-col items-center justify-center text-white gap-4">
-                <button id="personal-info-btn" onclick="changeTab('personal-info')"
-                    class="w-full p-4 text-start hover:!bg-[#1A67B1]" style="background: #005096;">
-                    Personal Information
-                </button>
+                <button id="events-btn" onclick="changeTab('events')" class="w-full p-4 text-start hover:!bg-[#1A67B1]"
+                style="background: #005096;">
+                My Volunteer Opportunities
+            </button>
+
+            <button id="personal-info-btn" onclick="changeTab('personal-info')"
+                class="w-full p-4 text-start hover:!bg-[#1A67B1]" style="background: #9E9E9E;">
+                Personal Information
+            </button>
 
                 <button id="badges-achievements-btn" onclick="changeTab('badges-achievements')"
                     class="w-full p-4 text-start hover:!bg-[#1A67B1]" style="background: #9E9E9E;">
                     Badges / Achievements
                 </button>
-
-                <button id="events-btn" onclick="changeTab('events')" class="w-full p-4 text-start hover:!bg-[#1A67B1]"
-                    style="background: #9E9E9E;">
-                    Events
-                </button>
             </div>
 
             {{-- Tab Contents --}}
             <div class="w-full flex flex-col items-center justify-center">
-                <div id="personal-info-content" class="w-full flex flex-col items-center justify-center gap-8">
+                <div id="personal-info-content" class="w-full flex flex-col items-center justify-center gap-8 hidden">
                     {{-- Personal Information --}}
                     <div class="w-full">
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Personal Infomation</p>
@@ -326,7 +290,7 @@
                                 <div class="col-span-1 flex items-center justify-center gap-1">
                                     <div class="w-[120px] h-[120px] relative">
                                         <img class="h-full w-full object-cover" src="{{asset('medals/silver.png')}}" alt="Silver Badge">
-                                        <div class="absolute inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
+                                        <div class="absolute rounded-full inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
                                             <i class="fas fa-lock text-white text-2xl"></i>
                                         </div>
                                     </div>
@@ -336,7 +300,7 @@
                                 <div class="col-span-1 flex items-center justify-center gap-1">
                                     <div class="w-[120px] h-[120px] relative">
                                         <img class="h-full w-full object-cover" src="{{asset('medals/gold.png')}}" alt="Gold Badge">
-                                        <div class="absolute inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
+                                        <div class="absolute rounded-full inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
                                             <i class="fas fa-lock text-white text-2xl"></i>
                                         </div>
                                     </div>
@@ -346,7 +310,7 @@
                                 <div class="col-span-1 flex items-center justify-center gap-1">
                                     <div class="w-[120px] h-[120px] relative">
                                         <img class="h-full w-full object-cover" src="{{asset('medals/plat.png')}}" alt="Platinum Badge">
-                                        <div class="absolute inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
+                                        <div class="absolute rounded-full inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
                                             <i class="fas fa-lock text-white text-2xl"></i>
                                         </div>
 
@@ -358,7 +322,7 @@
 
                 </div>
 
-                <div id="events-content" class="w-full flex items-center justify-center gap-8 hidden">
+                <div id="events-content" class="w-full flex items-center justify-center gap-8">
                     {{-- Events --}}
                     <div class="w-full">
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Events</p>
