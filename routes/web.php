@@ -54,6 +54,9 @@ Route::get('/data-privacy-policy', function () {
     return view('data-privacy-policy');
 })->name('data-privacy-policy');
 
+Route::get('/terms-and-conditions', function () {
+    return view('terms-and-conditions');
+})->name('terms-and-conditions');
 
 Route::get('/survey/{survey}/{token}', [SurveyResponseController::class, 'show'])
     ->name('survey.respond');
