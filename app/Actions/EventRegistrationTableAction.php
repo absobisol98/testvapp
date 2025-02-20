@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event as IcsEvent;
 use Spatie\IcalendarGenerator\ValueObjects\RRule;
 use Spatie\IcalendarGenerator\Enums\RecurrenceFrequency;
+use Filament\Forms\Components\CheckboxList;
 
 class EventRegistrationTableAction
 {
@@ -41,7 +43,7 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-                    
+
                     if (auth()->user()->can('set_featured_event') &&  ($record->is_featured == false)) {
 
                         return true;
@@ -139,243 +141,46 @@ class EventRegistrationTableAction
         }),
 
             \Filament\Tables\Actions\Action::make('Register')
+                ->hidden()
                 ->color('primary')
                 ->button()
                 ->modalContent(fn ($record) => view('custom.event-modal', ['record' => $record]))
                 ->form(function ($record) {
-
-                    if(auth()->user()->birthday && Carbon::parse(auth()->user()->birthday)->age < 18) { // MINOR
-                        $description = 'Please upload parental consent';
-                        $visible = true;
-                    }elseif($record->attachment_required){
-                        $description = 'Please upload required files';
-                        $visible = true;
-                    }else{
-                        $description = '';
-                        $visible = false;
-                    }
                     return [
-                        Radio::make('slot_type_id')
-                            ->label('')
-                            ->required(fn(Event $record) => $record->slots->first())
-                            ->options(function (Event $record){
-                                $option = [];
-                                foreach($record->slots as $slot) {
-                                    $registion_count = $record->registrations->where('slot_type_id',$slot->id)->where('status_id','!=',3)->count();
+                        CheckboxList::make('slot_type_ids')
+                            ->label('Select Available Shifts')
+                            ->required()
+                            ->options(function (Event $record) {
+                                return $this->getAvailableSlots($record);
+                            })
+                            ->columns(2),
 
-                                    if($slot->total_slots - $registion_count){
-                                        $option[$slot->id] = $slot->shift_name.' ('.Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('g:i A').' - '.Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('g:i A').')';
-                                    }
-                                }
-
-                                return $option;
-                            }),
-                        Section::make('Attachments')
-                            ->visible($visible)
-                            ->schema([
-                                FileUpload::make('media')
-                                    ->directory('event-registration-attachments')
-                                    ->multiple()
-                                    ->maxFiles(5)
-                                    ->label('')
-                                    ->openable()
-                                    ->required( function() use ($visible){ 
-                                        return $visible;
-                                    })
-                                    ->validationMessages([
-                                        'required' => $description,
-                                    ])
-                                    ->downloadable(),
-                            ])
-                            ->collapsible(),
+                        $this->getAttachmentSection($record)
                     ];
                 })
-                ->action(function (Event $record,array $data){
-                    // throw notif for duplciate registration
-                    if($record->attendees->where('attendee_id',auth()->user()->id)->first()){
-                        Notification::make()
-                            ->title('You are already registered in this event')
-                            ->icon('far-bell')
-                            ->danger()
-                            ->send()
-                            ->actions([
-                                \Filament\Notifications\Actions\Action::make('view')
-                                    ->button()
-                                    ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
-                            ]);
-
-
-                    }
-                    if($record->approval_type == "Automatic"){ // Automatic approved status for registration
-
-                        $attendee = EventAttendee::create([
-                            'event_id' => $record->id,
-                            'attendee_id' => auth()->user()->id,
-                            'facilitator_id' => auth()->id(),
-                            'is_approve' => 1,
-                        ]);
-
-                        // Generate QR code for attendee
-                        (new GenerateEventQRCode())->execute($attendee);
-
-                        $status = 2; // Approve - (Automatic)
-
-                        // Notify the registrant
-                        $message = 'Your registration for '.$record->title.' on '.Carbon::parse($record->start_date)->format('M d, Y').' has been approved.';
-
-                    }else{
-
-                        $status = 1; // Pending
-                        $message = null;
-
-                    }
-
-                    $event_registration = EventRegistration::create([
-                        'event_id' => $record->id,
-                        'volunteer_id' => auth()->user()->id,
-                        'slot_type_id' => $data['slot_type_id'],
-                        'created_at' => now(),
-                        'status_id' => $status,
-                        'message' => $message
-                    ]);
-
-                    if (isset($data['media']) && $data['media']) {
-                        foreach ($data['media'] as $media) {
-                            $event_registration->addMedia(storage_path('app/public/'.$media))->preservingOriginal()->toMediaCollection(
-                                'event-registration-attachments'
-                            );
-                        }
-                    }
-
-                    if($record->approval_type == "Automatic"){ // Automatic approved status for registration
-                        Notification::make()
-                            ->title($message)
-                            ->icon('far-bell')
-                            ->actions([
-                                \Filament\Notifications\Actions\Action::make('view')
-                                    ->button()
-                                    ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
-                            ])
-                            ->sendToDatabase($event_registration->volunteer);
-                    }else{
-                        Notification::make()
-                            ->title('You have successfully registered.')
-                            ->success()
-                            ->send();
-                    }
-                    //notification for slot threshold
-                    $slot_treshold = $event_registration->event_slot->total_slots;
-                    $registered = $event_registration->event_slot->event_registrations->count();
-                    $slot_treshold  = ($slot_treshold > 1) ? $slot_treshold: 1;
-
-
-                    $thresholds = [
-                        [
-                            'percentage'  => $slot_treshold * .9,
-                            'description' => '90%',
-                        ],
-
-                        [
-                            'percentage'  => $slot_treshold * .5,
-                            'description' => '50%',
-                        ],
-                        [
-                            'percentage'  => $slot_treshold * .75,
-                            'description' => '75%',
-                        ],
-                        [
-                            'percentage'  => $slot_treshold * .25,
-                            'description' => '25%',
-                        ],
-
-                    ];
-                    $throw_notif = false;
-                    $notif_to_show = null;
-                    foreach( $thresholds as $threshold){
-                        if($registered >= $threshold['percentage']){
-                            $throw_notif = true;
-                            $notif_to_show = $threshold;
-                            break;
-                        }
-                    }
-
-                    if( $throw_notif && $notif_to_show){
-                        foreach($record->notifiable() as $recipient){
-                            Notification::make()
-                                ->title('Event slot reach threshold')
-                                ->icon('far-bell')
-                                ->body(Str::markdown('The Shift Slot: <b>'.$event_registration->event_slot->shift_name.'</b> for Event: <b>'.$record->title.'</b> <br> Reaches '. $notif_to_show['description'].'  Registrant Capacity!'))
-                                ->actions([
-                                    \Filament\Notifications\Actions\Action::make('view')
-                                        ->button()
-                                        ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
-                                ])
-                                ->sendToDatabase($recipient);
-                        }
-                    }
-
-                    foreach ($record->notifiable() as $recipient){
-                        Notification::make()
-                            ->title('You have new event registration for '.$record->title)
-                            ->icon('far-bell')
-                            ->actions([
-                                \Filament\Notifications\Actions\Action::make('view')
-                                    ->button()
-                                    ->url(route('filament.admin.resources.events.view', ['record' => $record->id]), shouldOpenInNewTab: true),
-                            ])
-                            ->sendToDatabase($recipient);
-                    }
-
+                ->action(function (Event $record, array $data) {
+                    $this->handleRegistration($record, $data);
                 })
-                ->visible(function (Event $record){
+                ->visible(fn (Event $record) => $this->canRegister($record)),
 
-                    if(!auth()->user()->can('register_event')){
-                        return false;
-                    }
-                    if(!$record->start_date->gte(now())){
-                        return false;
-                    }
-
-                    if(!$record->registrations->where('volunteer_id',auth()->user()->id)->first() && auth()->user()->hasRole(['super_admin'])){
-                        return true;
-                    }
-                    if($record->registrations->where('volunteer_id',auth()->user()->id)->first()){
-                        return false;
-                    }
-
-                    return (new EventRegistrationButtonVisibilityAction())->execute($record);
-
-                }),
             \Filament\Tables\Actions\Action::make('Cancel Registration')
+            ->hidden()
                 ->color('warning')
                 ->button()
                 ->requiresConfirmation()
-                ->action(function (Event $record){
-
-                    EventRegistration::where('event_id', $record->id)->where('volunteer_id',auth()->user()->id)->delete();
-
-                    Notification::make()
-                        ->title('Registration has been canceled.')
-                        ->success()
-                        ->send();
+                ->form([
+                    CheckboxList::make('slots_to_cancel')
+                        ->label('Select Slots to Cancel')
+                        ->required()
+                        ->options(fn (Event $record) => $this->getCancellableSlots($record))
+                        ->columns(2)
+                ])
+                ->action(function (Event $record, array $data) {
+                    $this->handleCancellation($record, $data);
                 })
-                ->visible(function (Event $record){
+                ->visible(fn (Event $record) => $this->canCancelRegistration($record)),
 
-                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
-
-
-
-                    if ($registration?->status_id == 1 && $registration?->start_date && Carbon::parse($registration->start_date)->gte(now())) {
-
-                        return true;
-                    }
-
-                    return false;
-
-
-                }),
-
-                \Filament\Tables\Actions\Action::make('export')
+            \Filament\Tables\Actions\Action::make('export')
                 ->color('secondary')
                 ->button()
                 ->label('Export')
@@ -419,16 +224,21 @@ class EventRegistrationTableAction
                      Radio::make('slot_type_id')
                          ->label('')
                          ->required(fn(Event $record) => $record->slots->first())
-                         ->options(function (Event $record){
+                         ->options(function (Event $record) {
                              $option = [];
                              foreach($record->slots as $slot) {
-                                 $registion_count = $record->registrations->where('slot_type_id',$slot->id)->where('status_id','!=',3)->count();
+                                 // Only check total capacity, not existing registrations for this user
+                                 $registion_count = $record->registrations
+                                     ->where('slot_type_id', $slot->id)
+                                     ->where('status_id', '!=', 3)
+                                     ->count();
 
-                                 if($slot->total_slots - $registion_count){
-                                     $option[$slot->id] = $slot->shift_name.' ('.Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('g:i A').' - '.Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('g:i A').')';
+                                 if($slot->total_slots > $registion_count) {
+                                     $option[$slot->id] = $slot->shift_name.' ('.
+                                         Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('g:i A').' - '.
+                                         Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('g:i A').')';
                                  }
                              }
-
                              return $option;
                          }),
                      Section::make('Attachments')
@@ -595,6 +405,155 @@ class EventRegistrationTableAction
         ];
     }
 
+    private function getAvailableSlots(Event $record): array
+    {
+        $options = [];
+        $userRegistrations = $record->registrations
+            ->where('volunteer_id', auth()->user()->id)
+            ->where('status_id', '!=', 3)
+            ->pluck('slot_type_id')
+            ->toArray();
+
+        foreach ($record->slots as $slot) {
+            // Skip if user is already registered for this slot
+            if (in_array($slot->id, $userRegistrations)) {
+                continue;
+            }
+
+            $registrationCount = $record->registrations
+                ->where('slot_type_id', $slot->id)
+                ->where('status_id', '!=', 3)
+                ->count();
+
+            if ($slot->total_slots > $registrationCount) {
+                $options[$slot->id] = $this->formatSlotOption($slot);
+            }
+        }
+        return $options;
+    }
+
+    private function formatSlotOption($slot): string
+    {
+        return sprintf(
+            '%s (%s - %s)',
+            $slot->shift_name,
+            Carbon::parse($slot->start_time)->format('g:i A'),
+            Carbon::parse($slot->end_time)->format('g:i A')
+        );
+    }
+
+    private function getAttachmentSection($record): Section
+    {
+        $visible = $this->requiresAttachment();
+        $description = $this->getAttachmentDescription();
+
+        return Section::make('Attachments')
+            ->visible($visible)
+            ->schema([
+                FileUpload::make('media')
+                    ->directory('event-registration-attachments')
+                    ->multiple()
+                    ->maxFiles(5)
+                    ->label('')
+                    ->openable()
+                    ->required($visible)
+                    ->validationMessages([
+                        'required' => $description,
+                    ])
+                    ->downloadable(),
+            ])
+            ->collapsible();
+    }
+
+    private function handleRegistration(Event $record, array $data): void
+    {
+        // Handle multiple slot selections
+        foreach ($data['slot_type_ids'] as $slotId) {
+            // Check for existing registration for this slot
+            $existingRegistration = EventRegistration::where([
+                'event_id' => $record->id,
+                'volunteer_id' => auth()->user()->id,
+                'slot_type_id' => $slotId,
+            ])->first();
+
+            if ($existingRegistration) {
+                continue; // Skip if already registered for this slot
+            }
+
+            // Create registration
+            $registration = EventRegistration::create([
+                'event_id' => $record->id,
+                'volunteer_id' => auth()->user()->id,
+                'slot_type_id' => $slotId,
+                'status_id' => $record->approval_type == "Automatic" ? 2 : 1,
+            ]);
+
+            // Handle attachments if provided
+            if (isset($data['media']) && $data['media']) {
+                foreach ($data['media'] as $media) {
+                    $sourcePath = storage_path('app/public/' . $media);
+                    $registration->addMedia($sourcePath)
+                        ->toMediaCollection('event-registration-attachments');
+                }
+            }
+
+            // If automatic approval, create attendee record
+            if ($record->approval_type == "Automatic") {
+                $attendee = EventAttendee::create([
+                    'event_id' => $record->id,
+                    'attendee_id' => auth()->user()->id,
+                    'facilitator_id' => auth()->id(),
+                    'slot_type_id' => $slotId,
+                    'is_approve' => 1,
+                ]);
+
+                // Generate QR code for the attendee
+                (new GenerateEventQRCode())->execute($attendee);
+
+                // Send notification for automatic approval
+                Notification::make()
+                    ->title("Registration approved for shift")
+                    ->success()
+                    ->send();
+            }
+        }
+
+        // Send success notification
+        $count = count($data['slot_type_ids']);
+        Notification::make()
+            ->title($count > 1
+                ? "Successfully registered for {$count} shifts"
+                : "Successfully registered for shift")
+            ->success()
+            ->send();
+    }
+
+    private function handleCancellation(Event $record, array $data): void
+    {
+        // Get the registrations being cancelled
+        $registrations = EventRegistration::whereIn('id', $data['slots_to_cancel'])->get();
+
+        foreach ($registrations as $registration) {
+            // Delete corresponding attendee record if it exists
+            EventAttendee::where([
+                'event_id' => $registration->event_id,
+                'attendee_id' => $registration->volunteer_id,
+                'slot_type_id' => $registration->slot_type_id,
+            ])->delete();
+        }
+
+        // Delete the registrations
+        EventRegistration::whereIn('id', $data['slots_to_cancel'])->delete();
+
+        $count = count($data['slots_to_cancel']);
+        Notification::make()
+            ->title($count > 1
+                ? "Cancelled {$count} shift registrations"
+                : "Cancelled shift registration")
+            ->success()
+            ->send();
+    }
+
     public function remove_folder_number($media_file)
     {
         // Find the position of the first '/'
@@ -604,5 +563,83 @@ class EventRegistrationTableAction
         $result = substr($media_file, $pos + 1);
 
         return $result;
+    }
+
+    private function canRegister(Event $record): bool
+    {
+        // Get user's existing registrations for this event
+        $userRegistrations = $record->registrations
+            ->where('volunteer_id', auth()->user()->id)
+            ->where('status_id', '!=', 3); // Exclude rejected registrations
+
+        // Check if event has available slots that user hasn't registered for yet
+        $hasAvailableSlots = $record->slots->some(function ($slot) use ($record, $userRegistrations) {
+            // Count total registrations for this slot
+            $registrationCount = $record->registrations
+                ->where('slot_type_id', $slot->id)
+                ->where('status_id', '!=', 3)
+                ->count();
+
+            // Check if user is not already registered for this slot
+            $userNotRegistered = !$userRegistrations
+                ->where('slot_type_id', $slot->id)
+                ->count();
+
+            // Slot is available if it has capacity and user isn't registered
+            return $slot->total_slots > $registrationCount && $userNotRegistered;
+        });
+
+        return $hasAvailableSlots;
+    }
+
+    private function canCancelRegistration(Event $record): bool
+    {
+        // Can cancel if user has pending registrations
+        return $record->registrations
+            ->where('volunteer_id', auth()->user()->id)
+            ->count() > 0;
+    }
+
+    private function getCancellableSlots(Event $record): array
+    {
+        return $record->registrations
+            ->where('volunteer_id', auth()->user()->id)
+            ->mapWithKeys(function ($registration) {
+                $slot = $registration->event_slot;
+                return [
+                    $registration->id => sprintf(
+                        '%s (%s - %s)',
+                        $slot->shift_name,
+                        Carbon::parse($slot->start_time)->format('g:i A'),
+                        Carbon::parse($slot->end_time)->format('g:i A')
+                    )
+                ];
+            })
+            ->toArray();
+    }
+
+    private function requiresAttachment(): bool
+    {
+        $user = auth()->user();
+        $isMinor = $user->birthday && Carbon::parse($user->birthday)->age < 18;
+
+        // Required if user is minor or event requires attachments
+        return $isMinor || ($this->record->attachment_required ?? false);
+    }
+
+    private function getAttachmentDescription(): string
+    {
+        $user = auth()->user();
+        $isMinor = $user->birthday && Carbon::parse($user->birthday)->age < 18;
+
+        if ($isMinor) {
+            return 'Please upload parental consent';
+        }
+
+        if ($this->record->attachment_required ?? false) {
+            return 'Please upload required files';
+        }
+
+        return '';
     }
 }

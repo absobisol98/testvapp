@@ -54,7 +54,8 @@ class EventAttendee extends Model
 		'no_account_name',
 		'volunteer_count',
 		'is_approve',
-		'is_rejected'
+		'is_rejected',
+        'slot_type_id'
 	];
 
 	public function attendee()
@@ -88,5 +89,10 @@ class EventAttendee extends Model
 		}
 		return $hrs;
 	}
+
+    public function slot()
+    {
+        return $this->belongsTo(EventSlot::class, 'slot_type_id');
+    }
 
 }

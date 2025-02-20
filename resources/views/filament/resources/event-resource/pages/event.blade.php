@@ -31,6 +31,16 @@
     /* For Volunteer Dashboard Container(End) */
 </style>
 
+@php
+    // Add this at the top of your file with other PHP calculations
+    $user = auth()->user();
+    $isMinor = $user->birthday && Carbon\Carbon::parse($user->birthday)->age < 18;
+    $requiresAttachment = $isMinor || ($record->attachment_required ?? false);
+    $attachmentDescription = $isMinor
+        ? 'Please upload parental consent document (required for minors)'
+        : ($record->attachment_required ? 'Please upload required documents for this event' : '');
+@endphp
+
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
 
     <div class="w-full flex items-center justify-between">
@@ -176,72 +186,159 @@
 
 </div>
 
+@php
+    $userRegistrations = $record->registrations()
+        ->where('volunteer_id', auth()->id())
+        ->with(['event_slot', 'status'])
+        ->get();
+@endphp
+
 <div class="w-full col-span-3 p-5 gap-4 bg-gray-100 rounded" id="volunteer-section">
-    <div class="w-full">
-        <p class="text-xl font-bold">Volunteer Positions</p>
-    </div>
+    <div class="w-full space-y-6">
+        <!-- Current Registrations Section -->
+        @if($userRegistrations->count() > 0)
+        <div class="bg-white p-5 rounded-lg shadow">
+            <p class="text-xl font-bold mb-4">Your Registered Shifts</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($userRegistrations as $registration)
+                    <div class="border rounded-lg p-4 {{ $registration->status_id == 1 ? 'bg-yellow-50' : 'bg-green-50' }}">
+                        <div class="flex flex-col">
+                            <h4 class="font-semibold">{{ $registration->event_slot->shift_name }}</h4>
+                            <p class="text-sm text-gray-600">
+                                {{ Carbon\Carbon::parse($registration->event_slot->start_time)->format('g:i A') }} -
+                                {{ Carbon\Carbon::parse($registration->event_slot->end_time)->format('g:i A') }}
+                            </p>
+                            <span class="inline-flex mt-2 items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit
+                                {{ $registration->status_id == 1 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
+                                {{ $registration->status_id == 1 ? 'Pending Approval' : 'Approved' }}
+                            </span>
 
-    <div class="w-full p-2 space-y-4">
-        <!-- Carousel Navigation Buttons -->
-        <div class="flex justify-end gap-2">
-            <div class="stories-button-24-prev">
-                <div class="w-[24px] h-[24px] flex items-center justify-center hover:bg-gray-200 bg-white">
-                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
-                </div>
-            </div>
-            <div class="stories-button-24-next">
-                <div class="w-[24px] h-[24px] flex items-center justify-center hover:bg-gray-200 bg-white">
-                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
-                </div>
-            </div>
-        </div>
 
-        <div class="stories-swiper-container w-full overflow-hidden">
-            <div class="swiper-wrapper flex w-full h-full">
-                @foreach ($record->slots as $slot)
-                    <div class="swiper-slide h-full">
-                        <div class="bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl h-full flex flex-col">
-                            <!-- Fixed height container with scrollable content -->
-                            <div class="flex flex-col h-[300px]">
-                                <!-- Header Section - Fixed Height -->
-                                <div class="flex-none">
-                                    <p class="text-xl font-semibold leading-none mb-4">{{$slot->shift_name}}</p>
-                                    <p class="text-[#03498D] text-md inline-flex items-center mb-4">
-                                        <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                                            <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path>
-                                        </svg>
-                                        {{ $slot->total_slots }}
-                                    </p>
-                                </div>
 
-                                <!-- Content Section - Scrollable -->
-                                <div class="flex-grow overflow-y-scrollcustom-scrollbar">
-                                    <p class="text-md md:text-lg lg:text-base text-start font-bold mb-2">Key Responsibility</p>
-                                    <div class="pr-2">
-                                        <p class="text-md md:text-lg lg:text-base whitespace-pre-wrap font-normal">
-                                            {!! nl2br($slot->responsibilities) !!}
-                                        </p>
-                                    </div>
-                                </div>
+                            @if($registration->status_id == 2 || $registration->status_id == 1)
 
-                                <!-- Footer Section - Fixed Height -->
-                                <div class="flex-none mt-4">
-                                    <div class="w-full flex items-center justify-center">
-                                        <a href="#" class="w-full">
-                                            <div class="h-10 w-full max-w-[200px] mx-auto bg-[#F55E1D] flex items-center justify-center rounded-full hover:bg-[#FF8252]">
-                                                <p class="font-medium text-base text-white">Volunteer for this</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                                <form action="{{ route('event.cancel-registration', $registration->id) }}"
+                                      method="POST"
+                                      class="mt-2"
+                                      onsubmit="return confirm('Are you sure you want to cancel this registration?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded">
+                                        Cancel Registration
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
+        @endif
+
+        <!-- Available Positions Section -->
+        <div class="w-full">
+            <p class="text-xl font-bold">Available Volunteer Positions</p>
+        </div>
+
+        <div class="w-full p-2 space-y-4">
+            <!-- ... existing carousel navigation buttons ... -->
+
+            <div class="stories-swiper-container w-full overflow-hidden">
+                <div class="swiper-wrapper flex w-full">
+                    @foreach ($record->slots as $slot)
+                        @php
+                            $registrationCount = $record->registrations
+                                ->where('slot_type_id', $slot->id)
+                                ->where('status_id', '!=', 3)
+                                ->count();
+                            $isAvailable = $slot->total_slots > $registrationCount;
+                            $userRegistered = $userRegistrations
+                                ->where('slot_type_id', $slot->id)
+                                ->where('status_id', '!=', 3)
+                                ->count() > 0;
+                        @endphp
+
+                        <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
+                            <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
+                                <div class="flex-grow flex flex-col gap-4">
+                                    <p class="text-xl font-semibold leading-none">{{$slot->shift_name}}</p>
+                                    <p class="text-[#03498D] text-md">
+                                        <span class="font-medium">Available Slots:</span>
+                                        {{ $slot->total_slots - $registrationCount }}/{{ $slot->total_slots }}
+                                    </p>
+                                    <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
+                                        {{ $slot->responsibilities }}
+                                    </p>
+                                </div>
+
+                                <div class="w-full flex items-center justify-center mt-auto">
+                                    @if($isAvailable && !$userRegistered)
+                                        <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
+                                              method="POST"
+                                              enctype="multipart/form-data"
+                                              class="w-full">
+                                            @csrf
+
+                                            @if($requiresAttachment)
+                                                <div class="mb-4">
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                        {{ $attachmentDescription }}
+                                                    </label>
+                                                    <input type="file"
+                                                           name="media[]"
+                                                           multiple
+                                                           class="block w-full text-sm text-gray-500
+                                                                  file:mr-4 file:py-2 file:px-4
+                                                                  file:rounded-full file:border-0
+                                                                  file:text-sm file:font-semibold
+                                                                  file:bg-[#F55E1D] file:text-white
+                                                                  hover:file:bg-[#FF8252]"
+                                                           required>
+                                                    @error('media')
+                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                    @enderror
+                                                </div>
+                                            @endif
+
+                                            <button type="submit"
+                                                    class="h-10 w-[200px] bg-[#F55E1D] text-white font-medium rounded-full hover:bg-[#FF8252]">
+                                                Volunteer for this
+                                            </button>
+                                        </form>
+                                    @elseif($userRegistered)
+                                        <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
+                                            Already Registered
+                                        </span>
+                                    @else
+                                        <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
+                                            Slot Full
+                                        </span>
+                                    @endif
+
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Add this section for notifications -->
+@if(session('success') || session('error'))
+    <div class="fixed bottom-4 right-4">
+        <div class="px-4 py-3 rounded-lg shadow-lg {{ session('success') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+            {{ session('success') ?? session('error') }}
+        </div>
+    </div>
+    <script>
+        setTimeout(() => {
+            document.querySelector('.fixed.bottom-4.right-4').style.display = 'none';
+        }, 5000);
+    </script>
+@endif
 
     <!-- Swiper Script -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

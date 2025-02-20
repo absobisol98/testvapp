@@ -41,10 +41,10 @@ class Thumbnail extends ListRecords
             ])
             ->filters([
                 Filter::make('status')
-                    ->label('')
+                    ->label('Type')
                     ->form([
                         Select::make('status')
-                            ->label('')
+                            ->label('Type')
                             ->selectablePlaceholder(false)
                             ->default('upcoming_events')
                             ->options([
@@ -64,6 +64,62 @@ class Thumbnail extends ListRecords
                         }
 
                         return $query;
+                    }),
+
+                // Add new search filters
+                Filter::make('search_title')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('search_title')
+                            ->label('Title')
+                            ->placeholder('Search by event title'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $data['search_title'] ?
+                            $query->where('title', 'like', "%{$data['search_title']}%") :
+                            $query;
+                    }),
+
+                Filter::make('date_range')
+                    ->label('Date Range')
+                    ->form([
+                        \Filament\Forms\Components\Grid::make(2)
+                            ->schema([
+                                \Filament\Forms\Components\DatePicker::make('from_date')
+                                    ->label('From')
+                                    ->columnSpan(1),
+                                \Filament\Forms\Components\DatePicker::make('to_date')
+                                    ->label('To')
+                                    ->columnSpan(1),
+                            ]),
+                    ])
+                    ->columnSpan(2)
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['from_date'] || $data['to_date'],
+                            function (Builder $query) use ($data) {
+                                return $query
+                                    ->when(
+                                        $data['from_date'],
+                                        fn (Builder $query) => $query->whereDate('start_date', '>=', $data['from_date'])
+                                    )
+                                    ->when(
+                                        $data['to_date'],
+                                        fn (Builder $query) => $query->whereDate('start_date', '<=', $data['to_date'])
+                                    );
+                            }
+                        );
+                    }),
+
+                Filter::make('location')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('location')
+                            ->label('Location')
+                            ->placeholder('Search by location'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $data['location'] ?
+                            $query->where('location', 'like', "%{$data['location']}%") :
+                            $query;
                     }),
             ],layout: FiltersLayout::AboveContent)
             ->actions((new EventRegistrationTableAction())->execute())

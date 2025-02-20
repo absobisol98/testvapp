@@ -12,6 +12,7 @@ final class EventCreateAction
 {
     public function execute($data)
     {
+
         $tag_arr = array();
 
         if(isset($data['tags']) && $data['tags']){

@@ -64,6 +64,7 @@ class BannerResource extends Resource
                                             ->label('Description')
                                             ->helperText('Provide a description for the banner')
                                             ->maxLength(500)
+                                            ->required()
                                             ->columnSpanFull(),
                                     ])
                                     ->compact()

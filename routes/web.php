@@ -9,6 +9,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SurveyResponseController;
+use App\Http\Controllers\EventRegistrationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +74,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/volunteer/certificate/{event_id}/{attendee_id}', [PDFController::class, 'generateCertificate'])
         ->name('volunteer.certificate');
+
+    Route::post('/event/{event}/register-slot/{slot}', [EventRegistrationController::class, 'registerSlot'])
+        ->name('event.register-slot');
+    Route::delete('/event-registration/{registration}/cancel', [EventRegistrationController::class, 'cancelRegistration'])
+        ->name('event.cancel-registration');
 });
 
 

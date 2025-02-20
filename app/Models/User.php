@@ -145,6 +145,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $this->belongsTo(Company::class);
     }
 
+    public function cluster(): BelongsTo
+    {
+        return $this->belongsTo(Cluster::class);
+    }
+
     public function getFullNameAttribute()
     {
         $middlename = ($this->middle_name) ? $this->middle_name.' ' : '';
@@ -269,4 +274,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         }
         return $mileStone;
     }
+
+
+
 }

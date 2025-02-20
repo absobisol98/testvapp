@@ -262,7 +262,7 @@ class EventResource extends Resource implements HasShieldPermissions
                                     ->extraInputAttributes([
                                         'data-google-field' => '{formatted_address}',
                                     ])->columnSpan('full')
-                                    ->disabled(),
+                                    ->readOnly(),
 
                             ]),
 
@@ -540,9 +540,11 @@ class EventResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
-            'thumbnail' => Pages\Thumbnail::route('/'),
+
+
             'index' => Pages\ListEvents::route('/list'),
             'calendar' => Pages\Calendar::route('/calendar'),
+            'thumbnail' => Pages\Thumbnail::route('/'),
             'create' => Pages\CreateEvent::route('/create'),
             'view' => Pages\EventPage::route('/view/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
