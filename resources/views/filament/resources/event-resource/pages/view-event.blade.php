@@ -50,7 +50,7 @@
             {{-- @php
             $banner = $record->media->first();
             $banner_source = ( url('') . '/storage/event-banner-attachments/' . $banner->file_name );
-            
+
              @endphp
             <img class="h-full w-full object-cover" src="{{ $banner_source }}"
                 alt="User Profile Image"> --}}

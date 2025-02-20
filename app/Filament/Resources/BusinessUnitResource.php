@@ -53,80 +53,127 @@ class BusinessUnitResource extends Resource
     {
         return $form
             ->schema([
+                Grid::make(2)
+                    ->schema([
+                        Select::make('cluster_id')
+                            ->label('Cluster')
+                            ->relationship('cluster', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable()
+                            ->live(),
 
-                    SpatieMediaLibraryFileUpload::make('media')
-                        ->label('Company Logo')
-                        ->collection('bu_logo')
-                        ->required()
-                        ->conversion('preview')
-                        ->maxSize(10000)
-                        ->acceptedFileTypes([
-                                'image/apng',
-                                'image/avif',
-                                'image/png',
-                                'image/jpg',
-                                'image/jpeg',
-                                'image/svg',
-                                'image/webp',
-                        ])
-                        ->imageResizeMode('cover')
-                        ->hint('Please upload a high resolution image for better quality with no background.')
-                        ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Max. 10MB')
-                        ->image()
-                        ->openable()
-                        ->downloadable()
-                        ->columnSpan(3),
+                        Select::make('company_id')
+                            ->label('Company')
+                            ->relationship('company', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                if ($state) {
+                                    $company = \App\Models\Company::find($state);
+                                    if ($company) {
+                                        $set('name', $company->name);
+                                        $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $company->name);
+                                        $set('slug', strtolower($slug));
+                                    }
+                                }
+                            }),
+                    ])
+                    ->columnSpanFull(),
 
+                SpatieMediaLibraryFileUpload::make('media')
+                    ->label('Company Logo')
+                    ->collection('bu_logo')
+                    ->required()
+                    ->conversion('preview')
+                    ->maxSize(10000)
+                    ->acceptedFileTypes([
+                            'image/apng',
+                            'image/avif',
+                            'image/png',
+                            'image/jpg',
+                            'image/jpeg',
+                            'image/svg',
+                            'image/webp',
+                    ])
+                    ->imageResizeMode('cover')
+                    ->hint('Please upload a high resolution image for better quality with no background.')
+                    ->helperText('Accepted File types (WebP, JPG, PNG, Avif, SVG and APng) Only. Max. 10MB')
+                    ->image()
+                    ->openable()
+                    ->downloadable()
+                    ->columnSpan(3),
 
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->afterStateUpdated( function (Set $set,$state){
-                        $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $state);
-                        $set('slug',strtolower($slug));
-                    })
+                    ->disabled()
                     ->columnSpan(3)
-                    ->live(onBlur: true)
                     ->maxLength(50),
+
                 Grid::make(2)
                     ->schema([
                         Forms\Components\TextInput::make('nickname')
                             ->required()
                             ->label('Nickname / Shortname')
                             ->maxLength(100),
-        
+
                         Forms\Components\TextInput::make('slug')
+                            ->disabled()
                             ->required()
                             ->unique(column: 'slug',ignoreRecord: true)
                             ->maxLength(100),
                     ]),
-              
-   
+
+
                 Forms\Components\Textarea::make('about')
                     ->rows(5)
                     ->columnSpanFull(),
 
                 Select::make('admins')
                     ->label('Admins')
-                    ->helperText('Create or Assigned BU Admins')
-                    ->relationship('admins','firstname')
+                    ->helperText('Create or Assign BU Admins')
+                    ->relationship('admins', 'firstname')
                     ->multiple()
                     ->columnSpanFull()
-                    ->options(function (){
-                        $has_admin_in_other_BU = DB::table('business_unit_has_external_admin')->get()->pluck('user_id');
-                        return User::role('External Partner')->whereNotIn('id', $has_admin_in_other_BU)->orderBy('firstname')->get()->pluck('name','id');
+                    ->options(function (Get $get) {
+                        $clusterId = $get('cluster_id');
+                        $companyId = $get('company_id');
+
+                        if (!$clusterId || !$companyId) {
+                            return [];
+                        }
+
+                        $has_admin_in_other_BU = DB::table('business_unit_has_external_admin')
+                            ->get()
+                            ->pluck('user_id');
+
+                        return User::query()
+                            ->role('External Partner')
+                            ->where('cluster_id', $clusterId)
+                            ->where('company_id', $companyId)
+                            ->whereNotIn('id', $has_admin_in_other_BU)
+                            ->orderBy('firstname')
+                            ->get()
+                            ->pluck('name', 'id');
                     })
-                    ->createOptionUsing(function ($data, $form) { 
+                    ->createOptionUsing(function ($data, $form) {
                         $data['email_verified_at'] = now();
+                        $data['cluster_id'] = $form->getState()['cluster_id'];
+                        $data['company_id'] = $form->getState()['company_id'];
+
                         $supplier = User::create($data);
                         $form->model($supplier)->saveRelationships($supplier);
-                        $role = Role::where('name','External Partner')->first();
+
+                        $role = Role::where('name', 'External Partner')->first();
 
                         DB::table('model_has_roles')->insert([
-                            'role_id' =>  $role->id,
+                            'role_id' => $role->id,
                             'model_id' => $supplier->id,
                             'model_type' => 'App\Models\User',
                         ]);
-                        
+
                         Notification::make()
                             ->title('User Created')
                             ->success()
@@ -134,8 +181,9 @@ class BusinessUnitResource extends Resource
 
                         return $supplier->id;
                     })
-
-                    ->createOptionForm( (new UserCreateField())->execute(true) ),
+                    ->createOptionForm((new UserCreateField())->execute(true))
+                    ->live()
+                    ->disabled(fn (Get $get): bool => !$get('cluster_id') || !$get('company_id')),
 
                     Fieldset::make('Header')
                     ->schema([
@@ -173,7 +221,7 @@ class BusinessUnitResource extends Resource
                             ->rows(3)
                             ->columnSpanFull(),
                 ]),
-    
+
                 Repeater::make('socials')
                     ->relationship()
                     ->addActionLabel('Add Socials')

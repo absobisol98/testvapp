@@ -7,12 +7,13 @@ use Spatie\MediaLibrary\Conversions\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BusinessUnit extends Model implements HasMedia
 {
 
     use InteractsWithMedia;
-    
+
     protected $table = 'business_units';
 
     protected $fillable = [
@@ -23,6 +24,8 @@ class BusinessUnit extends Model implements HasMedia
         'header_tagline',
         'header_description',
         'created_by',
+        'cluster_id',
+        'company_id',
     ];
 
     /**
@@ -57,8 +60,8 @@ class BusinessUnit extends Model implements HasMedia
             ->format('webp')
             ->sharpen(10);
     }
- 
- 
+
+
 
     public function createdBy()
     {
@@ -74,6 +77,16 @@ class BusinessUnit extends Model implements HasMedia
     public function admins()
     {
         return $this->belongsToMany(User::class, 'business_unit_has_external_admin','business_unit_id', 'user_id');
+    }
+
+    public function cluster(): BelongsTo
+    {
+        return $this->belongsTo(Cluster::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     // public function children()

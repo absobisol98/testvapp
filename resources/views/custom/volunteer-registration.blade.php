@@ -496,13 +496,17 @@
                     data: formData,
                     success: function(response) {
                         console.log('Success response:', response);
-                        if (response.success) {
-                            window.location.href = '{{ route("verification.sent") }}';
-                        } else {
-                            $("#btn-register").prop('disabled', false).text('Register');
-                            console.error('Server returned error:', response);
-                            handleErrors(response.errors || {});
-                        }
+                        $("#btn-register").prop('disabled', true).text('Registration successful...');
+
+                        // Use setTimeout to ensure the response is processed
+                        setTimeout(function() {
+                            if (response.success) {
+                                window.location.replace("{{ route('verification.sent') }}");
+                            } else {
+                                $("#btn-register").prop('disabled', false).text('Register');
+                                handleErrors(response.errors || {});
+                            }
+                        }, 1000);
                     },
                     error: function(xhr, status, error) {
                         $("#btn-register").prop('disabled', false).text('Register');
@@ -516,19 +520,8 @@
                         if (xhr.status === 422) {
                             handleErrors(xhr.responseJSON.errors);
                         } else {
-                            // Show more detailed error message
-                            let errorMessage = 'An error occurred. ';
-                            try {
-                                const response = JSON.parse(xhr.responseText);
-                                errorMessage += response.message || xhr.statusText;
-                            } catch (e) {
-                                errorMessage += xhr.statusText || 'Please try again later.';
-                            }
-                            alert(errorMessage);
+                            alert('An error occurred. Please try again later.');
                         }
-                    },
-                    complete: function() {
-                        console.log('Ajax request completed');
                     }
                 });
             }

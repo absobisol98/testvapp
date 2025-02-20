@@ -70,7 +70,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label(__('menu.nav_group.activities'))
                     ->collapsed(),
             ])
-            
+
             ->navigationItems([
                 Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang
                     ->visible(fn(): bool => auth()->user()->can('access_log_viewer'))
