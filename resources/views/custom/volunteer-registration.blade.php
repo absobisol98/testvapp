@@ -113,8 +113,8 @@
                                 <!-- Privacy and Terms Notice -->
                                 <p class="text-sm mt-8 text-white">
                                     We will not share your information without your permission. By signing up you agree to our
-                                    <a href="#"  style="color: blue;" class="underline">Terms and Conditions</a>. Learn how we use your data in our
-                                    <a href="#"  style="color: blue;" class="underline">Privacy Policy</a>.
+                                    <a href="{{ route('terms-and-conditions') }}"  style="color: blue;" class="underline">Terms and Conditions</a>. Learn how we use your data in our
+                                    <a href="{{ route('data-privacy-policy') }}"  style="color: blue;" class="underline">Privacy Policy</a>.
                                 </p>
                             </div>
 
@@ -233,7 +233,7 @@
                                             <input id="checkbox" type="checkbox" required />
                                             <label class="text-color" for="checkbox">
                                                 &nbsp; I agree to these
-                                                <a href="{{ route('data-privacy-policy') }}" class="hover:underline text-color">Terms and Conditions</a>.
+                                                <a href="{{ route('terms-and-conditions') }}" class="hover:underline text-color">Terms and Conditions</a>.
                                             </label>
                                         </div>
                                     </div>
