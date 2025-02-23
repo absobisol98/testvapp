@@ -8,19 +8,22 @@
     }
 
     #navBar {
-        padding: 80px 80px;
-        background: transparent;
+        padding: 1.5rem 6rem;
+        max-width: 1920px;
+        margin: 0 auto;
+        background: white;
         position: absolute;
-        transition: background-color 0.3s ease-in-out, position 0.3s ease-in-out, padding 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
     }
 
     #navBar.scrolled {
-        padding: 30px 80px;
+        padding: 1rem 6rem;
         background-color: white;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     #userDropdownBtn {
@@ -29,6 +32,23 @@
 
     #avatarContainer {
         background: transparent;
+    }
+
+    /* Desktop menu improvements */
+    .desktop-menu {
+        gap: 2.5rem;
+    }
+
+    .desktop-menu p {
+        font-size: 1rem;
+        padding: 0.5rem 0;
+        transition: all 0.2s ease;
+        color: #6B7280;
+    }
+
+    .desktop-menu a.active p {
+        color: #004b87;
+        font-weight: 600;
     }
 
     @media screen and (max-width: 1279px) {
@@ -75,6 +95,28 @@
         display: none;
     }
 
+    /* Action buttons */
+    .nav-button {
+        padding: 0.75rem 1.5rem;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    /* Responsive styles */
+    @media screen and (max-width: 1279px) {
+        #navBar {
+            padding: 1.5rem 2rem;
+        }
+
+        #navBar.scrolled {
+            padding: 1rem 2rem;
+        }
+
+        .desktop-menu {
+            gap: 1.5rem;
+        }
+    }
+
     @media screen and (max-width: 768px) {
         .hamburger {
             display: block;
@@ -83,27 +125,25 @@
         .desktop-menu {
             display: none;
         }
-    }
-    #navBar {
-        padding: 30px 80px;
-        background: white;
-        position: absolute;
-        transition: background-color 0.3s ease-in-out, position 0.3s ease-in-out, padding 0.3s ease-in-out;
+
+        #navBar {
+            padding: 1rem;
         }
+
+        #navBar.scrolled {
+            padding: 1rem;
+        }
+    }
+    
 
     #userDropdownBtn {
         color: black !important;
-        }
+    }
 
     #avatarContainer {
         background: #005096 !important;
-        }
-
-    @media screen and (max-width: 1279px) {
-        #navBar {
-            padding: 30px 16px;
-        }
     }
+
 </style>
 
     @php
@@ -122,22 +162,50 @@
 
     <!-- Desktop Menu -->
     <div class="desktop-menu flex items-center justify-center gap-4">
-        <a href="{{ route('main.homepage.view') }}">
-            <p class="font-medium text-base text-black hidden md:block hover:underline">HOME</p>
+        <a href="{{ route('main.homepage.view') }}" class="{{ request()->routeIs('main.homepage.view') ? 'active' : '' }}">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">Home</p>
         </a>
 
-        <a href="{{ route('stories.view') }}">
-            <p class="font-medium text-base text-black hidden md:block hover:underline">STORIES</p>
+        <a href="{{ route('stories.view') }}" class="{{ request()->routeIs('stories.view') ? 'active' : '' }}">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">Stories</p>
         </a>
 
-        <a href="{{ route('ourpartners.view') }}">
-            <p class="font-medium text-base text-black hidden md:block hover:underline">OUR PARTNERS</p>
+        <a href="{{ route('ourpartners.view') }}" class="{{ request()->routeIs('ourpartners.view') ? 'active' : '' }}">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">Our Partners</p>
         </a>
+
+        <!-- <a href="">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">Who We Are</p>
+        </a>
+
+        <a href="">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">Programs</p>
+        </a>
+
+        <a href="">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">How to Help</p>
+        </a>
+
+        <a href="">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">News</p>
+        </a>
+
+        <a href="">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">Careers</p>
+        </a>
+
+        <a href="">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">Contact Us</p>
+        </a>
+
+        <a href="">
+            <p class="font-medium text-base text-black hidden md:block hover:underline">E-learning</p>
+        </a> --->
     </div>
 
     <div class="h-full flex items-center justify-between gap-4">
         @guest
-            <a href="{{ route('volunteer.form.view') }}" class="hidden md:block">
+            <a href="{{ route('volunteer.form.view') }}">
                 <div
                     class="h-auto md:h-[56px] w-auto md:w-[244px] rounded-full md:rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                     <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
@@ -148,11 +216,11 @@
                             <path d="M22 19h-6"/>
                         </svg>
                     </div>
-                    <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
+                    <p class="font-medium text-base text-white">Become a Volunteer</p>
                 </div>
             </a>
 
-            <a href="{{route('filament.admin.auth.login')}}" class="hidden md:block">
+            <a href="{{route('filament.admin.auth.login')}}">
                 <div
                     class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-full md:rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                     <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
@@ -162,7 +230,7 @@
                                 stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <p class="font-medium text-base text-white">LOG IN</p>
+                    <p class="font-medium text-base text-white">Log In</p>
                 </div>
             </a>
         @endguest
@@ -176,7 +244,7 @@
                         'icon' => 'avatar',
                     ])
                 </div>
-                <p class="font-medium text-base text-white">DASHBOARD</p>
+                <p class="font-medium text-base text-white">Dashboard</p>
             </div>
         </a>
         @endauth
@@ -200,15 +268,43 @@
         </div>
         <div class="w-full h-full flex flex-col items-center justify-evenly space-y-4">
             <div class="w-full flex flex-col items-center space-y-4">
-                <a href="{{ route('main.homepage.view') }}">
-                    <p class="font-medium text-base text-black hover:underline">HOME</p>
+                <a href="{{ route('main.homepage.view') }}" class="{{ request()->routeIs('main.homepage.view') ? 'active' : '' }}">
+                    <p class="font-medium text-base text-black hover:underline">Home</p>
                 </a>
-                <a href="{{ route('stories.view') }}">
-                    <p class="font-medium text-base text-black hover:underline">STORIES</p>
+                <a href="{{ route('stories.view') }}" class="{{ request()->routeIs('stories.view') ? 'active' : '' }}">
+                    <p class="font-medium text-base text-black hover:underline">Stories</p>
                 </a>
-                <a href="{{ route('ourpartners.view') }}">
-                    <p class="font-medium text-base text-black hover:underline">OUR PARTNERS</p>
+                <a href="{{ route('ourpartners.view') }}" class="{{ request()->routeIs('ourpartners.view') ? 'active' : '' }}">
+                    <p class="font-medium text-base text-black hover:underline">Our Partners</p>
                 </a>
+
+                <!-- <a href="">
+                    <p class="font-medium text-base text-black hidden md:block hover:underline">Who We Are</p>
+                </a>
+
+                <a href="">
+                    <p class="font-medium text-base text-black hidden md:block hover:underline">Programs</p>
+                </a>
+
+                <a href="">
+                    <p class="font-medium text-base text-black hidden md:block hover:underline">How to Help</p>
+                </a>
+
+                <a href="">
+                    <p class="font-medium text-base text-black hidden md:block hover:underline">News</p>
+                </a>
+
+                <a href="">
+                    <p class="font-medium text-base text-black hidden md:block hover:underline">Careers</p>
+                </a>
+
+                <a href="">
+                    <p class="font-medium text-base text-black hidden md:block hover:underline">Contact Us</p>
+                </a>
+
+                <a href="">
+                    <p class="font-medium text-base text-black hidden md:block hover:underline">E-learning</p>
+                </a> --->
             </div>
 
             <div class="w-full flex flex-col space-y-4">
@@ -224,7 +320,7 @@
                                 <path d="M22 19h-6"/>
                             </svg>
                         </div>
-                        <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
+                        <p class="font-medium text-base text-white">Become a Volunteer</p>
                     </div>
                 </a>
 
@@ -238,7 +334,7 @@
                                     stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </div>
-                        <p class="font-medium text-base text-white">LOG IN</p>
+                        <p class="font-medium text-base text-white">Log In</p>
                     </div>
                 </a>
                 @endguest
@@ -252,7 +348,7 @@
                                 'icon' => 'avatar',
                             ])
                         </div>
-                        <p class="font-medium text-base text-white">DASHBOARD</p>
+                        <p class="font-medium text-base text-white">Dashboard</p>
                     </div>
                 </a>
                 @endauth
@@ -262,6 +358,33 @@
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Existing mobile menu functionality
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        // Add active state handler
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.desktop-menu a');
+        
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+
+        // Existing hamburger menu listeners
+        hamburgerBtn.addEventListener('click', function() {
+            mobileMenu.classList.add('active');
+        });
+
+        closeMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.remove('active');
+        });
+    });
+
+    // Existing scroll event listener
     document.addEventListener("scroll", function() {
         const navBar = document.getElementById("navBar");
         const logoWhite = document.getElementById("logoWhite");
@@ -281,7 +404,6 @@
             if (avatarContainer) {
                 avatarContainer.style.background = '#005096';
             }
-
         } else {
             navBar.classList.remove("scrolled");
             logoWhite.style.display = "block";
@@ -295,20 +417,5 @@
                 avatarContainer.style.background = 'transparent';
             }
         }
-    });
-
-    // Hamburger Menu functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-
-        hamburgerBtn.addEventListener('click', function() {
-            mobileMenu.classList.add('active');
-        });
-
-        closeMenuBtn.addEventListener('click', function() {
-            mobileMenu.classList.remove('active');
-        });
     });
 </script>
