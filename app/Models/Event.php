@@ -216,4 +216,9 @@ class Event extends Model implements HasMedia
 
 	}
 
+    public function getAttachment(){
+
+        $attachment = $this->getMedia('event-attachments')->first();
+        return ($attachment) ? $attachment->getUrl() : asset('img/ayala-foundation-bg.jpg');
+    }
 }

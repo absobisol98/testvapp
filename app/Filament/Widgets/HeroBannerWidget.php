@@ -22,6 +22,25 @@ class HeroBannerWidget extends Widget
 
         $bgImg = '';
 
+        $user_created_date = auth()->user()->created_at;
+        $total_hours_since_creation = Event::whereHas('attendees', function ($query) {
+            $query->where('attendee_id', auth()->id())
+                ->where('is_approve', true)
+                ->whereNotNull('time_in')
+                ->whereNotNull('time_out');
+        })
+        ->where('created_at', '>=', $user_created_date)
+        ->with('attendees')
+        ->get()
+        ->sum(function ($event) {
+            return $event->attendees
+                ->where('attendee_id', auth()->id())
+                ->where('is_approve', true)
+                ->sum(function ($attendee) {
+                    return $attendee->get_totalHrs();
+                });
+        });
+
         $progNames = array();
         $count = array();
         $overall_hrs = 0;
@@ -93,8 +112,10 @@ class HeroBannerWidget extends Widget
             'volunteer' => $volunteer,
             'bgImg' => $bgImg,
             'overall_hrs' =>  number_format($overall_hrs,1),
+            'total_hours_since_creation' => number_format($total_hours_since_creation, 1),
             'opportunities' => $opportunities,
             'upcoming' => $upcoming,
+            'account_created_at' => $user_created_date->format('M d, Y'),
         ];
     }
 }
