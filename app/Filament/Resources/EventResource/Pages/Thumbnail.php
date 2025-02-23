@@ -80,33 +80,15 @@ class Thumbnail extends ListRecords
                     }),
 
                 Filter::make('date_range')
-                    ->label('Date Range')
+                    ->label('Date')
                     ->form([
-                        \Filament\Forms\Components\Grid::make(2)
-                            ->schema([
-                                \Filament\Forms\Components\DatePicker::make('from_date')
-                                    ->label('From')
-                                    ->columnSpan(1),
-                                \Filament\Forms\Components\DatePicker::make('to_date')
-                                    ->label('To')
-                                    ->columnSpan(1),
-                            ]),
+                        \Filament\Forms\Components\DatePicker::make('from_date')
+                            ->label('Date'),
                     ])
-                    ->columnSpan(2)
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when(
-                            $data['from_date'] || $data['to_date'],
-                            function (Builder $query) use ($data) {
-                                return $query
-                                    ->when(
-                                        $data['from_date'],
-                                        fn (Builder $query) => $query->whereDate('start_date', '>=', $data['from_date'])
-                                    )
-                                    ->when(
-                                        $data['to_date'],
-                                        fn (Builder $query) => $query->whereDate('start_date', '<=', $data['to_date'])
-                                    );
-                            }
+                            $data['from_date'],
+                            fn (Builder $query) => $query->whereDate('start_date', '>=', $data['from_date'])
                         );
                     }),
 

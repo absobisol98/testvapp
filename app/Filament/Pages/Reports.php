@@ -15,6 +15,8 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Filament\Widgets\VolunteerAgeDistributionWidget;
+use App\Filament\Widgets\LeaderboardWidget;
 
 class Reports extends Page
 {
@@ -27,8 +29,8 @@ class Reports extends Page
     protected static ?int $contentHeight = 300; //px
 
 
-    public function mount() :void {   
-        
+    public function mount() :void {
+
         $progNames = array();
         $count = array();
         $overall_hrs = 0;
@@ -96,7 +98,7 @@ class Reports extends Page
         ];
 
     }
-    
+
 
     public function getHeaderWidgetsColumns(): int | array
     {

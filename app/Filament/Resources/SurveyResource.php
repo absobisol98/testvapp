@@ -214,8 +214,13 @@ class SurveyResource extends Resource
     {
         return [
             'index' => Pages\ListSurveys::route('/'),
-            'create' => Pages\CreateSurvey::route('/create'),
             'edit' => Pages\EditSurvey::route('/{record}/edit'),
         ];
+    }
+
+    // Disable create
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

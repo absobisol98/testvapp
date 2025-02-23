@@ -49,6 +49,7 @@ final class VolunteerFields
             Fieldset::make('Company')
                 ->visible(fn (Get $get) => $get('is_company'))
                 ->schema([
+
                     Select::make('affiliate_type_id')
                         ->columnSpanFull()
                         ->default(1)
@@ -126,8 +127,9 @@ final class VolunteerFields
 
                     PhoneInput::make('emergency_contact_number')
                         ->label('Contact number')
-                        ->default('PH')
+                        ->defaultCountry('PH')
                         ->Placeholder('+63(xxx) xxx xxxx'),
+
                 ]),
 
             Select::make('program_id')

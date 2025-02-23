@@ -81,7 +81,12 @@ class EventAttendee extends Model
 	{
 		$hrs = 0;
 		if($this->time_in && $this->time_out){
-			$hrs = $this->time_in->diffInHours($this->time_out);
+
+            $timeIn = \Carbon\Carbon::parse($this->time_in);
+            $timeOut = \Carbon\Carbon::parse($this->time_out);
+            $diff = $timeOut->diff($timeIn);
+            $hrs = $diff->h + ($diff->days * 24);
+
 			//for bulk encoding
 			if($this->encoding_type == 3){
 				$hrs*=$this->volunteer_count;

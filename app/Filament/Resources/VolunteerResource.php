@@ -77,11 +77,10 @@ class VolunteerResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query){
-                if(!auth()->user()->hasRole('super_admin')){ // If not super_admin
-                    $query = $query->where('id',auth()->id());
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!auth()->user()->hasRole(['super_admin', 'admin'])) {
+                    $query = $query->where('id', auth()->id());
                 }
-
                 return $query;
             })
             ->columns([
@@ -108,9 +107,21 @@ class VolunteerResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'active' => 'success',
+                        'inactive' => 'danger',
+                        'pending' => 'warning',
+                        default => 'secondary',
+                    }),
+                Tables\Columns\TextColumn::make('total_hours')
+                    ->label('Volunteer Hours')
+                    ->numeric()
+                    ->sortable(),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -122,10 +133,19 @@ class VolunteerResource extends Resource
                     }),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn (Volunteer $record) =>
+                        auth()->user()->hasRole(['super_admin', 'admin']) ||
+                        $record->id === auth()->id()
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()->hasRole(['super_admin', 'admin'])),
+
                 ]),
             ]);
     }

@@ -40,12 +40,12 @@ class AttendeesRelationManager extends RelationManager
             ]);
     }
 
-    
+
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         return auth()->user()->can('manage_attendees_event');
     }
-    
+
 
     public function table(Table $table): Table
     {
@@ -53,6 +53,12 @@ class AttendeesRelationManager extends RelationManager
             ->defaultSort('event_id')
             ->recordTitleAttribute('event_id')
             ->columns([
+
+                Tables\Columns\TextColumn::make('slot_type_id')
+                    ->label('Slot')
+                    ->formatStateUsing(function ($record) {
+                        return $record->slot->shift_name;
+                    }),
                 Tables\Columns\TextColumn::make('id')
                     ->label('Volunteer Name')
                     ->formatStateUsing(function ($record): string {
@@ -63,7 +69,7 @@ class AttendeesRelationManager extends RelationManager
                         }
                         if($record->encoding_type == '2'){
                             $name = $record->no_account_name;
-                        }                           
+                        }
                         return $name;
                     }),
 
@@ -82,12 +88,12 @@ class AttendeesRelationManager extends RelationManager
                         ->formatStateUsing(fn ($record) => number_format($record->get_totalHrs(),1)),
 
 
-                
+
                     Tables\Columns\TextColumn::make('updated_at')
                         ->label('Last Change')
                         ->formatStateUsing(fn ($state) => ($state) ? Carbon::parse($state)->format('Y-m-d h:i A')  : null),
 
-                    
+
                     Tables\Columns\TextColumn::make('updatedBy')
                         ->label('Last Update')
                         ->formatStateUsing(fn ($state) =>  $state->firstname.' '.$state->lastname),
@@ -102,14 +108,33 @@ class AttendeesRelationManager extends RelationManager
 
 
                 Tables\Actions\Action::make('add_volunteer_hours')
-                    ->label('Set volunteer hours')
+                    ->label('Set Volunteer Hours')
                     ->color('success')
                     ->modalWidth('md')
                     // ->slideOver()
                     ->form([
-                        
+
                         Grid::make(2)
                             ->schema([
+                                Select::make('slot_type_id')
+                                    ->label('Select Slot')
+                                    ->options(function () {
+                                        return $this->getOwnerRecord()
+                                            ->slots
+                                            ->pluck('shift_name', 'id')
+                                            ->toArray();
+                                    })
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, Set $set) {
+                                        $slot = $this->getOwnerRecord()->slots->find($state);
+                                        if ($slot) {
+                                            $set('time_in', $slot->start_time);
+                                            $set('time_out', $slot->end_time);
+                                        }
+                                    })
+                                    ->columnSpan(2),
+
                                 DateTimePicker::make('time_in')
                                     ->seconds(false)
                                     ->live()
@@ -126,12 +151,21 @@ class AttendeesRelationManager extends RelationManager
                                     ->label('Select Volunteers')
                                     ->multiple()
                                     ->columnSpan(2)
-                                    ->options(function (){
-                                        $options = array();
-                                        $event = $this->getOwnerRecord();  
-                                        $not_attended =$event->attendees->where('time_in',null);
-                                        foreach($not_attended as $att){
-                                            $options[$att->attendee->id] = $att->attendee->firstname.' '.$att->attendee->lastname;
+                                    ->options(function (\Filament\Forms\Get $get) {
+                                        $options = [];
+                                        $event = $this->getOwnerRecord();
+                                        $slot_type_id = $get('slot_type_id');
+
+                                        $not_attended = $event->attendees()
+                                            ->where('time_in', null)
+                                            ->where('slot_type_id', $slot_type_id)
+                                            ->with('attendee')
+                                            ->get();
+
+                                        foreach ($not_attended as $att) {
+                                            if ($att->attendee) {
+                                                $options[$att->attendee->id] = $att->attendee->firstname . ' ' . $att->attendee->lastname;
+                                            }
                                         }
                                         return $options;
                                     })
@@ -143,16 +177,21 @@ class AttendeesRelationManager extends RelationManager
                             $event_time_end = $this->getOwnerRecord()->end_date;
                             $data['time_out'] =  $event_time_end;
                         }
-                        $attendee  = $this->getOwnerRecord()->attendees->whereIn('attendee_id',$data['select_volunteers']);
+                        $attendee  = $this->getOwnerRecord()->attendees()
+                            ->whereIn('attendee_id',$data['select_volunteers'])
+                            ->where('slot_type_id', $data['slot_type_id'])
+                            ->get();
                         foreach($attendee as $attendance_details){
                             if( $attendance_details){
-                                $attendance_details->time_in = $data['time_in'];
-                                $attendance_details->time_out = $data['time_out'];
-                                $attendance_details->is_approve = true;
-                                $attendance_details->encoding_type = 1;
-                                $attendance_details->updated_at = now();
-                                $attendance_details->updated_by = auth()->user()->id;
-                                $attendance_details->update();
+                                $attendance_details->update([
+                                    'time_in' => $data['time_in'],
+                                    'time_out' => $data['time_out'],
+                                    'is_approve' => true,
+                                    'encoding_type' => 1,
+                                    'updated_at' => now(),
+                                    'updated_by' => auth()->id(),
+                                    'slot_type_id' => $data['slot_type_id']
+                                ]);
                             }
                         }
                         Notification::make()
@@ -161,14 +200,33 @@ class AttendeesRelationManager extends RelationManager
                             ->send();
                     })
                     ->modalWidth('md')
-                    ->modalDescription('Add a registerered volunteer with account'),
+                    ->modalDescription('Add volunteer hours to an existing volunteer'),
 
                 Tables\Actions\Action::make('single_wo_account')
-                    ->label('Set volunteer hours (without account)')
+                    ->label('Set Volunteer Hours (without account)')
                     ->color('success')
                     ->form([
                         Grid::make(2)
                             ->schema([
+
+                                Select::make('slot_type_id')
+                                ->label('Select Slot')
+                                ->options(function () {
+                                    return $this->getOwnerRecord()
+                                        ->slots
+                                        ->pluck('shift_name', 'id')
+                                        ->toArray();
+                                })
+                                ->required()
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    $slot = $this->getOwnerRecord()->slots->find($state);
+                                    if ($slot) {
+                                        $set('time_in', $slot->start_time);
+                                        $set('time_out', $slot->end_time);
+                                    }
+                                })
+                                ->columnSpan(2),
                                 DateTimePicker::make('time_in')
                                     ->seconds(false)
                                     ->live()
@@ -193,7 +251,7 @@ class AttendeesRelationManager extends RelationManager
                                     ->afterStateUpdated(function (Set $set, $state, Get $get) {
                                         // dd($get('members'));
                                         $arr = array();
-                                        for ($x=0 ;$x<$state; $x++) { 
+                                        for ($x=0 ;$x<$state; $x++) {
                                             $arr[] = [
                                                 'no_name' => null,
                                             ];
@@ -238,12 +296,12 @@ class AttendeesRelationManager extends RelationManager
                             ->success()
                             ->send();
                     })
-                    
+
                     ->modalWidth('md')
-                    ->modalDescription('Add a volunteers that no account'),
+                    ->modalDescription('Add hours to volunteers without accounts'),
 
                 Tables\Actions\Action::make('bulk_adding')
-                    ->label('Multiple Attendee')
+                    ->label('Bulk Attendance')
                     ->color('info')
 
                     ->form([
@@ -283,9 +341,9 @@ class AttendeesRelationManager extends RelationManager
                             ->success()
                             ->send();
                     })
-                    
+
                     ->modalWidth('sm')
-                    ->modalDescription('Adding multiple attendee will automatically add total hrs and multiply it by number of volunteers join.'),
+                    ->modalDescription('Total hours will be based on time in and time out and number of volunteers. '),
             ])
 
             ->bulkActions([
@@ -298,7 +356,7 @@ class AttendeesRelationManager extends RelationManager
 
                     ->slideOver()
                     ->form([
-                 
+
                         Repeater::make('volunteers')
                             ->label('Volunteers')
                             ->reorderable(false)
@@ -325,7 +383,7 @@ class AttendeesRelationManager extends RelationManager
                                             }
                                             if($record->encoding_type == '2'){
                                                 $name = $record->no_account_name;
-                                            }                           
+                                            }
                                             return $name;
                                         })
                                         ->columnSpan(2),
@@ -396,7 +454,7 @@ class AttendeesRelationManager extends RelationManager
                                 ->danger()
                                 ->send();
                         }
-                      
+
                     }),
 
                     Action::make('reject')
@@ -430,7 +488,7 @@ class AttendeesRelationManager extends RelationManager
                                 ->title('Hours Denied')
                                 ->success()
                                 ->send();
-                        
+
                         }),
 
 

@@ -31,7 +31,7 @@ class ListEvents extends ListRecords
                 ->url(route('filament.admin.resources.events.calendar')),
             Actions\Action::make('Thumbnail')
                 ->icon('heroicon-o-photo')
-                ->url(route('filament.admin.resources.events.thumbnail')),
+                ->url(route('filament.admin.resources.events.index')),
             Actions\CreateAction::make()
                 ->label('Event')
                 ->icon('heroicon-o-plus'),
@@ -46,6 +46,6 @@ class ListEvents extends ListRecords
         ];
     }
 
- 
+
 
 }

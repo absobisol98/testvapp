@@ -336,7 +336,7 @@
                                 <!-- Challenge Card -->
                                 <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
                                     <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                    <p class="text-sm">Register got a new opportunity</p>
+                                    <p class="text-sm">Register for a new opportunity</p>
                                 </div>
 
                                 <!-- Challenge Card -->
@@ -363,7 +363,7 @@
                             <!-- Progress Section -->
                             <div class="w-full lg:w-2/3 space-y-4">
                                 <h2 class="font-bold text-lg">Next Badge: <span class="text-orange-600">Bronze</span></h2>
-                                <p class="text-sm font-bold">50/1250</p>
+                                <p class="text-sm font-bold">0/1250</p>
                                 <div class="w-full h-2 bg-gray-300 rounded-full">
                                     <div class="h-2 bg-orange-600 w-[4%] rounded-full"></div>
                                 </div>
@@ -451,9 +451,7 @@
                                                 </p>
                                             </div>
                                             @php
-
-                                                $att_details = $opportunity->attendees->where('attendee_id',$user->id)->first();
-
+                                                $att_details = $opportunity->attendees->where('attendee_id', $user->id)->first();
                                             @endphp
                                             @if ($att_details)
                                                 <div class="w-[200px]">
@@ -477,18 +475,78 @@
                                             @endif
                                         </div>
 
+                                        @if ($att_details)
+                                            <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8 mt-4">
+                                                <div class="w-full">
+                                                    <p class="text-[20px] font-[400] text-[#03498D]">Registered Slots:</p>
+                                                    @foreach ($opportunity->slots as $slot)
+                                                        @php
+                                                            // Find attendee record for this specific slot
+                                                            $slotAttendee = $opportunity->attendees()
+                                                                ->where('attendee_id', $user->id)
+                                                                ->where('slot_type_id', $slot->id)
+                                                                ->first();
+                                                        @endphp
+                                                        @if ($slotAttendee)
+                                                            <div class="text-[18px] font-[400] p-4 bg-gray-50 rounded-lg mb-2">
+                                                                <div class="flex justify-between items-start">
+                                                                    <div>
+                                                                        <p class="font-semibold text-[#03498D]">{{ $slot->shift_name }}</p>
+                                                                        <p class="text-sm text-gray-600">
+                                                                            {{ \Carbon\Carbon::parse($slot->start_time)->format('M-d-Y h:i A') }} -
+                                                                            {{ \Carbon\Carbon::parse($slot->end_time)->format('M-d-Y h:i A') }}
+                                                                        </p>
+                                                                        @if($slotAttendee->time_in && $slotAttendee->time_out)
+                                                                            <p class="text-sm text-green-600 mt-2">
+                                                                                @php
+                                                                                    $timeIn = \Carbon\Carbon::parse($slotAttendee->time_in);
+                                                                                    $timeOut = \Carbon\Carbon::parse($slotAttendee->time_out);
+                                                                                    $diff = $timeOut->diff($timeIn);
+                                                                                    $hours = $diff->h + ($diff->days * 24);
+                                                                                    $minutes = $diff->i;
+                                                                                @endphp
+                                                                                <span class="font-medium">Hours Completed:</span>
+                                                                                {{ $hours }}H {{ $minutes }}M
+                                                                            </p>
+                                                                        @else
+                                                                            <p class="text-sm text-orange-600 mt-2">
+                                                                                <span class="font-medium">Status:</span>
+                                                                                Pending Attendance
+                                                                            </p>
+                                                                        @endif
+                                                                    </div>
+                                                                    @if($slotAttendee->is_approve)
+                                                                        <span class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded">
+                                                                            Approved
+                                                                        </span>
+                                                                    @elseif($slotAttendee->is_rejected)
+                                                                        <span class="px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded">
+                                                                            Rejected
+                                                                        </span>
+                                                                    @else
+                                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded">
+                                                                            Pending
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         @if (!$loop->last)
                                             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
                                         @endif
                                     @endforeach
                                 @endif
-
                             </div>
 
                             {{-- Favorite Events --}}
-                            <div id="favorite-events-content"
+                             <div id="favorite-events-content"
                                 class="w-full flex flex-col items-center justify-center hidden">
-                                {{-- List --}}
+                                {{-- List
                                 @if ($allEvents->isEmpty())
                                     <div class="w-full flex items-center justify-center py-8">
                                         <p class="text-[18px] text-gray-500">No favorite opportunities.</p>
@@ -524,12 +582,12 @@
                                     @endforeach
                                 @endif
 
-                            </div>
+                            </div> --}}
                         </div>
 
                         {{-- Tab Scripts --}}
                         <script>
-                            // Get button and content elements
+                            // Get button and content elementss
                             const allEventsBtn = document.getElementById('all-events-btn');
                             const favoriteEventsBtn = document.getElementById('favorite-events-btn');
 
