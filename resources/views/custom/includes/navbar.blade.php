@@ -123,15 +123,21 @@
     <!-- Desktop Menu -->
     <div class="desktop-menu flex items-center justify-center gap-4">
         <a href="{{ route('main.homepage.view') }}">
-            <p class="font-medium text-base text-black hidden md:block hover:underline">HOME</p>
+            <p class="font-medium text-base {{ request()->routeIs('main.homepage.view') ? 'text-[#004b87]' : 'text-black'}}">
+                HOME
+            </p>
         </a>
 
         <a href="{{ route('stories.view') }}">
-            <p class="font-medium text-base text-black hidden md:block hover:underline">STORIES</p>
+            <p class="font-medium text-base {{ request()->routeIs('stories.view') ? 'text-[#004b87]' : 'text-black'}}">
+                STORIES
+            </p>
         </a>
 
         <a href="{{ route('ourpartners.view') }}">
-            <p class="font-medium text-base text-black hidden md:block hover:underline">OUR PARTNERS</p>
+            <p class="font-medium text-base {{ request()->routeIs('ourpartners.view') ? 'text-[#004b87]' : 'text-black'}}">
+                OUR PARTNERS
+            </p>
         </a>
     </div>
 
@@ -201,13 +207,19 @@
         <div class="w-full h-full flex flex-col items-center justify-evenly space-y-4">
             <div class="w-full flex flex-col items-center space-y-4">
                 <a href="{{ route('main.homepage.view') }}">
-                    <p class="font-medium text-base text-black hover:underline">HOME</p>
+                    <p class="font-medium text-base {{ request()->routeIs('main.homepage.view') ? 'text-[#004b87]' : 'text-black' }}">
+                        HOME
+                    </p>
                 </a>
                 <a href="{{ route('stories.view') }}">
-                    <p class="font-medium text-base text-black hover:underline">STORIES</p>
+                    <p class="font-medium text-base {{ request()->routeIs('stories.view') ? 'text-[#004b87]' : 'text-black' }}">
+                        STORIES
+                    </p>
                 </a>
                 <a href="{{ route('ourpartners.view') }}">
-                    <p class="font-medium text-base text-black hover:underline">OUR PARTNERS</p>
+                    <p class="font-medium text-base {{ request()->routeIs('ourpartners.view') ? 'text-[#004b87]' : 'text-black'}}">
+                        OUR PARTNERS
+                    </p>
                 </a>
             </div>
 
@@ -236,7 +248,7 @@
                                 <path
                                     d="M11.6265 4.83138H6.4602C5.77507 4.83138 5.11807 5.10353 4.63364 5.58796C4.14921 6.07239 3.87703 6.72943 3.87703 7.41452V25.4965C3.87703 26.1816 4.14921 26.8386 4.63364 27.3231C5.11807 27.8075 5.77507 28.0796 6.4602 28.0796H11.6265M18.0843 22.9134L11.6265 16.4555M11.6265 16.4555L18.0843 9.99766M11.6265 16.4555H27.1253"
                                     stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
+                        </svg>
                         </div>
                         <p class="font-medium text-base text-white">LOG IN</p>
                     </div>

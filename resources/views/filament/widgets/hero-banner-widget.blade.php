@@ -12,7 +12,39 @@
                 </div>
 
                 {{-- STATS --}}
-                <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-4">
+                <div class="w-full grid grid-cols-2 gap-4 mx-auto text-center md:grid-cols-3">
+                    {{-- For AFI Admins --}}
+                    @if (auth()->user()->hasRole('External Partner'))
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
+                        </div>
+
+
+                        {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">MY OPPORTUNITIES</p>
+                        </div> --}}
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $upcoming->count() }}</p>
+                            <p class="text-sm font-bold text-[#03498D]">UPCOMING OPPORTUNITIES</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEER HOURS</p>
+                        </div>
+
+                        {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"> {{$businessunit}}</p>
+                            <p class="text-sm font-bold text-[#03498D]">PARTNERS</p>
+                        </div> --}}
+                    @endif
+                </div>
+
+
+                <div class="w-full grid grid-cols-2 gap-4 mx-auto text-center md:grid-cols-4">
                     {{-- For Volunteers --}}
                     @if (auth()->user()->hasRole('Volunteer'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -32,7 +64,7 @@
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">TOTAL HOURS</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL HOURS RENDERED</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -40,45 +72,17 @@
                             <p class="text-sm font-bold text-[#03498D]">MY VOLUNTEER CERTIFICATES</p>
                         </div>
                     @endif
-                </div>
-
-
-                <div class="w-full grid grid-cols-2 gap-4 mx-auto sm:grid-cols-3 lg:grid-cols-5">
-
-                    {{-- For AFI Admins --}}
-                    @if (auth()->user()->hasRole('External Partner'))
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $upcoming->count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">ON GOING</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">HRS RENDERED</p>
-                        </div>
-
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]"> {{$businessunit}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">PARTNERS</p>
-                        </div>
-                    @endif
 
                     {{-- For Partners --}}
                     @if (auth()->user()->hasRole('super_admin'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">97</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS HOURS</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -86,7 +90,7 @@
                             <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
                         </div>
 
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                        {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $businessunit }}</p>
                             <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
                         </div>
@@ -94,7 +98,7 @@
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\EventFacilitator::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
-                        </div>
+                        </div> --}}
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
@@ -105,7 +109,12 @@
                     @if (auth()->user()->hasRole('Ayala Super Admin'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">VOLUNTEERS</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
+                        </div>
+
+                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">97</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS HOURS</p>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -113,15 +122,15 @@
                             <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
                         </div>
 
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                        {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $businessunit }}</p>
                             <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
-                        </div>
-
+                        </div> --}}
+{{--
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\EventFacilitator::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
-                        </div>
+                        </div> --}}
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>

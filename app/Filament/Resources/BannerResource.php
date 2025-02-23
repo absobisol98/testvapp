@@ -59,6 +59,7 @@ class BannerResource extends Resource
                                         Forms\Components\TextInput::make('title')
                                             ->label('Title')
                                             ->maxLength(255)
+                                            ->required()
                                             ->columnSpan(2),
                                         Forms\Components\MarkdownEditor::make('description')
                                             ->label('Description')
