@@ -418,12 +418,12 @@
                         <div class="w-full flex items-center justify-start text-white gap-4 mb-4">
                             <button id="all-events-btn" onclick="changeEventsTab('all-events')"
                                 class="py-2 px-4 text-base md:text-lg text-start bg-[#005096] hover:bg-[#1A67B1]">
-                                ALL EVENTS
+                                All Joined Opportunities
                             </button>
 
                             <button id="favorite-events-btn" onclick="changeEventsTab('favorite-events')"
                                 class="py-2 px-4 text-base md:text-lg text-start bg-[#F55E1D] hover:bg-[#FF9141]">
-                                FAVORITE EVENTS
+                                My Favorite Opportunities
                             </button>
                         </div>
 

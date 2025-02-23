@@ -61,9 +61,8 @@
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
                             <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
                         </div> --}}
-
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$total_hours_since_creation}}</p>
                             <p class="text-sm font-bold text-[#03498D]">TOTAL HOURS RENDERED</p>
                         </div>
 

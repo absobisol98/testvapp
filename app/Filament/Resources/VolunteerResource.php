@@ -130,12 +130,12 @@ class VolunteerResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            EventsRelationManager::class
-        ];
-    }
+    // public static function getRelations(): array
+    // {
+    //     return [
+    //         EventsRelationManager::class
+    //     ];
+    // }
 
     public static function getPages(): array
     {
