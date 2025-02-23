@@ -35,22 +35,23 @@ class CalendarWidget extends FullCalendarWidget
         ];
     }
 
-    public function fetchEvents(array $fetchInfo): array
-    {
-        return Event::query()
-            ->where('start_date', '>=', $fetchInfo['start'])
-            ->where('end_date', '<=', $fetchInfo['end'])
-            ->get()
-            ->map(
-                fn (Event $event) => [
-                    'id' => $event->id,
-                    'title' => $event->title,
-                    'start' => $event->start_date,
-                    'end' => $event->end_date,
-                    'url' => EventResource::getUrl(name: 'view', parameters: ['record' => $event]),
-                    'shouldOpenUrlInNewTab' => true
-                ]
-            )
-            ->all();
-    }
+public function fetchEvents(array $fetchInfo): array
+{
+    return Event::query()
+        ->where('start_date', '>=', $fetchInfo['start'])
+        ->where('end_date', '<=', $fetchInfo['end'])
+        ->get()
+        ->map(
+            fn (Event $event) => [
+                'id' => $event->id,
+                'title' => $event->title,
+                'start' => date('Y-m-d', strtotime($event->start_date)),
+                'end' => date('Y-m-d', strtotime($event->end_date)),
+                'url' => EventResource::getUrl(name: 'view', parameters: ['record' => $event]),
+                'shouldOpenUrlInNewTab' => true,
+                'allDay' => true,
+            ]
+        )
+        ->all();
+}
 }

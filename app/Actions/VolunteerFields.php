@@ -4,10 +4,12 @@ namespace App\Actions;
 
 use App\Models\AffiliateType;
 use App\Models\Cluster;
+use App\Models\Company;
 use App\Models\Program;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -47,20 +49,6 @@ final class VolunteerFields
             Fieldset::make('Company')
                 ->visible(fn (Get $get) => $get('is_company'))
                 ->schema([
-                    TextInput::make('company_name')->required()->columnSpanFull(),
-
-                    TextInput::make('company_address')->label('Address')->columnSpanFull(),
-
-                    TextInput::make('company_representative')->label('HR Representative')->columnSpanFull(),
-
-                    PhoneInput::make('company_contact_number')
-                        ->label('Contact number')
-                        ->defaultCountry('PH'),
-
-                    TextInput::make('company_email')
-                        ->email()
-                        ->maxLength(255),
-
 
                     Select::make('affiliate_type_id')
                         ->columnSpanFull()
@@ -69,34 +57,67 @@ final class VolunteerFields
                         ->live()
                         ->options(AffiliateType::all()->pluck('name', 'id')->toArray()),
 
+                    Select::make('cluster_id')
+                        ->columnSpanFull()
+                        ->label('Cluster')
+                        ->required()
+                        ->searchable()
+                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 1)
+                        ->options(fn () => Cluster::all()->pluck('name', 'id')->toArray())
+                        ->live(),
+
+                    Select::make('company_name')
+                        ->required()
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 2)
+                        ->options(fn () => Company::all()->pluck('name', 'id')->toArray())
+                        ->searchable()
+                        ->live(),
+
+                    TextInput::make('company_name')
+                        ->required()
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 3),
+
                     Select::make('company_id')
                         ->required()
                         ->prefixIcon('heroicon-o-building-office')
                         ->prefixIconColor('primary')
-                        ->visible(fn (Get $get) => $get('affiliate_type_id') != 3)
+                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 1) // Changed visibility condition
                         ->columnSpanFull()
                         ->label('')
                         ->searchable()
-                        ->options(function($get){
-
-                            $options = [];
-
-                            $clusters = Cluster::with(['companies'])->get();
-
-                            if($get && $get('affiliate_type_id') == 1){
-                                $clusters = Cluster::with(['companies'])->where('id',1)->get();
-                            }else if($get && $get('affiliate_type_id') == 2){
-                                $clusters = Cluster::with(['companies'])->where('id','!=',1)->get();
+                        ->options(function($get) {
+                            if (!$get('affiliate_type_id') || $get('affiliate_type_id') != 1) {
+                                return [];
                             }
 
-                            foreach ($clusters as $cluster) {
-                                $options[$cluster->name] = collect($cluster->companies)->mapWithKeys(function ($company) {
-                                    return [$company->id => $company->name];
-                                })->toArray();
+                            // Only show companies for Ayala type and selected cluster
+                            if (!$get('cluster_id')) {
+                                return [];
                             }
+                            return Company::query()
+                                ->where('cluster_id', $get('cluster_id'))
+                                ->pluck('name', 'id')
+                                ->toArray();
+                        })
+                        ->live()
+                        ->afterStateUpdated(fn (callable $set) => $set('company_name', null)),
 
-                            return $options;
-                        }),
+                    TextInput::make('company_address')->label('Address')->columnSpanFull(),
+
+
+                    TextInput::make('company_representative')->label('HR Representative')->columnSpanFull(),
+
+                    PhoneInput::make('company_contact_number')
+                        ->label('Contact number')
+                        ->default('PH')
+                        ->Placeholder('+63(xxx) xxx xxxx'),
+
+                    TextInput::make('company_email')
+                        ->email()
+                        ->maxLength(255),
+
                 ]),
 
             Fieldset::make('In Case of Emergency')
@@ -106,7 +127,9 @@ final class VolunteerFields
 
                     PhoneInput::make('emergency_contact_number')
                         ->label('Contact number')
-                        ->defaultCountry('PH'),
+                        ->defaultCountry('PH')
+                        ->Placeholder('+63(xxx) xxx xxxx'),
+
                 ]),
 
             Select::make('program_id')

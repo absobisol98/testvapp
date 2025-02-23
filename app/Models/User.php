@@ -96,7 +96,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
 
     public function getFilamentName(): string
     {
-        return $this->username  ?? 'No Name';
+        return "{$this->firstname} {$this->lastname}";
     }
 
 

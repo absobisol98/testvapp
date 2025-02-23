@@ -4,6 +4,7 @@
     <meta property="og:title" content="{{$record->title}}" />
     <meta property="og:description" content="Get from SEO newbie to SEO pro in 8 simple steps." />
     <meta property="og:image" content="{{$record->getBanner()}}" />
+    <meta property="og:image" content="{{$record->getAttachment()}}" />
 </head>
 <style>
     /* For Volunteer Dashboard Container(Start) */
@@ -78,6 +79,8 @@
 
 @endphp
 
+{{-- @dd($record->getAttachment()) --}}
+
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
 
     <div class="w-full flex items-center justify-between">
@@ -130,7 +133,7 @@
 
             <div>
                 <p class="text-xl font-bold">About the Opportunity</p>
-                <p class="text-md md:text-lg lg:text-base font-normal text-justify whitespace-pre-wrap capitalize">{!! strip_tags($record->description) !!}</p>
+                <p class="text-md md:text-lg lg:text-base font-normal text-justify whitespace-pre-wrap">{!! strip_tags($record->description) !!}</p>
             </div>
             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
         </div>
@@ -170,15 +173,13 @@
                             </p>
 
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
-                                <span class="w-8 h-8 flex items-center justify-center  bg-blue-200 text-[#03498D] rounded-full mr-4">
+                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
                                     <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                                        <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path></svg>
+                                        <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path>
+                                    </svg>
                                 </span>
-                                <strong>Volunteer Slot: &nbsp; </strong>
-                                @foreach ($record->slots as $slot)
-                                    {{ $slot->total_slots }}
-                                    @if( !$loop->last),@endif
-                                @endforeach
+                                <strong>Volunteer Slot: &nbsp;</strong>
+                                {{ $record->slots->sum('total_slots') }}
                             </p>
 
                             <br>
@@ -203,26 +204,35 @@
 
                     @endphp
                     <div class="w-full flex flex-col">
-                        <p class="text-md md:text-lg lg:text-base text-start font-bold">Point of Contact:</p>{{$record->point_of_contact?->firstname}} {{$record->point_of_contact?->lastname}}
+                        <p class="text-md md:text-lg lg:text-base text-start font-bold">HR Representative:</p>{{$record->point_of_contact?->firstname}} {{$record->point_of_contact?->lastname}}
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Facilitator/s:</p>
-                        @foreach ($record->facilitators as $facilitator)
-                                {{$facilitator->name}}
-                                @if( !$loop->last),@endif
+                        <ul class="list-disc pl-5">
+                            @foreach ($record->facilitators as $facilitator)
+                                <li class="text-md">{{$facilitator->name}}</li>
                             @endforeach
-                        <br>
-                        <div>
-                            <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
-                            <div class="flex items-center justify-start">
-                                <a href="#" class="text-black text-base font-normal underline">
-                                    Download PDF
-                                </a>
+                        </ul>
+                        {{-- @if($record->getMedia('event-attachments')->count() > 0)
+                            <div>
+                                <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
+                                <div class="flex flex-col items-start justify-start gap-2">
+                                    @foreach($record->getMedia('event-attachments') as $media)
+                                        <a href="{{ $media->getUrl() }}"
+                                        class="flex items-center gap-2 text-black text-base font-normal hover:text-blue-600"
+                                        download>
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                                            </svg>
+                                            <span class="underline">Download File</span>
+                                        </a>
+                                    @endforeach
+                                </div>
                             </div>
-                        </div>
+                        @endif --}}
 
                         <br>
                         <div class="{{ $record->tags->isEmpty() ? 'hidden' : '' }}">
                             <p class="text-md md:text-lg lg:text-base text-start font-bold">Tags:</p>
-                            <div class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[70%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px] bg-blue-200">
+                            <div class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[70%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px]">
                             @foreach ($record->tags as $tag)
                                 <div class="w-fit px-2 py-1" style="background:#03498D; border-radius: 10px;">
                                     <p class="text-white">{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center text-white justify-center cursor-pointer hover:font-[700]"></span></p>
