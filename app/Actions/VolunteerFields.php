@@ -54,7 +54,8 @@ final class VolunteerFields
                     TextInput::make('company_representative')->label('HR Representative')->columnSpanFull(),
 
                     PhoneInput::make('company_contact_number')
-                        ->label('Contact number'),
+                        ->label('Contact number')
+                        ->defaultCountry('PH'),
 
                     TextInput::make('company_email')
                         ->email()
@@ -104,7 +105,8 @@ final class VolunteerFields
                     TextInput::make('emergency_contact_relationship')->label(' Relationship'),
 
                     PhoneInput::make('emergency_contact_number')
-                        ->label('Contact number'),
+                        ->label('Contact number')
+                        ->defaultCountry('PH'),
                 ]),
 
             Select::make('program_id')

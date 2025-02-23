@@ -5,7 +5,7 @@ namespace App\Observers;
 use App\Models\Event;
 use App\Models\MessageRoom;
 use App\Models\MessageRoomParticipant;
-
+use App\Models\Survey;
 
 class EventObserver
 {
@@ -26,7 +26,40 @@ class EventObserver
             'user_id' => $event->created_by,
         ]);
 
-
+        // Create default survey for the event
+        Survey::create([
+            'event_id' => $event->id,
+            'title' => $event->title . ' - Post Event Survey',
+            'description' => 'Please help us improve by providing your feedback about this volunteer opportunity.',
+            'is_anonymous' => true,
+            'questions' => [
+                [
+                    'question' => 'How would you rate your overall volunteer experience?',
+                    'type' => 'rating'
+                ],
+                [
+                    'question' => 'What aspects of the volunteer opportunity did you find most meaningful?',
+                    'type' => 'text'
+                ],
+                [
+                    'question' => 'How satisfied were you with the support provided by the facilitators?',
+                    'type' => 'rating'
+                ],
+                [
+                    'question' => 'Would you recommend this volunteer opportunity to others?',
+                    'type' => 'multiple_choice',
+                    'options' => [
+                        ['option' => 'Yes, definitely'],
+                        ['option' => 'Maybe'],
+                        ['option' => 'No']
+                    ]
+                ],
+                [
+                    'question' => 'Do you have any suggestions for improvement?',
+                    'type' => 'text'
+                ]
+            ]
+        ]);
     }
 
     /**

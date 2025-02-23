@@ -30,6 +30,11 @@
 
     /* For Volunteer Dashboard Container(End) */
 </style>
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
 
 @php
     // Add this at the top of your file with other PHP calculations
@@ -39,21 +44,73 @@
     $attachmentDescription = $isMinor
         ? 'Please upload parental consent document (required for minors)'
         : ($record->attachment_required ? 'Please upload required documents for this event' : '');
+    $isEventFinished = now()->isAfter($record->end_date);
+    $attendeeHours = $record->attendees()
+        ->where('attendee_id', auth()->id())
+        ->whereNotNull('time_in')
+        ->whereNotNull('time_out')
+        ->get()
+        ->groupBy('slot_type_id')
+        ->mapWithKeys(function($attendances) {
+            $slotId = $attendances->first()->slot_type_id;
+            $totalMinutes = $attendances->sum(function($attendance) {
+                $timeIn = Carbon\Carbon::parse($attendance->time_in);
+                $timeOut = Carbon\Carbon::parse($attendance->time_out);
+
+                // Get time difference using diff()
+                $diff = $timeOut->diff($timeIn);
+                $hours = $diff->h + ($diff->days * 24);
+                $minutes = $diff->i;
+
+                return ($hours * 60) + $minutes;
+            });
+
+            // Convert minutes to hours and minutes for display
+            $hours = ($totalMinutes / 60);
+            $minutes = $totalMinutes % 60;
+
+            return [$slotId => [
+                'hours' => $hours,
+                'minutes' => $minutes
+            ]];
+        });
+
+
 @endphp
 
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
 
     <div class="w-full flex items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
-        <div class="grid grid-cols-2 gap-2">
-            <a href="{{route('filament.admin.resources.events.edit',['record' => $record->id])}}" class="py-2 px-2 flex items-center justify-center rounded-md bg-[#0000FF]">
-                <p class="text-base font-normal text-white">Edit</p>
-            </a>
-            <a href="{{route('filament.admin.resources.events.index')}}" class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+        <div class="grid grid-cols-3 gap-2">
+            @php
+                $user = auth()->user();
+                $isSuperAdmin = $user->hasRole('super_admin');
+                $isAdmin = $user->hasRole('admin');
+                $isCreator = $record->created_by == $user->id;
+                $isFacilitator = $record->facilitators->contains($user->id);
+                $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
+            @endphp
+
+            @if($canManageEvent)
+                <a href="{{ route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]) }}"
+                   class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+                    <p class="text-base font-normal text-white">Manage Volunteers</p>
+                </a>
+
+                <a href="{{route('filament.admin.resources.events.edit',['record' => $record->id])}}"
+                   class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+                    <p class="text-base font-normal text-white">Edit</p>
+                </a>
+                @else
+                <a></a>
+                <a></a>
+            @endif
+            <a href="{{route('filament.admin.resources.events.index')}}"
+               class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
                 <p class="text-base font-normal text-white">Event List</p>
             </a>
         </div>
-
     </div>
 
     <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -126,7 +183,11 @@
 
                             <br>
                             <button onclick="document.getElementById('volunteer-section').scrollIntoView({ behavior: 'smooth' });" class="py-2 px-2 flex items-center justify-center rounded-full bg-[#F55E1D] hover:bg-[#FF9141]">
+                                @if(!$isEventFinished)
                                 <p class="text-base font-normal text-white">I want to volunteer</p>
+                                @else
+                                    <p class="text-base font-normal text-white">Event Finished</p>
+                                @endif
                             </button>
                         </div>
                     </div>
@@ -215,19 +276,21 @@
 
 
 
-                            @if($registration->status_id == 2 || $registration->status_id == 1)
+                            @if(!$isEventFinished)
+                                    @if($registration->status_id == 2 || $registration->status_id == 1 )
 
-                                <form action="{{ route('event.cancel-registration', $registration->id) }}"
-                                      method="POST"
-                                      class="mt-2"
-                                      onsubmit="return confirm('Are you sure you want to cancel this registration?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded">
-                                        Cancel Registration
-                                    </button>
-                                </form>
+                                        <form action="{{ route('event.cancel-registration', $registration->id) }}"
+                                            method="POST"
+                                            class="mt-2"
+                                            onsubmit="return confirm('Are you sure you want to cancel this registration?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded">
+                                                Cancel Registration
+                                            </button>
+                                        </form>
+                                    @endif
                             @endif
                         </div>
                     </div>
@@ -273,7 +336,24 @@
                                 </div>
 
                                 <div class="w-full flex items-center justify-center mt-auto">
-                                    @if($isAvailable && !$userRegistered)
+
+                                    @if($isEventFinished)
+
+                                        @if(isset($attendeeHours[$slot->id]) && $attendeeHours[$slot->id]['hours'] >= 0)
+                                            <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
+                                                {{ number_format($attendeeHours[$slot->id]['hours']) }}
+                                                @if ($attendeeHours[$slot->id]['hours'] > 1)
+                                                    Hours
+                                                @else
+                                                    Hour
+                                                @endif Completed
+                                            </span>
+                                        @else
+                                            <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
+                                                Event Finished
+                                            </span>
+                                        @endif
+                                    @elseif($isAvailable && !$userRegistered)
                                         <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
                                               method="POST"
                                               enctype="multipart/form-data"
@@ -307,9 +387,15 @@
                                             </button>
                                         </form>
                                     @elseif($userRegistered)
-                                        <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
-                                            Already Registered
-                                        </span>
+                                        @if(isset($attendeeHours[$slot->id]) && $attendeeHours[$slot->id] > 0)
+                                            <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
+                                                {{ number_format($attendeeHours[$slot->id], 1) }} Hours Completed
+                                            </span>
+                                        @else
+                                            <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
+                                                Already Registered
+                                            </span>
+                                        @endif
                                     @else
                                         <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
                                             Slot Full
@@ -325,6 +411,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Add this section for notifications -->
 @if(session('success') || session('error'))

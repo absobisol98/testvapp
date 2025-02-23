@@ -41,7 +41,12 @@ class EventRegistrationController extends Controller
             ->count();
 
         if ($registrationCount >= $slot->total_slots) {
-            return back()->with('error', 'This shift is already full.');
+            Notification::make()
+                ->title('Registration Failed')
+                ->body('This shift is already full.')
+                ->danger()
+                ->send();
+            return back();
         }
 
         // Check for existing registration
@@ -52,71 +57,118 @@ class EventRegistrationController extends Controller
         ])->first();
 
         if ($existingRegistration) {
-            return back()->with('error', 'You are already registered for this shift.');
+            Notification::make()
+                ->title('Registration Failed')
+                ->body('You are already registered for this shift.')
+                ->danger()
+                ->send();
+            return back();
         }
 
-        // Create registration
-        $registration = EventRegistration::create([
-            'event_id' => $event->id,
-            'volunteer_id' => auth()->id(),
-            'slot_type_id' => $slot->id,
-            'status_id' => $event->approval_type == "Automatic" ? 2 : 1,
-        ]);
-
-        // Handle file attachments
-        if ($request->hasFile('media')) {
-            foreach ($request->file('media') as $file) {
-                $registration->addMedia($file)
-                    ->toMediaCollection('event-registration-attachments');
-            }
-        }
-
-        // Handle automatic approval
-        if ($event->approval_type == "Automatic") {
-            $attendee = EventAttendee::create([
+        try {
+            // Create registration
+            $registration = EventRegistration::create([
                 'event_id' => $event->id,
-                'attendee_id' => auth()->id(),
-                'facilitator_id' => auth()->id(),
+                'volunteer_id' => auth()->id(),
                 'slot_type_id' => $slot->id,
-                'is_approve' => 1,
+                'status_id' => $event->approval_type == "Automatic" ? 2 : 1,
             ]);
 
-            (new GenerateEventQRCode())->execute($attendee);
+            // Handle file attachments
+            if ($request->hasFile('media')) {
+                foreach ($request->file('media') as $file) {
+                    $registration->addMedia($file)
+                        ->toMediaCollection('event-registration-attachments');
+                }
+            }
 
+            // Handle automatic approval
+            if ($event->approval_type == "Automatic") {
+                $attendee = EventAttendee::create([
+                    'event_id' => $event->id,
+                    'attendee_id' => auth()->id(),
+                    'facilitator_id' => auth()->id(),
+                    'slot_type_id' => $slot->id,
+                    'is_approve' => 1,
+                ]);
+
+                (new GenerateEventQRCode())->execute($attendee);
+
+                Notification::make()
+                    ->title('Registration Successful')
+                    ->body('Your registration has been automatically approved.')
+                    ->success()
+                    ->send();
+            } else {
+                Notification::make()
+                    ->title('Registration Successful')
+                    ->body('Your registration is pending approval.')
+                    ->success()
+                    ->send();
+            }
+
+            return back();
+
+        } catch (\Exception $e) {
             Notification::make()
-                ->title('Registration automatically approved')
-                ->success()
+                ->title('Registration Failed')
+                ->body('An error occurred while processing your registration.')
+                ->danger()
                 ->send();
+            return back();
         }
-
-        return back()->with('success', 'Successfully registered for the shift.');
     }
 
     public function cancelRegistration(EventRegistration $registration)
     {
         // Security checks
         if ($registration->volunteer_id !== auth()->id()) {
-            return back()->with('error', 'Unauthorized action.');
+            Notification::make()
+                ->title('Unauthorized')
+                ->body('You are not authorized to cancel this registration.')
+                ->danger()
+                ->send();
+            return back();
         }
 
         if ($registration->status_id == 3) {
-            return back()->with('error', 'Cannot cancel an approved or rejected registration.');
+            Notification::make()
+                ->title('Cannot Cancel')
+                ->body('Cannot cancel an approved or rejected registration.')
+                ->warning()
+                ->send();
+            return back();
         }
 
-        // Delete attendee record if exists
-        EventAttendee::where([
-            'event_id' => $registration->event_id,
-            'attendee_id' => $registration->volunteer_id,
-            'slot_type_id' => $registration->slot_type_id,
-        ])->delete();
+        try {
+            // Delete attendee record if exists
+            EventAttendee::where([
+                'event_id' => $registration->event_id,
+                'attendee_id' => $registration->volunteer_id,
+                'slot_type_id' => $registration->slot_type_id,
+            ])->delete();
 
-        // Delete media files
-        $registration->clearMediaCollection('event-registration-attachments');
+            // Delete media files
+            $registration->clearMediaCollection('event-registration-attachments');
 
-        // Delete registration
-        $registration->delete();
+            // Delete registration
+            $registration->delete();
 
-        return back()->with('success', 'Registration cancelled successfully.');
+            Notification::make()
+                ->title('Registration Cancelled')
+                ->success()
+                ->send();
+
+            return back();
+
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Cancellation Failed')
+                ->body('An error occurred while cancelling your registration.')
+                ->danger()
+                ->send();
+            return back();
+        }
     }
 
     private function getMediaValidationRules(Event $event): array

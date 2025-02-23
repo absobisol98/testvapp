@@ -18,10 +18,10 @@ class Calendar extends Page
         return [
             Action::make('List')
                 ->icon('heroicon-o-list-bullet')
-                ->url(route('filament.admin.resources.events.index')),
+                ->url(route('filament.admin.resources.events.list')),
             Action::make('Thumbnail')
                 ->icon('heroicon-o-photo')
-                ->url(route('filament.admin.resources.events.thumbnail')),
+                ->url(route('filament.admin.resources.events.index')),
             CreateAction::make()
                 ->label('Event')
                 ->icon('heroicon-o-plus')
