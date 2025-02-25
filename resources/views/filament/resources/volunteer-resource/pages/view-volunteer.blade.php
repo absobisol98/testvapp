@@ -84,8 +84,8 @@
                                 </div>
                                 @endif
                                 @if ($badges['next_rank'] !== null)
-                                    <span class="justify-self-center">{{$badges['points'] }}/{{$badges['next_rank']['pts_required']}}</span><br>
-                                    <span>Next Tier: <b>{{$badges['next_rank']['name']}}</b></span>
+                                    <span class="justify-self-center">{{$badges['points'] }}/{{$badges['next_rank']['required']}}</span><br>
+                                    <span>Next Badge: <b>{{$badges['next_rank']['name']}}</b></span>
                                 @endif
                             </div>
                     </div>
@@ -274,134 +274,86 @@
                     <div class="w-full">
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Badges / Achievements</p>
 
-                        {{-- <div class="shadow-md p-8 grid grid-cols-[1fr_2fr]">
-                            <div class="min-h-[300px] flex flex-col items-center justify-center gap-1 overflow-y-scroll custom-scrollbar ">
-                            </div>
-
-                            <div class="flex flex-col items-center justify-center gap-1">
-                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                                    <!-- Current Rank Badge -->
-                                    <div class="col-span-1 flex items-center justify-center gap-1">
-                                        <div class="w-[120px] h-[120px] flex flex-col items-center justify-center overflow-hidden">
-                                            @if($badges['current_rank'])
-                                                <img class="h-full w-full object-cover" src="{{$badges['current_rank']['medal']}}" alt="Current Badge">
-                                            @endif
-                                        </div>
-                                        <div class="w-[120px] h-[120px] flex flex-col justify-center items-center">
-                                            @if ($badges['next_rank'] !== null)
-                                                <span>{{$badges['current_rank']['name']}}</span>
-                                                <span class="justify-self-center">{{$badges['points'] }}/{{$badges['next_rank']['pts_required']}}</span><br>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <!-- Silver Badge (Locked) -->
-                                    <div class="col-span-1 flex items-center justify-center gap-1">
-                                        <div class="w-[120px] h-[120px] relative">
-                                            <img class="h-full w-full object-cover" src="{{asset('medals/silver.png')}}" alt="Silver Badge">
-                                            <div class="absolute rounded-full inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
-                                                <i class="fas fa-lock text-white text-2xl"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Gold Badge (Locked) -->
-                                    <div class="col-span-1 flex items-center justify-center gap-1">
-                                        <div class="w-[120px] h-[120px] relative">
-                                            <img class="h-full w-full object-cover" src="{{asset('medals/gold.png')}}" alt="Gold Badge">
-                                            <div class="absolute rounded-full inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
-                                                <i class="fas fa-lock text-white text-2xl"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Platinum Badge (Locked) -->
-                                    <div class="col-span-1 flex items-center justify-center gap-1">
-                                        <div class="w-[120px] h-[120px] relative">
-                                            <img class="h-full w-full object-cover" src="{{asset('medals/plat.png')}}" alt="Platinum Badge">
-                                            <div class="absolute rounded-full inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center badge-overlay">
-                                                <i class="fas fa-lock text-white text-2xl"></i>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
                         <div class="shadow-md p-8 min-h-[50vh] flex flex-col lg:flex-row gap-6">
                             <!-- Challenges Section -->
                             <div class="w-full h-[400px] lg:w-1/3 space-y-4 overflow-y-scroll custom-scrollbar">
-                                <h2 class="font-bold text-lg">Challenges</h2>
+                                <!-- Pending Challenges First -->
+                                <h2 class="font-bold text-lg">Pending Challenges</h2>
+                                <div class="space-y-4 mb-8">
+                                    <!-- Registration Challenge -->
+                                    @if(!$user->created_at)
+                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Create an account</p>
+                                        </div>
+                                    @endif
 
-                                <!-- Challenge Card -->
-                                <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
-                                    <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                    <p class="text-sm">Register for a new opportunity</p>
+                                    <!-- First Opportunity -->
+                                    @if($user->eventAttended()->count() == 0)
+                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Register for first opportunity</p>
+                                        </div>
+                                    @endif
+
+                                    <!-- Next Hour Goal -->
+                                    @if($totalHours < 20)
+                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Complete {{ $nextHourGoal }} hours</p>
+                                            <p class="text-xs">{{ $totalHours }}/{{ $nextHourGoal }} hours completed</p>
+                                            <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
+                                                <div class="h-2 bg-white rounded-full" style="width: {{ min(($totalHours/$nextHourGoal * 100), 100) }}%"></div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <!-- Other pending challenges... -->
                                 </div>
 
-                                <!-- Challenge Card -->
-                                <div class="bg-blue-700 text-white p-4 rounded-md shadow">
-                                    <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                    <p class="text-sm">Complete 5 hours</p>
-                                    <p class="text-xs">0/5 hours completed</p>
-                                    <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
-                                        <div class="h-2 bg-white w-1/12 rounded-full"></div>
-                                    </div>
-                                </div>
+                                <!-- Completed Challenges Second -->
+                                <h2 class="font-bold text-lg">Completed Challenges</h2>
+                                <div class="space-y-4">
+                                    <!-- Registration Challenge -->
+                                    @if($user->created_at)
+                                        <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Create an account</p>
+                                            <p class="text-xs mt-2">✓ Completed</p>
+                                        </div>
+                                    @endif
 
-                                <!-- Challenge Card -->
-                                <div class="bg-blue-700 text-white p-4 rounded-md shadow">
-                                    <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                    <p class="text-sm">Complete 3 opportunities</p>
-                                    <p class="text-xs">0/3 opportunities completed</p>
-                                    <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
-                                        <div class="h-2 bg-white w-1/12 rounded-full"></div>
-                                    </div>
+                                    <!-- Other completed challenges... -->
                                 </div>
                             </div>
 
                             <!-- Progress Section -->
                             <div class="w-full lg:w-2/3 space-y-4">
-                                <h2 class="font-bold text-lg">Next Badge: <span class="text-orange-600">Bronze</span></h2>
-                                <p class="text-sm font-bold">0/1250</p>
+                                @php
+                                    $badges = $user->getBadges();
+                                    $currentRank = $badges['current_rank'];
+
+                                    $nextRank = $badges['next_rank'];
+                                @endphp
+
+                                <h2 class="font-bold text-lg">Next Badge: <span class="text-orange-600">{{ $nextRank['name'] }}</span></h2>
+                                <p class="text-sm font-bold">{{ $badges['points'] }}/{{ $nextRank['required'] }}</p>
                                 <div class="w-full h-2 bg-gray-300 rounded-full">
-                                    <div class="h-2 bg-orange-600 w-[4%] rounded-full"></div>
+                                    <div class="h-2 bg-orange-600" style="width: {{ min((($badges['points'] - $currentRank['required']) / ($nextRank['required'] - $currentRank['required'])) * 100, 100) }}%"></div>
                                 </div>
 
                                 <!-- Progress List -->
                                 <h2 class="font-bold text-lg mt-4">Progress</h2>
                                 <div class="space-y-3">
-                                    <div class="flex items-center justify-between border-b pb-2">
-                                        <div class="flex items-center gap-2">
-                                            <img src="{{asset('medals/bronze.png')}}" alt="Platinum" class="w-10 h-10">
-                                            <span class="text-orange-600 font-bold text-sm">Bronze</span>
+                                    @foreach(['No Rank', 'Bronze', 'Silver', 'Gold', 'Platinum'] as $rank)
+                                        <div class="flex items-center justify-between border-b pb-2 {{ $currentRank['name'] !== $rank ? 'opacity-50' : '' }}">
+                                            <div class="flex items-center gap-2">
+                                                <img src="{{ asset('medals/'.strtolower(str_replace(' ', '-', $rank)).'.png') }}" alt="{{ $rank }}" class="w-10 h-10">
+                                                <span class="font-bold text-sm {{ $currentRank['name'] === $rank ? 'text-orange-600' : 'text-gray-500' }}">{{ $rank }}</span>
+                                            </div>
+                                            <span class="text-sm text-gray-600">{{ $rank === 'No Rank' ? '1250' : ($rank === 'Bronze' ? '2500' : ($rank === 'Silver' ? '5000' : ($rank === 'Gold' ? '10000' : '10000+'))) }}VP</span>
                                         </div>
-                                        <span class="text-sm text-gray-600">1250VP</span>
-                                    </div>
-
-                                    <div class="flex items-center justify-between border-b pb-2 opacity-50">
-                                        <div class="flex items-center gap-2">
-                                            <img src="{{asset('medals/silver.png')}}" alt="Platinum" class="w-10 h-10">
-                                            <span class="text-gray-500 font-bold text-sm">Silver</span>
-                                        </div>
-                                        <span class="text-sm text-gray-600">2500VP</span>
-                                    </div>
-
-                                    <div class="flex items-center justify-between border-b pb-2 opacity-50">
-                                        <div class="flex items-center gap-2">
-                                            <img src="{{asset('medals/gold.png')}}" alt="Platinum" class="w-10 h-10">
-                                            <span class="text-yellow-500 font-bold text-sm">Gold</span>
-                                        </div>
-                                        <span class="text-sm text-gray-600">5000VP</span>
-                                    </div>
-
-                                    <div class="flex items-center justify-between opacity-50">
-                                        <div class="flex items-center gap-2">
-                                            <img src="{{asset('medals/plat.png')}}" alt="Platinum" class="w-10 h-10">
-                                            <span class="text-gray-800 font-bold text-sm">Platinum</span>
-                                        </div>
-                                        <span class="text-sm text-gray-600">10000VP</span>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

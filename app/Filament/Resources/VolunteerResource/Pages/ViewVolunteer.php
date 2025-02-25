@@ -43,35 +43,51 @@ class ViewVolunteer extends Page
 
     protected function getViewData(): array
     {
-        $businessunit = BusinessUnit::count();
-        $volunteer = User::role('volunteer')->count();
         $user = User::where('id', $this->record)->first();
-        $opportunity = Event::with('slots', 'tags', 'program')
-            ->orderBy('created_at', 'desc')
-            ->first();
 
-        $allEvents = Event::with('slots')
-            ->whereHas('attendees', function ($query) {
-                $query->where('attendee_id', $this->record);
-            })
-            ->get();
-        $favoriteEvents = Event::with('slots')
-            ->whereHas('attendees', function ($query) {
-                $query->where('attendee_id', $this->record);
-            })
-            ->get();
+        // Calculate badge-related metrics
+        $totalHours = $user->getTotalHours();
+        $totalOpportunities = $user->eventAttended()->count();
+        $currentStreak = $user->calculateStreak();
 
-        $bgImg = 'img/ayala-foundation-bg-2.jpg';
+        // Calculate next goals
+        $hourThresholds = [4, 8, 12, 16, 20];
+        $nextHourGoal = collect($hourThresholds)->first(function($threshold) use ($totalHours) {
+            return $threshold > $totalHours;
+        }) ?? end($hourThresholds);
+
+        $oppThresholds = [10, 20, 30];
+        $nextOppGoal = collect($oppThresholds)->first(function($threshold) use ($totalOpportunities) {
+            return $threshold > $totalOpportunities;
+        }) ?? end($oppThresholds);
+
+        // Get badges and progress
+        $badges = $user->getBadges();
 
         return [
-            'businessunit' => $businessunit,
+            'businessunit' => BusinessUnit::count(),
             'user' => $user,
-            'volunteer' => $volunteer,
-            'opportunity' => $opportunity,
-            'allEvents' => $allEvents,
-            'favoriteEvents' => $favoriteEvents,
-            'bgImg' => $bgImg,
-            'badges' => $user->getBadges(),
+            'volunteer' => User::role('volunteer')->count(),
+            'opportunity' => Event::with('slots', 'tags', 'program')
+                ->orderBy('created_at', 'desc')
+                ->first(),
+            'allEvents' => Event::with('slots')
+                ->whereHas('attendees', function ($query) {
+                    $query->where('attendee_id', $this->record);
+                })
+                ->get(),
+            'favoriteEvents' => Event::with('slots')
+                ->whereHas('attendees', function ($query) {
+                    $query->where('attendee_id', $this->record);
+                })
+                ->get(),
+            'bgImg' => 'img/ayala-foundation-bg-2.jpg',
+            'badges' => $badges,
+            'totalHours' => $totalHours,
+            'totalOpportunities' => $totalOpportunities,
+            'currentStreak' => $currentStreak,
+            'nextHourGoal' => $nextHourGoal,
+            'nextOppGoal' => $nextOppGoal,
         ];
     }
 

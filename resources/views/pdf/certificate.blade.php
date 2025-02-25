@@ -19,7 +19,7 @@
             text-align: center;
             margin: 0 !important;
             padding: 0 !important;
-            background-image: url('https://ayala-workflow.test/storage/certificate_background/01JKXHCE2GPZSMGM389Y41R8EW.png');
+            background-image: url('https://phplaravel-970963-4908828.cloudwaysapps.com/img/certificate/placeholder_certificate.png');
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
