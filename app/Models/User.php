@@ -188,93 +188,161 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
 
     public function getBadges()
     {
+        $badges = [
+            'hours' => [4, 8, 12, 16, 20],
+            'opportunities' => [10, 20, 30],
+            'streak' => [5],
+            'registration' => [1],
+            'first_opportunity' => [1]
+        ];
 
-        $filteredEvents = (new EventsGetTableQueryAction())->execute($this);
-        $filteredEvents = $filteredEvents->orderBy('id','asc')->get()->take(5);
+        $total_points = 0;
+        $earned_badges = [];
+        $progress = [];
 
-        $events = $this->eventAttended;
-        $total_hrs = 0;
-        $total_events = $this->eventAttended->count();
-        foreach ($events as $evnt){
-           $total_hrs = $evnt->get_totalHrs();
+        // Calculate hours badges
+        $total_hours = $this->getTotalHours();
+        foreach ($badges['hours'] as $hour_requirement) {
+            if ($total_hours >= $hour_requirement) {
+                $total_points += 50;
+                $earned_badges[] = "Completed {$hour_requirement} hours";
+            }
+            $progress['hours'] = [
+                'current' => $total_hours,
+                'next' => $hour_requirement
+            ];
         }
-        $points = 0;
-        $hours = [4,8,12,16];
-        $opportunities = [10,20,30,40];
+
+        // Calculate opportunities badges
+        $total_opportunities = $this->eventAttended()->count();
+        foreach ($badges['opportunities'] as $opp_requirement) {
+            if ($total_opportunities >= $opp_requirement) {
+                $total_points += 50;
+                $earned_badges[] = "Completed {$opp_requirement} opportunities";
+            }
+            $progress['opportunities'] = [
+                'current' => $total_opportunities,
+                'next' => $opp_requirement
+            ];
+        }
+
+        // Calculate streak
+        $streak = $this->calculateStreak();
+        if ($streak >= 5) {
+            $total_points += 50;
+            $earned_badges[] = "5 consecutive opportunities";
+        }
+        $progress['streak'] = [
+            'current' => $streak,
+            'next' => 5
+        ];
+
+        // Registration badge
+        $total_points += 50; // Everyone gets this for registering
+        $earned_badges[] = "Account creation";
+
+        // First opportunity badge
+        if ($total_opportunities >= 1) {
+            $total_points += 50;
+            $earned_badges[] = "First opportunity";
+        }
+
         $ranks = [
             [
-                'name' => 'Bronze',
-                'medal'=> asset('medals/bronze.png'),
-                'pts_required'=> 0,
+                'name' => 'No Rank',
+                'required' => 0,
+                'pts_required' => 1250,
+                'medal' => asset('medals/no-rank.png')
             ],
-
+            [
+                'name' => 'Bronze',
+                'required' => 1250,
+                'pts_required' => 2500,
+                'medal' => asset('medals/bronze.png')
+            ],
             [
                 'name' => 'Silver',
-                'medal'=> asset('medals/silver.png'),
-                'pts_required'=> 2500,
+                'required' => 2500,
+                'pts_required' => 5000,
+                'medal' => asset('medals/silver.png')
             ],
             [
                 'name' => 'Gold',
-                'medal'=> asset('medals/gold.png'),
-                'pts_required'=> 5000,
+                'required' => 5000,
+                'pts_required' => 10000,
+                'medal' => asset('medals/gold.png')
             ],
             [
                 'name' => 'Platinum',
-                'medal'=> asset('medals/plat.png'),
-                'pts_required'=> 10000,
-            ],
+                'required' => 10000,
+                'pts_required' => 10000,
+                'medal' => asset('medals/platinum.png')
+            ]
         ];
 
-        foreach($hours as $key => $hr){
-            if($total_hrs >= $hr){
-                $points += 50;
+        // Find current rank and next rank based on points
+        $current_rank = $ranks[0]; // Default to No Rank
+        $next_rank = $ranks[1]; // Default to Bronze
+
+        foreach ($ranks as $index => $rank) {
+            if ($total_points >= $rank['required']) {
+                $current_rank = $rank;
+                $next_rank = isset($ranks[$index + 1]) ? $ranks[$index + 1] : $rank;
+            } else {
+                // We've found the next rank to achieve
+                $next_rank = $rank;
+                break;
             }
         }
 
-        $streak = 0;
-        foreach($filteredEvents as $latestEvent){
-            $test = $latestEvent->attendees->where('attendee_id',$this->id)->first();
-            if($test){
-                $streak++;
-            }
-            else{
-                $streak = 0;
-            }
-        }
-        if($streak == 5){
-            $points += 50;
-        }
-        $total_events = 10;
-        foreach($opportunities as $key => $opp){
-            if($total_events >= $opp){
-                $points += 50;
-            }
-        }
-
-        if($total_events == 1 ){
-            $points += 50;
-        }
-        $points = 0;
-
-        $cur_rank = null;
-        foreach( $ranks as $key => $rank){
-            if($rank['pts_required'] <= $points){
-                $cur_rank = $key;
-            }
-        }
-        $mileStone['points'] = $points;
-        $mileStone['current_rank'] =  ($cur_rank !== null) ? $ranks[$cur_rank] : null;
-        if($cur_rank === null){
-            $mileStone['next_rank'] = $ranks[0];
-        }
-        else if($cur_rank == 3){
-            $mileStone['next_rank']  = null;
-        }else{
-            $mileStone['next_rank'] = $ranks[$cur_rank+1];
-        }
-        return $mileStone;
+        return [
+            'points' => $total_points,
+            'earned_badges' => $earned_badges,
+            'progress' => $progress,
+            'current_rank' => $current_rank,
+            'next_rank' => $next_rank
+        ];
     }
 
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges')
+            ->withTimestamps()
+            ->withPivot('earned_at');
+    }
 
+    public function calculateStreak()
+    {
+        $events = $this->eventAttended()
+            ->orderBy('created_at', 'desc')
+            ->whereNotNull('time_in')
+            ->whereNotNull('time_out')
+            ->limit(5)
+            ->get();
 
+        $streak = 0;
+        $previousEventDate = null;
+
+        foreach ($events as $event) {
+            $eventDate = Carbon::parse($event->event->start_date);
+
+            // For the first event
+            if (!$previousEventDate) {
+                $streak++;
+                $previousEventDate = $eventDate;
+                continue;
+            }
+
+            // Check if events are consecutive (within 30 days of each other)
+            $daysDifference = $previousEventDate->diffInDays($eventDate);
+            if ($daysDifference <= 30) {
+                $streak++;
+                $previousEventDate = $eventDate;
+            } else {
+                break; // Break the streak if events are not consecutive
+            }
+        }
+
+        return $streak;
+    }
 }

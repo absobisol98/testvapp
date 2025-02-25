@@ -83,46 +83,69 @@
             scanner.stop();
         }
 
+        // Replace the camera initialization part with this improved version
         function start_scan() {
             document.querySelector('.blur-overlay').style.display = 'flex';
+
             Instascan.Camera.getCameras().then(function (cameras) {
-                //If a camera is detected
                 if (cameras.length > 0) {
                     document.getElementById('btn_stop').style.display = 'block';
                     document.getElementById('btn_start').style.display = 'none';
                     document.getElementById('video-container').style.display = 'block';
                     document.querySelector('.blur-overlay').style.display = 'none';
 
-                    //If the user has a rear/back camera
-                    if (cameras[1]) {
-                        //use that by default
+                    // Try to find the back camera
+                    const backCamera = cameras.find(camera => camera.name.toLowerCase().includes('back'));
+
+                    if (backCamera) {
+                        scanner.start(backCamera);
+                    } else if (cameras[1]) {
+                        // Fallback to second camera if available
                         scanner.start(cameras[1]);
                     } else {
-                        //else use front camera
+                        // Last resort: use first available camera
                         scanner.start(cameras[0]);
                     }
                 } else {
-                    //if no cameras are detected give error
                     document.querySelector('.blur-overlay').style.display = 'none';
-                    console.error('No cameras found.');
+                    alert('No cameras found.');
                 }
             }).catch(function (e) {
-                alert('Invalid QR');
+                document.querySelector('.blur-overlay').style.display = 'none';
+                alert('Failed to start camera: ' + e.message);
                 console.error(e);
             });
         }
 
-        // Want to use async/await? Add the `async` keyword to your outer function/method.
+        // Update the scan_qr function to handle notifications better
         async function scan_qr(url) {
             try {
                 const response = await axios.get(url);
                 document.querySelector('.blur-overlay').style.display = 'none';
 
-            } catch (error) {
-                alert('Invalid QR');
-                document.querySelector('.blur-overlay').style.display = 'none';
+                // Show notification in a fixed position
+                showNotification(response.data.message || 'Scan successful');
 
+            } catch (error) {
+                document.querySelector('.blur-overlay').style.display = 'none';
+                showNotification('Invalid QR code', 'error');
             }
+        }
+
+        // Add this notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg z-[2000] ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white`;
+            notification.style.maxWidth = '90vw';
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
         }
     </script>
     <style>
