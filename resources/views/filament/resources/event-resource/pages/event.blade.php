@@ -86,35 +86,51 @@
     <div class="w-full flex items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
         <div class="grid grid-cols-3 gap-2">
-            @php
-                $user = auth()->user();
-                $isSuperAdmin = $user->hasRole('super_admin');
-                $isAdmin = $user->hasRole('admin');
-                $isCreator = $record->created_by == $user->id;
-                $isFacilitator = $record->facilitators->contains($user->id);
-                $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
-            @endphp
+        @php
+            $user = auth()->user();
+            $isSuperAdmin = $user->hasRole('super_admin');
+            $isAdmin = $user->hasRole('admin');
+            $isCreator = $record->created_by == $user->id;
+            $isFacilitator = $record->facilitators->contains($user->id);
+            $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
+        @endphp
 
-            @if($canManageEvent)
-                <a href="{{ route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]) }}"
-                   class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
-                    <p class="text-base font-normal text-white">Manage Volunteers</p>
-                </a>
-
-                <a href="{{route('filament.admin.resources.events.edit',['record' => $record->id])}}"
-                   class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
-                    <p class="text-base font-normal text-white">Edit</p>
-                </a>
-                @else
-                <a></a>
-                <a></a>
-            @endif
-            <a href="{{route('filament.admin.resources.events.index')}}"
-               class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
-                <p class="text-base font-normal text-white">Event List</p>
+        @if($canManageEvent)
+            <a href="{{ route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]) }}"
+            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+                <!-- Desktop Text -->
+                <p class="text-base font-normal text-white hidden md:block">Manage Volunteers</p>
+                <!-- Mobile/Tablet Icon -->
+                <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
             </a>
-        </div>
+
+            <a href="{{route('filament.admin.resources.events.edit',['record' => $record->id])}}"
+            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+                <!-- Desktop Text -->
+                <p class="text-base font-normal text-white hidden md:block">Edit</p>
+                <!-- Mobile/Tablet Icon -->
+                <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+            </a>
+        @else
+            <a></a>
+            <a></a>
+        @endif
+
+        <a href="{{route('filament.admin.resources.events.index')}}"
+        class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+            <!-- Desktop Text -->
+            <p class="text-base font-normal text-white hidden md:block">Opportunity List</p>
+            <!-- Mobile/Tablet Icon -->
+            <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
     </div>
+</div>
 
     <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="w-full col-span-2 space-y-4">
@@ -147,14 +163,16 @@
 
                     <div class="w-full flex flex-col md:flex-row space-y-4">
                         <div class="w-full flex flex-col space-y-2">
-                            <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
+                            <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-start">
                                 <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
                                     <svg class="w-8 h-4 " fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"> <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"></path></svg>
                                 </span>
-                                {{-- @php
-                                dd($record->location)
-                                @endphp --}}
-                                <strong>Location: &nbsp;</strong>{{$record->location}}
+                                <strong>Location:</strong>
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($record->location) }}"
+                                   target="_blank"
+                                   class="ml-3 text-[#03498D] hover:text-[#FF781E] hover:underline transition-colors duration-300">
+                                    {{$record->location}}
+                                </a>
                             </p>
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
                                 <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
@@ -187,7 +205,7 @@
                                 @if(!$isEventFinished)
                                 <p class="text-base font-normal text-white">I want to volunteer</p>
                                 @else
-                                    <p class="text-base font-normal text-white">Event Finished</p>
+                                    <p class="text-base font-normal text-white">Opportunity Finished</p>
                                 @endif
                             </button>
                         </div>
@@ -247,7 +265,7 @@
             <div class="w-full flex flex-col bg-white rounded-xl shadow-lg">
                 <div class="px-4 py-4 space-y-4">
                     <h2 class="text-black md:pl-10 lg:pl-0 text-lg text-start font-extrabold">
-                        Share this to event
+                        Share this opportunity
                     </h2>
                     <div class="sharethis-inline-share-buttons"></div>
                 </div>
@@ -415,7 +433,8 @@
                                         <span class="font-medium">Available Slots:</span>
                                         {{ $slot->total_slots - $registrationCount }}/{{ $slot->total_slots }}
                                     </p>
-                                    <p class="text-md md:text-lg lg:text-base pr-4 font-normal">
+                                    <p class="text-lg font-semibold leading-none">Key Responsibility</p>
+                                    <p class="text-md overflow-y-scroll custom-scrollbar max-h-[200px] md:text-lg lg:text-base pr-4 font-normal">
                                         {{ $slot->responsibilities }}
                                     </p>
                                 </div>
@@ -435,14 +454,14 @@
                                             </span>
                                         @else
                                             <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
-                                                Event Finished
+                                                Opportunity Finished
                                             </span>
                                         @endif
                                     @elseif($isAvailable && !$userRegistered)
                                         <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
                                               method="POST"
                                               enctype="multipart/form-data"
-                                              class="w-full">
+                                              class="min-w-full flex justify-between">
                                             @csrf
 
                                             @if($requiresAttachment)

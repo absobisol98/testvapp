@@ -15,7 +15,7 @@
                 <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
                     <div class="container whitespace-pre-line text-white">
                         <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
-                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
+                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
                     </div>
                 </div>
 
@@ -27,8 +27,8 @@
         <section class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
             <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
-                <p class="font-[700] text-[70px] leading-none">Your involvement is important to us!</p>
-                <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
+                <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>
+                <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Platform</p>
             </div>
         </section>
 
@@ -36,7 +36,7 @@
             <div class="flex flex-col items-center justify-between min-h-[756px] px-[5%] pt-[10%] pb-[5%] gap-12" style="background: url('{{ asset('img/reg.png') }}');">
                 <div class="flex flex-col items-center justify-center text-white gap-8">
                     <h2 class="text-5xl text-center font-semibold">Welcome to Ayala Foundation</h2>
-                    <p class="text-2xl text-center">Ayala Corporate Citizenship and Volunteer Program</p>
+                    <p class="text-2xl text-center">Ayala Corporate Citizenship and Volunteer Platform</p>
                     <p class="text-3xl text-center font-semibold whitespace-pre-line">Thank you for registering
                         a confirmation email was sent to
                         your email.
