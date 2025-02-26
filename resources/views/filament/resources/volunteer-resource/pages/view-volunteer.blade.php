@@ -75,7 +75,7 @@
                             <div class="swiper-slide flex items-center text-center w-auto">
                                 @if ($badges['current_rank'] !== null)
 
-                                <div>You are now a <b>{{$badges['current_rank']['name']}} Member!</b></div>
+                                <div>You are now a <b>{{$badges['current_rank']['name']}}!</b></div>
                                 <div class="w-[120px] h-[120px] flex  justify-self-center overflow-hidden relative">
                                     <img class="h-full w-full object-cover"
                                         src="{{$badges['current_rank']['medal']}}"
@@ -309,6 +309,59 @@
                                     @endif
 
                                     <!-- Other pending challenges... -->
+
+                                    <!-- Hour-based challenges -->
+                                    @php
+                                        $hourMilestones = [100, 250, 500, 1000];
+                                        $nextHourMilestone = null;
+                                        foreach ($hourMilestones as $milestone) {
+                                            if ($totalHours < $milestone) {
+                                                $nextHourMilestone = $milestone;
+                                                break;
+                                            }
+                                        }
+                                    @endphp
+                                    @if($nextHourMilestone)
+                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+{{ match($nextHourMilestone) {
+                                                100 => '250',
+                                                250 => '1500',
+                                                500 => '2500',
+                                                1000 => '5000'
+                                            } }} <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Complete {{ $nextHourMilestone }} volunteer hours</p>
+                                            <p class="text-xs">{{ $totalHours }}/{{ $nextHourMilestone }} hours completed</p>
+                                            <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
+                                                <div class="h-2 bg-white rounded-full" style="width: {{ min(($totalHours/$nextHourMilestone * 100), 100) }}%"></div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <!-- Opportunity-based challenges -->
+                                    @php
+                                        $opportunityMilestones = [25, 50, 100];
+                                        $nextOpportunityMilestone = null;
+                                        foreach ($opportunityMilestones as $milestone) {
+                                            if ($user->eventAttended()->count() < $milestone) {
+                                                $nextOpportunityMilestone = $milestone;
+                                                break;
+                                            }
+                                        }
+                                    @endphp
+                                    @if($nextOpportunityMilestone)
+                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+{{ match($nextOpportunityMilestone) {
+                                                25 => '250',
+                                                50 => '1500',
+                                                100 => '2500'
+                                            } }} <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Complete {{ $nextOpportunityMilestone }} volunteer positions</p>
+                                            <p class="text-xs">{{ $user->eventAttended()->count() }}/{{ $nextOpportunityMilestone }} positions completed</p>
+                                            <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
+                                                <div class="h-2 bg-white rounded-full" style="width: {{ min(($user->eventAttended()->count()/$nextOpportunityMilestone * 100), 100) }}%"></div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <!-- Completed Challenges Second -->

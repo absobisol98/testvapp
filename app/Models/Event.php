@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Models\EventBulletin;
 
 /**
  * Class Event
@@ -220,5 +221,10 @@ class Event extends Model implements HasMedia
 
         $attachment = $this->getMedia('event-attachments')->first();
         return ($attachment) ? $attachment->getUrl() : asset('img/ayala-foundation-bg.jpg');
+    }
+
+    public function bulletins()
+    {
+        return $this->hasMany(EventBulletin::class, 'event_id');
     }
 }

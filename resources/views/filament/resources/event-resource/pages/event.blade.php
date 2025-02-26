@@ -253,7 +253,82 @@
                 </div>
             </div>
         @endif
+        {{-- Add this after the event details section --}}
+<div class="w-full col-span-3 space-y-4">
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">Volunteers Bulletin</h2>
+            @if($canManageEvent)
+                <button onclick="document.getElementById('bulletin-form').classList.toggle('hidden')"
+                        class="px-4 py-2 bg-[#F55E1D] text-white rounded-lg hover:bg-[#FF8252]">
+                    Post Bulletin
+                </button>
+            @endif
+        </div>
+
+        {{-- Bulletin Form --}}
+        @if($canManageEvent)
+            <form id="bulletin-form" action="{{ route('event.post-bulletin', $record->id) }}"
+                  method="POST" class="hidden space-y-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                @csrf
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" name="title" required
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#F55E1D] focus:ring-[#F55E1D]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                    <textarea name="content" rows="3" required
+                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#F55E1D] focus:ring-[#F55E1D]"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="px-4 py-2 bg-[#F55E1D] text-white rounded-lg hover:bg-[#FF8252]">
+                        Post
+                    </button>
+                </div>
+            </form>
+        @endif
+
+        {{-- Bulletins List --}}
+        <div class="space-y-4">
+            @forelse($record->bulletins()->orderBy('created_at', 'desc')->limit(2)->get() as $bulletin)
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="font-semibold text-lg">{{ $bulletin->title }}</h3>
+                            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                <span>{{ $bulletin->author->name }}</span>
+                                <span>•</span>
+                                <span>{{ $bulletin->created_at->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                        @if($canManageEvent)
+                            <form action="{{ route('event.delete-bulletin', [$record->id, $bulletin->id]) }}"
+                                method="POST"
+                                onsubmit="return confirm('Are you sure you want to delete this bulletin?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-800">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                    <p class="mt-2 text-gray-700 whitespace-pre-wrap">{{ $bulletin->content }}</p>
+                </div>
+            @empty
+                <p class="text-gray-500 text-center py-4">No bulletins posted yet.</p>
+            @endforelse
+        </div>
     </div>
+</div>
+
+    </div>
+
+
 
 </div>
 
@@ -423,19 +498,7 @@
 </div>
 
 
-<!-- Add this section for notifications -->
-@if(session('success') || session('error'))
-    <div class="fixed bottom-4 right-4">
-        <div class="px-4 py-3 rounded-lg shadow-lg {{ session('success') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-            {{ session('success') ?? session('error') }}
-        </div>
-    </div>
-    <script>
-        setTimeout(() => {
-            document.querySelector('.fixed.bottom-4.right-4').style.display = 'none';
-        }, 5000);
-    </script>
-@endif
+
 
     <!-- Swiper Script -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

@@ -10,6 +10,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SurveyResponseController;
 use App\Http\Controllers\EventRegistrationController;
+use App\Http\Controllers\EventBulletinController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('event.register-slot');
     Route::delete('/event-registration/{registration}/cancel', [EventRegistrationController::class, 'cancelRegistration'])
         ->name('event.cancel-registration');
+
+    Route::post('/events/{event}/bulletins', [EventBulletinController::class, 'store'])
+        ->name('event.post-bulletin');
+    Route::delete('/events/{event}/bulletins/{bulletin}', [EventBulletinController::class, 'destroy'])
+        ->name('event.delete-bulletin');
 });
 
 

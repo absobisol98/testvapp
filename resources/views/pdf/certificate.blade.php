@@ -66,16 +66,59 @@
             font-size: 20px;
             color: #000;
         }
+        .certificate-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .hours-served {
+            font-size: 24px;
+            color: #000;
+            margin: 15px 0;
+        }
+
+        .slot-details {
+            font-size: 18px;
+            color: #444;
+            margin: 10px 0;
+        }
+
+        .validation-note {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="certificate">
+        <div class="certificate-number">
+            Certificate No: {{ $certificateNumber }}
+        </div>
+
         <h1>Certificate of Appreciation</h1>
         <h2>{{ $event->title }}</h2>
         <p>This certificate is proudly presented to</p>
         <p class="name">{{ $attendee->name }}</p>
+
+        <div class="slot-details">
+            <p>Volunteer Activity: {{ $attendeeRecord->slot->name ?? 'General Participation' }}</p>
+            <p class="hours-served">{{ $hoursServed }} Hours of Service</p>
+        </div>
+
         <p>for their outstanding volunteer service and dedication.</p>
         <p class="date">Presented on: {{ now()->format('F d, Y') }}</p>
+
+        <div class="validation-note">
+            To verify this certificate's authenticity, please contact the Ayala Foundation administrator
+            with the certificate number shown above.
+        </div>
     </div>
 </body>
 </html>

@@ -22,6 +22,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
+use Carbon\Carbon;
 
 
 // #[ScopedBy([FilterVolunteerForExternalAdmin::class])]
@@ -49,29 +50,21 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
      * @var array<int, string>
      */
     protected $fillable = [
-        'username',
-        'email',
+        'volunteer',
         'firstname',
         'lastname',
-        'password',
-        'volunteer',
         'middle_name',
+        'email',
+        'password',
         'birthday',
-        'is_company',
-        'company_name',
-        'company_address',
-        'company_contact_number',
-        'company_representative',
-        'company_email',
-        'school',
-        'school_address',
         'emergency_contact_name',
         'emergency_contact_number',
         'affiliate_type_id',
-        'company_id',
-        'program_id',
         'cluster_id',
-        'email_verified_at'
+        'company_id',
+        'external_company_name',
+        'referral_source',
+        'other_program',
     ];
 
     /**
@@ -92,6 +85,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'referral_source' => 'array',
+        'birthday' => 'date',
     ];
 
     public function getFilamentName(): string
@@ -188,9 +183,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
 
     public function getBadges()
     {
+        // Update badge requirements
         $badges = [
-            'hours' => [4, 8, 12, 16, 20],
-            'opportunities' => [10, 20, 30],
+            'hours' => [4, 8, 12, 16, 20, 100, 250, 500, 1000], // Added new hour milestones
+            'opportunities' => [10, 20, 25, 30, 50, 100], // Added new opportunity milestones
             'streak' => [5],
             'registration' => [1],
             'first_opportunity' => [1]
@@ -203,21 +199,36 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         // Calculate hours badges
         $total_hours = $this->getTotalHours();
         foreach ($badges['hours'] as $hour_requirement) {
+            $points = match($hour_requirement) {
+                100 => 250,
+                250 => 1500,
+                500 => 2500,
+                1000 => 5000,
+                default => 50
+            };
+
             if ($total_hours >= $hour_requirement) {
-                $total_points += 50;
+                $total_points += $points;
                 $earned_badges[] = "Completed {$hour_requirement} hours";
             }
             $progress['hours'] = [
                 'current' => $total_hours,
                 'next' => $hour_requirement
             ];
-        }
+        } // Added missing closing brace here
 
         // Calculate opportunities badges
         $total_opportunities = $this->eventAttended()->count();
         foreach ($badges['opportunities'] as $opp_requirement) {
+            $points = match($opp_requirement) {
+                25 => 250,
+                50 => 1500,
+                100 => 2500,
+                default => 50
+            };
+
             if ($total_opportunities >= $opp_requirement) {
-                $total_points += 50;
+                $total_points += $points;
                 $earned_badges[] = "Completed {$opp_requirement} opportunities";
             }
             $progress['opportunities'] = [
@@ -249,31 +260,31 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
 
         $ranks = [
             [
-                'name' => 'No Rank',
+                'name' => 'Volunteer',
                 'required' => 0,
                 'pts_required' => 1250,
                 'medal' => asset('medals/no-rank.png')
             ],
             [
-                'name' => 'Bronze',
+                'name' => 'Bronze Volunteer',
                 'required' => 1250,
                 'pts_required' => 2500,
                 'medal' => asset('medals/bronze.png')
             ],
             [
-                'name' => 'Silver',
+                'name' => 'Silver Volunteer',
                 'required' => 2500,
                 'pts_required' => 5000,
                 'medal' => asset('medals/silver.png')
             ],
             [
-                'name' => 'Gold',
+                'name' => 'Gold Volunteer',
                 'required' => 5000,
                 'pts_required' => 10000,
                 'medal' => asset('medals/gold.png')
             ],
             [
-                'name' => 'Platinum',
+                'name' => 'Platinum Volunteer',
                 'required' => 10000,
                 'pts_required' => 10000,
                 'medal' => asset('medals/platinum.png')
@@ -344,5 +355,55 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         }
 
         return $streak;
+    }
+
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class)
+            ->withPivot('is_admin')
+            ->withTimestamps();
+    }
+
+    public function adminCompanies()
+    {
+        return $this->belongsToMany(Company::class)
+            ->wherePivot('is_admin', true)
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the event attendances for the user.
+     */
+    public function eventAttendees()
+    {
+        return $this->hasMany(EventAttendee::class, 'attendee_id');
+    }
+
+    /**
+     * Calculate participation frequency
+     */
+    public function getParticipationFrequency(): string
+    {
+        $totalEvents = $this->eventAttendees()->count();
+        $firstEvent = $this->eventAttendees()->oldest()->first();
+
+        if (!$firstEvent) {
+            return 'N/A';
+        }
+
+        $firstEventDate = Carbon::parse($firstEvent->created_at);
+        $monthsSinceFirst = $firstEventDate->diffInMonths(now()) + 1;
+        $eventsPerMonth = round($totalEvents / $monthsSinceFirst, 2);
+
+        return "{$eventsPerMonth} opportunities/month";
+    }
+
+    // Add a new accessor for company name
+    public function getCompanyNameAttribute()
+    {
+        if ($this->affiliate_type_id === 1) {
+            return $this->company->name ?? 'N/A';
+        }
+        return $this->external_company_name ?? 'N/A';
     }
 }
