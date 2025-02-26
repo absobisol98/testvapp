@@ -79,7 +79,7 @@ class EventResource extends Resource implements HasShieldPermissions
                             ->label('')
                             ->openable()
                             ->downloadable()
-                            ->helpertext('Upload an event banner (Recommended: 1200x500px, Max: 100MB). Drag & drop or click Browse.')
+                            ->helpertext('Upload an event banner (Recommended: 1200x500px, Max: 10MB). Drag & drop or click Browse.')
                             ->extraAttributes([
                                 'title' => 'Upload event banner here'
                             ]),
@@ -390,7 +390,7 @@ class EventResource extends Resource implements HasShieldPermissions
                             ->label('')
                             ->openable()
                             ->downloadable()
-                            ->helpertext('Upload an event certificate background (Recommended: 1200x500px, Max: 100MB). Drag & drop or click Browse.')
+                            ->helpertext('Upload an event certificate background (Recommended: 1200x500px, Max: 10MB). Drag & drop or click Browse.')
                             ->extraAttributes([
                                 'title' => 'Upload certificate background here'
                             ]),

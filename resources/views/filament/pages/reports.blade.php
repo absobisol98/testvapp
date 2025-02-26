@@ -1,82 +1,112 @@
 <x-filament-panels::page>
+    <!-- Tab Navigation -->
+    <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center gap-4"
+            id="reportTabs"
+            data-tabs-toggle="#reportTabContent"
+            role="tablist">
+            <li role="presentation">
+                <button class="inline-flex items-center px-6 py-3 border-b-2 border-transparent rounded-t-lg hover:text-primary-600 hover:border-primary-600 active group"
+                        id="volunteers-tab"
+                        data-tabs-target="#volunteers"
+                        type="button"
+                        role="tab"
+                        aria-controls="volunteers"
+                        aria-selected="true">
+                    <x-heroicon-o-users class="w-5 h-5 mr-2" />
+                    Volunteers
+                </button>
+            </li>
+            <li role="presentation">
+                <button class="inline-flex items-center px-6 py-3 border-b-2 border-transparent rounded-t-lg hover:text-primary-600 hover:border-primary-600 group"
+                        id="opportunities-tab"
+                        data-tabs-target="#opportunities"
+                        type="button"
+                        role="tab"
+                        aria-controls="opportunities"
+                        aria-selected="false">
+                    <x-heroicon-o-calendar class="w-5 h-5 mr-2" />
+                    Opportunities
+                </button>
+            </li>
+            <li role="presentation">
+                <button class="inline-flex items-center px-6 py-3 border-b-2 border-transparent rounded-t-lg hover:text-primary-600 hover:border-primary-600 group"
+                        id="leaderboard-tab"
+                        data-tabs-target="#leaderboard"
+                        type="button"
+                        role="tab"
+                        aria-controls="leaderboard"
+                        aria-selected="false">
+                    <x-heroicon-o-trophy class="w-5 h-5 mr-2" />
+                    Leaderboard
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Tab Content -->
+    <div id="reportTabContent" class="space-y-6">
+        <!-- Volunteers Tab -->
+        <div class="block space-y-6 rounded-lg"
+             id="volunteers"
+             role="tabpanel"
+             aria-labelledby="volunteers-tab">
+            <!-- Stats Overview -->
+            <div class="p-6 bg-white rounded-lg shadow-sm dark:bg-gray-800">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Statistics</h3>
+                @livewire('App\Filament\Widgets\TotalVolunteerHoursStats')
+            </div>
 
 
+            <!-- Filtered Hours -->
+            <div class="p-6 bg-white rounded-lg shadow-sm dark:bg-gray-800">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Hours</h3>
+                @livewire('App\Filament\Widgets\FilteredVolunteerHours')
+            </div>
 
-
-
-
-
-
-<div class="mb-4 border-b border-gray-200 dark:border-gray-700">
-    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist" ata-tabs-active-classes="text-white bg-primary-500 hover:text-purple-600 " data-tabs-inactive-classes="dark:border-transparent text-primary-500 hover:text-primary-600 dark:text-gray-400 border-gray-100 hover:border-gray-300">
-        <li class="me-2" role="presentation">
-            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Overview</button>
-        </li>
-        <li class="me-2" role="presentation">
-            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Volunteers</button>
-        </li>
-        <li class="me-2" role="presentation">
-            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Opportunities</button>
-        </li>
-        {{-- <li role="presentation">
-            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">Export Volunteer List</button>
-        </li> --}}
-        {{-- <li class="me-2" role="presentation">
-            <button class="inline-block p-4 border-b-2 rounded-t-lg"
-                    id="leaderboard-tab"
-                    data-tabs-target="#leaderboard"
-                    type="button"
-                    role="tab"
-                    aria-controls="leaderboard"
-                    aria-selected="false">
-                Leaderboard
-            </button>
-        </li> --}}
-    </ul>
-</div>
-<div id="default-tab-content">
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 grid grid-cols-2 gap-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-        <div class="col-span-2">
-            @livewire(\App\Filament\Widgets\StatsOverview::class)
+            <!-- Participation List -->
+            <div class="p-6 bg-white rounded-lg shadow-sm dark:bg-gray-800">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Participation</h3>
+                @livewire('App\Filament\Widgets\VolunteerParticipationList')
+            </div>
         </div>
-        <div>
-            @livewire(\App\Filament\Widgets\VolunteerUsageWidgetByDepartment::class, ['progNames' =>$widgetData['widgetByDepartment']['progNames'] ,'count'=>$widgetData['widgetByDepartment']['count'] ,'overall_hrs' => $widgetData['widgetByDepartment']['overall_hrs']])
+
+        <!-- Opportunities Tab -->
+        <div class="hidden rounded-lg"
+             id="opportunities"
+             role="tabpanel"
+             aria-labelledby="opportunities-tab">
+            <!-- Stats Overview -->
+            <div class="p-6 bg-white rounded-lg shadow-sm dark:bg-gray-800">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Opportunity Statistics</h3>
+                @livewire('App\Filament\Widgets\OpportunityStatistics')
+            </div>
+
+            <!-- Business Unit Breakdown -->
+            <div class="p-6 bg-white rounded-lg shadow-sm dark:bg-gray-800 mt-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Business Unit Participation</h3>
+                @livewire('App\Filament\Widgets\BusinessUnitParticipationList')
+            </div>
         </div>
-        <div>
-            @livewire(\App\Filament\Widgets\VolunteerUsageWidgetByProgram::class, ['progNames' =>$widgetData['widgetByProgram']['progNames'] ,'count'=>$widgetData['widgetByProgram']['count'] ,'overall_hrs' => $widgetData['widgetByProgram']['overall_hrs']])
-        </div>
-        <div class="col-span-2">
-            @livewire(\App\Filament\Widgets\VolunteerSignupPerMonth::class)
-        </div>
-        <div class="col-span-2">
-            @livewire(\App\Filament\Widgets\ReportByDepartmentBar::class)
-        </div>
-        <div class="col-span-2">
-            @livewire(\App\Filament\Widgets\ReportByProgram::class)
+
+        <!-- Leaderboard Tab -->
+        <div class="hidden rounded-lg"
+             id="leaderboard"
+             role="tabpanel"
+             aria-labelledby="leaderboard-tab">
+            <div class="p-6 bg-white rounded-lg shadow-sm dark:bg-gray-800">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Top Volunteers</h3>
+                @livewire('App\Filament\Widgets\TopVolunteersLeaderboard')
+            </div>
         </div>
     </div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 grid gap-4" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-        <div>
-            @livewire(\App\Filament\Widgets\VolunteersByCategory::class)
-            {{-- @livewire(\App\Filament\Widgets\VolunteersReportByGroupWidget::class) --}}
-        </div>
-        <div>
-            @livewire(\App\Filament\Widgets\VolunteersByOpportunity::class)
-        </div>
-        <div>
-            @livewire(\App\Filament\Widgets\OpportunityPerVolunteer::class)
-        </div>
-        <div>
-            {{-- @livewire(\App\Filament\Widgets\TopVolunteers::class) --}}
-        </div>
-    </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-    </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-        <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Contacts tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
-    </div>
-
-</div>
-
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = new Tabs(document.querySelector('#reportTabs'));
+            tabs.show('volunteers-tab');
+        });
+    </script>
+    @endpush
 </x-filament-panels::page>

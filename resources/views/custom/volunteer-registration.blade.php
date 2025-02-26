@@ -96,7 +96,7 @@
 
                                 <!-- Program Interest Dropdown -->
                                 <div class="mb-8">
-                                    <label class="block mb-2 text-white font-semibold">What programs are you interested in?</label>
+                                    <label class="block mb-2 text-white font-semibold">What programs are you interested in? (Multi-Select)</label>
                                     <select id="program-select" class="shadow-lg w-full p-2 bg-white text-gray-900 rounded"
                                     name="program_ids[]"
                                     multiple
@@ -105,10 +105,37 @@
                                 @foreach($programs as $program)
                                     <option value="{{ $program->id }}">{{ $program->name }}</option>
                                 @endforeach
+                                <option value="other">Others (Please Specify)</option>
                             </select>
                             <span class="text-danger program_ids_err"></span>
 
+                                <!-- Other Program Text Field (initially hidden) -->
+                                <div id="other-program-field" class="mt-2 hidden">
+                                    <input type="text"
+                                        name="other_program"
+                                        class="shadow-lg w-full p-2 border border-gray-300 rounded text-black"
+                                        placeholder="Please specify other program(s)"/>
+                                    <span class="text-danger other_program_err"></span>
                                 </div>
+                            </div>
+
+                            <!-- How did you hear about us -->
+                            <div class="mb-8">
+                                <label class="block mb-2 text-white font-semibold required">How did you hear about us?</label>
+                                <select id="referral-source"
+                                        class="shadow-lg w-full p-2 bg-white text-gray-900 rounded"
+                                        name="referral_source[]"
+                                        multiple
+                                        required>
+                                    <option value="afi_website">AFI website</option>
+                                    <option value="social_media">Social media platforms (Facebook, Instagram, X, and TikTok)</option>
+                                    <option value="referral">Referral programs</option>
+                                    <option value="advertisements">Advertisements</option>
+                                    <option value="activations">On-the-ground activations and print</option>
+                                    <option value="news">Online news articles</option>
+                                </select>
+                                <span class="text-danger referral_source_err"></span>
+                            </div>
 
                                 <!-- Privacy and Terms Notice -->
                                 <p class="text-sm mt-8 text-white">
@@ -121,25 +148,12 @@
                             <!-- Right Side (Multi-Step Form) -->
                             <div class="p-8 lg:p-12 flex items-start justify-start">
                                 <div class="text-white w-full">
-                                    <h2 class="text-3xl font-normal mb-8">Personal Information</h2>
+                                    <h2 class="text-3xl font-normal mb-8">Company/Affiliation</h2>
 
                                     <!-- Multi-Step Form Structure -->
 
                                     <!-- Step 1 -->
                                     <div id="step-1" class="w-full">
-
-                                        <!-- Toggle between Company and School -->
-                                        <div class="inline-flex rounded-lg">
-                                            <input type="radio" name="toggle_type" id="company_toggle" checked hidden onclick="toggleFields('company')" />
-                                            <label for="company_toggle" class="radio text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75">Company</label>
-                                        </div>
-                                        <div class="inline-flex rounded-lg">
-                                            <input type="radio" name="toggle_type" id="school_toggle" hidden onclick="toggleFields('school')" />
-                                            <label for="school_toggle" class="radio text-center self-center py-2 px-4 rounded-lg cursor-pointer hover:opacity-75">School</label>
-                                        </div>
-
-                                        <!-- Company Fields -->
-                                            <div id="company_fields" >
 
                                         <!-- Organization Radio Buttons -->
                                             <div class="mb-4">
@@ -148,56 +162,48 @@
                                                     <input type="radio" id="ayala_employee" name="affiliate_type_id" checked value="1" class="mr-2" onchange="updateDropdowns()" />
                                                     <label for="ayala_employee" class="text-white">Ayala Employee</label>
                                                 </div>
-                                                <div class="flex items-center mb-2">
-                                                    <input type="radio" id="external_partner" name="affiliate_type_id" value="2" class="mr-2" onchange="updateDropdowns()" />
-                                                    <label for="external_partner" class="text-white">Accredited External Partner</label>
-                                                </div>
                                                 <div class="flex items-center">
-                                                    <input type="radio" id="non_ayala" name="affiliate_type_id" value="3" class="mr-2" onchange="updateDropdowns()" />
-                                                    <label for="non_ayala" class="text-white">Non-Ayala Group</label>
+                                                    <input type="radio" id="non_ayala" name="affiliate_type_id" value="2" class="mr-2" onchange="updateDropdowns()" />
+                                                    <label for="non_ayala" class="text-white">Non-Ayala Employee</label>
                                                 </div>
                                             </div>
 
-                                            <!-- Cluster Select Dropdown -->
+                                            <!-- Company Fields -->
+                                            <div id="company-fields">
+                                                <!-- For Ayala Employees -->
+                                                <div id="ayala-fields">
+                                                    <div class="mb-4">
+                                                        <label class="block text-sm font-semibold required">Cluster</label>
+                                                        <select class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="cluster_id" id="clusterSelect">
+                                                            <option value="" disabled selected></option>
+                                                            @foreach ($clusters as $cluster)
+                                                                <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <span class="text-danger cluster_id_err"></span>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="block text-sm font-semibold required">Company Name</label>
+                                                        <select class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect">
+                                                            <option value="" disabled selected></option>
+                                                            @foreach ($companies as $company)
+                                                                <option value="{{ $company->id }}" data-cluster="{{ $company->cluster_id }}">{{ $company->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <span class="text-danger company_id_err"></span>
+                                                    </div>
+                                                </div>
 
-                                            <div class="" id="clusterSelectWrapper">
-                                                <label class="block text-sm font-semibold required">Cluster</label>
-                                                <select required class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="cluster_id" id="clusterSelect" class="form-select">
-                                                    <option value="" disabled selected></option>
-                                                    @foreach ($clusters as $cluster)
-                                                        <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                                <!-- For Non-Ayala Employees -->
+                                                <div id="non-ayala-fields" class="hidden">
+                                                    <div class="mb-4">
+                                                        <label class="block text-sm font-semibold required">Company Name</label>
+                                                        <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="external_company_name"/>
+                                                        <span class="text-danger external_company_name_err"></span>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <!-- Company Select Dropdown -->
-                                            <div class="" id="companySelectWrapper">
-                                                <label class="block text-sm font-semibold required">Company Name</label>
-                                                <select required class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect" class="form-select">
-                                                    <option value="" disabled selected></option>
-                                                    @foreach ($companies as $company)
-                                                        <option value="{{ $company->id }}" data-cluster="{{ $company->cluster_id }}">{{ $company->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            {{-- <div>
-                                                <label class="block text-sm font-semibold required">Company Name</label>
-                                                <input type="text" class="w-full p-2 border border-gray-300 rounded text-black" name="company_name" />
-                                            </div> --}}
-
-                                        </div>
-
-                                        <!-- School Fields -->
-                                        <div id="school_fields" class="hidden">
-                                            <div>
-                                                <label class="block text-sm font-semibold required">School Name</label>
-                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="school" />
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-semibold required">School Address</label>
-                                                <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="school_address" />
-                                            </div>
-                                        </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Name</label>
                                             <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
@@ -281,19 +287,6 @@
             // document.getElementById('step-' + step).classList.remove('hidden');
         }
 
-        function toggleFields(type) {
-            const companyFields = document.getElementById('company_fields');
-            const schoolFields = document.getElementById('school_fields');
-
-            if (type === 'school') {
-                companyFields.classList.add('hidden');
-                schoolFields.classList.remove('hidden');
-            } else {
-                schoolFields.classList.add('hidden');
-                companyFields.classList.remove('hidden');
-            }
-        }
-
         $(document).ready(function() {
         $('#program-select').select2({
             placeholder: "Select programs",
@@ -309,54 +302,193 @@
     // });
 
         function updateDropdowns() {
-            const selectedOrganization = document.querySelector('input[name="affiliate_type_id"]:checked')?.id;
-            const clusterSelect = document.getElementById('clusterSelect');
-            const clusterSelectWrapper = document.getElementById('clusterSelectWrapper');
-            const companySelect = document.getElementById('companySelect');
-            const companySelectWrapper = document.getElementById('companySelectWrapper');
+            const isAyalaEmployee = $('#ayala_employee').is(':checked');
+            const ayalaFields = $('#ayala-fields');
+            const nonAyalaFields = $('#non-ayala-fields');
 
-            // Show or hide the cluster dropdown based on the selected organization
-            if (selectedOrganization === 'ayala_employee') {
-                clusterSelectWrapper.style.display = 'block'; // Show cluster dropdown
+            if (isAyalaEmployee) {
+                ayalaFields.removeClass('hidden');
+                nonAyalaFields.addClass('hidden');
+                // Make Ayala fields required
+                $('#clusterSelect, #companySelect').prop('required', true);
+                $('input[name="external_company_name"]').prop('required', false);
             } else {
-                clusterSelectWrapper.style.display = 'none'; // Hide cluster dropdown
+                ayalaFields.addClass('hidden');
+                nonAyalaFields.removeClass('hidden');
+                // Make external company name required
+                $('#clusterSelect, #companySelect').prop('required', false);
+                $('input[name="external_company_name"]').prop('required', true);
+            }
+        }
+
+        // Update form validation
+        function validateForm() {
+            // Clear previous errors
+            $('.text-danger').html('');
+            $('.invalid-field').removeClass('invalid-field');
+
+            let isValid = true;
+            const requiredFields = {
+                firstname: 'First Name',
+                lastname: 'Last Name',
+                email: 'Email',
+                birthday: 'Birthday',
+                emergency_contact_name: 'Emergency Contact Name',
+                emergency_contact_number: 'Emergency Contact Number',
+                password: 'Password',
+                passwordConfirmation: 'Confirm Password'
+            };
+
+            if ($('#ayala_employee').is(':checked')) {
+                if (!$('select[name="cluster_id"]').val()) {
+                    $('.cluster_id_err').html('Cluster is required');
+                    $('select[name="cluster_id"]').addClass('invalid-field');
+                    isValid = false;
+                }
+                if (!$('select[name="company_id"]').val()) {
+                    $('.company_id_err').html('Company is required');
+                    $('select[name="company_id"]').addClass('invalid-field');
+                    isValid = false;
+                }
+            } else {
+                if (!$('input[name="external_company_name"]').val().trim()) {
+                    $('.external_company_name_err').html('Company name is required');
+                    $('input[name="external_company_name"]').addClass('invalid-field');
+                    isValid = false;
+                }
             }
 
-            // Show or hide the company dropdown based on the selected organization
-            if (selectedOrganization === 'non_ayala') {
-                companySelectWrapper.style.display = 'none'; // Hide company dropdown
-            } else {
-                companySelectWrapper.style.display = 'block'; // Show company dropdown
+            // Validate required fields
+            Object.entries(requiredFields).forEach(([field, label]) => {
+                const element = $(`[name="${field}"]`);
+                const value = element.val();
+
+                if (!value || value.trim() === '') {
+                    element.addClass('invalid-field');
+                    $(`.${field}_err`).html(`${label} is required`);
+                    isValid = false;
+                }
+            });
+
+            //Validate program select
+            const selectedPrograms = $('#program-select').val();
+            if (!selectedPrograms || selectedPrograms.length === 0) {
+                $('#program-select').addClass('invalid-field');
+                $('.program_ids_err').html('Please select at least one program');
+                isValid = false;
             }
 
-            // Update company dropdown based on selected cluster
-            clusterSelect.addEventListener('change', function () {
-                const selectedClusterId = clusterSelect.value;
-                const allOptions = companySelect.querySelectorAll('option');
+            // Validate referral source
+            const selectedSources = $('#referral-source').val();
+            if (!selectedSources || selectedSources.length === 0) {
+                $('#referral-source').addClass('invalid-field');
+                $('.referral_source_err').html('Please select at least one option');
+                isValid = false;
+            }
 
-                allOptions.forEach(option => {
-                    const clusterId = option.getAttribute('data-cluster');
+            // Validate other program if selected
+            if ($('#program-select').val()?.includes('other') && !$('input[name="other_program"]').val().trim()) {
+                $('input[name="other_program"]').addClass('invalid-field');
+                $('.other_program_err').html('Please specify other program(s)');
+                isValid = false;
+            }
 
-                    if (!selectedClusterId || clusterId === selectedClusterId) {
-                        option.style.display = 'block'; // Show matching companies
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test($('[name="email"]').val())) {
+                $('[name="email"]').addClass('invalid-field');
+                $('.email_err').html('Please enter a valid email address');
+                isValid = false;
+            }
+
+            // Password validation
+            if ($('[name="password"]').val() !== $('[name="passwordConfirmation"]').val()) {
+                $('[name="password"], [name="passwordConfirmation"]').addClass('invalid-field');
+                $('.password_err').html('Passwords do not match');
+                isValid = false;
+            }
+
+            // Terms checkbox
+            if (!$('#checkbox').is(':checked')) {
+                $('.terms_err').html('Please agree to the Terms and Conditions');
+                isValid = false;
+            }
+
+            // Scroll to first error if validation fails
+            if (!isValid) {
+                const firstError = $('.invalid-field').first();
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+                }
+            }
+
+            return isValid;
+        }
+
+        function submitForm() {
+            const affiliateTypeId = $("input[type=radio][name=affiliate_type_id]:checked").val();
+
+            const formData = {
+                _token: $("input[name='_token']").val(),
+                email: $("input[name='email']").val(),
+                firstname: $("input[name='firstname']").val(),
+                lastname: $("input[name='lastname']").val(),
+                middle_name: $("input[name='middle_name']").val(),
+                password: $("input[name='password']").val(),
+                birthday: $("input[name='birthday']").val(),
+                emergency_contact_name: $("input[name='emergency_contact_name']").val(),
+                emergency_contact_number: $("input[name='emergency_contact_number']").val(),
+                affiliate_type_id: parseInt(affiliateTypeId),
+                program_ids: $('#program-select').val(),
+                other_program: $('input[name="other_program"]').val(),
+                referral_source: $('#referral-source').val(),
+                cluster_id: $('#ayala_employee').is(':checked') ? $("#clusterSelect").val() : null,
+                company_id: $('#ayala_employee').is(':checked') ? $("#companySelect").val() : null,
+                external_company_name: $('#non_ayala').is(':checked') ? $("input[name='external_company_name']").val() : null,
+            };
+
+            $("#btn-register").prop('disabled', true).text('Registering...');
+
+            // Log the form data being sent
+            console.log('Submitting form data:', formData);
+
+            $.ajax({
+                url: "{{ route('volunteer.form.store') }}",
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    console.log('Success response:', response);
+                    $("#btn-register").prop('disabled', true).text('Registration successful...');
+
+                    // Use setTimeout to ensure the response is processed
+                    setTimeout(function() {
+                        if (response.success) {
+                            window.location.replace("{{ route('verification.sent') }}");
+                        } else {
+                            $("#btn-register").prop('disabled', false).text('Register');
+                            handleErrors(response.errors || {});
+                        }
+                    }, 1000);
+                },
+                error: function(xhr, status, error) {
+                    $("#btn-register").prop('disabled', false).text('Register');
+                    console.error('Ajax error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
+
+                    if (xhr.status === 422) {
+                        handleErrors(xhr.responseJSON.errors);
                     } else {
-                        option.style.display = 'none'; // Hide non-matching companies
+                        alert('An error occurred. Please try again later.');
                     }
-                });
-
-                // Reset selected company
-                companySelect.value = '';
-        });
-    }
-
-    // Add event listeners to update dropdowns when the organization changes
-        document.querySelectorAll('input[name="affiliate_type_id"]').forEach(radio => {
-            radio.addEventListener('change', updateDropdowns);
-    });
-
-    // Call the function on page load to ensure the initial state is set correctly
-        updateDropdowns();
-
+                }
+            });
+        }
 
         $(document).ready(function() {
             // Prevent default form submission
@@ -390,26 +522,19 @@
                     passwordConfirmation: 'Confirm Password'
                 };
 
-                // Check toggle type
-                const isCompany = $('#company_toggle').is(':checked');
-                if (isCompany) {
-                    if ($('#ayala_employee').is(':checked')) {
-                        if (!$('select[name="cluster_id"]').val()) {
-                            $('.cluster_id_err').html('Cluster is required');
-                            $('select[name="cluster_id"]').addClass('invalid-field');
-                            isValid = false;
-                        }
+                if ($('#ayala_employee').is(':checked')) {
+                    if (!$('select[name="cluster_id"]').val()) {
+                        $('.cluster_id_err').html('Cluster is required');
+                        $('select[name="cluster_id"]').addClass('invalid-field');
+                        isValid = false;
                     }
-                    if (!$('#non_ayala').is(':checked')) {
-                        if (!$('select[name="company_id"]').val()) {
-                            $('.company_id_err').html('Company is required');
-                            $('select[name="company_id"]').addClass('invalid-field');
-                            isValid = false;
-                        }
+                }
+                if (!$('#non_ayala').is(':checked')) {
+                    if (!$('select[name="company_id"]').val()) {
+                        $('.company_id_err').html('Company is required');
+                        $('select[name="company_id"]').addClass('invalid-field');
+                        isValid = false;
                     }
-                } else {
-                    requiredFields.school = 'School Name';
-                    requiredFields.school_address = 'School Address';
                 }
 
                 // Validate required fields
@@ -432,6 +557,20 @@
                     isValid = false;
                 }
 
+                // Validate referral source
+                const selectedSources = $('#referral-source').val();
+                if (!selectedSources || selectedSources.length === 0) {
+                    $('#referral-source').addClass('invalid-field');
+                    $('.referral_source_err').html('Please select at least one option');
+                    isValid = false;
+                }
+
+                // Validate other program if selected
+                if ($('#program-select').val()?.includes('other') && !$('input[name="other_program"]').val().trim()) {
+                    $('input[name="other_program"]').addClass('invalid-field');
+                    $('.other_program_err').html('Please specify other program(s)');
+                    isValid = false;
+                }
 
                 // Email validation
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -482,7 +621,11 @@
                     emergency_contact_number: $("input[name='emergency_contact_number']").val(),
                     affiliate_type_id: parseInt(affiliateTypeId),
                     program_ids: $('#program-select').val(),
-                    is_company: affiliateTypeId !== '3' ? true : false, // Explicitly set boolean
+                    other_program: $('input[name="other_program"]').val(),
+                    referral_source: $('#referral-source').val(),
+                    cluster_id: $('#ayala_employee').is(':checked') ? $("#clusterSelect").val() : null,
+                    company_id: $('#ayala_employee').is(':checked') ? $("#companySelect").val() : null,
+                    external_company_name: $('#non_ayala').is(':checked') ? $("input[name='external_company_name']").val() : null,
                 };
 
                 $("#btn-register").prop('disabled', true).text('Registering...');
@@ -548,6 +691,33 @@
                     }, 500);
                 }
             }
+        });
+
+        // Initialize Select2 for programs
+        $('#program-select').select2({
+            placeholder: "Select programs",
+            allowClear: true
+        }).on('change', function(e) {
+            // Check if "Other" is selected
+            if ($(this).val()?.includes('other')) {
+                $('#other-program-field').removeClass('hidden');
+            } else {
+                $('#other-program-field').addClass('hidden');
+            }
+        });
+
+        // Initialize Select2 for referral sources
+        $('#referral-source').select2({
+            placeholder: "Select how you heard about us",
+            allowClear: true
+        });
+
+        // Initialize Select2 for referral source
+        $(document).ready(function() {
+            $('#referral-source').select2({
+                placeholder: "Select how you heard about us",
+                allowClear: true
+            });
         });
     </script>
 @endsection

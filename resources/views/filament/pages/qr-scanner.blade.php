@@ -94,18 +94,34 @@
                     document.getElementById('video-container').style.display = 'block';
                     document.querySelector('.blur-overlay').style.display = 'none';
 
-                    // Try to find the back camera
-                    const backCamera = cameras.find(camera => camera.name.toLowerCase().includes('back'));
+                    // Improved camera detection logic
+                    let selectedCamera = cameras[0]; // default to first camera
 
-                    if (backCamera) {
-                        scanner.start(backCamera);
-                    } else if (cameras[1]) {
-                        // Fallback to second camera if available
-                        scanner.start(cameras[1]);
+                    // Check if running on iOS
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+                    if (isIOS) {
+                        // On iOS, the back camera usually has "environment" facing mode
+                        selectedCamera = cameras.find(camera =>
+                            camera.name.toLowerCase().includes('back') ||
+                            camera.name.toLowerCase().includes('environment')
+                        ) || cameras[cameras.length - 1]; // fallback to last camera on iOS
                     } else {
-                        // Last resort: use first available camera
-                        scanner.start(cameras[0]);
+                        // For other devices, try to find back camera
+                        selectedCamera = cameras.find(camera =>
+                            camera.name.toLowerCase().includes('back')
+                        ) || cameras[1] || cameras[0]; // fallback to second or first camera
                     }
+
+                    console.log('Available cameras:', cameras.map(c => c.name)); // Debug info
+                    console.log('Selected camera:', selectedCamera.name); // Debug info
+
+                    scanner.start(selectedCamera).catch(function (e) {
+                        console.error('Failed to start camera:', e);
+                        // Fallback to first camera if selected camera fails
+                        scanner.start(cameras[0]);
+                    });
+
                 } else {
                     document.querySelector('.blur-overlay').style.display = 'none';
                     alert('No cameras found.');

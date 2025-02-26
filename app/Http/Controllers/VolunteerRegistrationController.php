@@ -44,102 +44,118 @@ class VolunteerRegistrationController extends Controller
         try {
             Log::info('Volunteer registration attempt', ['data' => $request->except(['password', 'passwordConfirmation'])]);
 
-            // Define validation rules
             $rules = [
-                // 'username' => 'required|string|max:255',
                 'firstname' => 'required|string|max:255',
                 'lastname' => 'required|string|max:255',
+                'middle_name' => 'nullable|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:8',
                 'birthday' => 'required|date',
-                'emergency_contact_name' => 'nullable|string|max:255',
-                'emergency_contact_number' => 'nullable|string|max:15|regex:/^[0-9]+$/',
-                'company_name' => 'nullable|string|max:255',
-                'company_address' => 'nullable|string|max:255',
-                'company_contact_number' => 'nullable|string|max:15|regex:/^[0-9]+$/',
-                'school' => 'nullable|string|max:255',
-                'school_address' => 'nullable|string|max:255',
-                'affiliate_type_id' => 'required|integer|in:1,2,3',
-                'company_id' => 'nullable|integer',
-                'program_ids' => ['required', 'array', 'min:1'],
-                'program_ids.*' => ['exists:programs,id'],
-                'cluster_id' => 'nullable|integer',
-                'is_company' => 'required|boolean', // Add validation rule for is_company
+                'emergency_contact_name' => 'required|string|max:255',
+                'emergency_contact_number' => 'required|string|max:15|regex:/^[0-9]+$/',
+                'affiliate_type_id' => 'required|integer|in:1,2',
+                'program_ids' => 'required|array|min:1',
+                'program_ids.*' => [
+                    'required',
+                    function ($attribute, $value, $fail) {
+                        if ($value !== 'other' && !Program::where('id', $value)->exists()) {
+                            $fail('The selected program is invalid.');
+                        }
+                    }
+                ],
+                'other_program' => [
+                    'nullable',
+                    function ($attribute, $value, $fail) use ($request) {
+                        if (in_array('other', $request->program_ids) && empty($value)) {
+                            $fail('Please specify the other program.');
+                        }
+                    }
+                ],// Fixed program validation
+                'other_program' => 'nullable|string|max:255',
+                'referral_source' => 'required|array|min:1',
+                'referral_source.*' => ['required', 'in:afi_website,social_media,referral,advertisements,activations,news']  // Fixed referral validation
             ];
 
-            // Perform validation
+            // Conditional validation for affiliate type
+            if ($request->input('affiliate_type_id') == 1) {
+                $rules['cluster_id'] = 'required|exists:clusters,id';
+                $rules['company_id'] = 'required|exists:companies,id';
+            } else {
+                $rules['external_company_name'] = 'required|string|max:255';
+            }
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ]);
+            }
 
             DB::beginTransaction();
             try {
                 $input = $request->all();
-                if(isset($input['affiliate_type_id']) && $input['affiliate_type_id'] != 3 )
-                {
-                    $input['is_company'] = true;
-                }
-                else
-                {
-                    $input['is_company'] = false;
-                }
-                // Save data if validation passes
+
+                // Create user
                 $user = User::create([
                     'volunteer' => 1,
-                    'username' => $input['username'] ?? null,
-                    'email' => $input['email'],
                     'firstname' => $input['firstname'],
                     'lastname' => $input['lastname'],
-                    'password' => Hash::make($input['password']),
                     'middle_name' => $input['middle_name'],
+                    'email' => $input['email'],
+                    'password' => Hash::make($input['password']),
                     'birthday' => $input['birthday'],
-                    'is_company' => $input['is_company'], // Set based on affiliate type
-                    'company_name' => $input['company_name'] ?? null,
-                    'school' => $input['school'] ?? null,
-                    'school_address' => $input['school_address'] ?? null,
                     'emergency_contact_name' => $input['emergency_contact_name'],
                     'emergency_contact_number' => $input['emergency_contact_number'],
                     'affiliate_type_id' => $input['affiliate_type_id'],
-                    'company_id' => $input['company_id'] ?? null,
                     'cluster_id' => $input['cluster_id'] ?? null,
+                    'company_id' => $input['company_id'] ?? null,
+                    'external_company_name' => $input['external_company_name'] ?? null,
+                    'referral_source' => $input['referral_source']
                 ]);
 
-                // Assign volunteer role
-                $role = Role::where('name', 'volunteer')->first();
-                $user->assignRole($role);
+                // Attach programs
+                if (!empty($input['program_ids'])) {
+                    $programData = [];
+                    foreach ($input['program_ids'] as $programId) {
+                        if ($programId !== 'other') {
+                            $programData[] = [
+                                'program_id' => $programId,
+                                'volunteer_id' => $user->id,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
+                    }
 
-                // Save programs with primary program
-                foreach ($input['program_ids'] as $index => $programId) {
-                    DB::table('program_volunteer')->insert([
-                        'program_id' => $programId,
-                        'volunteer_id' => $user->id,
-                        'is_primary' => $index === 0, // First program is primary
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                    if (!empty($programData)) {
+                        DB::table('program_volunteer')->insert($programData);
+                    }
 
-                    if ($index === 0) {
-                        DB::table('users')->where('id', $user->id)->update(['program_id' => $programId]);
+                    // Handle other program if specified
+                    if (in_array('other', $input['program_ids']) && !empty($input['other_program'])) {
+                        $user->update(['other_program' => $input['other_program']]);
                     }
                 }
 
-                $user->notify(new VerifyEmailNotification());
-
                 DB::commit();
-                return redirect()->route('verification.sent');
+                return response()->json(['success' => true]);
 
             } catch (\Exception $e) {
                 DB::rollBack();
-                throw $e;
+                Log::error('Volunteer registration failed', ['error' => $e->getMessage()]);
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['general' => 'Registration failed. Please try again.']
+                ]);
             }
         } catch (\Exception $e) {
-            Log::error('Volunteer registration failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
+            Log::error('Volunteer registration failed', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Registration failed: ' . $e->getMessage(),
-                'trace' => config('app.debug') ? $e->getTraceAsString() : null
-            ], 500);
+                'errors' => ['general' => 'Registration failed. Please try again.']
+            ]);
         }
     }
 
@@ -193,4 +209,6 @@ class VolunteerRegistrationController extends Controller
 
         return redirect()->route('filament.admin.pages.dashboard')->with('status', 'Email verified successfully!');
     }
+
+
 }
