@@ -28,7 +28,7 @@ class Login extends BasePage
     {
         return $form
             ->schema([
-                $this->getEmailFormComponent()->label('Email'),
+                $this->getEmailFormComponent()->label('Email Address'),
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
                 Placeholder::make('data_privacy_notice')

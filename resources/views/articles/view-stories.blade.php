@@ -81,9 +81,11 @@
                                                     </p>
                                                 </div>
                                             </div>
-
-                                            <div class="h-[40px] w-full lg:max-w-[300px] bg-[#FF781E] flex items-center justify-center p-2 rounded-xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
-                                                <p class="font-medium text-sm md:text-base text-white">READ MORE</p>
+                                            <div class="h-[40px] w-full lg:max-w-[300px] bg-[#FF781E] rounded-xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                                <a href="{{ url('/article'). '/' . $article->slug }}"
+                                                   class="h-full w-full flex items-center justify-center p-2">
+                                                    <p class="font-medium text-sm md:text-base text-white">READ MORE</p>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -114,9 +116,11 @@
                                                 </p>
                                             </div>
                                         </div>
-
-                                        <div class="h-[36px] w-full bg-[#FF781E] flex items-center justify-center p-2 rounded-xl hover:bg-[#FF9141] transition duration-300 ease-in-out mt-auto">
-                                            <p class="font-medium text-sm text-white">READ MORE</p>
+                                        <div class="h-[36px] w-full bg-[#FF781E] rounded-xl hover:bg-[#FF9141] transition duration-300 ease-in-out mt-auto">
+                                            <a href="{{ url('/article'). '/' . $article->slug }}"
+                                               class="h-full w-full flex items-center justify-center p-2">
+                                                <p class="font-medium text-sm text-white">READ MORE</p>
+                                            </a>
                                         </div>
                                     </div>
                                 @endif

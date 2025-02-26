@@ -210,8 +210,8 @@
                             @foreach ($record->facilitators as $facilitator)
                                 <li class="text-md">{{$facilitator->name}}</li>
                             @endforeach
-                        </ul>
-                        {{-- @if($record->getMedia('event-attachments')->count() > 0)
+                        </ul>d
+                        @if($record->getMedia('event-attachments')->count() > 0)
                             <div>
                                 <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
                                 <div class="flex flex-col items-start justify-start gap-2">
@@ -222,12 +222,12 @@
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
                                             </svg>
-                                            <span class="underline">Download File</span>
+                                            <span class="underline">{{ $media->file_name }}</span>
                                         </a>
                                     @endforeach
                                 </div>
                             </div>
-                        @endif --}}
+                        @endif
 
                         <br>
                         <div class="{{ $record->tags->isEmpty() ? 'hidden' : '' }}">

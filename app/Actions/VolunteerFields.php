@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use libphonenumber\PhoneNumberType as libPhoneNumberType;
 
 final class VolunteerFields
 {
@@ -66,13 +67,13 @@ final class VolunteerFields
                         ->options(fn () => Cluster::all()->pluck('name', 'id')->toArray())
                         ->live(),
 
-                    Select::make('company_name')
-                        ->required()
-                        ->columnSpanFull()
-                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 2)
-                        ->options(fn () => Company::all()->pluck('name', 'id')->toArray())
-                        ->searchable()
-                        ->live(),
+                    // Select::make('company_name')
+                    //     ->required()
+                    //     ->columnSpanFull()
+                    //     ->visible(fn (Get $get) => $get('affiliate_type_id') == 2)
+                    //     ->options(fn () => Company::all()->pluck('name', 'id')->toArray())
+                    //     ->searchable()
+                    //     ->live(),
 
                     TextInput::make('company_name')
                         ->required()
@@ -111,8 +112,10 @@ final class VolunteerFields
 
                     PhoneInput::make('company_contact_number')
                         ->label('Contact number')
-                        ->default('PH')
-                        ->Placeholder('+63(xxx) xxx xxxx'),
+                        ->defaultCountry('PH')
+                        ->validateFor(
+                            type: libPhoneNumberType::MOBILE | libPhoneNumberType::FIXED_LINE
+                        ),
 
                     TextInput::make('company_email')
                         ->email()
@@ -128,7 +131,9 @@ final class VolunteerFields
                     PhoneInput::make('emergency_contact_number')
                         ->label('Contact number')
                         ->defaultCountry('PH')
-                        ->Placeholder('+63(xxx) xxx xxxx'),
+                        ->validateFor(
+                            type: libPhoneNumberType::MOBILE | libPhoneNumberType::FIXED_LINE
+                        ),
 
                 ]),
 
