@@ -484,7 +484,7 @@ class EventResource extends Resource implements HasShieldPermissions
                                 $query->where('attendee_id', auth()->id());
                             });
                         }elseif($data['status'] == 'upcoming_events'){
-                            $query->where('start_date', '>', now()->subDay());
+                            $query->where('start_date', '>', now()->startOfDay());
                         }
 
                         return $query;

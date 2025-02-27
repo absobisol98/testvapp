@@ -1,17 +1,11 @@
 @php
     $record = $getRecord();
-    $banner = $record->media->first();
+    $banner = $record->getMedia('event-banner-attachments')?->first()?->getUrl();
 @endphp
 <div class="max-h-[300px] h-[300px] flex flex-col">
-    @isset($banner)
-        <div class="overflow-hidden mb-2 w-full h-[60%] bg-cover bg-center bg-no-repeat rounded-xl"
-            style="background-image: url('{{ asset('storage/event-banner-attachments/' . $banner->file_name) }}');">
-        </div>
-    @else
-        <div class="overflow-hidden mb-2 w-full h-[60%] bg-cover bg-center bg-no-repeat rounded-xl"
-        style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
-    </div>
-    @endisset
+    <div class="overflow-hidden mb-2 w-full h-[60%] bg-cover bg-center bg-no-repeat rounded-xl">
+        <img class="w-full h-full object-cover" src="{{ $banner ?? url('img/ayala-foundation-bg.jpg') }}" alt="">
+</div>
 
     <div class="flex flex-col flex-grow">
         <div class="font-bold text-2xl mb-2 truncate event-title capitalize">{{$record->title}}</div>
