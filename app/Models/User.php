@@ -65,6 +65,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'external_company_name',
         'referral_source',
         'other_program',
+        'nickname',
+        'age_range',
     ];
 
     /**
@@ -95,7 +97,19 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     }
 
 
-
+    public function getFormattedAgeRangeAttribute()
+    {
+        return match($this->age_range) {
+            '10-17' => '10-17 years old',
+            '18-24' => '18-24 years old',
+            '25-34' => '25-34 years old',
+            '35-44' => '35-44 years old',
+            '45-54' => '45-54 years old',
+            '55-64' => '55-64 years old',
+            '65+' => '65 years and above',
+            default => 'Not specified'
+        };
+    }
 
     // Custom method to generate verification token
     public function generateVerificationToken()

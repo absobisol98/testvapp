@@ -71,13 +71,13 @@
                                     <span class="text-danger text-red-400 text-sm username_err"></span>
                                 </div> --}}
                                 <div>
-                                    <label class="block text-sm font-semibold required">First Name</label>
+                                    <label class="block text-sm font-semibold required">Given Name</label>
                                     <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="firstname"/>
                                     <span class="text-danger text-red-400 text-sm firstname_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold">Middle Name</label>
-                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="middle_name"/>
+                                    <label class="block text-sm font-semibold">Nickname</label>
+                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="nickname"/>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold required">Last Name</label>
@@ -90,9 +90,18 @@
                                     <span class="text-danger text-red-400 text-sm email_err"></span>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold required">Birthday</label>
-                                    <input type="date" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="birthday"/>
-                                    <span class="text-danger text-red-400 text-sm birthday_err"></span>
+                                    <label class="block text-sm font-semibold required">Age Range</label>
+                                    <select class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="age_range">
+                                        <option value="" disabled selected></option>
+                                        <option value="10-17">10-17 years old</option>
+                                        <option value="18-24">18-24 years old</option>
+                                        <option value="25-34">25-34 years old</option>
+                                        <option value="35-44">35-44 years old</option>
+                                        <option value="45-54">45-54 years old</option>
+                                        <option value="55-64">55-64 years old</option>
+                                        <option value="65+">65 years and above</option>
+                                    </select>
+                                    <span class="text-danger text-red-400 text-sm age_range_err"></span>
                                 </div>
 
                                 <!-- Program Interest Dropdown -->
@@ -330,14 +339,14 @@
 
             let isValid = true;
             const requiredFields = {
-                firstname: 'First Name',
-                lastname: 'Last Name',
-                email: 'Email',
-                birthday: 'Birthday',
-                emergency_contact_name: 'Emergency Contact Name',
-                emergency_contact_number: 'Emergency Contact Number',
-                password: 'Password',
-                passwordConfirmation: 'Confirm Password'
+            firstname: 'Given Name',
+            lastname: 'Last Name',
+            email: 'Email',
+            age_range: 'Age Range',
+            emergency_contact_name: 'Emergency Contact Name',
+            emergency_contact_number: 'Emergency Contact Number',
+            password: 'Password',
+            passwordConfirmation: 'Confirm Password'
             };
 
             if ($('#ayala_employee').is(':checked')) {
@@ -615,9 +624,10 @@
                     email: $("input[name='email']").val(),
                     firstname: $("input[name='firstname']").val(),
                     lastname: $("input[name='lastname']").val(),
-                    middle_name: $("input[name='middle_name']").val(),
+                    nickname: $("input[name='nickname']").val(), // Changed from middle_name
+                    age_range: $("select[name='age_range']").val(), // Changed from birthday
                     password: $("input[name='password']").val(),
-                    birthday: $("input[name='birthday']").val(),
+                    passwordConfirmation: $("input[name='passwordConfirmation']").val(),
                     emergency_contact_name: $("input[name='emergency_contact_name']").val(),
                     emergency_contact_number: $("input[name='emergency_contact_number']").val(),
                     affiliate_type_id: parseInt(affiliateTypeId),
