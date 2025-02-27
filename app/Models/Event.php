@@ -189,8 +189,7 @@ class Event extends Model implements HasMedia
     }
     public function companies(): BelongsToMany
     {
-        return $this->BelongsToMany(Company::class, 'event_companies', 'event_id', 'company_id')
-            ->withTimestamps();
+        return $this->BelongsToMany(Company::class, 'event_companies');
     }
     public function tags(): BelongsToMany
     {
@@ -227,5 +226,45 @@ class Event extends Model implements HasMedia
     public function bulletins()
     {
         return $this->hasMany(EventBulletin::class, 'event_id');
+    }
+
+    public function getStatus(): array
+    {
+        $now = now();
+        $startDate = \Carbon\Carbon::parse($this->start_date);
+        $endDate = \Carbon\Carbon::parse($this->end_date);
+
+        if ($now->isAfter($endDate)) {
+            return [
+                'text' => 'Finished',
+                'color' => 'gray',
+                'badge_class' => 'bg-gray-100 text-gray-800',
+                'icon' => 'heroicon-o-check-circle',
+            ];
+        } elseif ($now->isBefore($startDate)) {
+            // Use floor() to round down to whole number of days
+            $daysUntil = floor($now->floatDiffInDays($startDate));
+            $status = 'Upcoming';
+
+            if ($daysUntil < 7) {
+                $status = $daysUntil > 0
+                    ? "Starting in {$daysUntil} " . ($daysUntil == 1 ? "day" : "days")
+                    : "Starting today";
+            }
+
+            return [
+                'text' => $status,
+                'color' => 'info',
+                'badge_class' => 'bg-blue-100 text-blue-800',
+                'icon' => 'heroicon-o-clock',
+            ];
+        } else {
+            return [
+                'text' => 'Active',
+                'color' => 'success',
+                'badge_class' => 'bg-green-100 text-green-800',
+                'icon' => 'heroicon-o-play',
+            ];
+        }
     }
 }

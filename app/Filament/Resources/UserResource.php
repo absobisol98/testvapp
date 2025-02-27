@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use App\Actions\UserCreateField;
+use Illuminate\Support\Facades\Log;
+
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
@@ -45,12 +47,12 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('media')->label('Avatar')
-                    ->collection('avatars')
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('username')->label('Username')
-                    ->description(fn(Model $record) => $record->firstname . ' ' . $record->lastname)
-                    ->searchable(),
+                SpatieMediaLibraryImageColumn::make('avatar')
+                ->label('Avatar')
+                ->collection('avatars')
+                ->circular()
+                ->conversion('thumb')
+                ->size(40),
                 Tables\Columns\TextColumn::make('roles.name')->label('Role')
                     ->formatStateUsing(fn($state): string => Str::headline($state))
                     ->colors(['info'])
@@ -123,30 +125,44 @@ class UserResource extends Resource
 
     public static function doResendEmailVerification($settings = null, $user): void
     {
-        if (!method_exists($user, 'notify')) {
-            $userClass = $user::class;
+        Log::info("Starting email verification for user: {$user->email}");
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
-        }
+        try {
+            if (!method_exists($user, 'notify')) {
+                $userClass = $user::class;
+                Log::error("Model [{$userClass}] does not have a [notify()] method.");
+                throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+            }
 
-        if ($settings->isMailSettingsConfigured()) {
-            $notification = new VerifyEmail();
-            $notification->url = Filament::getVerifyEmailUrl($user);
+            if ($settings->isMailSettingsConfigured()) {
+                Log::info("Mail settings configured properly.");
 
-            $settings->loadMailSettingsToConfig();
+                $settings->loadMailSettingsToConfig();
 
-            $user->notify($notification);
+                // Use your custom notification that works in VolunteerRegistrationController
+                $notification = new \App\Notifications\VerifyEmailNotification();
+                $user->notify($notification);
 
+                Log::info("Custom notification sent successfully to {$user->email}");
 
+                Notification::make()
+                    ->title(__('resource.user.notifications.verify_sent.title'))
+                    ->success()
+                    ->send();
+            } else {
+                Notification::make()
+                    ->title(__('resource.user.notifications.verify_warning.title'))
+                    ->body(__('resource.user.notifications.verify_warning.description'))
+                    ->warning()
+                    ->send();
+            }
+        } catch (\Exception $e) {
+            // Log error and show notification
+            Log::error("Error during email verification: {$e->getMessage()}");
             Notification::make()
-                ->title(__('resource.user.notifications.verify_sent.title'))
-                ->success()
-                ->send();
-        } else {
-            Notification::make()
-                ->title(__('resource.user.notifications.verify_warning.title'))
-                ->body(__('resource.user.notifications.verify_warning.description'))
-                ->warning()
+                ->title(__('resource.user.notifications.verify_error.title'))
+                ->body(__('resource.user.notifications.verify_error.description'))
+                ->danger()
                 ->send();
         }
     }

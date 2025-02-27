@@ -25,7 +25,7 @@ final class UserCreateField
         return [
             Group::make()
             ->schema([
-                SpatieMediaLibraryFileUpload::make('media')
+                SpatieMediaLibraryFileUpload::make('avatar')
                     ->hiddenLabel()
                     ->avatar()
                     ->collection('avatars')
@@ -38,8 +38,9 @@ final class UserCreateField
                         ->color('info')
                         ->action(fn(MailSettings $settings, Model $record) => static::doResendEmailVerification($settings, $record)),
                 ])
-                    // ->hidden(fn (User $user) => $user->email_verified_at != null)
+                    ->hidden(fn (User $user) => $user->email_verified_at != null)
                     ->hiddenOn('create')
+                    ->hiddenOn('edit')
                     ->fullWidth(),
 
                Section::make()
@@ -88,16 +89,6 @@ final class UserCreateField
                 Tab::make('Details')
                     ->icon('heroicon-o-information-circle')
                     ->schema([
-                        TextInput::make('username')
-                            ->required()
-                            ->maxLength(255)
-                            ->live()
-                            ->rules(function ($record) {
-                                $userId = $record?->id;
-                                return $userId
-                                    ? ['unique:users,username,' . $userId]
-                                    : ['unique:users,username'];
-                            }),
 
                         TextInput::make('email')
                             ->email()

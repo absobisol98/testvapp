@@ -40,33 +40,38 @@ class Thumbnail extends ListRecords
                 View::make('filament.tables.columns.event-thumbnail'),
             ])
             ->filters([
-                Filter::make('status')
-                    ->label('Type')
+                // Replace existing status filter with the same one from EventResource
+                Filter::make('event_status')
+                    ->label('Category')
                     ->form([
                         Select::make('status')
-                            ->label('Type')
-                            ->selectablePlaceholder(false)
-                            ->default('upcoming_events')
+                            ->label('Category')
                             ->options([
-                                'all' => 'All Events',
-                                'upcoming_events' => 'Upcoming Events',
-                                'joined' => 'Joined Events',
-                            ]),
+                                'all' => 'All Opportunities',
+                                'active' => 'Active Opportunities',
+                                'upcoming' => 'Upcoming Opportunities',
+                                'finished' => 'Finished Opportunities',
+                                'joined' => 'My Opportunities',
+                            ])
+                            ->default('upcoming')
+                            ->selectablePlaceholder(false),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
+                        $now = now();
 
-                        if($data['status'] === 'joined') {
-                            $query->whereHas('attendees', function (Builder $query) {
+                        return match($data['status'] ?? 'upcoming') {
+                            'active' => $query->where('start_date', '<=', $now)
+                                ->where('end_date', '>=', $now),
+                            'upcoming' => $query->where('start_date', '>', $now),
+                            'finished' => $query->where('end_date', '<', $now),
+                            'joined' => $query->whereHas('attendees', function (Builder $query) {
                                 $query->where('attendee_id', auth()->id());
-                            });
-                        }elseif($data['status'] == 'upcoming_events'){
-                            $query->where('start_date', '>=', now()->startOfDay());
-                        }
-
-                        return $query;
+                            }),
+                            default => $query,
+                        };
                     }),
 
-                // Add new search filters
+                // Keep the rest of your filters
                 Filter::make('search_title')
                     ->form([
                         \Filament\Forms\Components\TextInput::make('search_title')

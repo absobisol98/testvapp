@@ -417,6 +417,16 @@ class EventResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                ->label('Status')
+                ->getStateUsing(function (Event $record) {
+                    return $record->getStatus()['text'];
+                })
+                ->badge()
+                ->color(fn (Event $record) => $record->getStatus()['color'])
+                ->icon(fn (Event $record) => $record->getStatus()['icon'])
+                ->searchable(false)
+                ->sortable(false),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
 //                Tables\Columns\TextColumn::make('event_type_id')
@@ -464,6 +474,35 @@ class EventResource extends Resource implements HasShieldPermissions
                     ->searchable(),
             ])
             ->filters([
+                Filter::make('event_status')
+                    ->label('Event Status')
+                    ->form([
+                        Forms\Components\Select::make('status')
+                            ->label('')
+                            ->options([
+                                'all' => 'All Events',
+                                'active' => 'Active Events',
+                                'upcoming' => 'Upcoming Events',
+                                'finished' => 'Finished Events',
+                                'joined' => 'My Registered Events',
+                            ])
+                            ->default('all')
+                            ->selectablePlaceholder(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        $now = now();
+
+                        return match($data['status'] ?? 'all') {
+                            'active' => $query->where('start_date', '<=', $now)
+                                ->where('end_date', '>=', $now),
+                            'upcoming' => $query->where('start_date', '>', $now),
+                            'finished' => $query->where('end_date', '<', $now),
+                            'joined' => $query->whereHas('attendees', function (Builder $query) {
+                                $query->where('attendee_id', auth()->id());
+                            }),
+                            default => $query,
+                        };
+                    }),
                 Filter::make('status')
                     ->label('')
                     ->form([

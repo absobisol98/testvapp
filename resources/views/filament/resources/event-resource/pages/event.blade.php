@@ -40,7 +40,7 @@
 @php
     // Add this at the top of your file with other PHP calculations
     $user = auth()->user();
-    $isMinor = $user->birthday && Carbon\Carbon::parse($user->birthday)->age < 18;
+    $isMinor = $user->age_range === '10-17';
     $requiresAttachment = $isMinor || ($record->attachment_required ?? false);
     $attachmentDescription = $isMinor
         ? 'Please upload parental consent document (required for minors)'
@@ -85,7 +85,8 @@
 
     <div class="w-full flex items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
-        <div class="grid grid-cols-3 gap-2">
+
+        <div class="grid grid-cols-4 gap-2">
         @php
             $user = auth()->user();
             $isSuperAdmin = $user->hasRole('super_admin');
@@ -103,6 +104,16 @@
                 <!-- Mobile/Tablet Icon -->
                 <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+            </a>
+
+            <a href="{{ route('event.export-registrants', ['event' => $record->id]) }}"
+            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+                <!-- Desktop Text -->
+                <p class="text-base font-normal text-white hidden md:block">Export Volunteers</p>
+                <!-- Mobile/Tablet Icon -->
+                <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
             </a>
 
@@ -355,6 +366,8 @@
         ->where('volunteer_id', auth()->id())
         ->with(['event_slot', 'status'])
         ->get();
+
+
 @endphp
 
 <div class="w-full col-span-3 p-5 gap-4 bg-gray-100 rounded" id="volunteer-section">
@@ -373,9 +386,13 @@
                                 {{ Carbon\Carbon::parse($registration->event_slot->end_time)->format('g:i A') }}
                             </p>
                             <span class="inline-flex mt-2 items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit
-                                {{ $registration->status_id == 1 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
-                                {{ $registration->status_id == 1 ? 'Pending Approval' : 'Approved' }}
-                            </span>
+                            {{ $registration->status_id == 1 ? 'bg-yellow-100 text-yellow-800' :
+                               ($registration->status_id == 2 ? 'bg-green-100 text-green-800' :
+                                                                'bg-red-100 text-red-800') }}">
+                            {{ $registration->status_id == 1 ? 'Pending Approval' :
+                               ($registration->status_id == 2 ? 'Approved' :
+                                                                'Skills/Qualification Mismatch') }}
+                        </span>
 
 
 
@@ -423,6 +440,13 @@
                                 ->where('slot_type_id', $slot->id)
                                 ->where('status_id', '!=', 3)
                                 ->count() > 0;
+
+                            // Check if the user was ever REJECTED for this slot
+                            $userWasRejected = $record->registrations
+                                ->where('slot_type_id', $slot->id)
+                                ->where('volunteer_id', auth()->id())
+                                ->where('status_id', 3)
+                                ->count() > 0;
                         @endphp
 
                         <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
@@ -457,33 +481,44 @@
                                                 Opportunity Finished
                                             </span>
                                         @endif
-                                    @elseif($isAvailable && !$userRegistered)
+                                        @elseif($userWasRejected)
+                                        <span class="h-10 w-[350px] bg-red-100 text-red-800 flex items-center justify-center rounded-full">
+                                            Skills/Qualification Mismatch
+                                        </span>
+
+                                        @elseif($isAvailable && !$userRegistered)
                                         <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
                                               method="POST"
                                               enctype="multipart/form-data"
-                                              class="min-w-full flex justify-between">
+                                              class="w-full flex flex-col items-center">
                                             @csrf
 
                                             @if($requiresAttachment)
-                                                <div class="mb-4">
-                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                        {{ $attachmentDescription }}
-                                                    </label>
-                                                    <input type="file"
-                                                           name="media[]"
-                                                           multiple
-                                                           class="block w-full text-sm text-gray-500
-                                                                  file:mr-4 file:py-2 file:px-4
-                                                                  file:rounded-full file:border-0
-                                                                  file:text-sm file:font-semibold
-                                                                  file:bg-[#F55E1D] file:text-white
-                                                                  hover:file:bg-[#FF8252]"
-                                                           required>
-                                                    @error('media')
-                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                                    @enderror
+                                            <div class="mb-4 w-full px-4">
+                                                <div class="p-3 bg-blue-50 text-blue-700 rounded-lg mb-2 text-sm">
+                                                    <p class="font-semibold flex items-center">
+                                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    </p>
+                                                    <p class="mt-1">{{ $attachmentDescription }}</p>
                                                 </div>
-                                            @endif
+
+                                                <input type="file"
+                                                       name="media[]"
+                                                       multiple
+                                                       class="block w-full text-sm text-gray-500
+                                                              file:mr-4 file:py-2 file:px-4
+                                                              file:rounded-full file:border-0
+                                                              file:text-sm file:font-semibold
+                                                              file:bg-[#F55E1D] file:text-white
+                                                              hover:file:bg-[#FF8252]"
+                                                       required>
+                                                @error('media')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        @endif
 
                                             <button type="submit"
                                                     class="h-10 w-[200px] bg-[#F55E1D] text-white font-medium rounded-full hover:bg-[#FF8252]">

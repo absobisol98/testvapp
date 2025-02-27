@@ -28,22 +28,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Company extends Model
 {
-	use SoftDeletes;
-	protected $table = 'companies';
+    use SoftDeletes;
+    protected $table = 'companies';
 
-	protected $casts = [
-		'cluster_id' => 'int'
-	];
+    protected $casts = [
+        'cluster_id' => 'int'
+    ];
 
-	protected $fillable = [
-		'name',
-		'cluster_id'
-	];
+    protected $fillable = [
+        'name',
+        'cluster_id'
+    ];
 
-	public function cluster()
-	{
-		return $this->belongsTo(Cluster::class);
-	}
+    public function cluster()
+    {
+        return $this->belongsTo(Cluster::class);
+    }
 
     /**
      * Get the events associated with the company through event_companies table
@@ -60,5 +60,13 @@ class Company extends Model
     public function eventAttendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class);
+    }
+
+    /**
+     * Get all users associated with this company
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
     }
 }

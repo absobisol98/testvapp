@@ -11,6 +11,9 @@ use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
+use League\Csv\Writer;
 
 class EventRegistrationController extends Controller
 {
@@ -19,7 +22,7 @@ class EventRegistrationController extends Controller
         // Add validation rules
         $validationRules = [
             'media.*' => ['file', 'max:10240'], // 10MB max
-            'privacy_policy' => ['required', 'accepted'], // Add privacy policy validation
+
         ];
 
         // Add required validation if needed
@@ -69,7 +72,7 @@ class EventRegistrationController extends Controller
         }
 
         // Check if registration is still open
-        if (Carbon::now()->isAfter($event->registration_end_date)) {
+        if ($event->registration_end_date && Carbon::now()->isAfter($event->registration_end_date)) {
             Notification::make()
                 ->title('Registration Failed')
                 ->body('Registration period for this event has ended.')
@@ -260,5 +263,85 @@ class EventRegistrationController extends Controller
         }
 
         return true;
+    }
+
+    /**
+     * Export event registrants to CSV
+     */
+    public function exportRegistrants(Event $event)
+    {
+        // Check if user is authorized (Super Admin, Admin, Creator, or Facilitator)
+        $user = Auth::user();
+        $isSuperAdmin = $user->hasRole('super_admin');
+        $isAdmin = $user->hasRole('admin');
+        $isCreator = $event->created_by == $user->id;
+        $isFacilitator = $event->facilitators->contains($user->id);
+
+        if (!$isSuperAdmin && !$isAdmin && !$isCreator && !$isFacilitator) {
+            return back()->with('error', 'You are not authorized to export volunteer registrations for this event.');
+        }
+
+        // Get all registrants with related data
+        $registrations = EventRegistration::where('event_id', $event->id)
+            ->with(['volunteer', 'event_slot', 'status'])
+            ->get();
+
+        // Create CSV writer
+        $csv = Writer::createFromString('');
+
+        // Add header row
+        $csv->insertOne([
+            'Registration ID',
+            'Volunteer Name',
+            'Email',
+            'Phone',
+            'Company',
+            'Position',
+            'Shift Name',
+            'Shift Time',
+            'Status',
+            'Registration Date'
+        ]);
+
+        // Add data rows
+        foreach ($registrations as $registration) {
+            $volunteer = $registration->volunteer;
+            $company = $volunteer->company ? $volunteer->company->name : 'N/A';
+            $position = $volunteer->position ?? 'N/A';
+
+            $shiftTime = 'N/A';
+            if ($registration->event_slot) {
+                $startTime = \Carbon\Carbon::parse($registration->event_slot->start_time)->format('g:i A');
+                $endTime = \Carbon\Carbon::parse($registration->event_slot->end_time)->format('g:i A');
+                $shiftTime = "$startTime - $endTime";
+            }
+
+            $csv->insertOne([
+                $registration->id,
+                $volunteer->firstname . ' ' . $volunteer->lastname,
+                $volunteer->email,
+                $volunteer->phone ?? 'N/A',
+                $company,
+                $position,
+                $registration->event_slot ? $registration->event_slot->shift_name : 'N/A',
+                $shiftTime,
+                $registration->status ? $registration->status->name : 'N/A',
+                $registration->created_at->format('Y-m-d H:i:s')
+            ]);
+        }
+
+        // Generate file name
+        $fileName = 'opportunity-' . $event->title . '-registrants-' . now()->format('Y-m-d') . '.csv';
+
+        // Create response
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        return Response::make($csv->getContent(), 200, $headers);
     }
 }
