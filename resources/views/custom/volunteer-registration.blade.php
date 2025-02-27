@@ -26,6 +26,26 @@
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
             color: black !important;
         }
+
+        .standard-input {
+            @apply shadow-lg w-full p-2 border border-gray-300 rounded text-black;
+            height: 42px; /* Standardize height */
+        }
+
+        .standard-select {
+            @apply shadow-lg w-full p-2 bg-white border-gray-300 text-gray-900 rounded;
+            height: 42px; /* Standardize height */
+        }
+
+        /* Style Select2 to match standard size */
+        .select2-container--default .select2-selection--multiple,
+        .select2-container--default .select2-selection--single {
+            min-height: 42px !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding: 5px 8px !important;
+        }
     </style>
 
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
@@ -72,26 +92,26 @@
                                 </div> --}}
                                 <div>
                                     <label class="block text-sm font-semibold required">Given Name</label>
-                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="firstname"/>
+                                    <input type="text" class="standard-input" name="firstname"/>
                                     <span class="text-danger text-red-400 text-sm firstname_err"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold">Nickname</label>
-                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="nickname"/>
+                                    <input type="text" class="standard-input" name="nickname"/>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold required">Last Name</label>
-                                    <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="lastname"/>
+                                    <input type="text" class="standard-input" name="lastname"/>
                                     <span class="text-danger text-red-400 text-sm lastname_err"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold required">Email</label>
-                                    <input type="email" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="email"/>
+                                    <input type="email" class="standard-input" name="email"/>
                                     <span class="text-danger text-red-400 text-sm email_err"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold required">Age Range</label>
-                                    <select class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="age_range">
+                                    <select class="standard-select" name="age_range">
                                         <option value="" disabled selected></option>
                                         <option value="10-17">10-17 years old</option>
                                         <option value="18-24">18-24 years old</option>
@@ -105,9 +125,9 @@
                                 </div>
 
                                 <!-- Program Interest Dropdown -->
-                                <div class="mb-8">
-                                    <label class="block mb-2 text-white font-semibold">What programs are you interested in? (Multi-Select)</label>
-                                    <select id="program-select" class="shadow-lg w-full p-2 bg-white text-gray-900 rounded"
+                                <div class="">
+                                    <label class="block text-white font-semibold">What programs are you interested in? (Multi-Select)</label>
+                                    <select id="program-select" class="standard-select"
                                     name="program_ids[]"
                                     multiple
                                     required>
@@ -123,7 +143,7 @@
                                 <div id="other-program-field" class="mt-2 hidden">
                                     <input type="text"
                                         name="other_program"
-                                        class="shadow-lg w-full p-2 border border-gray-300 rounded text-black"
+                                        class="standard-input"
                                         placeholder="Please specify other program(s)"/>
                                     <span class="text-danger other_program_err"></span>
                                 </div>
@@ -131,9 +151,9 @@
 
                             <!-- How did you hear about us -->
                             <div class="mb-8">
-                                <label class="block mb-2 text-white font-semibold required">How did you hear about us?</label>
+                                <label class="block text-white font-semibold required">How did you hear about us?</label>
                                 <select id="referral-source"
-                                        class="shadow-lg w-full p-2 bg-white text-gray-900 rounded"
+                                        class="standard-select"
                                         name="referral_source[]"
                                         multiple
                                         required>
@@ -158,7 +178,7 @@
                             <!-- Right Side (Multi-Step Form) -->
                             <div class="p-8 lg:p-12 flex items-start justify-start">
                                 <div class="text-white w-full">
-                                    <h2 class="text-3xl font-normal mb-8">Company/Affiliation</h2>
+                                    <h2 class="text-3xl font-normal mb-4">Company/Affiliation</h2>
 
                                     <!-- Multi-Step Form Structure -->
 
@@ -182,9 +202,9 @@
                                             <div id="company-fields">
                                                 <!-- For Ayala Employees -->
                                                 <div id="ayala-fields">
-                                                    <div class="mb-4">
+                                                    <div class="">
                                                         <label class="block text-sm font-semibold required">Cluster</label>
-                                                        <select class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="cluster_id" id="clusterSelect">
+                                                        <select class="standard-select" name="cluster_id" id="clusterSelect">
                                                             <option value="" disabled selected></option>
                                                             @foreach ($clusters as $cluster)
                                                                 <option value="{{ $cluster->id }}">{{ $cluster->name }}</option>
@@ -192,9 +212,9 @@
                                                         </select>
                                                         <span class="text-danger cluster_id_err"></span>
                                                     </div>
-                                                    <div class="mb-4">
+                                                    <div class="">
                                                         <label class="block text-sm font-semibold required">Company Name</label>
-                                                        <select class="shadow-lg w-full p-2 bg-white text-gray-900 rounded" name="company_id" id="companySelect">
+                                                        <select class="standard-select" name="company_id" id="companySelect">
                                                             <option value="" disabled selected></option>
                                                             @foreach ($companies as $company)
                                                                 <option value="{{ $company->id }}" data-cluster="{{ $company->cluster_id }}">{{ $company->name }}</option>
@@ -208,7 +228,7 @@
                                                 <div id="non-ayala-fields" class="hidden">
                                                     <div class="mb-4">
                                                         <label class="block text-sm font-semibold required">Company Name</label>
-                                                        <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="external_company_name"/>
+                                                        <input type="text" class="standard-input" name="external_company_name"/>
                                                         <span class="text-danger external_company_name_err"></span>
                                                     </div>
                                                 </div>
@@ -216,12 +236,12 @@
 
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Name</label>
-                                            <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="emergency_contact_name"/>
+                                            <input type="text" class="standard-input" name="emergency_contact_name"/>
                                             <span class="text-danger text-red-400 text-sm text-sm emergency_contact_name_err"></span>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Emergency Contact Number</label>
-                                            <input type="text" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black"
+                                            <input type="text" class="standard-input"
                                                 name="emergency_contact_number" pattern="[0-9]*" inputmode="numeric"
                                                 maxlength="15"
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)"
@@ -230,27 +250,26 @@
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Password</label>
-                                            <input type="password" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="password"/>
+                                            <input type="password" class="standard-input" name="password"/>
                                             <span class="text-danger text-red-400 text-sm password_err"></span>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-semibold required">Confirm Password</label>
-                                            <input type="password" class="shadow-lg w-full p-2 border border-gray-300 rounded text-black" name="passwordConfirmation"/>
+                                            <input type="password" class="standard-input" name="passwordConfirmation"/>
                                             <span class="text-danger text-red-400 text-sm password_err"></span>
+                                        </div>
+                                        <div class="mt-6">
+                                            <input id="checkbox" type="checkbox" required />
+                                            <label class="text-color" for="checkbox">
+                                                &nbsp; I have read and agree to the Ayala Foundation's
+                                                <a href="{{ route('data-privacy-policy') }}" class="hover:underline text-color">Data Privacy Policy</a>.
+                                            </label>
                                         </div>
                                         <div class="flex justify-between">
                                             <button id="btn-register"
                                                     wire:confirm="Are you sure you want to save this form?"
                                                     class="w-full mt-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700">Register
                                             </button>
-                                        </div>
-
-                                        <div>
-                                            <input id="checkbox" type="checkbox" required />
-                                            <label class="text-color" for="checkbox">
-                                                &nbsp; I have read and agree to the Ayala Foundation's
-                                                <a href="{{ route('data-privacy-policy') }}" class="hover:underline text-color">Data Privacy Policy</a>.
-                                            </label>
                                         </div>
                                     </div>
                                 </div>
