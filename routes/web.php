@@ -11,6 +11,8 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SurveyResponseController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\EventBulletinController;
+use App\Http\Controllers\VolunteerExportController;
+use App\Http\Controllers\ChangePasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,7 +87,20 @@ Route::middleware(['auth'])->group(function () {
         ->name('event.post-bulletin');
     Route::delete('/events/{event}/bulletins/{bulletin}', [EventBulletinController::class, 'destroy'])
         ->name('event.delete-bulletin');
+
+    // Add this with your other event routes
+    Route::get('/events/{event}/export-registrants', [EventRegistrationController::class, 'exportRegistrants'])
+        ->name('event.export-registrants')
+        ->middleware(['auth']);
+
+    Route::get('/change-password', [ChangePasswordController::class, 'show'])->name('change-password');
+    Route::put('/change-password', [ChangePasswordController::class, 'update'])->name('change-password.update');
 });
+
+// Add this with your other routes
+        Route::post('/volunteers/export', [VolunteerExportController::class, 'export'])
+            ->name('volunteers.export')
+            ->middleware(['auth']);
 
 
 //Test Routes

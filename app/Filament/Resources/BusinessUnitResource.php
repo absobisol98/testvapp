@@ -75,13 +75,32 @@ class BusinessUnitResource extends Resource
                                     $company = \App\Models\Company::find($state);
                                     if ($company) {
                                         $set('name', $company->name);
+                                        $set('show_name', $company->name);
                                         $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $company->name);
                                         $set('slug', strtolower($slug));
+                                        $set('show_slug', strtolower($slug));
                                     }
                                 }
                             }),
+
+                            Forms\Components\Hidden::make('name')
+
+                            ->live(), // Make it reactive
+                            Forms\Components\Hidden::make('slug')
+
+                            ->live(), // Make it reactive
                     ])
                     ->columnSpanFull(),
+
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('manage_admins')
+                        ->label('Manage Admins')
+                        ->icon('heroicon-o-users')
+                        ->color('warning')
+                        ->url(fn ($record) => $record ? static::getUrl('manage-admins', ['record' => $record]) : null)
+                        ->visible(fn ($record) => $record && auth()->user()->can('update', $record))
+                        ->hidden(fn ($operation) => $operation === 'create'),
+                ])->columnSpanFull(),
 
                 SpatieMediaLibraryFileUpload::make('media')
                     ->label('Company Logo')
@@ -106,7 +125,8 @@ class BusinessUnitResource extends Resource
                     ->downloadable()
                     ->columnSpan(3),
 
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('show_name')
+                    ->label('Name')
                     ->required()
                     ->disabled()
                     ->columnSpan(3)
@@ -119,7 +139,8 @@ class BusinessUnitResource extends Resource
                             ->label('Nickname / Shortname')
                             ->maxLength(100),
 
-                        Forms\Components\TextInput::make('slug')
+                        Forms\Components\TextInput::make('show_slug')
+                            ->label('Slug')
                             ->disabled()
                             ->required()
                             ->unique(column: 'slug',ignoreRecord: true)
@@ -130,60 +151,6 @@ class BusinessUnitResource extends Resource
                 Forms\Components\Textarea::make('about')
                     ->rows(5)
                     ->columnSpanFull(),
-
-                Select::make('admins')
-                    ->label('Admins')
-                    ->helperText('Create or Assign BU Admins')
-                    ->relationship('admins', 'firstname')
-                    ->multiple()
-                    ->columnSpanFull()
-                    ->options(function (Get $get) {
-                        $clusterId = $get('cluster_id');
-                        $companyId = $get('company_id');
-
-                        if (!$clusterId || !$companyId) {
-                            return [];
-                        }
-
-                        $has_admin_in_other_BU = DB::table('business_unit_has_external_admin')
-                            ->get()
-                            ->pluck('user_id');
-
-                        return User::query()
-                            ->role('External Partner')
-                            ->where('cluster_id', $clusterId)
-                            ->where('company_id', $companyId)
-                            ->whereNotIn('id', $has_admin_in_other_BU)
-                            ->orderBy('firstname')
-                            ->get()
-                            ->pluck('name', 'id');
-                    })
-                    ->createOptionUsing(function ($data, $form) {
-                        $data['email_verified_at'] = now();
-                        $data['cluster_id'] = $form->getState()['cluster_id'];
-                        $data['company_id'] = $form->getState()['company_id'];
-
-                        $supplier = User::create($data);
-                        $form->model($supplier)->saveRelationships($supplier);
-
-                        $role = Role::where('name', 'External Partner')->first();
-
-                        DB::table('model_has_roles')->insert([
-                            'role_id' => $role->id,
-                            'model_id' => $supplier->id,
-                            'model_type' => 'App\Models\User',
-                        ]);
-
-                        Notification::make()
-                            ->title('User Created')
-                            ->success()
-                            ->send();
-
-                        return $supplier->id;
-                    })
-                    ->createOptionForm((new UserCreateField())->execute(true))
-                    ->live()
-                    ->disabled(fn (Get $get): bool => !$get('cluster_id') || !$get('company_id')),
 
                     Fieldset::make('Header')
                     ->schema([
@@ -284,9 +251,9 @@ class BusinessUnitResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('header_tagline')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('event_heading')
+                Tables\Columns\TextColumn::make('header_tagline')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('event_description')
+                Tables\Columns\TextColumn::make('header_description')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('createdBy.email')
                     ->searchable(),
@@ -305,6 +272,11 @@ class BusinessUnitResource extends Resource
                     ->icon('fas-eye')
                     ->color('warning')
                     ->url(fn (BusinessUnit $record): string  => route('businessunit.homepage.view',['slug' => $record->slug]),shouldOpenInNewTab:true),
+                Action::make('manage_admins')
+                    ->label('Manage Admins')
+                    ->icon('heroicon-o-users')
+                    ->url(fn (BusinessUnit $record): string => static::getUrl('manage-admins', ['record' => $record]))
+                    ->visible(fn (BusinessUnit $record): bool => auth()->user()->can('update', $record)),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -327,6 +299,7 @@ class BusinessUnitResource extends Resource
             'index' => Pages\ListBusinessUnits::route('/'),
             'create' => Pages\CreateBusinessUnit::route('/create'),
             'edit' => Pages\EditBusinessUnit::route('/{record}/edit'),
+            'manage-admins' => Pages\ManageBusinessUnitAdmins::route('/{record}/admins'),
         ];
     }
 }

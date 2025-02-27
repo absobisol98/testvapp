@@ -23,6 +23,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 use Carbon\Carbon;
+use App\Models\Volunteer;
 
 
 // #[ScopedBy([FilterVolunteerForExternalAdmin::class])]
@@ -67,6 +68,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'other_program',
         'nickname',
         'age_range',
+        'password_changed_at',
     ];
 
     /**
@@ -86,6 +88,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password_changed_at' => 'datetime',
         'password' => 'hashed',
         'referral_source' => 'array',
         'birthday' => 'date',
@@ -128,7 +131,14 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->getMedia('avatars')?->first()?->getUrl() ?? $this->getMedia('avatars')?->first()?->getUrl('thumb') ?? null;
+                // First try to get avatar from User model
+                $userAvatar = $this->getFirstMediaUrl('avatars');
+                if ($userAvatar) {
+                    return $userAvatar;
+                }
+
+
+                return null;
     }
 
     // Define an accessor for the 'name' attribute
@@ -419,5 +429,17 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             return $this->company->name ?? 'N/A';
         }
         return $this->external_company_name ?? 'N/A';
+    }
+
+    // Add this method to your User class
+    public function affiliate()
+    {
+        return $this->belongsTo(AffiliateType::class, 'affiliate_type_id');
+    }
+
+    // Add this relationship if not already present
+    public function volunteerModel()
+    {
+        return $this->hasOne(Volunteer::class, 'user_id', 'id');
     }
 }

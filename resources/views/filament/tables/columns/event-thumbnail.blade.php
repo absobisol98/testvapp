@@ -1,11 +1,25 @@
 @php
     $record = $getRecord();
     $banner = $record->getMedia('event-banner-attachments')?->first()?->getUrl();
+    $status = $record->getStatus();
 @endphp
-<div class="max-h-[300px] h-[300px] flex flex-col">
+
+<div class="max-h-[300px] h-[300px] flex flex-col relative">
+    <!-- Status Badge -->
+    <div class="absolute top-2 right-2 z-10">
+        <span class="px-2 py-1 text-xs font-medium rounded-full {{ $status['badge_class'] }}">
+            @if(isset($status['icon']))
+                <x-dynamic-component
+                    :component="$status['icon']"
+                    class="w-3 h-3 inline-block mr-1" />
+            @endif
+            {{ $status['text'] }}
+        </span>
+    </div>
+
     <div class="overflow-hidden mb-2 w-full h-[60%] bg-cover bg-center bg-no-repeat rounded-xl">
-        <img class="w-full h-full object-cover" src="{{ $banner ?? url('img/ayala-foundation-bg.jpg') }}" alt="">
-</div>
+        <img class="w-full h-full object-cover" src="{{ $banner ?? url('img/ayala-foundation-bg.jpg') }}" alt="{{ $record->title }}">
+    </div>
 
     <div class="flex flex-col flex-grow">
         <div class="font-bold text-2xl mb-2 truncate event-title capitalize">{{$record->title}}</div>

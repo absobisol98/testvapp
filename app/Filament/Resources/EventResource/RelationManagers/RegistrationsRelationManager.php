@@ -48,10 +48,11 @@ class RegistrationsRelationManager extends RelationManager
     {
         return auth()->user()->can('manage_registrations_event');
     }
-    
+
 
     public function table(Table $table): Table
     {
+
         return $table
             ->modifyQueryUsing(function (Builder $query){
                 if(auth()->user()->hasRole('External Partner')){ // If not super_admin
@@ -155,20 +156,29 @@ class RegistrationsRelationManager extends RelationManager
                     ->button()
                     ->requiresConfirmation()
                     ->form([
-                        Forms\Components\Textarea::make('message')
-                            ->placeholder('Your registration has been rejected...')
-                            ->maxLength(150)
-                            ->required(),
+                        Radio::make('rejection_reason')
+                            ->label('Rejection Reason')
+                            ->options([
+                                'positions_filled' => 'Positions already filled or unavailable',
+                                'skills_mismatch' => 'Mismatch in skills for the role',
+                            ])
+                            ->required()
                     ])
-                    ->action(function ($record, array $data){
+                    ->action(function ($record, array $data) {
+                        $reasonText = $data['rejection_reason'] === 'positions_filled'
+                            ? 'Positions already filled or unavailable'
+                            : 'Mismatch in skills for the role';
+
+                        $message = "{$reasonText}.\n\nWe are unable to offer you this position at this time, but we truly appreciate your willingness to contribute. Please stay tuned for upcoming openings or directly contact the program manager for this opportunity.";
 
                         $record->status_id = 3; // Status Reject
-                        $record->message = $data['message'];
+                        $record->message = $message;
                         $record->save();
 
                         // Notify the registrant
                         Notification::make()
-                            ->title($data['message'])
+                            ->title($reasonText)
+                            ->body($message)
                             ->color('warning')
                             ->icon('far-bell')
                             ->actions([
@@ -183,12 +193,18 @@ class RegistrationsRelationManager extends RelationManager
                             ->success()
                             ->send();
                     })
-                    ->visible(function ($record){
-                        if($record->status_id == 1){
-                            if(auth()->user()->can('manage_registrations_event')){
-                                return true;
-                            }
+                    ->visible(function ($record) {
+                        if ($record->status_id == 1) {
+                            $user = auth()->user();
+                            $isSuperAdmin = $user->hasRole('super_admin');
+                            $isAdmin = $user->hasRole('admin');
+                            $isCreator = $record->created_by == $user->id;
+                            $isFacilitator = $record->facilitators && $record->facilitators->contains($user->id);
+                            $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
+
+                            return $canManageEvent;
                         }
+                        return false;
                     }),
                 Action::make('Cancel')
                     ->color('warning')

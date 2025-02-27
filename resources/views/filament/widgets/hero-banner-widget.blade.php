@@ -80,7 +80,9 @@
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">0</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">
+                                {{ App\Models\Certificate::where('attendee_id', auth()->id())->count() }}
+                            </p>
                             <p class="text-sm font-bold text-[#03498D]">MY VOLUNTEER CERTIFICATES</p>
                         </div>
                     @endif

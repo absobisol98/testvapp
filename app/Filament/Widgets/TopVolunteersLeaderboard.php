@@ -72,7 +72,7 @@ class TopVolunteersLeaderboard extends BaseWidget
                         ->where('encoding_type', '!=', 3)
                         ->get()
                         ->sum(fn($attendance) => $attendance->get_totalHrs());
-                })   
+                })
                 ->numeric()
 
                 ->alignEnd(),
@@ -93,7 +93,7 @@ class TopVolunteersLeaderboard extends BaseWidget
                 ->preload(),
 
             SelectFilter::make('affiliate_type_id')
-                ->label('Category')
+                ->label('Affiliation')
                 ->options([
                     1 => 'Ayala',
                     2 => 'Non-Ayala'

@@ -18,6 +18,6 @@ class CreateEvent extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return route('filament.admin.resources.events.calendar');
+        return route('filament.admin.resources.events.index');
     }
 }

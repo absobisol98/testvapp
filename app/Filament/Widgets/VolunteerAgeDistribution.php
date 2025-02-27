@@ -60,4 +60,20 @@ class VolunteerAgeDistribution extends ChartWidget
     {
         return 'pie';
     }
+
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'display' => false,
+                ],
+            ],
+            'plugins' => [
+                'legend' => [
+                    'position' => 'right',
+                ],
+            ],
+        ];
+    }
 }
