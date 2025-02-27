@@ -140,7 +140,35 @@
                                             <div class="h-10 w-[200px] rounded-full bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
                                                 <p class="font-medium text-base text-white">READ MORE</p>
                                             </div>
+
                                         </a>
+
+                                        </div>
+
+                                        <p class="text-xl text-[#03498D] font-bold leading-none">{{ $item->title }}</p>
+                                        <div class="flex flex-row gap-1">
+                                            <p class="text-gray-600 text-xs">Written By:
+                                                <a href="#"
+                                                    class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
+                                                    {{ $item->author->name ?? 'Unknown' }} |
+                                                </a>
+                                            </p>
+                                            <p class="text-gray-600 text-xs">Date:
+                                                <a href="#"
+                                                    class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
+                                                    {{ $item->created_at->format('M j, Y') ?? 'N/A' }}
+                                                </a>
+                                            </p>
+                                        </div>
+                                        <p class="text-[14px]">{{ $item->content_overview }}</p>
+                                        <div class="w-full flex justify-center items-center">
+                                            <a href="{{ url('/article'). '/' . $item->slug }}">
+                                                <div class="h-10 w-[200px] rounded-full bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
+                                                    <p class="font-medium text-base text-white">READ MORE</p>
+                                                </div>
+                                            </a>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>

@@ -16,8 +16,11 @@
                     {{-- For AFI Admins --}}
                     @if (auth()->user()->hasRole('External Partner'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
+                            <a href="{{ route('filament.admin.resources.business-units.index') }}"
+                           class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $businessunit }}</p>
+                                <p class="text-sm font-bold text-[#03498D]">BUSINESS UNIT</p>
+                            </a>
                         </div>
 
 
@@ -27,13 +30,16 @@
                         </div> --}}
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $upcoming->count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">UPCOMING OPPORTUNITIES</p>
+                            <a href="{{ route('filament.admin.resources.events.index') }}"
+                               class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $upcoming->count() }}</p>
+                                <p class="text-sm font-bold text-[#03498D]">UPCOMING OPPORTUNITIES</p>
+                            </a>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$overall_hrs}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEER HOURS</p>
+                            <p class="text-sm font-bold text-[#03498D]">TOTAL HOURS RENDERED</p>
                         </div>
 
                         {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -48,14 +54,21 @@
                     {{-- For Volunteers --}}
                     @if (auth()->user()->hasRole('Volunteer'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$opportunities->count()}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">AVAILABLE OPPORTUNITIES</p>
+                            <a href="{{ route('filament.admin.resources.events.list') }}"
+                               class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$opportunities->count()}}</p>
+                                <p class="text-sm font-bold text-[#03498D]">AVAILABLE OPPORTUNITIES</p>
+                            </a>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$upcoming->count()}}</p>
-                            <p class="text-sm font-bold text-[#03498D]">MY UPCOMING OPPORTUNITIES</p>
+                            <a href="{{ route('filament.admin.resources.events.index') }}"
+                               class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$upcoming->count()}}</p>
+                                <p class="text-sm font-bold text-[#03498D]">MY UPCOMING OPPORTUNITIES</p>
+                            </a>
                         </div>
+                        {{-- @dd($upcoming); --}}
 
                         {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
@@ -74,10 +87,13 @@
 
                     {{-- For Partners --}}
                     @if (auth()->user()->hasRole('super_admin'))
-                        <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                    <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
+                        <a href="{{ route('filament.admin.resources.volunteers.index') }}"
+                           class="hover:text-[#FF9141] transition-colors duration-200">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
                             <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
-                        </div>
+                        </a>
+                    </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">97</p>
@@ -85,8 +101,11 @@
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
+                            <a href="{{ route('filament.admin.resources.programs.index') }}"
+                               class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
+                                <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
+                            </a>
                         </div>
 
                         {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -100,15 +119,21 @@
                         </div> --}}
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
+                            <a href="{{ route('filament.admin.resources.events.index') }}"
+                               class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
+                                <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
+                            </a>
                         </div>
                     @endif
 
                     @if (auth()->user()->hasRole('Ayala Super Admin'))
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
+                            <a href="{{ route('filament.admin.resources.volunteers.index') }}"
+                           class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $volunteer }}</p>
+                                <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
+                            </a>
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -117,8 +142,11 @@
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
+                            <a href="{{ route('filament.admin.resources.programs.index') }}"
+                               class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Program::count() }}</p>
+                                <p class="text-sm font-bold text-[#03498D]">PROGRAMS</p>
+                            </a>
                         </div>
 
                         {{-- <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
@@ -132,8 +160,11 @@
                         </div> --}}
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
-                            <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
+                            <a href="{{ route('filament.admin.resources.events.index') }}"
+                               class="hover:text-[#FF9141] transition-colors duration-200">
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ \App\Models\Event::count() }}</p>
+                                <p class="text-sm font-bold text-[#03498D]">OPPORTUNITIES</p>
+                            </a>
                         </div>
                     @endif
                 </div>

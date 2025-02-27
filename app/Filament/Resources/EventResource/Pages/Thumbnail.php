@@ -60,7 +60,7 @@ class Thumbnail extends ListRecords
                                 $query->where('attendee_id', auth()->id());
                             });
                         }elseif($data['status'] == 'upcoming_events'){
-                            $query->where('start_date', '>', now()->subDay());
+                            $query->where('start_date', '>=', now()->startOfDay());
                         }
 
                         return $query;
@@ -120,7 +120,7 @@ class Thumbnail extends ListRecords
         return [
             Action::make('List')
                 ->icon('heroicon-o-list-bullet')
-                ->url(route('filament.admin.resources.events.index')),
+                ->url(route('filament.admin.resources.events.list')),
             Action::make('Calendar')
                 ->icon('heroicon-o-calendar-date-range')
                 ->url(route('filament.admin.resources.events.calendar')),
