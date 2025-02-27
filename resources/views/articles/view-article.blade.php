@@ -140,6 +140,9 @@
                                             <div class="h-10 w-[200px] rounded-full bg-[#F55E1D] flex items-center justify-center hover:bg-[#FF8252]">
                                                 <p class="font-medium text-base text-white">READ MORE</p>
                                             </div>
+
+                                        </a>
+
                                         </div>
 
                                         <p class="text-xl text-[#03498D] font-bold leading-none">{{ $item->title }}</p>
@@ -165,6 +168,7 @@
                                                 </div>
                                             </a>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
