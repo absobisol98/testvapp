@@ -74,7 +74,7 @@
                                                 <div class="min-h-[80px] flex items-center">
                                                     <p class="text-xl md:text-2xl lg:text-3xl font-bold text-[#03498D]">{{ $article->title }}</p>
                                                 </div>
-                                                <p class="text-sm md:text-base font-normal text-black">Written By: {{ $article->blog_author }} | Date: {{ $article->created_at->format('F d, Y') }}</p>
+                                                <p class="text-sm md:text-base font-normal text-black">Written By: {{ $article->author->name ?? 'Unknown' }} | Date: {{ $article->created_at->format('F d, Y') }}</p>
                                                 <div class="min-h-[100px]">
                                                     <p class="text-sm md:text-base font-normal text-[#7A7A7A]">
                                                         {{ Str::limit(strip_tags($article->content), 150) }}
@@ -109,7 +109,7 @@
                                             <div class="min-h-[60px] flex items-center">
                                                 <p class="text-lg md:text-xl font-bold text-[#03498D]">{{ $article->title }}</p>
                                             </div>
-                                            <p class="text-xs md:text-sm font-normal text-black">Written By: {{ $article->blog_author }} | Date: {{ $article->created_at->format('F d, Y') }}</p>
+                                            <p class="text-xs md:text-sm font-normal text-black">Written By: {{ $article->author->name ?? 'Unknown' }} | Date: {{ $article->created_at->format('F d, Y') }}</p>
                                             <div class="min-h-[80px]">
                                                 <p class="text-xs md:text-sm font-normal text-[#7A7A7A]">
                                                     {{ Str::limit(strip_tags($article->content), 150) }}

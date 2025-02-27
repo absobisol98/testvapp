@@ -18,8 +18,34 @@ class HomepageController extends Controller implements HasMedia
 
     public function mainHomepageView()
     {
-        $opportunities = Event::with('slots')->get();
-        $featuredOpportunity = Event::latest()->first();
+        $opportunities = Event::with(['slots', 'media'])
+            ->where('is_published', true)
+            ->whereDate('end_date', '>=', now())
+            ->orderBy('created_at', 'Asc')
+            ->take(10)
+            ->get();
+        $featuredOpportunity = Event::with(['slots', 'media', 'program'])
+            ->where('is_featured', true)
+            ->whereDate('start_date', '>=', now())
+            ->orderBy('start_date', 'asc')
+            ->first();
+
+            if (!$featuredOpportunity) {
+                $featuredOpportunity = Event::with(['slots', 'media', 'program'])
+                    ->where('is_published', true)
+                    ->whereDate('start_date', '>=', now())
+                    ->orderBy('start_date', 'asc')
+                    ->first();
+            }
+
+        // if (!$featuredOpportunity) {
+        //     $featuredOpportunity = Event::with(['slots', 'media'])
+        //         ->where('is_published', true)
+        //         ->latest()
+        //         ->first();
+        // }
+
+
         $articles = Post::latest()->get();
 
         $upcoming = Event::with('slots')

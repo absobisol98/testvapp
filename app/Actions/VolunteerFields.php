@@ -23,29 +23,29 @@ final class VolunteerFields
     {
         return [
             ToggleButtons::make('is_company')
-                ->label('')
-                ->default(1)
-                ->options([
-                    '1' => 'Company',
-                    '0' => 'School',
-                ])
-                ->icons([
-                    '1' => 'heroicon-o-building-office',
-                    '0' => 'heroicon-o-academic-cap',
-                ])
-                ->colors([
-                    '1' => 'secondary',
-                    '0' => 'secondary',
-                ])
-                ->live()
-                ->grouped(),
-            Fieldset::make('School')
-                ->visible(fn (Get $get) => !$get('is_company'))
-                ->schema([
-                    TextInput::make('school')->label('School name')->required()->columnSpanFull(),
+                ->label(''),
+            //     ->default(1)
+            //     ->options([
+            //         '1' => 'Company',
+            //         '0' => 'School',
+            //     ])
+            //     ->icons([
+            //         '1' => 'heroicon-o-building-office',
+            //         '0' => 'heroicon-o-academic-cap',
+            //     ])
+            //     ->colors([
+            //         '1' => 'secondary',
+            //         '0' => 'secondary',
+            //     ])
+            //     ->live()
+            //     ->grouped(),
+            // Fieldset::make('School')
+            //     ->visible(fn (Get $get) => !$get('is_company'))
+            //     ->schema([
+            //         TextInput::make('school')->label('School name')->required()->columnSpanFull(),
 
-                    TextInput::make('school_address')->label('Address')->columnSpanFull(),
-                ]),
+            //         TextInput::make('school_address')->label('Address')->columnSpanFull(),
+            //     ]),
 
             Fieldset::make('Company')
                 ->visible(fn (Get $get) => $get('is_company'))

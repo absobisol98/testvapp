@@ -26,7 +26,7 @@ final class EventFillFormAction
         $data['tags'] = $record->tags->pluck('name')->toArray();
 
         // Companies
-        $data['companies'] = $record->companies->pluck('id')->toArray();
+        // $data['companies'] = $record->companies->pluck('id')->toArray();
 
         // Slots
         $data['slots'] = $record->slots->toArray();

@@ -228,7 +228,7 @@
                             @foreach ($record->facilitators as $facilitator)
                                 <li class="text-md">{{$facilitator->name}}</li>
                             @endforeach
-                        </ul>d
+                        </ul>
                         @if($record->getMedia('event-attachments')->count() > 0)
                             <div>
                                 <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>

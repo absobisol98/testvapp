@@ -40,10 +40,10 @@
                         <div class="flex items-center justify-start gap-4 text-sm font-[400]">
                             <p>Created by: <span class="font-[700]">{{$opportunity->created_by_user->firstname ?? ''}} {{$opportunity->created_by_user->lastname ?? ''}}</span></p>
 
-                            <div class="flex items-center justify-start gap-2">
+                            {{-- <div class="flex items-center justify-start gap-2">
                                 @include('custom.icons.admin-icons', ['icon' => 'for-review'])
                                 <p class="font-[700] text-[#F55E1D]">{{$opportunity->status?->name}}</p>
-                            </div>
+                            </div> --}}
                         </div>
                         <p class="text-[28px] font-bold font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
 

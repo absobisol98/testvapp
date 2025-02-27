@@ -25,7 +25,7 @@ class Post extends Model implements HasMedia
      * @var array<int, string>
      */
     protected $fillable = [
-        'blog_author_id',
+        'blog_author',
         'blog_category_id',
         'title',
         'slug',
@@ -48,7 +48,7 @@ class Post extends Model implements HasMedia
     /** @return BelongsTo<User,self> */
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'blog_author_id');
+        return $this->belongsTo(User::class, 'blog_author');
     }
 
     /** @return BelongsTo<Category,self> */

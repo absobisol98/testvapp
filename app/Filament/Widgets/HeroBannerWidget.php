@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\Models\Program;
 use Filament\Widgets\Widget;
+use App\Models\EventAttendee;
 
 class HeroBannerWidget extends Widget
 {
@@ -19,6 +20,33 @@ class HeroBannerWidget extends Widget
         $opportunity = Event::with('slots', 'tags', 'program')
             ->orderBy('created_at', 'desc')
             ->first();
+
+        // Calculate Ayala Member hours
+        $ayalaHours = EventAttendee::whereHas('attendee', function ($query) {
+                $query->where('affiliate_type_id', 1); // Ayala members
+            })
+            ->whereNotNull(['time_in', 'time_out'])
+            ->where('is_approve', true)
+            ->get()
+            ->sum(function ($attendance) {
+                return $attendance->get_totalHrs();
+            });
+
+        // Calculate Non-Ayala Member hours
+        $nonAyalaHours = EventAttendee::whereHas('attendee', function ($query) {
+                $query->where('affiliate_type_id', 2); // Non-Ayala members
+            })
+            ->whereNotNull(['time_in', 'time_out'])
+            ->where('is_approve', true)
+            ->get()
+            ->sum(function ($attendance) {
+                return $attendance->get_totalHrs();
+            });
+
+        // Get volunteer counts
+        $ayalaVolunteers = User::where('affiliate_type_id', 1)->count();
+        $nonAyalaVolunteers = User::where('affiliate_type_id', 2)->count();
+        $totalVolunteers = $ayalaVolunteers + $nonAyalaVolunteers;
 
         $bgImg = '';
 
@@ -77,6 +105,10 @@ class HeroBannerWidget extends Widget
 
         $opportunities = Event::with('slots')->orderBy('created_at','desc')->get();
 
+        $totalHours = EventAttendee::whereNotNull(['time_in', 'time_out'])
+            ->get()
+            ->sum(fn($attendance) => $attendance->get_totalHrs());
+
         // For Volunteer
         if (false) {
             $bgImg = 'img/ayala-foundation-bg.jpg';
@@ -111,11 +143,18 @@ class HeroBannerWidget extends Widget
             'businessunit' => $businessunit,
             'volunteer' => $volunteer,
             'bgImg' => $bgImg,
-            'overall_hrs' =>  number_format($overall_hrs,1),
+            'overall_hrs' =>  number_format($overall_hrs, 1),
+            'ayala_hours' => number_format($ayalaHours, 1),
+            'non_ayala_hours' => number_format($nonAyalaHours, 1),
+            'total_volunteer_hours' => number_format($ayalaHours + $nonAyalaHours, 1),
+            'ayala_volunteers' => $ayalaVolunteers,
+            'non_ayala_volunteers' => $nonAyalaVolunteers,
+            'total_volunteers' => $totalVolunteers,
             'total_hours_since_creation' => number_format($total_hours_since_creation, 1),
             'opportunities' => $opportunities,
             'upcoming' => $upcoming,
             'account_created_at' => $user_created_date->format('M d, Y'),
+            'totalHours' => $totalHours,
         ];
     }
 }

@@ -16,6 +16,7 @@ class UpcomingOpportunityWidget extends Widget
         $opportunities = Event::query()
         ->where('start_date', '>=', $currentDate)
         ->orderBy('start_date', 'asc')
+        ->take(10)
         ->get();
 
         $Recentopportunities = Event::with('slots')->orderBy('created_at','desc')->get();

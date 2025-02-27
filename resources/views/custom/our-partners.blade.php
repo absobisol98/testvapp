@@ -70,9 +70,12 @@
 
                             <div class="w-full flex flex-col md:flex-row items-center justify-between gap-4">
                                 <div class="w-fit h-fit md:w-[300px] md:h-[180px] flex items-center justify-center overflow-hidden">
-                                    <img class="w-full h-full object-contain"
-                                         src="{{ $partner->getMedia('bu_logo')->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg') }}"
-                                         alt="{{ $partner->name }}">
+                                    <a href="{{ route('businessunit.homepage.view', $partner->slug) }}" class="w-full h-full flex items-center justify-center hover:opacity-80 transition duration-300">
+                                        <img class="w-full h-full object-contain"
+                                             src="{{ $partner->getMedia('bu_logo')->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg') }}"
+                                             alt="{{ $partner->name }}"
+                                             title="Click to view {{ $partner->name }} page">
+                                    </a>
                                 </div>
 
                                 <div class="w-full flex flex-col items-start justify-center gap-2">
