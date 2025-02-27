@@ -75,16 +75,18 @@ final class VolunteerFields
                     //     ->searchable()
                     //     ->live(),
 
-                    TextInput::make('company_name')
+                    TextInput::make('external_company_name')
+                        ->label('Company name')
                         ->required()
                         ->columnSpanFull()
-                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 3),
+                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 2)
+                        ->afterStateUpdated(fn (callable $set) => $set('company_id', null)),
 
                     Select::make('company_id')
                         ->required()
                         ->prefixIcon('heroicon-o-building-office')
                         ->prefixIconColor('primary')
-                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 1) // Changed visibility condition
+                        ->visible(fn (Get $get) => $get('affiliate_type_id') == 1)
                         ->columnSpanFull()
                         ->label('')
                         ->searchable()
@@ -103,7 +105,7 @@ final class VolunteerFields
                                 ->toArray();
                         })
                         ->live()
-                        ->afterStateUpdated(fn (callable $set) => $set('company_name', null)),
+                        ->afterStateUpdated(fn (callable $set) => $set('external_company_name', null)),
 
                     TextInput::make('company_address')->label('Address')->columnSpanFull(),
 
