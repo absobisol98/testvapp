@@ -22,9 +22,6 @@ class PartnersTableWidget extends BaseWidget
             TextColumn::make('name')
                 ->label('Partner')
                 ->searchable()->sortable(),
-            TextColumn::make('address')
-                ->label('Address')
-                ->searchable()->sortable(),
             TextColumn::make('nickname')
                 ->label('Abbreviation')
                 ->searchable()->sortable(),
