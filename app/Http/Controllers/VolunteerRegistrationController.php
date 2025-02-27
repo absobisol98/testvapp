@@ -47,10 +47,10 @@ class VolunteerRegistrationController extends Controller
             $rules = [
                 'firstname' => 'required|string|max:255',
                 'lastname' => 'required|string|max:255',
-                'middle_name' => 'nullable|string|max:255',
+                'nickname' => 'nullable|string|max:255', // Changed from middle_name
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:8',
-                'birthday' => 'required|date',
+                'age_range' => 'required|string|in:10-17,18-24,25-34,35-44,45-54,55-64,65+', // Changed from birthday
                 'emergency_contact_name' => 'required|string|max:255',
                 'emergency_contact_number' => 'required|string|max:15|regex:/^[0-9]+$/',
                 'affiliate_type_id' => 'required|integer|in:1,2',
@@ -70,12 +70,10 @@ class VolunteerRegistrationController extends Controller
                             $fail('Please specify the other program.');
                         }
                     }
-                ],// Fixed program validation
-                'other_program' => 'nullable|string|max:255',
+                ],
                 'referral_source' => 'required|array|min:1',
-                'referral_source.*' => ['required', 'in:afi_website,social_media,referral,advertisements,activations,news']  // Fixed referral validation
+                'referral_source.*' => ['required', 'in:afi_website,social_media,referral,advertisements,activations,news']
             ];
-
             // Conditional validation for affiliate type
             if ($request->input('affiliate_type_id') == 1) {
                 $rules['cluster_id'] = 'required|exists:clusters,id';
@@ -102,10 +100,10 @@ class VolunteerRegistrationController extends Controller
                     'volunteer' => 1,
                     'firstname' => $input['firstname'],
                     'lastname' => $input['lastname'],
-                    'middle_name' => $input['middle_name'],
+                    'nickname' => $input['nickname'], // Changed from middle_name
                     'email' => $input['email'],
                     'password' => Hash::make($input['password']),
-                    'birthday' => $input['birthday'],
+                    'age_range' => $input['age_range'], // Changed from birthday
                     'emergency_contact_name' => $input['emergency_contact_name'],
                     'emergency_contact_number' => $input['emergency_contact_number'],
                     'affiliate_type_id' => $input['affiliate_type_id'],
