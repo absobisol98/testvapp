@@ -133,7 +133,7 @@
                                 @endauth
                             </div>
                         </div>
-                        @endif
+                    @endif
                     </div>
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
                                     {{-- OPPORTUNITIES --}}
@@ -191,16 +191,24 @@
                             {{-- List --}}
                             @foreach ($opportunities as $index => $opportunity)
                                 <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                                    <div
-                                        class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                        <img class="w-full h-full object-cover" src="{{ $mediaItems ?? url('img/ayala-foundation-bg.jpg') }}"
+                                    <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                        @php
+                                            $opportunityMedia = $opportunity->getFirstMedia('event-banner-attachments');
+                                        @endphp
 
-                                            alt="">
+                                        @if($opportunityMedia)
+                                            <img class="w-full h-full object-cover"
+                                                src="{{ $opportunityMedia->getUrl() }}"
+                                                alt="{{ $opportunity->title }}">
+                                        @else
+                                            <img class="w-full h-full object-cover"
+                                                src="{{ url('img/ayala-foundation-bg.jpg') }}"
+                                                alt="{{ $opportunity->title }}">
+                                        @endif
                                     </div>
 
                                     <div class="w-full">
                                         <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
-
                                         <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
 
                                         <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
@@ -209,7 +217,7 @@
                                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
                                                 <p><span class="font-[600]"></span>
                                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
-                                                    {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</pclass=>
+                                                    {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
                                             </div>
                                             <div class="w-fit flex flex-col items-start justify-between gap-1">
                                                 <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{ $opportunity->slots->count() }}</p>
@@ -251,16 +259,8 @@
                                 @endif
                             @endforeach
                         @else
-                            <div class="w-full h-full flex flex-col items-center justify-center gap-4 py-12">
-                                <div class="w-24 h-24 text-gray-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                                    </svg>
-                                </div>
-                                <div class="text-center">
-                                    <h3 class="text-xl font-semibold text-[#03498D] mb-1">No Opportunities Available</h3>
-                                    <p class="text-gray-500 text-base">Check back later for new volunteer opportunities.</p>
-                                </div>
+                            <div class="w-full flex items-center justify-center py-8">
+                                <p class="text-[18px] text-gray-500">No opportunities available at the moment.</p>
                             </div>
                         @endif
                     </div>
@@ -881,3 +881,4 @@
 
     </div>
 @endsection
+

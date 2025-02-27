@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::table('event_attendees', function (Blueprint $table) {
             //
-            $table->foreignUuid('updated_by')
-            ->nullable()
-            ->after('facilitator_id')
-            ->constrained('users')
-            ->nullOnDelete();
+            // $table->foreignUuid('updated_by')
+            // ->nullable()
+            // ->after('facilitator_id')
+            // ->constrained('users')
+            // ->nullOnDelete();
         });
     }
 

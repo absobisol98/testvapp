@@ -478,13 +478,12 @@ class EventResource extends Resource implements HasShieldPermissions
                             ]),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-
                         if($data['status'] === 'joined') {
                             $query->whereHas('attendees', function (Builder $query) {
                                 $query->where('attendee_id', auth()->id());
                             });
-                        }elseif($data['status'] == 'upcoming_events'){
-                            $query->where('start_date', '>', now()->startOfDay());
+                        } elseif($data['status'] == 'upcoming_events'){
+                            $query->where('start_date', '>=', now()->startOfDay());
                         }
 
                         return $query;
