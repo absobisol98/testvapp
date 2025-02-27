@@ -32,7 +32,10 @@ class Login extends BasePage
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
                 Placeholder::make('data_privacy_notice')
-                ->content(new HtmlString('By logging in, you accept the <a class="underline" href="' . route('data-privacy-policy') . '" target="_blank">Data Privacy Policy</a>.'))
+                ->content(new HtmlString('<div class="text-sm text-gray-600 mt-1">By logging in, you accept the <a class="text-primary-600 hover:text-primary-700 hover:underline" href="' . route('data-privacy-policy') . '" target="_blank">Data Privacy Policy</a>.</div>'))
+                ->disableLabel(),
+                Placeholder::make('register_link')
+                ->content(new HtmlString('<div class="text-center mt-4">Not a Volunteer yet? <a class="text-primary-500 font-bold hover:underline" href="' . route('volunteer.form.view') . '">Register Now</a></div>'))
                 ->disableLabel(),
             ]);
     }
