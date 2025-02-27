@@ -25,7 +25,7 @@ class FilteredVolunteerHours extends BaseWidget
         ->heading('Volunteer Hours')
             ->query(
                 EventAttendee::query()
-                    ->with(['attendee', 'event.companies', 'slot'])
+                    ->with(['attendee', 'slot', 'event'])
                     ->whereNotNull(['time_in', 'time_out'])
             )
             ->columns([
@@ -34,7 +34,7 @@ class FilteredVolunteerHours extends BaseWidget
                     ->searchable()
                     ->sortable()
                     ->placeholder('N/A'),
-                Tables\Columns\TextColumn::make('event.companies.name')
+                Tables\Columns\TextColumn::make('attendee.company.name')
                     ->label('Business Unit')
                     ->searchable()
                     ->sortable()
@@ -52,11 +52,8 @@ class FilteredVolunteerHours extends BaseWidget
                 Tables\Columns\TextColumn::make('Total Hours')
                     ->getStateUsing(function(EventAttendee $record) {
                         return $record->get_totalHrs();
-                    })
-                    ->numeric(
-                        decimalPlaces: 2,
-                        thousandsSeparator: ',',
-                    ),
+                    }),
+
                 Tables\Columns\TextColumn::make('time_in')
                     ->label('Time In')
                     ->dateTime()
@@ -77,7 +74,7 @@ class FilteredVolunteerHours extends BaseWidget
 
 
                 Tables\Filters\SelectFilter::make('company')
-                    ->relationship('event.companies', 'name')
+                    ->relationship('attendee.company', 'name')
                     ->multiple()
                     ->preload(),
 

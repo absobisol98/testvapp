@@ -149,7 +149,7 @@
                             <!-- Right Side (Multi-Step Form) -->
                             <div class="p-8 lg:p-12 flex items-start justify-start">
                                 <div class="text-white w-full">
-                                    <h2 class="text-3xl font-normal mb-4">Company/Affiliation</h2>
+                                    <h2 class="text-3xl font-normal mb-8">Company/Affiliation</h2>
 
                                     <!-- Multi-Step Form Structure -->
 

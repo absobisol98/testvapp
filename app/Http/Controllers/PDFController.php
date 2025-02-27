@@ -18,26 +18,22 @@ class PDFController extends Controller
     {
         $event = Event::find($event_id);
         $attendee = User::find($attendee_id);
+        $certificates = [];
 
-        // Get all completed slots for this attendee
         $attendeeRecords = EventAttendee::where('event_id', $event_id)
             ->where('attendee_id', $attendee_id)
             ->whereNotNull('time_in')
             ->whereNotNull('time_out')
+            ->where('is_approve', true)
             ->with(['slot', 'event'])
             ->get();
-
 
         if ($attendeeRecords->isEmpty()) {
             abort(404, 'No completed attendance records found');
         }
 
-        // If only one slot, generate single PDF
-        if ($attendeeRecords->count() ) {
-            $record = $attendeeRecords->first();
-            $timeIn = Carbon::parse($record->time_in);
-            $timeOut = Carbon::parse($record->time_out);
-            $hoursServed = $timeOut->diffInHours($timeIn);
+        foreach ($attendeeRecords as $record) {
+            $hoursServed = $record->get_totalHrs();
 
             $certificateNumber = $this->generateCertificateNumber(
                 $event_id,
@@ -45,41 +41,35 @@ class PDFController extends Controller
                 $record->slot_type_id
             );
 
-            $existingCertificate = Certificate::where([
-                'event_id' => $event_id,
-                'attendee_id' => $attendee_id,
-                'slot_type_id' => $record->slot_type_id,
-            ])->first();
-
-            if (!$existingCertificate) {
-                Certificate::create([
-                    'certificate_number' => $certificateNumber,
+            $existingCertificate = Certificate::firstOrCreate(
+                [
                     'event_id' => $event_id,
                     'attendee_id' => $attendee_id,
                     'slot_type_id' => $record->slot_type_id,
+                ],
+                [
+                    'certificate_number' => $certificateNumber,
                     'hours_served' => $hoursServed,
                     'issued_at' => now(),
-                ]);
-            } else {
-                // Use existing certificate number if entry exists
-                $certificateNumber = $existingCertificate->certificate_number;
-                $hoursServed = $existingCertificate->hours_served;
-            }
+                ]
+            );
 
-
-            return PDF::loadView('pdf.certificate', compact(
-                'event',
-                'attendee',
-                'certificateNumber',
-                'hoursServed',
-                'record'
-            ))
-            ->setPaper('Letter')
-            ->setOption('margin-bottom', 0)
-            ->setOrientation('landscape')
-            ->inline('certificate.pdf');
+            $certificates[] = [
+                'record' => $record,
+                'certificateNumber' => $existingCertificate->certificate_number,
+                'hoursServed' => $hoursServed
+            ];
         }
 
+        return PDF::loadView('pdf.certificate', compact(
+            'event',
+            'attendee',
+            'certificates'
+        ))
+        ->setPaper('Letter')
+        ->setOption('margin-bottom', 0)
+        ->setOrientation('landscape')
+        ->inline('certificates.pdf');
 
     }
 

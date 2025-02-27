@@ -19,7 +19,7 @@
             text-align: center;
             margin: 0 !important;
             padding: 0 !important;
-            background-image: url('https://phplaravel-970963-4908828.cloudwaysapps.com/img/certificate/placeholder_certificate.png');
+
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
@@ -28,6 +28,7 @@
             object-fit: contain;
         }
         .certificate {
+            background-image: url('https://phplaravel-970963-4908828.cloudwaysapps.com/img/certificate/placeholder_certificate.png');
             position: relative;
             padding: 50px;
             padding-top:300px;
@@ -97,28 +98,36 @@
     </style>
 </head>
 <body>
-    <div class="certificate">
-        <div class="certificate-number">
-            Certificate No: {{ $certificateNumber }}
+    @foreach($certificates as $certificate)
+        <div class="certificate">
+            <div class="certificate-number">
+                Certificate No: {{ $certificate['certificateNumber'] }}
+            </div>
+            <h1>Certificate of Appreciation</h1>
+            <h2>{{ $event->title }}</h2>
+            <p>This certificate is proudly presented to</p>
+            <p class="name">{{ $attendee->name }}</p>
+            <div class="slot-details">
+                <p>Volunteer Activity: {{ $certificate['record']->slot->name ?? 'General Participation' }}</p>
+                <p class="hours-served">
+                    @php
+                        $hours = $certificate['hoursServed'];
+                        echo number_format($hours, 1) . ($hours == 1 ? ' Hour' : ' Hours') . ' of Service';
+                    @endphp
+                </p>
+            </div>
+            <p>for their outstanding volunteer service and dedication.</p>
+            <p class="date">Presented on: {{ \Carbon\Carbon::parse($event->end_date)->format('F d, Y') }}</p>
+
+            <div class="validation-note">
+                To verify this certificate's authenticity, please contact the Ayala Foundation administrator
+                with the certificate number shown above.
+            </div>
         </div>
+        @if(!$loop->last)
+            <div style="page-break-after: always;"></div>
+        @endif
+    @endforeach
 
-        <h1>Certificate of Appreciation</h1>
-        <h2>{{ $event->title }}</h2>
-        <p>This certificate is proudly presented to</p>
-        <p class="name">{{ $attendee->name }}</p>
-
-        <div class="slot-details">
-            <p>Volunteer Activity: {{ $attendeeRecord->slot->name ?? 'General Participation' }}</p>
-            <p class="hours-served">{{ $hoursServed }} Hours of Service</p>
-        </div>
-
-        <p>for their outstanding volunteer service and dedication.</p>
-        <p class="date">Presented on: {{ now()->format('F d, Y') }}</p>
-
-        <div class="validation-note">
-            To verify this certificate's authenticity, please contact the Ayala Foundation administrator
-            with the certificate number shown above.
-        </div>
-    </div>
 </body>
 </html>

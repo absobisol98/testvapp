@@ -67,7 +67,7 @@ class VolunteerParticipationList extends BaseWidget
                         ->get()
                         ->sum(fn($attendance) => $attendance->get_totalHrs());
                 })
-                ->numeric(2)
+                ->numeric()
                 ->sortable()
                 ->alignEnd(),
 

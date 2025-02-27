@@ -19,20 +19,64 @@ class EventRegistrationController extends Controller
         // Add validation rules
         $validationRules = [
             'media.*' => ['file', 'max:10240'], // 10MB max
+            'privacy_policy' => ['required', 'accepted'], // Add privacy policy validation
         ];
 
         // Add required validation if needed
         $user = auth()->user();
         $isMinor = $user->birthday && Carbon::parse($user->birthday)->age < 18;
+
         if ($isMinor || $event->attachment_required) {
             $validationRules['media'] = ['required', 'array'];
         }
 
-        $request->validate($validationRules, [
+        // Add file type validation
+        if ($request->hasFile('media')) {
+            $validationRules['media.*'] = [
+                'file',
+                'max:10240',
+                'mimes:pdf,jpg,jpeg,png,doc,docx', // Allow only specific file types
+            ];
+        }
+
+        // Custom validation messages
+        $messages = [
             'media.required' => $isMinor
                 ? 'Parental consent document is required for minors.'
                 : 'Required documents must be uploaded for this event.',
-        ]);
+            'media.*.max' => 'Files must not exceed 10MB in size.',
+            'media.*.mimes' => 'Only PDF, JPG, PNG, DOC, and DOCX files are allowed.',
+            'privacy_policy.required' => 'You must accept the Data Privacy Policy to continue.',
+            'privacy_policy.accepted' => 'You must accept the Data Privacy Policy to continue.',
+        ];
+
+        // Validate the request
+        $request->validate($validationRules, $messages);
+
+        // Add duplicate registration check
+        $existingRegistrations = EventRegistration::where('volunteer_id', auth()->id())
+            ->where('event_id', $event->id)
+            ->whereIn('status_id', [1, 2]) // Pending or Approved
+            ->count();
+
+        if ($existingRegistrations > 0) {
+            Notification::make()
+                ->title('Registration Failed')
+                ->body('You are already registered for this event.')
+                ->danger()
+                ->send();
+            return back();
+        }
+
+        // Check if registration is still open
+        if (Carbon::now()->isAfter($event->registration_end_date)) {
+            Notification::make()
+                ->title('Registration Failed')
+                ->body('Registration period for this event has ended.')
+                ->danger()
+                ->send();
+            return back();
+        }
 
         // Check if slot is available
         $registrationCount = $event->registrations()
@@ -195,5 +239,26 @@ class EventRegistrationController extends Controller
         }
 
         return 'Required documents must be uploaded for this event.';
+    }
+
+    /**
+     * Validate file attachments
+     */
+    private function validateAttachments($files): bool
+    {
+        foreach ($files as $file) {
+            // Check file size
+            if ($file->getSize() > 10240 * 1024) { // 10MB in bytes
+                return false;
+            }
+
+            // Check file type
+            $allowedTypes = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
+            if (!in_array($file->getClientOriginalExtension(), $allowedTypes)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

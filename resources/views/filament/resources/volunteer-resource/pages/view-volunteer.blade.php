@@ -460,7 +460,6 @@
                                             @endphp
                                             @if ($att_details)
                                                 <div class="w-[200px]">
-                                                    {{-- <img onerror="this.src='{{url('images/error-image.jpeg')}}'; this.onerror=null;" class="w-full" src="{{Storage::url($att_details->id.'-qr-code.png')}}"> --}}
                                                     <a href="{{ secure_asset(Storage::url($att_details->id . '-qr-code.png')) }}"
                                                         onclick="event.preventDefault(); forceDownload(this)"
                                                         data-filename="qr-code.png"
@@ -470,13 +469,22 @@
                                                          </div>
                                                      </a>
                                                 </div>
-                                                <div class="w-[200px]">
-                                                   <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id ]) }}" class="cursor-pointer">
-                                                         <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141] transition duration-300 ease-in-out">
-                                                             <p class="font-medium text-base md:text-[18px] text-white">Download Certificate</p>
-                                                         </div>
-                                                     </a>
-                                                </div>
+
+                                                @php
+                                                    $isEventFinished = \Carbon\Carbon::parse($opportunity->end_date)->isPast();
+
+                                                @endphp
+
+                                                @if ($isEventFinished)
+                                                    <div class="w-[200px]">
+                                                        <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id ]) }}"
+                                                           class="cursor-pointer">
+                                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                                                <p class="font-medium text-base md:text-[18px] text-white">Download Certificate</p>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                @endif
                                             @endif
                                         </div>
 
