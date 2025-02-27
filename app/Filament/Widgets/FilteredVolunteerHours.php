@@ -53,6 +53,7 @@ class FilteredVolunteerHours extends BaseWidget
                     ->getStateUsing(function(EventAttendee $record) {
                         return $record->get_totalHrs();
                     }),
+
                 Tables\Columns\TextColumn::make('time_in')
                     ->label('Time In')
                     ->dateTime()

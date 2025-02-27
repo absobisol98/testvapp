@@ -70,6 +70,7 @@ class PDFController extends Controller
         ->setOption('margin-bottom', 0)
         ->setOrientation('landscape')
         ->inline('certificates.pdf');
+
     }
 
     private function generateCertificateNumber($event_id, $attendee_id, $slot_id)

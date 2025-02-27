@@ -1,10 +1,14 @@
 @extends('custom.layouts.app')
 
 @section('content')
+    {{-- Consolidated Styles --}}
     <style>
+        /* Hero Section Clip Path */
         .clip-path-custom {
             clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
         }
+
+        /* Swiper Styles */
         .swiper-slide {
             flex-grow: 1;
             min-width: 50%;
@@ -14,8 +18,30 @@
             flex-grow: 0;
             min-width: auto;
         }
-    </style>
 
+        /* Tab Icons */
+        #icon svg path,
+        #icon-calendar svg path {
+            stroke: #000000;
+            transition: stroke 0.3s ease;
+        }
+
+        #icon:hover svg path,
+        #icon-calendar:hover svg path {
+            stroke: #FF781E;
+        }
+
+        #icon.active svg path,
+        #icon-calendar.active svg path {
+            stroke: #FF9141;
+        }
+
+        /* Custom Scrollbar (if needed) */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #FF781E #F5F5F5;
+        }
+    </style>
 
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
 
@@ -25,7 +51,7 @@
                 <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
                     <div class="container whitespace-pre-line text-white">
                         <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
-                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
+                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
                     </div>
                 </div>
 
@@ -40,8 +66,8 @@
             style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
             <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
-                <p class="font-[700] text-5xl leading-none">Your involvement is important to us!</p>
-                <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Program</p>
+                <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>
+                <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Platform</p>
             </div>
         </section>
         {{-- Opportunity Section --}}
@@ -160,74 +186,83 @@
                     <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
 
                     {{-- OPPORTUNITIES List --}}
-                    <div id="opportunityList"
-                        class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-scroll custom-scrollbar">
-                        {{-- List --}}
-                        @foreach ($opportunities as $index => $opportunity)
+                    <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-scroll custom-scrollbar">
+                        @if($opportunities->count() > 0)
+                            {{-- List --}}
+                            @foreach ($opportunities as $index => $opportunity)
+                                <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                                    <div
+                                        class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                        <img class="w-full h-full object-cover" src="{{ $mediaItems ?? url('img/ayala-foundation-bg.jpg') }}"
 
-                        @php
-                            $mediaItems = $opportunity->getMedia('event-banner-attachments')?->first()?->getUrl();
-                        @endphp
-                            <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                                <div
-                                    class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                    <img class="w-full h-full object-cover" src="{{ $mediaItems ?? url('img/ayala-foundation-bg.jpg') }}"
+                                            alt="">
+                                    </div>
 
-                                        alt="">
-                                </div>
+                                    <div class="w-full">
+                                        <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
 
-                                <div class="w-full">
-                                    <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
+                                        <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
 
-                                    <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
-
-                                    <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                            <p><span class="font-[600]">DATE:</span>
-                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
-                                            <p><span class="font-[600]"></span>
-                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
-                                                {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</pclass=>
-                                        </div>
-                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                            <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{ $opportunity->slots->count() }}</p>
-                                            <div class="flex items-center justify-start gap-4">
-                                            @foreach ($opportunity->slots as $key=> $slot)
-                                            <p><span class="font-[600]">BATCH {{$key+1}}:</span>
-                                                    {{ $slot->type->name }}
-                                                @endforeach
-                                            </p>
+                                        <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                            <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                                <p><span class="font-[600]">DATE:</span>
+                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
+                                                <p><span class="font-[600]"></span>
+                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
+                                                    {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</pclass=>
+                                            </div>
+                                            <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                                <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{ $opportunity->slots->count() }}</p>
+                                                <div class="flex items-center justify-start gap-4">
+                                                @foreach ($opportunity->slots as $key=> $slot)
+                                                <p><span class="font-[600]">BATCH {{$key+1}}:</span>
+                                                        {{ $slot->type->name }}
+                                                    @endforeach
+                                                </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="w-[200px]">
+                                        @guest
+                                        <a href="\volunteer-registration">
+                                            <div
+                                                class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                            </div>
+                                        </a>
+                                        @endguest
+
+                                        @auth
+                                        <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
+                                            <div
+                                                class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                <p class="font-[400] text-base md:text-[18px] text-white">VIEW</p>
+                                            </div>
+                                        </a>
+                                        @endauth
+
+                                    </div>
                                 </div>
 
-                                <div class="w-[200px]">
-                                    @guest
-                                    <a href="\volunteer-registration">
-                                        <div
-                                            class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
-                                        </div>
-                                    </a>
-                                    @endguest
-
-                                    @auth
-                                    <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
-                                        <div
-                                            class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-[400] text-base md:text-[18px] text-white">VIEW</p>
-                                        </div>
-                                    </a>
-                                    @endauth
-
+                                @if (!$loop->last)
+                                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="w-full h-full flex flex-col items-center justify-center gap-4 py-12">
+                                <div class="w-24 h-24 text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                    </svg>
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="text-xl font-semibold text-[#03498D] mb-1">No Opportunities Available</h3>
+                                    <p class="text-gray-500 text-base">Check back later for new volunteer opportunities.</p>
                                 </div>
                             </div>
-
-                            @if (!$loop->last)
-                                <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                            @endif
-                        @endforeach
+                        @endif
                     </div>
 
                     {{-- OPPORTUNITIES Calendar --}}
@@ -448,8 +483,7 @@
                         </p>
                     </div>
                     <div class="w-full">
-
-                        <a href="/volunteer-registration">
+                        <a href="https://ayalafoundation.org" target="_blank" rel="noopener noreferrer">
                             <div class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#FF781E] rounded-xl flex items-center justify-center hover:bg-[#FF9141]">
                                 <p class="font-medium text-base md:text-lg text-white">SEE ALL PROGRAMS</p>
                             </div>
@@ -627,7 +661,7 @@
                                     dd($article_banner);
                                 @endphp --}}
 
-                                <div class="swiper-slide">
+                                <div class="swiper-slide px-4">
                                     @if ($article_banner)
                                     <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4" style="background-image: url({{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
                                         <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
@@ -642,7 +676,7 @@
                                     </div>
                                     @endif
                                     {{-- @endisset --}}
-                                    <div class="w-full md:w-[80%] p-10 min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
+                                    <div class="w-full md:w-[80%] bg-white md:bg-none p-10 min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
                                         <div class="w-fit min-w-[104px] p-4 bg-white rounded-xl shadow-md flex flex-col items-center">
                                             <p class="text-lg text-center font-medium">{{ \Carbon\Carbon::parse($article->published_at)->format('M j, Y') }}</p>
                                         </div>
@@ -652,7 +686,7 @@
                                             <p class="text-[14px]">{{ $article->content_overview }}</p>
                                             <a href="{{ url('/article'). '/' . $article->slug }}">
                                                 <div
-                                                    class="h-10 md:h-12 w-[180px] md:w-[219px] rounded-xl bg-[#FF781E] flex items-center justify-center hover:bg-[#FF8252]">
+                                                    class="h-8 md:h-10 w-[180px] md:w-[219px] rounded-xl bg-[#FF781E] flex items-center justify-center hover:bg-[#FF8252]">
                                                     <p class="font-medium text-base md:text-lg text-white">READ MORE</p>
                                                 </div>
                                             </a>

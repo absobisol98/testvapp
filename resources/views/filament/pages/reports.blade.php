@@ -1,6 +1,7 @@
 <x-filament-panels::page>
     <!-- Tab Navigation -->
     <div class="border-b border-gray-200 dark:border-gray-700">
+
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center gap-4"
             id="reportTabs"
             data-tabs-toggle="#reportTabContent"
@@ -52,20 +53,26 @@
              role="tabpanel"
              aria-labelledby="volunteers-tab">
             <!-- Stats Overview -->
+
             <div class=" bg-white rounded-lg shadow-sm dark:bg-gray-800">
+
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Statistics</h3>
                 @livewire('App\Filament\Widgets\TotalVolunteerHoursStats')
             </div>
 
 
             <!-- Filtered Hours -->
+
             <div class=" bg-white rounded-lg shadow-sm dark:bg-gray-800">
+
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Hours</h3>
                 @livewire('App\Filament\Widgets\FilteredVolunteerHours')
             </div>
 
             <!-- Participation List -->
+
             <div class=" bg-white rounded-lg shadow-sm dark:bg-gray-800">
+
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Participation</h3>
                 @livewire('App\Filament\Widgets\VolunteerParticipationList')
             </div>
@@ -78,10 +85,12 @@
              aria-labelledby="opportunities-tab">
 
 
+
             <!-- Add the new Event Opportunity Summary widget -->
             <div class=" bg-white rounded-lg shadow-sm dark:bg-gray-800 mt-6">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Event Opportunity Summary</h3>
                 @livewire('App\Filament\Widgets\EventOpportunitySummary')
+
             </div>
         </div>
 
@@ -96,18 +105,17 @@
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Top Volunteers</h3>
                     @livewire('App\Filament\Widgets\TopVolunteersLeaderboard')
                 </div>
-
                 {{-- <!-- Top Companies Section -->
                 <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Top Business Units</h3>
                     @livewire('App\Filament\Widgets\TopCompaniesLeaderboard')
                 </div> --}}
-
                 <!-- Age Distribution Section -->
                 <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Age Distribution</h3>
                     @livewire('App\Filament\Widgets\VolunteerAgeDistribution')
                 </div>
+
             </div>
         </div>
     </div>

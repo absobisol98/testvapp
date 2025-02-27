@@ -78,7 +78,7 @@ class VolunteerResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!auth()->user()->hasRole(['super_admin', 'admin'])) {
+                if (!auth()->user()->hasRole(['super_admin', 'admin', 'Ayala Super Admin'])) {
                     $query = $query->where('id', auth()->id());
                 }
                 return $query;
@@ -90,10 +90,10 @@ class VolunteerResource extends Resource
                 Tables\Columns\TextColumn::make('username')->label('Username')
                     ->description(fn(Model $record) => $record->firstname . ' ' . $record->lastname)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('roles.name')->label('Role')
-                    ->formatStateUsing(fn($state): string => Str::headline($state))
-                    ->colors(['info'])
-                    ->badge(),
+                // Tables\Columns\TextColumn::make('roles.name')->label('Role')
+                //     ->formatStateUsing(fn($state): string => Str::headline($state))
+                //     ->colors(['info'])
+                //     ->badge(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')->label('Verified at')
@@ -107,14 +107,14 @@ class VolunteerResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'active' => 'success',
-                        'inactive' => 'danger',
-                        'pending' => 'warning',
-                        default => 'secondary',
-                    }),
+                // Tables\Columns\TextColumn::make('status')
+                //     ->badge()
+                //     ->color(fn (string $state): string => match ($state) {
+                //         'active' => 'success',
+                //         'inactive' => 'danger',
+                //         'pending' => 'warning',
+                //         default => 'secondary',
+                //     }),
                 Tables\Columns\TextColumn::make('total_hours')
                     ->label('Volunteer Hours')
                     ->numeric()

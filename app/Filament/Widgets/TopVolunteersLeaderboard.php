@@ -72,8 +72,9 @@ class TopVolunteersLeaderboard extends BaseWidget
                         ->where('encoding_type', '!=', 3)
                         ->get()
                         ->sum(fn($attendance) => $attendance->get_totalHrs());
-                })
+                })   
                 ->numeric()
+
                 ->alignEnd(),
 
             TextColumn::make('total_opportunities')

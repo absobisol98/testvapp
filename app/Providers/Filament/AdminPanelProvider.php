@@ -112,7 +112,7 @@ class AdminPanelProvider extends PanelProvider
                 ->mobileFormPanelPosition('bottom')
                 ->showEmptyPanelOnMobile(true)
                 ->emptyPanelBackgroundImageOpacity('100%')
-                ->emptyPanelBackgroundImageUrl(asset('img/ayala-login-bg.png')),
+                ->emptyPanelBackgroundImageUrl(asset('img/ayala-login-bg-new.png')),
                 FilamentMailLogPlugin::make(),
                 \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make(),
                 FilamentFullCalendarPlugin::make()

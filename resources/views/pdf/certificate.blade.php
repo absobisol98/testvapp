@@ -103,12 +103,10 @@
             <div class="certificate-number">
                 Certificate No: {{ $certificate['certificateNumber'] }}
             </div>
-
             <h1>Certificate of Appreciation</h1>
             <h2>{{ $event->title }}</h2>
             <p>This certificate is proudly presented to</p>
             <p class="name">{{ $attendee->name }}</p>
-
             <div class="slot-details">
                 <p>Volunteer Activity: {{ $certificate['record']->slot->name ?? 'General Participation' }}</p>
                 <p class="hours-served">
@@ -118,7 +116,6 @@
                     @endphp
                 </p>
             </div>
-
             <p>for their outstanding volunteer service and dedication.</p>
             <p class="date">Presented on: {{ \Carbon\Carbon::parse($event->end_date)->format('F d, Y') }}</p>
 
@@ -127,10 +124,10 @@
                 with the certificate number shown above.
             </div>
         </div>
-
         @if(!$loop->last)
             <div style="page-break-after: always;"></div>
         @endif
     @endforeach
+
 </body>
 </html>

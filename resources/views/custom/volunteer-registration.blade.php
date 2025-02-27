@@ -36,11 +36,11 @@
                 <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
                     <div class="container whitespace-pre-line text-white">
                         <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
-                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
+                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
                     </div>
                 </div>
 
-                <div class="h-[100vh] col-span-3 clip-path-custom" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+                <div class="h-[100vh] col-span-3 clip-path-custom" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center left; background-size: cover;">
                 </div>
             </div>
         </section>
@@ -48,21 +48,22 @@
         <section class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
             <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
-                <p class="font-[700] text-[70px] leading-none">Your involvement is important to us!</p>
-                <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Program</p>
+                <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>
+                <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Platform</p>
             </div>
         </section>
 
-        <div class="bg-[#FFFFFFE5] m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] z-10 bg-[#F55E1D] bg-cover" style="background: url('{{ asset('img/registration-bg.png') }}') no-repeat right center; background-size: cover;">
+        {{-- style="background: url('{{ asset('img/registration-bg.png') }}') no-repeat right center; background-size: cover;" --}}
+        <div class="rounded-lg m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] z-10 bg-[#F55E1D]">
                 <div class="items-start justify-center min-h-[756px]">
                     <!-- Left Side -->
-                    <form  action="{{ route('volunteer.form.store') }}" method="POST">
+                     <form  action="{{ route('volunteer.form.store') }}" method="POST">
                         @csrf
-                        <div id="step-1" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[3fr_3fr_2fr]  ">
+                        <div id="step-1" class="grid grid-cols-1 md:grid-cols-2">
                             <div class=" text-white p-8 lg:p-12">
                                 <h1 class="text-4xl font-bold mb-4">Become a Volunteer</h1>
-                                <p class="text-2xl  mb-4">Ayala Corporate Citizenship and Volunteer Program</p>
-                                <p class="text-2xl mb-4">Start your registration here.</p>
+                                <p class="text-xl  mb-4">Ayala Corporate Citizenship and Volunteer Platform</p>
+                                <p class="text-xl font-bold mb-4">Personal Information</p>
 
                                 {{-- <div>
                                     <label class="block text-sm font-semibold required">Username</label>
@@ -138,11 +139,11 @@
                             </div>
 
                                 <!-- Privacy and Terms Notice -->
-                                <p class="text-sm mt-8 text-white">
+                                {{-- <p class="text-sm mt-8 text-white">
                                     We will not share your information without your permission. By signing up you agree to our
                                     <a href="{{ route('terms-and-conditions') }}"  style="color: blue;" class="underline">Terms and Conditions</a>. Learn how we use your data in our
                                     <a href="{{ route('data-privacy-policy') }}"  style="color: blue;" class="underline">Privacy Policy</a>.
-                                </p>
+                                </p> --}}
                             </div>
 
                             <!-- Right Side (Multi-Step Form) -->
@@ -238,8 +239,8 @@
                                         <div>
                                             <input id="checkbox" type="checkbox" required />
                                             <label class="text-color" for="checkbox">
-                                                &nbsp; I agree to these
-                                                <a href="{{ route('terms-and-conditions') }}" class="hover:underline text-color">Terms and Conditions</a>.
+                                                &nbsp; I have read and agree to the Ayala Foundation's
+                                                <a href="{{ route('data-privacy-policy') }}" class="hover:underline text-color">Data Privacy Policy</a>.
                                             </label>
                                         </div>
                                     </div>
