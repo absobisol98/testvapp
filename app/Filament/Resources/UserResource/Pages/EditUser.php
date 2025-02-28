@@ -19,51 +19,7 @@ class EditUser extends EditRecord
 
     protected static string $resource = UserResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        $actions = [
-            Actions\ActionGroup::make([
-                Actions\EditAction::make()
-                    ->label('Change password')
-                    ->form([
-                        Forms\Components\TextInput::make('password')
-                            ->password()
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->revealable()
-                            ->required(),
-                        Forms\Components\TextInput::make('passwordConfirmation')
-                            ->password()
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->revealable()
-                            ->same('password')
-                            ->required(),
-                    ])
-                    ->modalWidth(Support\Enums\MaxWidth::Medium)
-                    ->modalHeading('Update Password')
-                    ->modalDescription(fn($record) => $record->email)
-                    ->modalAlignment(Alignment::Center)
-                    ->modalCloseButton(false)
-                    ->modalSubmitActionLabel('Submit')
-                    ->modalCancelActionLabel('Cancel'),
 
-                Actions\DeleteAction::make()
-                    ->extraAttributes(["class" => "border-b"]),
-
-                Actions\CreateAction::make()
-                    ->label('Create new user')
-                    ->url(fn(): string => static::$resource::getNavigationUrl() . '/create'),
-            ])
-            ->icon('heroicon-m-ellipsis-horizontal')
-            ->hiddenLabel()
-            ->button()
-            ->tooltip('More Actions')
-            ->color('gray')
-        ];
-
-        return array_merge($this->getNavigationActions(), $actions);
-    }
 
     protected function getRedirectUrl(): string
     {
@@ -93,4 +49,10 @@ class EditUser extends EditRecord
 
         return $badge;
     }
+
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
 }

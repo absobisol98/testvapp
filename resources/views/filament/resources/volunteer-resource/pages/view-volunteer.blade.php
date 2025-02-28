@@ -64,7 +64,6 @@
                         <p class="text-[20px] font-[500] capitalize">{{ $user->name }}</p>
                         <p><span class="text-[14px] font-[300] font-bold">Member Since:</span>
                             {{ $user->created_at->format('F j, Y') }}</p>
-                        <p class="text-[18px] font-bold text-[#F55E1D]">LEVEL: 1</p>
                     </div>
                 </div>
 
@@ -426,10 +425,10 @@
                                 All Joined Opportunities
                             </button>
 
-                            <button id="favorite-events-btn" onclick="changeEventsTab('favorite-events')"
+                            {{-- <button id="favorite-events-btn" onclick="changeEventsTab('favorite-events')"
                                 class="py-2 px-4 text-base md:text-lg text-start bg-[#F55E1D] hover:bg-[#FF9141]">
                                 My Favorite Opportunities
-                            </button>
+                            </button> --}}
                         </div>
 
                         <div class="shadow-md p-8">
