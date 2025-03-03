@@ -180,6 +180,8 @@ class AdminPanelProvider extends PanelProvider
     {
         if(request()->routeIs('filament.admin.auth.login')) {
             return asset('img/logo-colored.png');
+        }elseif(request()->routeIs('livewire.update')) {
+            return asset('img/logo-colored.png');
         }else{
              return Storage::url(app(GeneralSettings::class)->brand_logo) ?? null;;
         }

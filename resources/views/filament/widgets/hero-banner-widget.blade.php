@@ -62,10 +62,10 @@
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <a href="{{ route('filament.admin.resources.events.index') }}"
+                            <a href="{{ route('filament.admin.resources.volunteers.view', ['record' => auth()->id()]) }}"
                                class="hover:text-[#FF9141] transition-colors duration-200">
-                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$upcoming->count()}}</p>
-                                <p class="text-sm font-bold text-[#03498D]">MY UPCOMING OPPORTUNITIES</p>
+                                <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$joined->count()}}</p>
+                                <p class="text-sm font-bold text-[#03498D]">JOINED OPPORTUNITIES</p>
                             </a>
                         </div>
                         {{-- @dd($upcoming); --}}
