@@ -83,7 +83,7 @@
 
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
 
-    <div class="w-full flex items-center justify-between">
+    <div class="w-full flex flex-col md:flex-row items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
 
         <div class="grid grid-cols-4 gap-2">

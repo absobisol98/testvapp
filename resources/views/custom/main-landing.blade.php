@@ -50,8 +50,8 @@
             <div class="grid grid-cols-5">
                 <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
                     <div class="container whitespace-pre-line text-white">
-                        <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
-                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
+                        <p class="font-[700] text-6xl leading-none">Your involvement is <br> important to us!</p>
+                        <p class="font-[400] text-2xl whitespace-nowrap">Ayala Corporate Citizenship and Volunteer Platform</p>
                     </div>
                 </div>
 
@@ -91,7 +91,7 @@
 
                             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
-                            <p class="text-[18px] font-[400] mb-3">{{$latestOpporfeaturedOpportunitytunity->location ?? 'No Location'}}</p>
+                            <p class="text-[18px] font-[400] mb-3">{{$featuredOpportunity->location ?? 'No Location'}}</p>
                             <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
                                 <div class="w-fit flex flex-col items-start justify-between gap-1">
                                     <p><span class="font-[600]">DATE:</span> {{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('M-d-Y') ?? 'No Date Available'}}</p>
@@ -325,73 +325,81 @@
                     <div class="swiper-wrapper w-full">
 
                         {{-- Partner Slide Item 1 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/bronze.png') }}"
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img\AC-Logistics.png') }}"
                                         alt="Partner 1">
                                 </div>
                             </a>
                         </div>
 
                         {{-- Partner Slide Item 2 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/silver.png') }}"
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img\ALI.jpg') }}"
                                         alt="Partner 1">
                                 </div>
                             </a>
                         </div>
 
                         {{-- Partner Slide Item 3 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/gold.png') }}"
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img\Ayala_AC_Health.jpg') }}"
                                         alt="Partner 1">
                                 </div>
                             </a>
                         </div>
 
                         {{-- Partner Slide Item 4 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/plat.png') }}"
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img/Ayala_AC_Industrials.jpg') }}"
                                         alt="Partner 1">
                                 </div>
                             </a>
                         </div>
 
-
                         {{-- Partner Slide Item 5 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/bronze.png') }}"
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img/Ayala.jpg') }}"
                                         alt="Partner 1">
                                 </div>
                             </a>
                         </div>
 
                         {{-- Partner Slide Item 6 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/silver.png') }}"
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img/BPI.png') }}"
                                         alt="Partner 1">
                                 </div>
                             </a>
                         </div>
 
-
+                        {{-- Partner Slide Item 7 --}}
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img/Globe.jpg') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -420,6 +428,7 @@
                         },
                         breakpoints: {
                             1024: { slidesPerView: 5, },
+                            768: { slidesPerView: 4, },
                             640: { slidesPerView: 3, },
                             320: { slidesPerView: 1, }
                         }

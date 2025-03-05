@@ -35,8 +35,8 @@
             <div class="grid grid-cols-5">
                 <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
                     <div class="container whitespace-pre-line text-white">
-                        <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
-                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
+                        <p class="font-[700] text-6xl leading-none">Your involvement is <br> important to us!</p>
+                        <p class="font-[400] text-2xl whitespace-nowrap">Ayala Corporate Citizenship and Volunteer Platform</p>
                     </div>
                 </div>
 
