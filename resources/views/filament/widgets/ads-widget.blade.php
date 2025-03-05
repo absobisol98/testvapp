@@ -63,7 +63,7 @@
                      x-transition:leave-end="opacity-0 absolute inset-0"
                      class="absolute inset-0">
                     <a :href="banner.click_url" :target="banner.target" class="block w-full h-full">
-                        <img class="w-full h-[450px] min-h-[450px] max-h-[450px] object-cover"
+                        <img class="w-full h-full min-h-[450px] object-cover"
                              :src="banner.url"
                              alt="Banner Image">
                     </a>

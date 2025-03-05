@@ -103,6 +103,16 @@ class HeroBannerWidget extends Widget
         ->orderBy('start_date', 'asc')
         ->get();
 
+        $joined = Event::query()
+            ->whereHas('registrations', function($query) {
+                $query->where('volunteer_id', auth()->id());
+            })
+            ->orWhereHas('attendees', function($query) {
+                $query->where('attendee_id', auth()->id());
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $opportunities = Event::with('slots')->orderBy('created_at','desc')->get();
 
         $totalHours = EventAttendee::whereNotNull(['time_in', 'time_out'])
@@ -155,6 +165,7 @@ class HeroBannerWidget extends Widget
             'upcoming' => $upcoming,
             'account_created_at' => $user_created_date->format('M d, Y'),
             'totalHours' => $totalHours,
+            'joined' => $joined,
         ];
     }
 }

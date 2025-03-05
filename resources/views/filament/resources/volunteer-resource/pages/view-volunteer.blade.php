@@ -446,7 +446,6 @@
                                                 <img class="w-full h-full object-cover"
                                                     src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
                                             </div>
-
                                             <div class="w-full">
                                                 <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
                                                 <p class="text-[18px] font-[400]">{{ $opportunity->location }}</p>
