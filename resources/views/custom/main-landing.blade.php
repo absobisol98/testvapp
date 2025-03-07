@@ -74,7 +74,14 @@
         <div class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] rounded-xl px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
             {{-- Featured Opportunity --}}
                     @php
-                            $mediaItems = $featuredOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                    $latestOpportunity = $featuredOpportunity ?? null;
+                    $mediaItems = null;
+
+                    if ($latestOpportunity) {
+                        $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                    } else {
+                        $mediaItems = asset('img/ayala-foundation-bg.jpg');
+                    }
                     @endphp
             <div class="flex flex-col md:flex-row items-center justify-center gap-4">
                 <div class="flex items-center justify-between h-[400px] w-[100%] md:w-[40%]  gap-4"

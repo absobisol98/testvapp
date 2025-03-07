@@ -35,8 +35,8 @@
             <div class="grid grid-cols-5">
                 <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
                     <div class="container whitespace-pre-line text-white">
-                        <p class="font-[700] text-6xl leading-none">Your involvement is <br> important to us!</p>
-                        <p class="font-[400] text-2xl whitespace-nowrap">Ayala Corporate Citizenship and Volunteer Platform</p>
+                        <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
+                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
                     </div>
                 </div>
 
@@ -279,456 +279,281 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 
     <script>
-        function nextStep(step) {
-            // Hide all steps
-            if(step == 2){
-                $('#step-1').addClass('hidden')
-                $('#step-2').removeClass('hidden')
-            }
-            else{
-                $('#step-2').addClass('hidden')
-                $('#step-1').removeClass('hidden')
-            }
-            // for (let i = 1; i <= 2; i++) {
-            //     document.getElementById('step-' + i).classList.add('hidden');
-            // }
-            // // Show the desired step
-            // document.getElementById('step-' + step).classList.remove('hidden');
-        }
-
         $(document).ready(function() {
-        $('#program-select').select2({
-            placeholder: "Select programs",
-            allowClear: true
+            // Initialize Select2 Components
+            initializeSelect2Components();
+
+            // Form Event Handlers
+            setupFormHandlers();
+
+            // Organization Type Toggle
+            setupOrganizationToggle();
         });
-    });
 
-    //     $(document).ready(function() {
-    //     $('#program-select').select2({
-    //         placeholder: "Select programs",
-    //         allowClear: true
-    //     });
-    // });
+        function initializeSelect2Components() {
+            // Programs Select2
+            $('#program-select').select2({
+                placeholder: "Select programs",
+                allowClear: true
+            }).on('change', handleProgramChange);
 
-        function updateDropdowns() {
-            const isAyalaEmployee = $('#ayala_employee').is(':checked');
-            const ayalaFields = $('#ayala-fields');
-            const nonAyalaFields = $('#non-ayala-fields');
-
-            if (isAyalaEmployee) {
-                ayalaFields.removeClass('hidden');
-                nonAyalaFields.addClass('hidden');
-                // Make Ayala fields required
-                $('#clusterSelect, #companySelect').prop('required', true);
-                $('input[name="external_company_name"]').prop('required', false);
-            } else {
-                ayalaFields.addClass('hidden');
-                nonAyalaFields.removeClass('hidden');
-                // Make external company name required
-                $('#clusterSelect, #companySelect').prop('required', false);
-                $('input[name="external_company_name"]').prop('required', true);
-            }
+            // Referral Source Select2
+            $('#referral-source').select2({
+                placeholder: "Select how you heard about us",
+                allowClear: true
+            });
         }
 
-        // Update form validation
-        function validateForm() {
-            // Clear previous errors
-            $('.text-danger').html('');
-            $('.invalid-field').removeClass('invalid-field');
-
-            let isValid = true;
-            const requiredFields = {
-            firstname: 'Given Name',
-            lastname: 'Last Name',
-            email: 'Email',
-            age_range: 'Age Range',
-            emergency_contact_name: 'Emergency Contact Name',
-            emergency_contact_number: 'Emergency Contact Number',
-            password: 'Password',
-            passwordConfirmation: 'Confirm Password'
-            };
-
-            if ($('#ayala_employee').is(':checked')) {
-                if (!$('select[name="cluster_id"]').val()) {
-                    $('.cluster_id_err').html('Cluster is required');
-                    $('select[name="cluster_id"]').addClass('invalid-field');
-                    isValid = false;
-                }
-                if (!$('select[name="company_id"]').val()) {
-                    $('.company_id_err').html('Company is required');
-                    $('select[name="company_id"]').addClass('invalid-field');
-                    isValid = false;
-                }
-            } else {
-                if (!$('input[name="external_company_name"]').val().trim()) {
-                    $('.external_company_name_err').html('Company name is required');
-                    $('input[name="external_company_name"]').addClass('invalid-field');
-                    isValid = false;
-                }
-            }
-
-            // Validate required fields
-            Object.entries(requiredFields).forEach(([field, label]) => {
-                const element = $(`[name="${field}"]`);
-                const value = element.val();
-
-                if (!value || value.trim() === '') {
-                    element.addClass('invalid-field');
-                    $(`.${field}_err`).html(`${label} is required`);
-                    isValid = false;
-                }
+        function setupFormHandlers() {
+            // Prevent default form submission
+            $('form').on('submit', function(e) {
+                e.preventDefault();
             });
 
-            //Validate program select
-            const selectedPrograms = $('#program-select').val();
-            if (!selectedPrograms || selectedPrograms.length === 0) {
-                $('#program-select').addClass('invalid-field');
-                $('.program_ids_err').html('Please select at least one program');
-                isValid = false;
-            }
-
-            // Validate referral source
-            const selectedSources = $('#referral-source').val();
-            if (!selectedSources || selectedSources.length === 0) {
-                $('#referral-source').addClass('invalid-field');
-                $('.referral_source_err').html('Please select at least one option');
-                isValid = false;
-            }
-
-            // Validate other program if selected
-            if ($('#program-select').val()?.includes('other') && !$('input[name="other_program"]').val().trim()) {
-                $('input[name="other_program"]').addClass('invalid-field');
-                $('.other_program_err').html('Please specify other program(s)');
-                isValid = false;
-            }
-
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test($('[name="email"]').val())) {
-                $('[name="email"]').addClass('invalid-field');
-                $('.email_err').html('Please enter a valid email address');
-                isValid = false;
-            }
-
-            // Password validation
-            if ($('[name="password"]').val() !== $('[name="passwordConfirmation"]').val()) {
-                $('[name="password"], [name="passwordConfirmation"]').addClass('invalid-field');
-                $('.password_err').html('Passwords do not match');
-                isValid = false;
-            }
-
-            // Terms checkbox
-            if (!$('#checkbox').is(':checked')) {
-                $('.terms_err').html('Please agree to the Terms and Conditions');
-                isValid = false;
-            }
-
-            // Scroll to first error if validation fails
-            if (!isValid) {
-                const firstError = $('.invalid-field').first();
-                if (firstError.length) {
-                    $('html, body').animate({
-                        scrollTop: firstError.offset().top - 100
-                    }, 500);
+            // Register button click handler
+            $("#btn-register").click(function(e) {
+                e.preventDefault();
+                if (validateForm()) {
+                    submitForm();
                 }
+            });
+        }
+
+        function handleProgramChange() {
+            const hasOther = $(this).val()?.includes('other');
+            $('#other-program-field').toggleClass('hidden', !hasOther);
+            if (!hasOther) {
+                $('input[name="other_program"]').val('');
+            }
+        }
+
+        function validateForm() {
+            clearValidationErrors();
+            let isValid = true;
+
+            // Validate required fields
+            isValid = validateRequiredFields() && isValid;
+
+            // Validate organization fields
+            isValid = validateOrganizationFields() && isValid;
+
+            // Validate selections
+            isValid = validateSelections() && isValid;
+
+            // Validate email and password
+            isValid = validateEmailAndPassword() && isValid;
+
+            // Validate terms acceptance
+            isValid = validateTerms() && isValid;
+
+            if (!isValid) {
+                scrollToFirstError();
             }
 
             return isValid;
         }
 
-        function submitForm() {
-            const affiliateTypeId = $("input[type=radio][name=affiliate_type_id]:checked").val();
+        function clearValidationErrors() {
+            $('.text-danger').html('');
+            $('.invalid-field').removeClass('invalid-field');
+        }
 
-            const formData = {
+        function validateRequiredFields() {
+            let isValid = true;
+            const requiredFields = {
+                firstname: 'Given Name',
+                lastname: 'Last Name',
+                email: 'Email',
+                age_range: 'Age Range',
+                emergency_contact_name: 'Emergency Contact Name',
+                emergency_contact_number: 'Emergency Contact Number',
+                password: 'Password',
+                passwordConfirmation: 'Confirm Password'
+            };
+
+            Object.entries(requiredFields).forEach(([field, label]) => {
+                const element = $(`[name="${field}"]`);
+                if (!element.val()?.trim()) {
+                    markFieldInvalid(field, `${label} is required`);
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        function validateOrganizationFields() {
+            let isValid = true;
+
+            if ($('#ayala_employee').is(':checked')) {
+                if (!$('select[name="cluster_id"]').val()) {
+                    markFieldInvalid('cluster_id', 'Cluster is required');
+                    isValid = false;
+                }
+                if (!$('select[name="company_id"]').val()) {
+                    markFieldInvalid('company_id', 'Company is required');
+                    isValid = false;
+                }
+            } else if (!$('input[name="external_company_name"]').val()?.trim()) {
+                markFieldInvalid('external_company_name', 'Company name is required');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateSelections() {
+            let isValid = true;
+
+            // Programs
+            const selectedPrograms = $('#program-select').val();
+            if (!selectedPrograms?.length) {
+                markFieldInvalid('program_ids', 'Please select at least one program');
+                isValid = false;
+            }
+
+            // Other program if selected
+            if (selectedPrograms?.includes('other') && !$('input[name="other_program"]').val()?.trim()) {
+                markFieldInvalid('other_program', 'Please specify other program(s)');
+                isValid = false;
+            }
+
+            // Referral source
+            if (!$('#referral-source').val()?.length) {
+                markFieldInvalid('referral_source', 'Please select at least one option');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateEmailAndPassword() {
+            let isValid = true;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test($('[name="email"]').val())) {
+                markFieldInvalid('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            if ($('[name="password"]').val() !== $('[name="passwordConfirmation"]').val()) {
+                markFieldInvalid('password', 'Passwords do not match');
+                $('[name="passwordConfirmation"]').addClass('invalid-field');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateTerms() {
+            if (!$('#checkbox').is(':checked')) {
+                $('.terms_err').html('Please agree to the Terms and Conditions');
+                return false;
+            }
+            return true;
+        }
+
+        function markFieldInvalid(field, message) {
+            $(`.${field}_err`).html(message);
+            $(`[name="${field}"]`).addClass('invalid-field');
+        }
+
+        function scrollToFirstError() {
+            const firstError = $('.invalid-field').first();
+            if (firstError.length) {
+                $('html, body').animate({
+                    scrollTop: firstError.offset().top - 100
+                }, 500);
+            }
+        }
+
+        function submitForm() {
+            const formData = collectFormData();
+
+            $("#btn-register").prop('disabled', true).text('Registering...');
+
+            $.ajax({
+                url: "/volunteer-registration-store",
+                type: 'POST',
+                data: formData,
+                success: handleSubmitSuccess,
+                error: handleSubmitError
+            });
+        }
+
+        function collectFormData() {
+            const affiliateTypeId = $("input[name=affiliate_type_id]:checked").val();
+            const isAyalaEmployee = $('#ayala_employee').is(':checked');
+
+            return {
                 _token: $("input[name='_token']").val(),
                 email: $("input[name='email']").val(),
                 firstname: $("input[name='firstname']").val(),
                 lastname: $("input[name='lastname']").val(),
-                middle_name: $("input[name='middle_name']").val(),
+                nickname: $("input[name='nickname']").val(),
+                age_range: $("select[name='age_range']").val(),
                 password: $("input[name='password']").val(),
-                birthday: $("input[name='birthday']").val(),
+                passwordConfirmation: $("input[name='passwordConfirmation']").val(),
                 emergency_contact_name: $("input[name='emergency_contact_name']").val(),
                 emergency_contact_number: $("input[name='emergency_contact_number']").val(),
                 affiliate_type_id: parseInt(affiliateTypeId),
                 program_ids: $('#program-select').val(),
                 other_program: $('input[name="other_program"]').val(),
                 referral_source: $('#referral-source').val(),
-                cluster_id: $('#ayala_employee').is(':checked') ? $("#clusterSelect").val() : null,
-                company_id: $('#ayala_employee').is(':checked') ? $("#companySelect").val() : null,
-                external_company_name: $('#non_ayala').is(':checked') ? $("input[name='external_company_name']").val() : null,
+                cluster_id: isAyalaEmployee ? $("#clusterSelect").val() : null,
+                company_id: isAyalaEmployee ? $("#companySelect").val() : null,
+                external_company_name: !isAyalaEmployee ? $("input[name='external_company_name']").val() : null,
             };
+        }
 
-            $("#btn-register").prop('disabled', true).text('Registering...');
+        function handleSubmitSuccess(response) {
+            $("#btn-register").text('Registration successful...');
 
-            // Log the form data being sent
-            console.log('Submitting form data:', formData);
-
-            $.ajax({
-                url: "{{ route('volunteer.form.store') }}",
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    console.log('Success response:', response);
-                    $("#btn-register").prop('disabled', true).text('Registration successful...');
-
-                    // Use setTimeout to ensure the response is processed
-                    setTimeout(function() {
-                        if (response.success) {
-                            window.location.replace("{{ route('verification.sent') }}");
-                        } else {
-                            $("#btn-register").prop('disabled', false).text('Register');
-                            handleErrors(response.errors || {});
-                        }
-                    }, 1000);
-                },
-                error: function(xhr, status, error) {
+            setTimeout(() => {
+                if (response.success) {
+                    window.location.replace("/email/verify/sent");
+                } else {
                     $("#btn-register").prop('disabled', false).text('Register');
-                    console.error('Ajax error:', {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        responseText: xhr.responseText,
-                        error: error
-                    });
+                    handleErrors(response.errors || {});
+                }
+            }, 1000);
+        }
 
-                    if (xhr.status === 422) {
-                        handleErrors(xhr.responseJSON.errors);
-                    } else {
-                        alert('An error occurred. Please try again later.');
-                    }
+        function handleSubmitError(xhr, status, error) {
+            $("#btn-register").prop('disabled', false).text('Register');
+            console.error('Form submission error:', { status: xhr.status, error });
+
+            if (xhr.status === 422) {
+                handleErrors(xhr.responseJSON.errors);
+            } else {
+                alert('An error occurred. Please try again later.');
+            }
+        }
+
+        function handleErrors(errors) {
+            if (!errors) return;
+
+            Object.entries(errors).forEach(([field, messages]) => {
+                markFieldInvalid(field, messages[0]);
+            });
+
+            scrollToFirstError();
+        }
+
+        function setupOrganizationToggle() {
+            $('input[name="affiliate_type_id"]').on('change', function() {
+                const isAyalaEmployee = $('#ayala_employee').is(':checked');
+                $('#ayala-fields').toggleClass('hidden', !isAyalaEmployee);
+                $('#non-ayala-fields').toggleClass('hidden', isAyalaEmployee);
+
+                // Reset fields
+                if (isAyalaEmployee) {
+                    $('input[name="external_company_name"]').val('');
+                } else {
+                    $('#clusterSelect, #companySelect').val('').trigger('change');
                 }
             });
         }
-
-        $(document).ready(function() {
-            // Prevent default form submission
-            $('form').on('submit', function(e) {
-                e.preventDefault();
-            });
-
-            $("#btn-register").click(function(e) {
-                e.preventDefault();
-                let isValid = validateForm();
-
-                if (isValid) {
-                    submitForm();
-                }
-            });
-
-            function validateForm() {
-                // Clear previous errors
-                $('.text-danger').html('');
-                $('.invalid-field').removeClass('invalid-field');
-
-                let isValid = true;
-                const requiredFields = {
-                    firstname: 'First Name',
-                    lastname: 'Last Name',
-                    email: 'Email',
-                    birthday: 'Birthday',
-                    emergency_contact_name: 'Emergency Contact Name',
-                    emergency_contact_number: 'Emergency Contact Number',
-                    password: 'Password',
-                    passwordConfirmation: 'Confirm Password'
-                };
-
-                if ($('#ayala_employee').is(':checked')) {
-                    if (!$('select[name="cluster_id"]').val()) {
-                        $('.cluster_id_err').html('Cluster is required');
-                        $('select[name="cluster_id"]').addClass('invalid-field');
-                        isValid = false;
-                    }
-                }
-                if (!$('#non_ayala').is(':checked')) {
-                    if (!$('select[name="company_id"]').val()) {
-                        $('.company_id_err').html('Company is required');
-                        $('select[name="company_id"]').addClass('invalid-field');
-                        isValid = false;
-                    }
-                }
-
-                // Validate required fields
-                Object.entries(requiredFields).forEach(([field, label]) => {
-                    const element = $(`[name="${field}"]`);
-                    const value = element.val();
-
-                    if (!value || value.trim() === '') {
-                        element.addClass('invalid-field');
-                        $(`.${field}_err`).html(`${label} is required`);
-                        isValid = false;
-                    }
-                });
-
-                //Validate program select
-                const selectedPrograms = $('#program-select').val();
-                if (!selectedPrograms || selectedPrograms.length === 0) {
-                    $('#program-select').addClass('invalid-field');
-                    $('.program_ids_err').html('Please select at least one program');
-                    isValid = false;
-                }
-
-                // Validate referral source
-                const selectedSources = $('#referral-source').val();
-                if (!selectedSources || selectedSources.length === 0) {
-                    $('#referral-source').addClass('invalid-field');
-                    $('.referral_source_err').html('Please select at least one option');
-                    isValid = false;
-                }
-
-                // Validate other program if selected
-                if ($('#program-select').val()?.includes('other') && !$('input[name="other_program"]').val().trim()) {
-                    $('input[name="other_program"]').addClass('invalid-field');
-                    $('.other_program_err').html('Please specify other program(s)');
-                    isValid = false;
-                }
-
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test($('[name="email"]').val())) {
-                    $('[name="email"]').addClass('invalid-field');
-                    $('.email_err').html('Please enter a valid email address');
-                    isValid = false;
-                }
-
-                // Password validation
-                if ($('[name="password"]').val() !== $('[name="passwordConfirmation"]').val()) {
-                    $('[name="password"], [name="passwordConfirmation"]').addClass('invalid-field');
-                    $('.password_err').html('Passwords do not match');
-                    isValid = false;
-                }
-
-                // Terms checkbox
-                if (!$('#checkbox').is(':checked')) {
-                    $('.terms_err').html('Please agree to the Terms and Conditions');
-                    isValid = false;
-                }
-
-                // Scroll to first error if validation fails
-                if (!isValid) {
-                    const firstError = $('.invalid-field').first();
-                    if (firstError.length) {
-                        $('html, body').animate({
-                            scrollTop: firstError.offset().top - 100
-                        }, 500);
-                    }
-                }
-
-                return isValid;
-            }
-
-            function submitForm() {
-                const affiliateTypeId = $("input[type=radio][name=affiliate_type_id]:checked").val();
-
-                const formData = {
-                    _token: $("input[name='_token']").val(),
-                    email: $("input[name='email']").val(),
-                    firstname: $("input[name='firstname']").val(),
-                    lastname: $("input[name='lastname']").val(),
-                    nickname: $("input[name='nickname']").val(), // Changed from middle_name
-                    age_range: $("select[name='age_range']").val(), // Changed from birthday
-                    password: $("input[name='password']").val(),
-                    passwordConfirmation: $("input[name='passwordConfirmation']").val(),
-                    emergency_contact_name: $("input[name='emergency_contact_name']").val(),
-                    emergency_contact_number: $("input[name='emergency_contact_number']").val(),
-                    affiliate_type_id: parseInt(affiliateTypeId),
-                    program_ids: $('#program-select').val(),
-                    other_program: $('input[name="other_program"]').val(),
-                    referral_source: $('#referral-source').val(),
-                    cluster_id: $('#ayala_employee').is(':checked') ? $("#clusterSelect").val() : null,
-                    company_id: $('#ayala_employee').is(':checked') ? $("#companySelect").val() : null,
-                    external_company_name: $('#non_ayala').is(':checked') ? $("input[name='external_company_name']").val() : null,
-                };
-
-                $("#btn-register").prop('disabled', true).text('Registering...');
-
-                // Log the form data being sent
-                console.log('Submitting form data:', formData);
-
-                $.ajax({
-                    url: "{{ route('volunteer.form.store') }}",
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        console.log('Success response:', response);
-                        $("#btn-register").prop('disabled', true).text('Registration successful...');
-
-                        // Use setTimeout to ensure the response is processed
-                        setTimeout(function() {
-                            if (response.success) {
-                                window.location.replace("{{ route('verification.sent') }}");
-                            } else {
-                                $("#btn-register").prop('disabled', false).text('Register');
-                                handleErrors(response.errors || {});
-                            }
-                        }, 1000);
-                    },
-                    error: function(xhr, status, error) {
-                        $("#btn-register").prop('disabled', false).text('Register');
-                        console.error('Ajax error:', {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            responseText: xhr.responseText,
-                            error: error
-                        });
-
-                        if (xhr.status === 422) {
-                            handleErrors(xhr.responseJSON.errors);
-                        } else {
-                            alert('An error occurred. Please try again later.');
-                        }
-                    }
-                });
-            }
-
-            function handleErrors(errors) {
-                console.log('Handling errors:', errors);
-
-                if (!errors) {
-                    console.error('No errors object provided to handleErrors');
-                    return;
-                }
-
-                Object.entries(errors).forEach(([field, messages]) => {
-                    console.log(`Setting error for ${field}:`, messages);
-                    $(`.${field}_err`).html(messages[0]);
-                    $(`[name="${field}"]`).addClass('invalid-field');
-                });
-
-                // Scroll to first error
-                const firstError = $('.invalid-field').first();
-                if (firstError.length) {
-                    $('html, body').animate({
-                        scrollTop: firstError.offset().top - 100
-                    }, 500);
-                }
-            }
-        });
-
-        // Initialize Select2 for programs
-        $('#program-select').select2({
-            placeholder: "Select programs",
-            allowClear: true
-        }).on('change', function(e) {
-            // Check if "Other" is selected
-            if ($(this).val()?.includes('other')) {
-                $('#other-program-field').removeClass('hidden');
-            } else {
-                $('#other-program-field').addClass('hidden');
-            }
-        });
-
-        // Initialize Select2 for referral sources
-        $('#referral-source').select2({
-            placeholder: "Select how you heard about us",
-            allowClear: true
-        });
-
-        // Initialize Select2 for referral source
-        $(document).ready(function() {
-            $('#referral-source').select2({
-                placeholder: "Select how you heard about us",
-                allowClear: true
-            });
-        });
     </script>
 @endsection
 
