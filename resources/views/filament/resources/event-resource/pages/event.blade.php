@@ -83,7 +83,7 @@
 
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
 
-    <div class="w-full flex flex-col md:flex-row items-center justify-between">
+    <div class="w-full flex items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
 
         <div class="grid grid-cols-4 gap-2">
@@ -239,7 +239,7 @@
                             @foreach ($record->facilitators as $facilitator)
                                 <li class="text-md">{{$facilitator->name}}</li>
                             @endforeach
-                        </ul>
+                        </ul>d
                         @if($record->getMedia('event-attachments')->count() > 0)
                             <div>
                                 <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
@@ -466,27 +466,30 @@
                                 <div class="w-full flex items-center justify-center mt-auto">
 
                                     @if($isEventFinished)
-
-                                        @if(isset($attendeeHours[$slot->id]) && $attendeeHours[$slot->id]['hours'] >= 0)
-                                            <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                {{ number_format($attendeeHours[$slot->id]['hours']) }}
-                                                @if ($attendeeHours[$slot->id]['hours'] > 1)
-                                                    Hours
-                                                @else
-                                                    Hour
-                                                @endif Completed
-                                            </span>
+                                        @if(isset($attendeeHours[$slot->id]))
+                                            @if(is_array($attendeeHours[$slot->id]))
+                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
+                                                    No Hours Completed
+                                                </span>
+                                            @elseif(is_numeric($attendeeHours[$slot->id]) && $attendeeHours[$slot->id] > 0)
+                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
+                                                    {{ number_format($attendeeHours[$slot->id], 1) }} Hours Completed
+                                                </span>
+                                            @else
+                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
+                                                    No Hours Completed
+                                                </span>
+                                            @endif
                                         @else
                                             <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
                                                 Opportunity Finished
                                             </span>
                                         @endif
-                                        @elseif($userWasRejected)
+                                    @elseif($userWasRejected)
                                         <span class="h-10 w-[350px] bg-red-100 text-red-800 flex items-center justify-center rounded-full">
                                             Skills/Qualification Mismatch
                                         </span>
-
-                                        @elseif($isAvailable && !$userRegistered)
+                                    @elseif($isAvailable && !$userRegistered)
                                         <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
                                               method="POST"
                                               enctype="multipart/form-data"
@@ -526,10 +529,20 @@
                                             </button>
                                         </form>
                                     @elseif($userRegistered)
-                                        @if(isset($attendeeHours[$slot->id]) && $attendeeHours[$slot->id] > 0)
-                                            <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                {{ number_format($attendeeHours[$slot->id], 1) }} Hours Completed
-                                            </span>
+                                        @if(isset($attendeeHours[$slot->id]))
+                                            @if(is_array($attendeeHours[$slot->id]))
+                                                <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
+                                                    Already Registered
+                                                </span>
+                                            @elseif(is_numeric($attendeeHours[$slot->id]) && $attendeeHours[$slot->id] > 0)
+                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
+                                                    {{ number_format($attendeeHours[$slot->id], 1) }} Hours Completed
+                                                </span>
+                                            @else
+                                                <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
+                                                    Already Registered
+                                                </span>
+                                            @endif
                                         @else
                                             <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
                                                 Already Registered

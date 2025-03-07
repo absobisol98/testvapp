@@ -24,8 +24,31 @@ final class VolunteerFields
         return [
             ToggleButtons::make('is_company')
                 ->label(''),
+            //     ->default(1)
+            //     ->options([
+            //         '1' => 'Company',
+            //         '0' => 'School',
+            //     ])
+            //     ->icons([
+            //         '1' => 'heroicon-o-building-office',
+            //         '0' => 'heroicon-o-academic-cap',
+            //     ])
+            //     ->colors([
+            //         '1' => 'secondary',
+            //         '0' => 'secondary',
+            //     ])
+            //     ->live()
+            //     ->grouped(),
+            // Fieldset::make('School')
+            //     ->visible(fn (Get $get) => !$get('is_company'))
+            //     ->schema([
+            //         TextInput::make('school')->label('School name')->required()->columnSpanFull(),
+
+            //         TextInput::make('school_address')->label('Address')->columnSpanFull(),
+            //     ]),
+
             Fieldset::make('Company')
-                ->visible(fn (Get $get) => $get('is_company'))
+                ->visible()
                 ->schema([
 
                     Select::make('affiliate_type_id')
@@ -43,6 +66,14 @@ final class VolunteerFields
                         ->visible(fn (Get $get) => $get('affiliate_type_id') == 1)
                         ->options(fn () => Cluster::all()->pluck('name', 'id')->toArray())
                         ->live(),
+
+                    // Select::make('company_name')
+                    //     ->required()
+                    //     ->columnSpanFull()
+                    //     ->visible(fn (Get $get) => $get('affiliate_type_id') == 2)
+                    //     ->options(fn () => Company::all()->pluck('name', 'id')->toArray())
+                    //     ->searchable()
+                    //     ->live(),
 
                     TextInput::make('external_company_name')
                         ->label('Company name')
@@ -84,7 +115,6 @@ final class VolunteerFields
                     PhoneInput::make('company_contact_number')
                         ->label('Contact number')
                         ->defaultCountry('PH')
-                        ->showFlags(false)
                         ->validateFor(
                             type: libPhoneNumberType::MOBILE | libPhoneNumberType::FIXED_LINE
                         ),
@@ -103,7 +133,6 @@ final class VolunteerFields
                     PhoneInput::make('emergency_contact_number')
                         ->label('Contact number')
                         ->defaultCountry('PH')
-                        ->showFlags(false)
                         ->validateFor(
                             type: libPhoneNumberType::MOBILE | libPhoneNumberType::FIXED_LINE
                         ),
@@ -114,16 +143,6 @@ final class VolunteerFields
                 ->columnSpanFull()
                 ->label('Interests')
                 ->options(Program::all()->pluck('name', 'id')->toArray()),
-
-            // Select::make('program_interests')
-            //     ->relationship('')
-            //     ->columnSpanFull()
-            //     ->label('Interests')
-            //     ->multiple()
-            //     ->searchable()
-            //     ->preload()
-            //     ->placeholder('Select your volunteering interests')
-            //     ->helperText('Choose one or more program areas that interest you')
         ];
 
     }
