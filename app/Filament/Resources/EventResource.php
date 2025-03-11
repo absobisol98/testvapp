@@ -158,7 +158,6 @@ class EventResource extends Resource implements HasShieldPermissions
                                     ->label('Date')
                                     ->required()
                                     ->live()
-                                    ->minDate(now()->startOfDay())
                                     ->default(now())
                                     ->extraAttributes([
                                         'title' => 'Please select event date'
@@ -566,13 +565,7 @@ class EventResource extends Resource implements HasShieldPermissions
             ])
             ->defaultSort('start_date');
     }
-    public static function getRelations(): array
-    {
-        return [
-            RelationManagers\RegistrationsRelationManager::class,
-            AttendeesRelationManager::class,
-        ];
-    }
+
 
 
     public static function getPages(): array

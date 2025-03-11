@@ -36,6 +36,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        if($this->app->environment('production')) {
+            \URL::forceScheme('https');
+        }
+
         Gate::policy(\TomatoPHP\FilamentMediaManager\Models\Folder::class, \App\Policies\MediaPolicy::class);
         Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplate::class, \App\Policies\EmailTemplatePolicy::class);
         Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplateTheme::class, \App\Policies\EmailTemplateThemePolicy::class);

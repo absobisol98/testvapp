@@ -19,26 +19,55 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 final class SaveEventTagsAction
 {
-    public function execute($event,$tag_arr,$edit)
+    public function execute($event, $tag_arr, $edit)
     {
-        if($edit){
-            EventTag::where('event_id',$event->id)->delete();
+        // If there are no new tags to add, and we're not editing, just return
+        if (!$tag_arr && !$edit) {
+            return;
         }
 
-        if($tag_arr){ // If a new tag exists, insert the new tag into the tags_event table
+        // Initialize arrays for comparison
+        $tag_arr = $tag_arr ?: []; // Convert null to empty array
 
-            $tags = TagsEvent::get()->pluck('name')->toArray();
+        if ($edit) {
+            // Get current event tags
+            $currentEventTagIds = EventTag::where('event_id', $event->id)
+                ->join('tags_events', 'event_tags.tag_id', '=', 'tags_events.id')
+                ->pluck('tags_events.name')
+                ->toArray();
 
-            $new_tags = array_diff($tag_arr, $tags); // Get new tags
+            // Only proceed if there's a difference between current and new tags
+            if (count(array_diff($currentEventTagIds, $tag_arr)) > 0 ||
+                count(array_diff($tag_arr, $currentEventTagIds)) > 0) {
 
-            foreach ($new_tags as $new_tag) { // Insert new tags in tags_event table
+                // There's a difference, so delete old tags and create new ones
+                EventTag::where('event_id', $event->id)->delete();
+
+                // Continue with adding the new tags
+            } else {
+                // Tags are the same, no need to update
+                return;
+            }
+        }
+
+        if ($tag_arr) { // If tags exist, process them
+            // Get existing tags
+            $existingTags = TagsEvent::get()->pluck('name')->toArray();
+
+            // Find new tags that don't exist yet
+            $new_tags = array_diff($tag_arr, $existingTags);
+
+            // Create any new tags that don't exist in the system yet
+            foreach ($new_tags as $new_tag) {
                 TagsEvent::create([
                     'name' => ucfirst($new_tag),
                 ]);
             }
 
+            // Get all tag IDs for the event
             $tags = TagsEvent::whereIn('name', $tag_arr)->get();
 
+            // Create event tag associations
             foreach ($tags as $tag) {
                 EventTag::create([
                     'event_id' => $event->id,

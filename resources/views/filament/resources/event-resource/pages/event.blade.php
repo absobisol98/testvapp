@@ -76,7 +76,12 @@
             ]];
         });
 
-
+    // Admin/management permissions
+    $isSuperAdmin = $user->hasRole('super_admin');
+    $isAdmin = $user->hasRole('admin');
+    $isCreator = $record->created_by == $user->id;
+    $isFacilitator = $record->facilitators->contains($user->id);
+    $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
 @endphp
 
 {{-- @dd($record->getAttachment()) --}}
@@ -87,14 +92,6 @@
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
 
         <div class="grid grid-cols-4 gap-2">
-        @php
-            $user = auth()->user();
-            $isSuperAdmin = $user->hasRole('super_admin');
-            $isAdmin = $user->hasRole('admin');
-            $isCreator = $record->created_by == $user->id;
-            $isFacilitator = $record->facilitators->contains($user->id);
-            $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
-        @endphp
 
         @if($canManageEvent)
             <a href="{{ route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]) }}"
@@ -182,13 +179,14 @@
                                 <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($record->location) }}"
                                    target="_blank"
                                    class="ml-3 text-[#03498D] hover:text-[#FF781E] hover:underline transition-colors duration-300">
+
                                     {{$record->location}}
                                 </a>
                             </p>
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
                                 <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
                                     <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                        <path d="M19 3h-1V2a1 1 0 1 0-2 0v1H8V2a1 1 0 1 0-2 0v1H5a3 3 0 0 0-3 3v13a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10h16v9zM4 8V6a1 1 0 0 1 1-1h1v1a1 1 0 1 0 2"></path>
+                                        <path d="M19 3h-1V2a1 1 0 1 0-2 0v1H8V2a1 1 0 1 0-2 0v1H5a3 3 0 0 0-3 3v13a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10h16v9zM4 8V6a1 1 0 0 1 1-1h1v1a1 1 0 1 0 2 0V5h10v1a1 1 0 1 0 2 0V5h1a1 1 0 0 1 1 1v2H4z"/>
                                     </svg>
                                 </span>
                                 <strong>Schedule: &nbsp;</strong>{{ \Carbon\Carbon::parse($record->start_date)->format('F d, Y') }}
@@ -207,14 +205,14 @@
                                         <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path>
                                     </svg>
                                 </span>
-                                <strong>Volunteer Slot: &nbsp;</strong>
+                                <strong>Volunteer Slots: &nbsp;</strong>
                                 {{ $record->slots->sum('total_slots') }}
                             </p>
 
                             <br>
                             <button onclick="document.getElementById('volunteer-section').scrollIntoView({ behavior: 'smooth' });" class="py-2 px-2 flex items-center justify-center rounded-full bg-[#F55E1D] hover:bg-[#FF9141]">
                                 @if(!$isEventFinished)
-                                <p class="text-base font-normal text-white">I want to volunteer</p>
+                                    <p class="text-base font-normal text-white">I want to volunteer</p>
                                 @else
                                     <p class="text-base font-normal text-white">Opportunity Finished</p>
                                 @endif
@@ -229,9 +227,7 @@
                     <h2 class="text-black md:pl-10 lg:pl-0 text-lg text-start font-extrabold">
                         Contact Information
                     </h2>
-                    @php
 
-                    @endphp
                     <div class="w-full flex flex-col">
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">HR Representative:</p>{{$record->point_of_contact?->firstname}} {{$record->point_of_contact?->lastname}}
                         <p class="text-md md:text-lg lg:text-base text-start font-bold">Facilitator/s:</p>
@@ -239,7 +235,7 @@
                             @foreach ($record->facilitators as $facilitator)
                                 <li class="text-md">{{$facilitator->name}}</li>
                             @endforeach
-                        </ul>d
+                        </ul>
                         @if($record->getMedia('event-attachments')->count() > 0)
                             <div>
                                 <p class="text-md md:text-lg lg:text-base text-start font-bold">File Attachment:</p>
@@ -467,29 +463,19 @@
 
                                     @if($isEventFinished)
                                         @if(isset($attendeeHours[$slot->id]))
-                                            @if(is_array($attendeeHours[$slot->id]))
-                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                    No Hours Completed
-                                                </span>
-                                            @elseif(is_numeric($attendeeHours[$slot->id]) && $attendeeHours[$slot->id] > 0)
-                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                    {{ number_format($attendeeHours[$slot->id], 1) }} Hours Completed
-                                                </span>
-                                            @else
-                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                    No Hours Completed
-                                                </span>
-                                            @endif
+                                            <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
+                                                {{ number_format($attendeeHours[$slot->id]['hours'], 1) }} Hours Completed
+                                            </span>
                                         @else
                                             <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
-                                                Opportunity Finished
+                                                No Hours Completed
                                             </span>
                                         @endif
                                     @elseif($userWasRejected)
                                         <span class="h-10 w-[350px] bg-red-100 text-red-800 flex items-center justify-center rounded-full">
                                             Skills/Qualification Mismatch
                                         </span>
-                                    @elseif($isAvailable && !$userRegistered)
+                                        @elseif($isAvailable && !$userRegistered)
                                         <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
                                               method="POST"
                                               enctype="multipart/form-data"
@@ -500,9 +486,10 @@
                                             <div class="mb-4 w-full px-4">
                                                 <div class="p-3 bg-blue-50 text-blue-700 rounded-lg mb-2 text-sm">
                                                     <p class="font-semibold flex items-center">
-                                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd"></path>
                                                         </svg>
+                                                        Required Document
                                                     </p>
                                                     <p class="mt-1">{{ $attachmentDescription }}</p>
                                                 </div>
@@ -521,7 +508,7 @@
                                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                                 @enderror
                                             </div>
-                                        @endif
+                                            @endif
 
                                             <button type="submit"
                                                     class="h-10 w-[200px] bg-[#F55E1D] text-white font-medium rounded-full hover:bg-[#FF8252]">
@@ -529,25 +516,9 @@
                                             </button>
                                         </form>
                                     @elseif($userRegistered)
-                                        @if(isset($attendeeHours[$slot->id]))
-                                            @if(is_array($attendeeHours[$slot->id]))
-                                                <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
-                                                    Already Registered
-                                                </span>
-                                            @elseif(is_numeric($attendeeHours[$slot->id]) && $attendeeHours[$slot->id] > 0)
-                                                <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                    {{ number_format($attendeeHours[$slot->id], 1) }} Hours Completed
-                                                </span>
-                                            @else
-                                                <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
-                                                    Already Registered
-                                                </span>
-                                            @endif
-                                        @else
-                                            <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
-                                                Already Registered
-                                            </span>
-                                        @endif
+                                        <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
+                                            Already Registered
+                                        </span>
                                     @else
                                         <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
                                             Slot Full

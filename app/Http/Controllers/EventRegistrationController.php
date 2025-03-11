@@ -22,12 +22,11 @@ class EventRegistrationController extends Controller
         // Add validation rules
         $validationRules = [
             'media.*' => ['file', 'max:10240'], // 10MB max
-
         ];
 
         // Add required validation if needed
         $user = auth()->user();
-        $isMinor = $user->birthday && Carbon::parse($user->birthday)->age < 18;
+        $isMinor = $user->age_range === '10-17';
 
         if ($isMinor || $event->attachment_required) {
             $validationRules['media'] = ['required', 'array'];
@@ -55,21 +54,6 @@ class EventRegistrationController extends Controller
 
         // Validate the request
         $request->validate($validationRules, $messages);
-
-        // Add duplicate registration check
-        $existingRegistrations = EventRegistration::where('volunteer_id', auth()->id())
-            ->where('event_id', $event->id)
-            ->whereIn('status_id', [1, 2]) // Pending or Approved
-            ->count();
-
-        if ($existingRegistrations > 0) {
-            Notification::make()
-                ->title('Registration Failed')
-                ->body('You are already registered for this event.')
-                ->danger()
-                ->send();
-            return back();
-        }
 
         // Check if registration is still open
         if ($event->registration_end_date && Carbon::now()->isAfter($event->registration_end_date)) {
@@ -221,7 +205,7 @@ class EventRegistrationController extends Controller
     private function getMediaValidationRules(Event $event): array
     {
         $user = auth()->user();
-        $isMinor = $user->birthday && Carbon::parse($user->birthday)->age < 18;
+        $isMinor = $user->age_range === '10-17';
 
         $rules = ['file', 'max:10240']; // 10MB max file size
 
@@ -235,7 +219,7 @@ class EventRegistrationController extends Controller
     private function getMediaValidationMessage(): string
     {
         $user = auth()->user();
-        $isMinor = $user->birthday && Carbon::parse($user->birthday)->age < 18;
+        $isMinor = $user->age_range === '10-17';
 
         if ($isMinor) {
             return 'Parental consent document is required for minors.';
