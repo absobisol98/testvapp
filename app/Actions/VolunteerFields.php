@@ -138,11 +138,17 @@ final class VolunteerFields
                         ),
 
                 ]),
-
-            Select::make('program_id')
+                Grid::make(1)
                 ->columnSpanFull()
-                ->label('Interests')
-                ->options(Program::all()->pluck('name', 'id')->toArray()),
+                ->schema([
+                    Select::make('programs')
+                        ->label('Interests (Select all that apply)')
+                        ->helperText('The first selected interest will be set as your primary interest')
+                        ->multiple()
+                        ->relationship('programs', 'name')
+                        ->searchable()
+                        ->preload(),
+                ]),
         ];
 
     }

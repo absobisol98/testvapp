@@ -24,6 +24,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 
+
 class VolunteerResource extends Resource
 {
     protected static ?string $model = Volunteer::class;
@@ -166,4 +167,6 @@ class VolunteerResource extends Resource
             'view' => Pages\ViewVolunteer::route('/{record}'),
         ];
     }
+
+
 }
