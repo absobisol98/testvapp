@@ -137,6 +137,23 @@ class VolunteerRegistrationController extends Controller
                     }
                 }
 
+                try {
+                    // Load mail settings
+                    $settings = app(MailSettings::class);
+                    $settings->loadMailSettingsToConfig();
+
+                    // Send verification email
+                    $user->notify(new VerifyEmailNotification());
+
+                    Log::info('Verification email sent to new volunteer', ['email' => $user->email]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send verification email', [
+                        'email' => $user->email,
+                        'error' => $e->getMessage()
+                    ]);
+                    // Don't fail registration if email fails - user can request resend
+                }
+
                 DB::commit();
                 return response()->json(['success' => true]);
 
@@ -178,6 +195,9 @@ class VolunteerRegistrationController extends Controller
         if ($user->hasVerifiedEmail()) {
             return response()->json(['message' => 'Email already verified']);
         }
+
+        // Load mail settings
+
 
         $user->notify(new VerifyEmailNotification());
 
