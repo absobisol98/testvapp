@@ -42,8 +42,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Gate::policy(\TomatoPHP\FilamentMediaManager\Models\Folder::class, \App\Policies\MediaPolicy::class);
-        Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplate::class, \App\Policies\EmailTemplatePolicy::class);
-        Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplateTheme::class, \App\Policies\EmailTemplateThemePolicy::class);
+        // Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplate::class, \App\Policies\EmailTemplatePolicy::class);
+        // Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplateTheme::class, \App\Policies\EmailTemplateThemePolicy::class);
         Gate::policy(\Tapp\FilamentMailLog\Models\MailLog::class, \App\Policies\MailLogPolicy::class);
         Gate::policy(\Datlechin\FilamentMenuBuilder\Models\Menu::class, \App\Policies\MenuPolicy::class);
 

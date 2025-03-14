@@ -12,7 +12,12 @@ use App\Http\Controllers\SurveyResponseController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\EventBulletinController;
 use App\Http\Controllers\VolunteerExportController;
-use App\Http\Controllers\ChangePasswordController;
+use App\Notifications\VerifyEmailNotification;
+use App\Settings\MailSettings;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
+// use App\Http\Controllers\ChangePasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,8 +98,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('event.export-registrants')
         ->middleware(['auth']);
 
-    Route::get('/change-password', [ChangePasswordController::class, 'show'])->name('change-password');
-    Route::put('/change-password', [ChangePasswordController::class, 'update'])->name('change-password.update');
+    // Route::get('/change-password', [ChangePasswordController::class, 'show'])->name('change-password');
+    // Route::put('/change-password', [ChangePasswordController::class, 'update'])->name('change-password.update');
 });
 
 // Add this with your other routes
@@ -105,3 +110,69 @@ Route::middleware(['auth'])->group(function () {
 
 //Test Routes
 
+Route::get('/test-verification-email/{uuid}', function ($uuid) {
+    try {
+        // Find user by uuid
+        $user = User::where('id', $uuid)->first();
+        
+        if (!$user) {
+            return "User with ID {$uuid} not found.";
+        }
+        
+        // Load mail settings
+        $settings = app(MailSettings::class);
+        $settings->loadMailSettingsToConfig();
+        
+        // Send verification email
+        $user->notify(new VerifyEmailNotification());
+        
+        return "Verification email sent to {$user->email} (ID: {$user->id}). Please check inbox and spam folder.";
+    } catch (\Exception $e) {
+        return "Error sending verification email: " . $e->getMessage();
+    }
+})->where('uuid', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}');
+
+
+Route::get('/admin/assign-volunteer-role', function () {
+    // Only allow super admin or admin users
+    if (!auth()->user() || !auth()->user()->hasAnyRole(['super_admin','Ayala Super Admin', 'admin'])) {
+        abort(403, 'Unauthorized access');
+    }
+    
+    // Find users that have volunteer=1 but no roles
+    $usersWithoutRoles = User::where('volunteer', 1)
+        ->whereDoesntHave('roles')
+        ->get();
+    
+    $count = 0;
+    
+    // Get the Volunteer role
+    $volunteerRole = Role::where('name', 'Volunteer')->first();
+    
+    if (!$volunteerRole) {
+        return "Error: Volunteer role not found in database.";
+    }
+    
+    DB::beginTransaction();
+    try {
+        // Assign the Volunteer role to each user
+        foreach ($usersWithoutRoles as $user) {
+            $user->assignRole($volunteerRole);
+            $count++;
+            
+            Log::info("Volunteer role assigned to existing user", [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ]);
+        }
+        
+        DB::commit();
+        return "Success: Assigned Volunteer role to {$count} users without roles.";
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error("Failed to assign volunteer roles", [
+            'error' => $e->getMessage()
+        ]);
+        return "Error: Failed to assign roles. " . $e->getMessage();
+    }
+})->middleware('auth')->name('admin.assign-volunteer-role');

@@ -80,13 +80,17 @@ class EventOpportunitySummary extends Widget implements HasForms, HasTable
         // Calculate company breakdown
         $companyBreakdown = $approvedAttendees
             ->where('attendee.affiliate_type_id', 1) // Only Ayala employees
+            ->filter(function ($attendee) {
+                // Filter out entries where company is null
+                return $attendee->attendee && $attendee->attendee->company;
+            })
             ->groupBy('attendee.company_id')
             ->map(function ($group) use ($totalVolunteers) {
                 $company = $group->first()->attendee->company;
                 return [
-                    'name' => $company->name,
+                    'name' => $company ? $company->name : 'Unknown',
                     'count' => $group->count(),
-                    'percentage' => round(($group->count() / $totalVolunteers) * 100, 1)
+                    'percentage' => $totalVolunteers > 0 ? round(($group->count() / $totalVolunteers) * 100, 1) : 0
                 ];
             })
             ->sortByDesc('count')

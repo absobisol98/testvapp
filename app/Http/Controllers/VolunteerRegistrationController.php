@@ -113,6 +113,16 @@ class VolunteerRegistrationController extends Controller
                     'referral_source' => $input['referral_source']
                 ]);
 
+
+                $volunteerRole = Role::where('name', 'Volunteer')->first();
+                if ($volunteerRole) {
+                    $user->assignRole($volunteerRole);
+                    Log::info('Volunteer role assigned to user', ['user_id' => $user->id]);
+                } else {
+                    Log::error('Volunteer role not found in the database');
+                }
+
+
                 // Attach programs
                 if (!empty($input['program_ids'])) {
                     $programData = [];
