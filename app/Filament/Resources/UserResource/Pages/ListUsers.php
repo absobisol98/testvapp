@@ -49,15 +49,15 @@ class ListUsers extends ListRecords
     protected function getTableQuery(): Builder
     {
         $user = auth()->user();
-        $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id)->where('volunteer',0);
+        $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id);
 
         if (!$user->isSuperAdmin()) {
             if(auth()->user()->hasRole('Ayala Super Admin')){
-                $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id)->where('volunteer',0);
+                $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id);
             }
             else{
                 $model = $model->whereDoesntHave('roles', function ($query) {
-                    $query->where('name', '=', config('filament-shield.super_admin.name'))->where('volunteer',0);
+                    $query->where('name', '=', config('filament-shield.super_admin.name'));
                 });
             }
         }

@@ -43,7 +43,7 @@ class QrController extends Controller
             ], 404);
         }
 
-        $facilitator_ids = $event->facilitators()->pluck('id')->toArray();
+        $facilitator_ids = $event->facilitators()->pluck('users.id')->toArray();
 
         // Check if user is authorized (Super Admin or Facilitator)
         if (!auth()->user()->hasRole('super_admin') && !in_array(auth()->id(), $facilitator_ids)) {

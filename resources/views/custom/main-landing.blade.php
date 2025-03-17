@@ -779,19 +779,26 @@
                             @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
                         </button>
                     </div>
+                    @php
+                    $latestOpportunity = $featuredOpportunity;
+                    if ($latestOpportunity) {
+                            $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                    } else {
+                            $mediaItems = asset('img/ayala-foundation-bg.jpg');
+                    }
+
+                @endphp
 
                     <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
                         <div class="flex flex-col  items-center justify-center">
                             <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center"
-                                style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
+                                style="background: url('{{ url($mediaItems) }}">
                                 <div
                                     class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
                                     <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
                                 </div>
                             </div>
-                            @php
-                                $latestOpportunity = $opportunities->sortByDesc('created_at')->first();
-                            @endphp
+
 
                             {{-- @php
                                 dd($latestOpportunity);
