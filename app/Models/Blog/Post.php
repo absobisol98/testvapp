@@ -56,4 +56,12 @@ class Post extends Model implements HasMedia
     {
         return $this->belongsTo(Category::class, 'blog_category_id');
     }
+
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => $value,
+            set: fn (string $value) => \App\Services\MarkdownSanitizer::sanitize($value),
+        );
+    }
 }

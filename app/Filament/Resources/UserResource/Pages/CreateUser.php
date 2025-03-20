@@ -24,6 +24,10 @@ class CreateUser extends CreateRecord
     {
         $user = $this->record;
         $settings = app(MailSettings::class);
+        $volunteerRole = Role::where('name', 'Volunteer')->first();
+        if ($volunteerRole) {
+            $this->record->assignRole($volunteerRole);
+        }
 
         Log::info("Creating new user: {$user->email}, attempting verification email");
 

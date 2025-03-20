@@ -77,11 +77,29 @@ class PostResource extends Resource
                         //     ]),
 
                         Forms\Components\MarkdownEditor::make('content')
-                            ->required()
-                            ->columnSpan('full')
-                            ->extraAttributes([
-                                'title' => 'Input article content'
-                            ]),
+                        ->required()
+                        ->columnSpan('full')
+                        ->fileAttachmentsDisk('public')
+                        ->fileAttachmentsDirectory('post-attachments')
+                        ->fileAttachmentsVisibility('public')
+                        ->fileAttachmentsAcceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                        ->extraAttributes([
+                            'title' => 'Input article content'
+                        ])->toolbarButtons([
+                            'attachFiles',
+                            'blockquote',
+                            'bold',
+                            'bulletList',
+                            'heading',
+                            'italic',
+                            'link',
+                            'orderedList',
+                            'redo',
+                            'strike',
+                            'table',
+                            'undo',
+                        ]),
+
 
                         Forms\Components\TextInput::make('blog_author')
                             ->label('Author')

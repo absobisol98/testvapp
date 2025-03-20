@@ -26,11 +26,16 @@ final class UserCreateField
             Group::make()
             ->schema([
                 SpatieMediaLibraryFileUpload::make('avatar')
-                    ->hiddenLabel()
-                    ->avatar()
-                    ->collection('avatars')
-                    ->alignCenter()
-                    ->columnSpanFull(),
+                ->hiddenLabel()
+                ->avatar()
+                ->collection('avatars')
+                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                ->maxSize(2048)  // 2MB file size limit
+                ->imageResizeMode('cover')
+                ->imageResizeTargetWidth('400')
+                ->imageResizeTargetHeight('400')
+                ->alignCenter()
+                ->columnSpanFull(),
 
                 Actions::make([
                     Action::make('resend_verification')
@@ -111,7 +116,7 @@ final class UserCreateField
                     ])
                     ->columns(2),
 
-                Tab::make('Roles')
+                    Tab::make('Roles')
                     ->visible( fn  () => auth()->user()->can('update_shield::role'))
                     ->hidden( function () use  ($not_from_user_resorce) {
                         return ($not_from_user_resorce) ? true : false;
@@ -120,7 +125,18 @@ final class UserCreateField
                     ->schema([
                         Select::make('roles')
                             ->hiddenLabel()
-                            ->relationship('roles', 'name')
+                            ->relationship(
+                                'roles',
+                                'name',
+                                modifyQueryUsing: function ($query) {
+                                    // If current user is not a super_admin, exclude the super_admin role
+                                    if (!auth()->user()->hasRole('super_admin')) {
+                                        return $query->where('name', '!=', 'super_admin');
+                                    }
+
+                                    return $query;
+                                }
+                            )
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => Str::headline($record->name))
                             ->multiple()
                             ->preload()

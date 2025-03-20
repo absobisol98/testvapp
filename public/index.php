@@ -3,6 +3,8 @@
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
+header_remove('X-Powered-By');
+
 define('LARAVEL_START', microtime(true));
 
 /*

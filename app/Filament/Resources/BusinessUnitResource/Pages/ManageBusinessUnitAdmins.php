@@ -5,9 +5,9 @@ namespace App\Filament\Resources\BusinessUnitResource\Pages;
 use App\Filament\Resources\BusinessUnitResource;
 use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select; // Add this import
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -32,7 +32,7 @@ class ManageBusinessUnitAdmins extends Page implements HasTable
         $this->record = $this->resolveRecord($record);
     }
 
-    // Add this method
+    // Keep existing getTableQuery method
     protected function getTableQuery(): Builder
     {
         return $this->getRecord()
@@ -41,87 +41,78 @@ class ManageBusinessUnitAdmins extends Page implements HasTable
             ->getQuery();
     }
 
-    // Keep this method
+    // Modify the table method to replace CreateAction with regular Action
     public function table(Table $table): Table
-{
-    return $table
-        ->query($this->getTableQuery())
-        ->columns([
-            TextColumn::make('firstname')
-                ->label('First Name')
-                ->sortable()
-                ->searchable(),
-            TextColumn::make('lastname')
-                ->label('Last Name')
-                ->sortable()
-                ->searchable(),
-            TextColumn::make('email')
-                ->sortable()
-                ->searchable(),
-            TextColumn::make('created_at')
-                ->dateTime('M d, Y h:i A')
-                ->sortable(),
-        ])
-        ->actions([
-            Action::make('remove')
-                ->color('danger')
-                ->icon('heroicon-o-trash')
-                ->requiresConfirmation()
-                ->action(fn ($record) => $this->removeAdmin($record)),
-        ])
-        ->headerActions([
-            CreateAction::make('add_admin')
-                ->label('Add New Admin')
-                ->icon('heroicon-o-plus')
-                ->form([
-                    TextInput::make('firstname')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('lastname')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('email')
-                        ->email()
-                        ->required()
-                        ->unique(User::class)
-                        ->maxLength(255),
-                    TextInput::make('password')
-                        ->password()
-                        ->required()
-                        ->minLength(8)
-                        ->confirmed(),
-                    TextInput::make('password_confirmation')
-                        ->password()
-                        ->required()
-                        ->label('Confirm Password'),
-                ])
-                ->action(function (array $data) {
-                    $this->createAdmin($data);
-                }),
-        ]);
-}
+    {
+        return $table
+            ->query($this->getTableQuery())
+            ->columns([
+                TextColumn::make('firstname')
+                    ->label('First Name')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('lastname')
+                    ->label('Last Name')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime('M d, Y h:i A')
+                    ->sortable(),
+            ])
+            ->actions([
+                Action::make('remove')
+                    ->color('danger')
+                    ->icon('heroicon-o-trash')
+                    ->requiresConfirmation()
+                    ->action(fn ($record) => $this->removeAdmin($record)),
+            ])
+            ->headerActions([
+                Action::make('add_admin')
+                    ->label('Add Admin')
+                    ->icon('heroicon-o-plus')
+                    ->form([
+                        Select::make('user_id')
+                            ->label('Select User')
+                            ->options(function () {
+                                return User::query()
+                                    ->where('cluster_id', $this->getRecord()->cluster_id)
+                                    ->where('company_id', $this->getRecord()->company_id)
+                                    ->whereDoesntHave('businessUnits', function ($query) {
+                                        $query->where('business_unit_id', $this->getRecord()->id);
+                                    })
+                                    ->get()
+                                    ->mapWithKeys(function ($user) {
+                                        return [$user->id => $user->firstname . ' ' . $user->lastname . ' (' . $user->email . ')'];
+                                    });
+                            })
+                            ->searchable()
+                            ->required(),
+                    ])
+                    ->action(function (array $data) {
+                        $this->assignAdmin($data['user_id']);
+                    }),
+            ]);
+    }
 
-    protected function createAdmin(array $data): void
+    // Add this new method for assigning admin role
+    protected function assignAdmin(int $userId): void
     {
         try {
             \DB::beginTransaction();
 
-            $userData = array_merge($data, [
-                'email_verified_at' => now(),
-                'cluster_id' => $this->getRecord()->cluster_id,
-                'company_id' => $this->getRecord()->company_id,
-                'password' => Hash::make($data['password']),
-                'password_changed_at' => null
-            ]);
+            $user = User::findOrFail($userId);
 
-            $user = User::create($userData);
-
-            // Assign External Partner role
-            $role = Role::where('name', 'External Partner')->first();
-            $user->assignRole($role);
+            // Assign business_unit_admin role
+            $role = Role::where('name', 'business_unit_admin')->first();
+            if ($role) {
+                $user->assignRole($role);
+            }
 
             // Add as admin to this business unit
-            $this->getRecord()->admins()->attach($user->id);
+            $this->getRecord()->admins()->attach($userId);
 
             \DB::commit();
 
@@ -141,6 +132,7 @@ class ManageBusinessUnitAdmins extends Page implements HasTable
         }
     }
 
+    // Keep the existing removeAdmin method
     protected function removeAdmin(User $user): void
     {
         $this->getRecord()->admins()->detach($user->id);
