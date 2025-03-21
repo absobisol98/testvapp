@@ -76,30 +76,13 @@ class PostResource extends Resource
                         //         'title' => 'Toggle button to feature the article'
                         //     ]),
 
-                        Forms\Components\MarkdownEditor::make('content')
+                        Forms\Components\Textarea::make('content')
                         ->required()
                         ->columnSpan('full')
-                        ->fileAttachmentsDisk('public')
-                        ->fileAttachmentsDirectory('post-attachments')
-                        ->fileAttachmentsVisibility('public')
-                        ->fileAttachmentsAcceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                        ->rows(10)
                         ->extraAttributes([
                             'title' => 'Input article content'
-                        ])->toolbarButtons([
-                            'attachFiles',
-                            'blockquote',
-                            'bold',
-                            'bulletList',
-                            'heading',
-                            'italic',
-                            'link',
-                            'orderedList',
-                            'redo',
-                            'strike',
-                            'table',
-                            'undo',
                         ]),
-
 
                         Forms\Components\TextInput::make('blog_author')
                             ->label('Author')

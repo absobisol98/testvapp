@@ -103,10 +103,21 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Add this with your other routes
-        Route::post('/volunteers/export', [VolunteerExportController::class, 'export'])
-            ->name('volunteers.export')
-            ->middleware(['auth']);
+Route::post('/volunteers/export', [VolunteerExportController::class, 'export'])
+    ->name('volunteers.export')
+    ->middleware(['auth']);
 
+// OTP Verification Route
+Route::middleware(['web', 'guest'])->group(function () {
+    Route::get('/admin/auth/otp', App\Filament\Pages\Auth\OtpVerification::class)->name('filament.admin.auth.otp');
+});
+
+// Apply throttling middleware to login routes
+Route::middleware(['throttle.login'])->group(function () {
+    Route::match(['get', 'post'], '/admin/login', function () {
+        return redirect()->route('filament.admin.auth.login');
+    });
+});
 
 //Test Routes
 

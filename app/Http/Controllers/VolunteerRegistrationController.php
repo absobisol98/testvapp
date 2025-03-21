@@ -18,6 +18,7 @@ use App\Settings\MailSettings;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Support\Facades\Log;
+use App\Services\EmailDomainValidator;
 
 class VolunteerRegistrationController extends Controller
 {
@@ -83,6 +84,17 @@ class VolunteerRegistrationController extends Controller
             }
 
             $validator = Validator::make($request->all(), $rules);
+
+
+            // Add custom validation for email domain
+            $validator->after(function ($validator) use ($request) {
+                $domainValidator = new EmailDomainValidator();
+
+                if ($domainValidator->isDenied($request->email)) {
+                    $validator->errors()->add('email', 'This email domain is not allowed. Please use your company or personal email address.');
+                }
+            });
+
 
             if ($validator->fails()) {
                 return response()->json([

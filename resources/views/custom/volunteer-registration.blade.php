@@ -507,7 +507,7 @@
         }
 
         function handleSubmitSuccess(response) {
-            $("#btn-register").text('Registration successful...');
+            $("#btn-register").text('Registration processing...');
 
             setTimeout(() => {
                 if (response.success) {

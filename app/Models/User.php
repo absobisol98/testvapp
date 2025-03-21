@@ -69,6 +69,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'nickname',
         'age_range',
         'password_changed_at',
+        'otp',
+        'otp_expires_at',
     ];
 
     /**

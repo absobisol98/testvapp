@@ -61,7 +61,8 @@ class BannerResource extends Resource
                                             ->maxLength(255)
                                             ->required()
                                             ->columnSpan(2),
-                                        Forms\Components\MarkdownEditor::make('description')
+
+                                        Forms\Components\Textarea::make('description')
                                             ->label('Description')
                                             ->helperText('Provide a description for the banner')
                                             ->maxLength(500)
