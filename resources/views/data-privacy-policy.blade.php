@@ -27,13 +27,10 @@
 
         <main class="bg-white shadow-lg rounded-lg p-8 max-w-4xl mx-auto">
             <section class="mb-8">
-                <p>Ayala Foundation, Inc. (the "Foundation") values and respects your privacy. Any personal information you provide to the Foundation will be processed in
-                    accordance with the Data Privacy Act of 2012 (Republic Act No. 10173) and its Implementing Rules and Regulations (IRR), as well as the issuances of the National
-                    Privacy Commission (NPC).</p>
+                <p>with the Data Privacy Act of 2012 (Republic Act No. 10173) and its Implementing Rules and Regulations (IRR), as well as the issuances of the National Privacy Commission (NPC).</p>
                     <br>
                 <p>Collection and Use:
-                        We collect and use your personal data to allow us to include you in the Ayala Corporate Citizenship and Volunteer Program and other related activities and
-                        services.
+                    We collect and use your personal data to allow us to include you in the Ayala Corporate Citizenship and Volunteer Program and other related activities and services.
                     </p>
             </section>
             <section class="mb-8">
@@ -57,7 +54,7 @@
                     The Foundation to collect, process, share, store, and use your personal information for the following purposes:
                 </h2>
                 <ol class="list-decimal list-inside ml-4 mt-2 space-y-2">
-                    <li>Inclusion in the Foundation's alumni community; </li>
+                    <li>Inclusion in the Foundation's volunteer management system.</li>
                     <li>Registration for Foundation events, including event planning, logistics, and sending event-related information and reminders;</li>
                     <li>Creation and management of an alumni database for communication, updates, and future event invitations;</li>
                     <li>Participation in Foundation and/or Ayala Group projects and initiatives; and</li>
@@ -66,9 +63,7 @@
             </section>
 
             <section class="mb-8">
-                <p>Access to your personal data will be limited to individuals or entities who require it to achieve the purposes outlined above.  The Foundation ensures that your
-                    personal information will only be shared with individuals or entities who strictly complies with the data privacy requirements and use the same standards to
-                    protect your rights as data subject. </p>
+                <p>Access to your personal data will be limited to individuals or entities who require it to achieve the purposes outlined above. The Foundation ensures that your personal information will only be shared with individuals or entities who strictly complies with the data privacy requirements and use the same standards to protect your rights as data subject. </p>
                 <br>
                 <p>Your personal data will be retained for as long as necessary to fulfill the purposes specified above, in compliance with applicable laws, or until you request its
                     deletion.
