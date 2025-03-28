@@ -34,6 +34,7 @@ use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Navigation\MenuItem;
 
 
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -128,6 +129,7 @@ class AdminPanelProvider extends PanelProvider
                     ->plugins(['dayGrid','timeGrid'])
                     ->config([]),
                EmailTemplatesPlugin::make(),
+
 //                \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
 //                    ->allowSubFolders(),
                 \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),

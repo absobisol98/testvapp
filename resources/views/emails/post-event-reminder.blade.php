@@ -54,11 +54,11 @@
     </div>
 
     <div class="content">
-        <h2>Opportunity Ending Soon: <span class="highlight">{{ $event->name }}</span></h2>
+        <h2><span class="highlight">{{ $event->name }}</span></h2>
 
         <p>Dear {{ $registration->name }},</p>
 
-        <p>The event will be concluding in 15 minutes. We hope you had a meaningful and enriching experience.</p>
+        <p> We hope you had a meaningful and enriching experience.</p>
 
         <div class="event-details">
             <h3 style="color: #005096;">Important Reminders:</h3>

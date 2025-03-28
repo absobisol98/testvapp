@@ -59,13 +59,13 @@
 
         <p>Dear {{ $registration->name }},</p>
 
-        <p>This is a gentle reminder that your registered event will begin in 15 minutes.</p>
+        <p>This is a gentle reminder that you have a registered event for tomorrow.</p>
 
         <div class="event-details">
             <h3 style="color: #005096;">Opportunity Details:</h3>
             <p><strong>Opportunity:</strong> {{ $event->title }}</p>
             <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}</p>
-            <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }}</p>
+            <p><strong>Time:</strong>  {{ \Carbon\Carbon::parse($event->start_date)->format('g:i A') }}</p>
             <p><strong>Venue:</strong> {{ $event->location }}</p>
         </div>
 
