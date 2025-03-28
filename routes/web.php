@@ -18,6 +18,7 @@ use App\Settings\MailSettings;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
+
 // use App\Http\Controllers\ChangePasswordController;
 
 /*
@@ -184,5 +185,3 @@ Route::get('/admin/assign-volunteer-role', function () {
         return "Error: Failed to assign roles. " . $e->getMessage();
     }
 })->middleware('auth')->name('admin.assign-volunteer-role');
-
-

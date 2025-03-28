@@ -122,25 +122,27 @@ class VolunteerResource extends Resource
                             // Send verification email
                             $record->notify(new VerifyEmailNotification());
 
-                            Log::info('Verification email resent to volunteer', ['email' => $record->email]);
+                        Log::info('Verification email resent to volunteer', ['email' => $record->email]);
 
-                            Notification::make()
-                                ->title('Verification email sent successfully')
-                                ->success()
-                                ->send();
-                        } catch (\Exception $e) {
-                            Log::error('Failed to resend verification email', [
-                                'email' => $record->email,
-                                'error' => $e->getMessage()
-                            ]);
+                        Notification::make()
+                            ->title('Verification email sent successfully')
+                            ->success()
+                            ->send();
 
-                            Notification::make()
-                                ->title('Failed to send verification email')
-                                ->body('Please try again later or contact support.')
-                                ->danger()
-                                ->send();
-                        }
-                    }),
+                    } catch (\Exception $e) {
+                        Log::error('Failed to resend verification email', [
+                            'email' => $record->email,
+                            'error' => $e->getMessage()
+                        ]);
+
+                        Notification::make()
+                            ->title('Failed to send verification email')
+                            ->body('Please try again later or contact support.')
+                            ->danger()
+                            ->send();
+                    }
+                }),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

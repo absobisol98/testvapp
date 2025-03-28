@@ -152,7 +152,7 @@
 
                         <div class="flex items-center justify-between gap-4 md:gap-8">
 
-                            <a class="text-lg md:text-[20px] font-[400]" href="">VIEW</a>
+                            <p class="text-lg md:text-[20px] font-[400]">VIEW</p>
 
                             {{-- Style for the tabs --}}
                             <style>
@@ -183,10 +183,10 @@
                             <button id="icon" class="w-[32px] h-[32px] active" onclick="changeTab('list')">
                                 @include('custom.icons.landing-page-icons', ['icon' => 'list-32'])
                             </button>
-
+{{--
                             <button id="icon-calendar" class="w-[32px] h-[32px]" onclick="changeTab('calendar')">
                                 @include('custom.icons.landing-page-icons', ['icon' => 'calendar-32'])
-                            </button>
+                            </button> --}}
                         </div>
                     </div>
 
@@ -273,9 +273,9 @@
                     </div>
 
                     {{-- OPPORTUNITIES Calendar --}}
-                    <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
+                    {{-- <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
                         @livewire(\App\Filament\Widgets\CalendarWidget::class)
-                    </div>
+                    </div> --}}
 
                     {{-- Tab Scripts --}}
                     <script>
@@ -460,7 +460,11 @@
                     <div class="flex flex-col md:flex-row items-center justify-center gap-12">
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
                             <p class="text-[80px] font-bold"> {{ \App\Models\User::role('volunteer')->count() }}</p>
-                            <p class="text-[20px] font-medium">Volunteer</p>
+                            <p class="text-[20px] font-medium">Volunteers</p>
+                        </div>
+                        <div class="w-fit flex flex-col items-center justify-center gap-1">
+                            <p class="text-[80px] font-bold">{{ $totalHours ?? '0' }}</p>
+                            <p class="text-[20px] font-medium">Total Volunteer Hours</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
                             <p class="text-[80px] font-bold">{{ \App\Models\BusinessUnit::count() }}</p>

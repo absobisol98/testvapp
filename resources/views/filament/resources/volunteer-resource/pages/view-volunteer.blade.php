@@ -159,18 +159,18 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">First Name</p>
-                                    <p class="text-lg md:text-xl">{{ $user->firstname }}</p>
+                                    <p class="text-lg md:text-xl capitalize">{{ $user->firstname }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Middle Name</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->middle_name ? $user->middle_name : 'N/A' }}</p>
+                                    <p class="text-sm">Nickname</p>
+                                    <p class="text-lg md:text-xl capitalize">
+                                        {{ $user->nickname ? $user->nickname : 'N/A' }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Last Name</p>
-                                    <p class="text-lg md:text-xl">{{ $user->lastname }}</p>
+                                    <p class="text-lg md:text-xl capitalize">{{ $user->lastname }}</p>
                                 </div>
                             </div>
 
@@ -178,19 +178,19 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Username</p>
-                                    <p class="text-lg md:text-xl">{{ $user->username }}</p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Email</p>
                                     <p class="text-lg md:text-xl">{{ $user->email }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Birthday</p>
+                                    {{-- <p class="text-sm">Username</p>
+                                    <p class="text-lg md:text-xl">{{ $user->username }}</p> --}}
+                                </div>
+
+                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
+                                    <p class="text-sm">Age Range</p>
                                     <p class="text-lg md:text-xl">
-                                        {{ $user->birthday ? $user->birthday : 'N/A' }}</p>
+                                        {{ $user->age_range ? $user->age_range : 'N/A' }}</p>
                                 </div>
                             </div>
 
@@ -199,7 +199,7 @@
 
                     {{-- Company / School --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Company / School</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Company</p>
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -226,14 +226,19 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">In Case of Emergency</p>
 
                         <div class="shadow-md p-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Person</p>
-                                    <p class="text-lg md:text-xl">
+                                    <p class="text-lg md:text-xl capitalize">
                                         {{ $user->emergency_contact_name ? $user->emergency_contact_name : 'N/A' }}
                                     </p>
                                 </div>
-
+                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
+                                    <p class="text-sm">Relationship</p>
+                                    <p class="text-lg md:text-xl capitalize">
+                                        {{ $user->emergency_contact_relationship ? $user->emergency_contact_relationship : 'N/A' }}
+                                    </p>
+                                </div>
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Number</p>
                                     <p class="text-lg md:text-xl">
@@ -247,19 +252,30 @@
                     {{-- Interest --}}
                     <div class="w-full">
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
-                        @php
-                            if($user->program_id != null){
-                                $program_name = DB::table('programs')->where('id', $user->program_id)->first()->name;
-                            }else{
-                                $program_name = 'N/A';
-                            }
 
+                        @php
+
+
+                            if($user->program_id != null){
+                                $programs = DB::table('program_volunteer')->where('volunteer_id', $user->id)->get();
+
+                            }else{
+                                $programs = 'N/A';
+                            }
                         @endphp
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-lg md:text-xl capitalize">{{ $program_name }}</p>
+                                    <p class="text-lg md:text-xl capitalize">
+                                        @foreach($programs as $program)
+
+                                            @php
+                                                $prog_name = \App\Models\Program::where('id', $program->program_id)->first();
+                                            @endphp
+                                            {{ $prog_name->name }} <br>
+                                        @endforeach
+                                    </p>
                                 </div>
                             </div>
                         </div>
