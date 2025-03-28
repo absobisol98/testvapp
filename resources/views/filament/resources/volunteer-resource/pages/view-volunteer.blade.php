@@ -365,19 +365,88 @@
                                 </div>
 
                                 <!-- Completed Challenges Second -->
-                                <h2 class="font-bold text-lg">Completed Challenges</h2>
-                                <div class="space-y-4">
-                                    <!-- Registration Challenge -->
-                                    @if($user->created_at)
+                                <!-- Completed Challenges Second -->
+                                    <h2 class="font-bold text-lg">Completed Challenges</h2>
+                                    <div class="space-y-4">
+                                        <!-- Registration Challenge -->
+                                        @if($user->created_at)
+                                            <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                                <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                                <p class="text-sm">Create an account</p>
+                                                <p class="text-xs mt-2">✓ Completed</p>
+                                            </div>
+                                        @endif
+
+                                        <!-- First Opportunity Challenge -->
+                                        @if($user->eventAttended()->count() > 0)
+                                            <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                                <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                                <p class="text-sm">Register for first opportunity</p>
+                                                <p class="text-xs mt-2">✓ Completed</p>
+                                            </div>
+                                        @endif
+
+                                        <!-- Hour Milestone Challenges -->
+                                       <!-- Hour Milestone Challenges -->
+                                @php
+                                $completedHourMilestones = [];
+                                // Only include the 20-hour milestone if actually completed
+                                if ($totalHours >= 20) {
+                                    $completedHourMilestones[] = 20;
+                                }
+                                foreach ([100, 250, 500, 1000] as $milestone) {
+                                    if ($totalHours >= $milestone) {
+                                        $completedHourMilestones[] = $milestone;
+                                    }
+                                }
+                                @endphp
+
+                                        @foreach($completedHourMilestones ?? [] as $milestone)
                                         <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Create an account</p>
+                                            <p class="font-bold text-xl">+{{ match($milestone) {
+                                                20 => '50',
+                                                100 => '250',
+                                                250 => '1500',
+                                                500 => '2500',
+                                                1000 => '5000',
+                                                default => '50'
+                                            } }} <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Complete {{ $milestone }} volunteer hours</p>
                                             <p class="text-xs mt-2">✓ Completed</p>
                                         </div>
-                                    @endif
+                                        @endforeach
 
-                                    <!-- Other completed challenges... -->
-                                </div>
+                                        <!-- Opportunity Milestone Challenges -->
+                                        @foreach($completedOpportunityMilestones ?? [] as $milestone)
+                                        <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+{{ match($milestone) {
+                                                5 => '50',
+                                                10 => '100',
+                                                25 => '250',
+                                                50 => '1500',
+                                                100 => '2500',
+                                                default => '50'
+                                            } }} <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Complete {{ $milestone }} volunteer positions</p>
+                                            <p class="text-xs mt-2">✓ Completed</p>
+                                        </div>
+                                        @endforeach
+
+                                        @foreach($completedOpportunityMilestones as $milestone)
+                                            <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                                <p class="font-bold text-xl">+{{ match($milestone) {
+                                                    5 => '50',
+                                                    10 => '100',
+                                                    25 => '250',
+                                                    50 => '1500',
+                                                    100 => '2500',
+                                                    default => '50'
+                                                } }} <span class="text-sm">VP</span></p>
+                                                <p class="text-sm">Complete {{ $milestone }} volunteer positions</p>
+                                                <p class="text-xs mt-2">✓ Completed</p>
+                                            </div>
+                                        @endforeach
+                                    </div>
                             </div>
 
                             <!-- Progress Section -->
