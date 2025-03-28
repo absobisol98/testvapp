@@ -111,7 +111,7 @@ final class VolunteerFields
 
 
                     TextInput::make('company_representative')->label('HR Representative')->columnSpanFull(),
-                   
+
                     TextInput::make('company_contact_number')
                     ->label('Contact number')
                     ->tel()

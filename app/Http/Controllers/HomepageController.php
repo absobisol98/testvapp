@@ -9,6 +9,7 @@ use App\Models\BusinessUnit;
 use Filament\Notifications\Notification;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Models\EventAttendee;
 
 
 class HomepageController extends Controller implements HasMedia
@@ -55,7 +56,16 @@ class HomepageController extends Controller implements HasMedia
 
         $ban = $upcoming ? $upcoming->getMedia('event-banner-attachments')->first() : null;
 
-        return view('custom.main-landing', compact('opportunities', 'articles', 'featuredOpportunity'));
+        $totalHours = EventAttendee::whereNotNull(['time_in', 'time_out'])
+            ->get()
+            ->sum(fn($attendance) => $attendance->get_totalHrs());
+
+        return view('custom.main-landing', [
+            'opportunities' => $opportunities,
+            'articles' => $articles,
+            'featuredOpportunity' => $featuredOpportunity,
+            'totalHours' => number_format($totalHours, 1),
+        ]);
     }
 
     public function businessUnitHomepageView($slug)
