@@ -229,42 +229,44 @@ class Event extends Model implements HasMedia
     }
 
     public function getStatus(): array
-    {
-        $now = now();
-        $startDate = \Carbon\Carbon::parse($this->start_date);
-        $endDate = \Carbon\Carbon::parse($this->end_date);
+{
+    $now = now();
+    $startDate = \Carbon\Carbon::parse($this->start_date);
+    $endDate = \Carbon\Carbon::parse($this->end_date);
 
-        if ($now->isAfter($endDate)) {
-            return [
-                'text' => 'Finished',
-                'color' => 'gray',
-                'badge_class' => 'bg-gray-100 text-gray-800',
-                'icon' => 'heroicon-o-check-circle',
-            ];
-        } elseif ($now->isBefore($startDate)) {
-            // Use floor() to round down to whole number of days
-            $daysUntil = floor($now->floatDiffInDays($startDate));
-            $status = 'Upcoming';
+    if ($now->isAfter($endDate)) {
+        return [
+            'text' => 'Finished',
+            'color' => 'gray',
+            'badge_class' => 'bg-gray-100 text-gray-800',
+            'icon' => 'heroicon-o-check-circle',
+        ];
+    } elseif ($now->isBefore($startDate)) {
+        // Get the difference in days without time component
+        $daysUntil = $now->startOfDay()->diffInDays($startDate->startOfDay());
+        $status = 'Upcoming';
 
-            if ($daysUntil < 7) {
-                $status = $daysUntil > 0
-                    ? "Starting in {$daysUntil} " . ($daysUntil == 1 ? "day" : "days")
-                    : "Starting today";
+        if ($daysUntil < 7) {
+            if ($daysUntil == 0) {
+                $status = "Starting today";
+            } else {
+                $status = "Starting in {$daysUntil} " . ($daysUntil == 1 ? "day" : "days");
             }
-
-            return [
-                'text' => $status,
-                'color' => 'info',
-                'badge_class' => 'bg-blue-100 text-blue-800',
-                'icon' => 'heroicon-o-clock',
-            ];
-        } else {
-            return [
-                'text' => 'Active',
-                'color' => 'success',
-                'badge_class' => 'bg-green-100 text-green-800',
-                'icon' => 'heroicon-o-play',
-            ];
         }
+
+        return [
+            'text' => $status,
+            'color' => 'info',
+            'badge_class' => 'bg-blue-100 text-blue-800',
+            'icon' => 'heroicon-o-clock',
+        ];
+    } else {
+        return [
+            'text' => 'Active',
+            'color' => 'success',
+            'badge_class' => 'bg-green-100 text-green-800',
+            'icon' => 'heroicon-o-play',
+        ];
     }
+}
 }

@@ -10,35 +10,80 @@ use Carbon\Carbon;
 
 class SendEventReminders extends Command
 {
-    protected $signature = 'events:send-reminders';
+    protected $signature = 'events:send-reminders {--dry-run : Preview notifications without sending them}';
     protected $description = 'Send pre and post event reminders';
 
     public function handle()
     {
-        $now = Carbon::now();
+        $isDryRun = $this->option('dry-run');
 
-        // Find events starting in 15 minutes
-        $preEventReminders = Event::where('start_date', $now->copy()->addMinutes(15)->toDateString())
-            ->where('start_date', $now->copy()->addMinutes(15)->format('H:i:s'))
-            ->get();
-
-        foreach ($preEventReminders as $event) {
-            foreach ($event->registrations as $registration) {
-                $registration->notify(new PreEventReminder($event));
-            }
+        if ($isDryRun) {
+            $this->info('DRY RUN MODE: No notifications will be sent');
         }
 
-        // Find events ending in 15 minutes
-        $postEventReminders = Event::where('end_date', $now->copy()->addMinutes(15)->toDateString())
-            ->where('end_date', $now->copy()->addMinutes(15)->format('H:i:s'))
-            ->get();
+        $this->sendDayBeforeReminders($isDryRun);
+        $this->sendPostEventReminders($isDryRun);
 
-        foreach ($postEventReminders as $event) {
+        $this->info('Event reminders ' . ($isDryRun ? 'dry run completed' : 'sent successfully') . '!');
+    }
+
+    /**
+     * Send reminders 1 day before events
+     */
+    private function sendDayBeforeReminders($isDryRun = false)
+    {
+        // Tomorrow's date
+        $tomorrow = Carbon::tomorrow()->format('Y-m-d');
+
+        // Find events starting tomorrow
+        $upcomingEvents = Event::whereDate('start_date', $tomorrow)->get();
+
+        $this->info("Found " . $upcomingEvents->count() . " events starting tomorrow");
+
+        foreach ($upcomingEvents as $event) {
+            $this->info("Processing event: {$event->title}");
+
             foreach ($event->registrations as $registration) {
-                $registration->notify(new PostEventReminder($event));
+                // Check if user relationship exists before accessing properties
+                if ($registration->volunteer) {
+                    if (!$isDryRun) {
+                        $registration->notify(new PreEventReminder($event));
+                    }
+                    $this->line(($isDryRun ? "[DRY RUN] Would send" : "Sent") . " pre-event reminder to {$registration->volunteer->name} for event: {$event->title}");
+                } else {
+                    $this->warn("Skipping notification for registration ID {$registration->id} - volunteer not found");
+                }
             }
         }
+    }
 
-        $this->info('Event reminders sent successfully!');
+    /**
+     * Send post-event reminders for events that ended yesterday
+     */
+    private function sendPostEventReminders($isDryRun = false)
+    {
+        // Yesterday's date (for post-event reminders)
+        $yesterday = Carbon::yesterday()->format('Y-m-d');
+
+        // Find events that ended yesterday
+        $endedEvents = Event::whereDate('end_date', $yesterday)->get();
+
+        $this->info("Found " . $endedEvents->count() . " events that ended yesterday");
+
+        foreach ($endedEvents as $event) {
+            $this->info("Processing event: {$event->title}");
+
+            foreach ($event->registrations as $registration) {
+                // Check if user relationship exists before accessing properties
+                if ($registration->volunteer) {
+                    if (!$isDryRun) {
+                        $registration->notify(new PostEventReminder($event));
+                    }
+                    $this->line(($isDryRun ? "[DRY RUN] Would send" : "Sent") . " post-event reminder to {$registration->volunteer->name} for event: {$event->title}");
+                } else {
+                    $this->warn("Skipping notification for registration ID {$registration->id} - volunteer not found");
+                }
+            }
+        }
     }
 }
