@@ -161,8 +161,8 @@ class ManageBusinessUnitAdmins extends Page implements HasTable
                 }
                 
                 // Assign Volunteer role
-                if (!$user->hasRole('Volunteer')) {
-                    $volunteerRole = Role::where('name', 'Volunteer')->first();
+                if (!$user->hasRole('volunteer')) {
+                    $volunteerRole = Role::where('name', 'volunteer')->first();
                     $user->assignRole($volunteerRole);
                 }
                 
@@ -189,46 +189,46 @@ class ManageBusinessUnitAdmins extends Page implements HasTable
         }
     }
     
-    protected function addExistingAdmin(int $userId): void
-    {
-        try {
-            \DB::beginTransaction();
-            
-            $user = User::findOrFail($userId);
-            
-            // Remove Volunteer role if it exists
-            if ($user->hasRole('Volunteer')) {
-                $user->removeRole('Volunteer');
-            }
-            
-            // Assign External Partner role if not already assigned
-            if (!$user->hasRole('External Partner')) {
-                $role = Role::where('name', 'External Partner')->first();
-                $user->assignRole($role);
-            }
-            
-            // Set volunteer column to 0 since they're now an External Partner
-            $user->volunteer = 0;
-            $user->save();
-            
-            // Add as admin to this business unit
-            $this->getRecord()->admins()->attach($userId);
-    
-            \DB::commit();
-    
-            Notification::make()
-                ->title('Admin Added Successfully')
-                ->success()
-                ->send();
-    
-        } catch (\Exception $e) {
-            \DB::rollBack();
-            
-            Notification::make()
-                ->title('Error Adding Admin')
-                ->danger()
-                ->body($e->getMessage())
-                ->send();
+    protected function addExistingAdmin(string $userId): void
+{
+    try {
+        \DB::beginTransaction();
+        
+        $user = User::findOrFail($userId);
+        
+        // Remove volunteer role if it exists
+        if ($user->hasRole('volunteer')) {
+            $user->removeRole('volunteer');
         }
+        
+        // Assign External Partner role if not already assigned
+        if (!$user->hasRole('External Partner')) {
+            $role = Role::where('name', 'External Partner')->first();
+            $user->assignRole($role);
+        }
+        
+        // Set volunteer column to 0 since they're now an External Partner
+        $user->volunteer = 0;
+        $user->save();
+        
+        // Add as admin to this business unit
+        $this->getRecord()->admins()->attach($userId);
+
+        \DB::commit();
+
+        Notification::make()
+            ->title('Admin Added Successfully')
+            ->success()
+            ->send();
+
+    } catch (\Exception $e) {
+        \DB::rollBack();
+        
+        Notification::make()
+            ->title('Error Adding Admin')
+            ->danger()
+            ->body($e->getMessage())
+            ->send();
     }
+}
 }
