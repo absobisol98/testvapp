@@ -480,4 +480,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             'External Partner'
         ]) || $hasHistory;
     }
+
+    public function businessUnitsAdmin()
+    {
+        return $this->belongsToMany(BusinessUnit::class, 'business_unit_has_external_admin', 'user_id', 'business_unit_id');
+    }
 }
