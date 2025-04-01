@@ -68,7 +68,7 @@
 
         {{-- Opportunity Section --}}
 
-        <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] py-4 mb-8 px-[16px] xl:px-[80px] gap-8"  id="opportunity-list">
+        @if(count($galleries) > 0 || $upcoming)
             <div class="grid grid-cols-2 lg:grid-cols-3 w-full gap-4">
                 @if (count($galleries) > 0)
                     <div class="w-full program-swiper-container2 col-span-2  h-full w-full overflow-hidden ">
@@ -108,8 +108,6 @@
                         <p class="text-base text-black">This Business Unit has no Event Gallery.</p>
                     </div>
                 @endif
-
-
 
                 <div class="col-span-2 md:col-span-1 flex flex-col items-start justify-start gap-2">
                     @if ($upcoming)
@@ -161,8 +159,10 @@
                     @endif
                 </div>
             </div>
+        @endif
 
-            <div class="grid grid-cols-3 gap-8">
+        <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] py-4 mb-8 px-[16px] xl:px-[80px] gap-8"  id="opportunity-list">
+            <div class="w-full grid grid-cols-3 gap-8">
                 <div class="col-span-3 md:col-span-1 flex flex-col items-center justify-start gap-8">
                     <p class="text-[40px] font-[400] text-black text-center">About <span
                             class="font-[600] text-[#F55E1D]">{{$business_unit->nickname}}</span></p>

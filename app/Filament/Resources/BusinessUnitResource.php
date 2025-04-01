@@ -81,6 +81,19 @@ class BusinessUnitResource extends Resource
                                         $set('show_slug', strtolower($slug));
                                     }
                                 }
+                            })
+                            ->afterStateHydrated(function ($state, Set $set) {
+                                // This will run when the form is loaded in edit mode
+                                if ($state) {
+                                    $company = \App\Models\Company::find($state);
+                                    if ($company) {
+                                        $set('name', $company->name);
+                                        $set('show_name', $company->name);
+                                        $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $company->name);
+                                        $set('slug', strtolower($slug));
+                                        $set('show_slug', strtolower($slug));
+                                    }
+                                }
                             }),
 
                             Forms\Components\Hidden::make('name')
@@ -234,6 +247,7 @@ class BusinessUnitResource extends Resource
                             ->maxSize(5000)
                             ->reorderable()
                             ->downloadable()
+                            ->nullable()
                             ->columnSpanFull(),
                     ]),
 
