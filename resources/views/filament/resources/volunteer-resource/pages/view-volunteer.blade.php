@@ -254,27 +254,28 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
 
                         @php
-
-
-                            if($user->program_id != null){
-                                $programs = DB::table('program_volunteer')->where('volunteer_id', $user->id)->get();
-
-                            }else{
-                                $programs = 'N/A';
-                            }
-                        @endphp
+                        if($user->program_id != null){
+                            $programs = DB::table('program_volunteer')->where('volunteer_id', $user->id)->get();
+                        } else {
+                            // Initialize as an empty collection instead of a string
+                            $programs = collect();
+                        }
+                    @endphp
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-lg md:text-xl capitalize">
+                                        @if($programs->count() > 0)
                                         @foreach($programs as $program)
-
                                             @php
                                                 $prog_name = \App\Models\Program::where('id', $program->program_id)->first();
                                             @endphp
-                                            {{ $prog_name->name }} <br>
+                                            {{ $prog_name ? $prog_name->name : 'Unknown Program' }} <br>
                                         @endforeach
+                                    @else
+                                        No programs selected
+                                    @endif
                                     </p>
                                 </div>
                             </div>
@@ -527,10 +528,21 @@
                                     </div>
                                 @else
                                     @foreach ($favoriteEvents as $index => $opportunity)
+
+                                                @php
+                                                $latestOpportunity = $opportunity ?? null;
+                                                $mediaItems = null;
+
+                                                if ($latestOpportunity) {
+                                                    $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                                                } else {
+                                                    $mediaItems = asset('img/ayala-foundation-bg.jpg');
+                                                }
+                                                @endphp
                                         <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                                             <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                                 <img class="w-full h-full object-cover"
-                                                    src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                                                    src="{{ $mediaItems }}" alt="">
                                             </div>
 
                                             <div class="w-full">

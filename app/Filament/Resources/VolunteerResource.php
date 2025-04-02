@@ -39,7 +39,7 @@ class VolunteerResource extends Resource
         $user = auth()->user();
 
         // Check if user is in volunteer mode or actually has the Volunteer role
-        if ($user?->is_volunteer || $user?->hasRole('Volunteer')) {
+        if ($user?->is_volunteer || $user?->hasRole('volunteer')) {
             $volunteerId = auth()->id();
             return static::getUrl('view', ['record' => $volunteerId]);
         }
@@ -68,7 +68,7 @@ class VolunteerResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!auth()->user()->hasRole(['super_admin', 'admin', 'Ayala Super Admin'])) {
+                if (!auth()->user()->hasRole(['super_admin', 'admin', 'Ayala Super Admin', ' External Partner'])) {
                     $query = $query->where('id', auth()->id());
                 }
                 return $query;

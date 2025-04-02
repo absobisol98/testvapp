@@ -78,7 +78,7 @@
 
     // Admin/management permissions
     $isSuperAdmin = $user->hasRole('super_admin');
-    $isAdmin = $user->hasRole('admin');
+    $isAdmin = $user->hasRole('Ayala Super Admin');
     $isCreator = $record->created_by == $user->id;
     $isFacilitator = $record->facilitators->contains($user->id);
     $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
@@ -88,7 +88,7 @@
 
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
 
-    <div class="w-full flex flex-col md:flex-row items-stretch md:items-center justify-between">
+    <div class="w-full flex items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
 
         <div class="grid grid-cols-4 gap-2">
@@ -257,7 +257,7 @@
                         <br>
                         <div class="{{ $record->tags->isEmpty() ? 'hidden' : '' }}">
                             <p class="text-md md:text-lg lg:text-base text-start font-bold">Tags:</p>
-                            <div class="w-full flex flex-wrap items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px]">
+                            <div class="w-full max-w-[70%] sm:max-w-[40%] lg:max-w-[70%] flex items-center justify-start gap-2 p-2 px-4 text-black text-xs font-normal rounded-[20px]">
                             @foreach ($record->tags as $tag)
                                 <div class="w-fit px-2 py-1" style="background:#03498D; border-radius: 10px;">
                                     <p class="text-white">{{ \Illuminate\Support\Str::upper($tag->name) }} <span class="w- inline-flex items-center text-white justify-center cursor-pointer hover:font-[700]"></span></p>
