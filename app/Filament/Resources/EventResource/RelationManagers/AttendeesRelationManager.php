@@ -282,6 +282,7 @@ class AttendeesRelationManager extends RelationManager
                             $details = array();
                             $details['time_in'] = $data['time_in'];
                             $details['time_out'] = $data['time_out'];
+                            $details['slot_type_id'] = $data['slot_type_id'];
                             $details['no_account_name'] = $attendee['no_name'];
                             $details['event_id'] = $this->getOwnerRecord()->id;
                             $details['facilitator_id'] = auth()->id();

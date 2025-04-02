@@ -282,7 +282,7 @@
                                 </div>
 
                                 <div class="w-[200px]">
-                                    @if ( \Carbon\Carbon::parse($opportunity->created_at)->lt(now()))
+                                    @if ( \Carbon\Carbon::parse($opportunity->start_date)->gt(now()))
                                         <a href="{{route('filament.admin.resources.events.view',['record' => $opportunity->id])}}">
                                             <div
                                                 class="h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">

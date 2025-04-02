@@ -38,6 +38,8 @@ class BusinessUnitResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+
+
     public static function getNavigationLabel(): string
     {
         if(auth()->user()->hasRole('External Partner')){
@@ -51,6 +53,7 @@ class BusinessUnitResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $isExternalPartner = auth()->user()->hasRole('External Partner');
         return $form
             ->schema([
                 Grid::make(2)
@@ -61,7 +64,8 @@ class BusinessUnitResource extends Resource
                             ->required()
                             ->preload()
                             ->searchable()
-                            ->live(),
+                            ->live()
+                            ->disabled($isExternalPartner),
 
                         Select::make('company_id')
                             ->label('Company')
@@ -82,19 +86,8 @@ class BusinessUnitResource extends Resource
                                     }
                                 }
                             })
-                            ->afterStateHydrated(function ($state, Set $set) {
-                                // This will run when the form is loaded in edit mode
-                                if ($state) {
-                                    $company = \App\Models\Company::find($state);
-                                    if ($company) {
-                                        $set('name', $company->name);
-                                        $set('show_name', $company->name);
-                                        $slug = preg_replace('/[^A-Za-z0-9-]+/', '-', $company->name);
-                                        $set('slug', strtolower($slug));
-                                        $set('show_slug', strtolower($slug));
-                                    }
-                                }
-                            }),
+                            ->disabled($isExternalPartner),
+
 
                             Forms\Components\Hidden::make('name')
 
@@ -138,10 +131,18 @@ class BusinessUnitResource extends Resource
                     ->downloadable()
                     ->columnSpan(3),
 
-                Forms\Components\TextInput::make('show_name')
+                    Forms\Components\TextInput::make('show_name')
                     ->label('Name')
                     ->required()
                     ->disabled()
+                    ->default(fn (callable $get) => $get('name'))
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        // When editing an existing record, set show_name to the name field
+                        if ($record) {
+                            $component->state($record->name);
+                        }
+                    })
+                    ->dehydrated(false) // Don't save this field to database
                     ->columnSpan(3)
                     ->maxLength(50),
 
@@ -156,7 +157,14 @@ class BusinessUnitResource extends Resource
                             ->label('Slug')
                             ->disabled()
                             ->required()
-                            ->unique(column: 'slug',ignoreRecord: true)
+                            ->default(fn (callable $get) => $get('slug'))
+                            ->afterStateHydrated(function ($component, $state, $record) {
+                                // When editing an existing record, set show_slug to the slug field
+                                if ($record) {
+                                    $component->state($record->slug);
+                                }
+                            })
+                            ->dehydrated(false) // Don't save this field to database
                             ->maxLength(100),
                     ]),
 
