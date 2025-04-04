@@ -264,6 +264,13 @@
                                 </div>
                             @endforeach
                         </div>
+
+                        <div class="{{ $record->other_fields->isEmpty() ? 'hidden' : '' }}">
+                            @foreach ($record->other_fields as $field)
+                            <p class="text-md md:text-lg lg:text-base text-start font-bold">{{ $field->label}}</p>
+                            <p class="text-md md:text-lg lg:text-base text-start font-normal">{{ $field->text}}</p>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
