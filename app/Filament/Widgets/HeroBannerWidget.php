@@ -13,7 +13,7 @@ class HeroBannerWidget extends Widget
 {
     protected static string $view = 'filament.widgets.hero-banner-widget';
 
-    protected function getViewData(): array
+    public function getViewData(): array
     {
         $volunteer = User::role('volunteer')->count();
         $businessunit = BusinessUnit::count();
@@ -135,6 +135,9 @@ class HeroBannerWidget extends Widget
             $bgImg = 'img/hero-banner-bg_3.jpg';
         }
 
+        
+        $businessUnit = BusinessUnit::where('company_id', auth()->user()->company_id)->first();
+
         return [
             'opportunity' => $opportunity,
             'businessunit' => $businessunit,
@@ -153,6 +156,7 @@ class HeroBannerWidget extends Widget
             'account_created_at' => $user_created_date->format('M d, Y'),
             'totalHours' => $totalHours,
             'joined' => $joined,
+            'businessUnit' => $businessUnit,
         ];
     }
 }

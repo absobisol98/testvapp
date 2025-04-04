@@ -59,7 +59,8 @@
                         </div>
 
                         <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{$ayala_hours}}</p>
+
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $businessUnit ? $businessUnit->getTotalVolunteerHours() : 0 }}</p>
                             <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS HOURS</p>
                         </div>
 
