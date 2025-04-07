@@ -88,6 +88,7 @@ class BusinessUnitResource extends Resource
                             })
                             ->disabled($isExternalPartner),
 
+
                             Forms\Components\Hidden::make('name')
 
                             ->live(), // Make it reactive
@@ -254,6 +255,7 @@ class BusinessUnitResource extends Resource
                             ->maxSize(5000)
                             ->reorderable()
                             ->downloadable()
+                            ->nullable()
                             ->columnSpanFull(),
                     ]),
 
