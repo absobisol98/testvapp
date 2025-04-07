@@ -417,27 +417,45 @@
 
                 <!-- Swiper Script -->
                 <script>
-                     const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
+                    const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
                         loop: true,
-                        slidesPerView: 'auto',
-                        spaceBetween: 1, // Adjust spacing if needed
-                        // centeredSlides: true,
+                        slidesPerView: 1,
+                        spaceBetween: 16,
                         autoplay: {
                             delay: 3000,
                             disableOnInteraction: false
                         },
-                        grabCursor: true, // Makes it feel draggable
-                        autoHeight: false,
-                        freeMode: true,
+                        grabCursor: true,
                         navigation: {
                             nextEl: '.our-partners-button-next',
                             prevEl: '.our-partners-button-prev',
                         },
                         breakpoints: {
-                            1024: { slidesPerView: 5, },
-                            768: { slidesPerView: 4, },
-                            640: { slidesPerView: 3, },
-                            320: { slidesPerView: 1, }
+                            // Mobile
+                            320: {
+                                slidesPerView: 1,
+                                spaceBetween: 8
+                            },
+                            // Tablet
+                            640: {
+                                slidesPerView: 2,
+                                spaceBetween: 12
+                            },
+                            // Desktop
+                            768: {
+                                slidesPerView: 3,
+                                spaceBetween: 16
+                            },
+                            // Large Desktop
+                            1024: {
+                                slidesPerView: 4,
+                                spaceBetween: 16
+                            },
+                            // Extra Large Desktop
+                            1280: {
+                                slidesPerView: 5,
+                                spaceBetween: 16
+                            }
                         }
                     });
                 </script>
@@ -454,7 +472,7 @@
                 dd($opportunity->created_by_user);
             @endphp --}}
 
-            <div class="h-[100vh] md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
+            <div class="h-full md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
                 style="background-image: url('{{ asset('img/background-img-2.png') }}')">
                 <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
                     <div class="flex flex-col md:flex-row items-center justify-center gap-12">
@@ -463,7 +481,7 @@
                             <p class="text-[20px] font-medium">Volunteers</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ $totalHours ?? '0' }}</p>
+                            <p class="text-[80px] font-bold">{{ number_format($totalHours) ?? '0' }}</p>
                             <p class="text-[20px] font-medium">Total Volunteer Hours</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">

@@ -4,7 +4,7 @@ namespace App\Filament\Widgets;
 use App\Models\User;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 class VolunteerAgeDistribution extends ChartWidget
 {
     protected static ?string $heading = 'Volunteer Age Distribution';
@@ -12,6 +12,21 @@ class VolunteerAgeDistribution extends ChartWidget
     protected int | string | array $columnSpan = 'full';
 
     protected static ?string $maxHeight = '300px';
+     // Add cluster filter parameter
+     public ?int $clusterFilter = null;
+    
+     public function mount(?int $clusterFilter = null): void
+     {
+         // If no cluster filter is passed, check if current user is External Partner
+         if (!$clusterFilter) {
+             $user = Auth::user();
+             if ($user && $user->hasRole('External Partner') && $user->cluster_id) {
+                 $this->clusterFilter = $user->cluster_id;
+             }
+         } else {
+             $this->clusterFilter = $clusterFilter;
+         }
+     }
 
     protected function getData(): array
     {

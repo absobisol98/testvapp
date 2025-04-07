@@ -129,8 +129,7 @@
              role="tabpanel"
              aria-labelledby="volunteers-tab">
 
-            <!-- Export Section - ADD THIS SECTION -->
-            <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
+             <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Export Volunteers</h3>
                 <form action="{{ route('volunteers.export') }}" method="POST" class="space-y-4">
                     @csrf
@@ -141,36 +140,36 @@
                                 Business Units
                             </label>
                             <select name="companies[]" id="companies" class="select2-dropdown w-full" multiple>
-                                @foreach(App\Models\Company::orderBy('name')->get() as $company)
+                                @foreach($filteredCompanies ?? App\Models\Company::orderBy('name')->get() as $company)
                                     <option value="{{ $company->id }}">{{ $company->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-
+            
                         <!-- Affiliations Filter -->
                         <div>
                             <label for="affiliations" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Affiliations
                             </label>
                             <select name="affiliations[]" id="affiliations" class="select2-dropdown w-full" multiple>
-                                @foreach(App\Models\AffiliateType::orderBy('name')->get() as $affiliation)
+                                @foreach($filteredAffiliations ?? App\Models\AffiliateType::orderBy('name')->get() as $affiliation)
                                     <option value="{{ $affiliation->id }}">{{ $affiliation->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-
+            
                         <!-- Events Filter -->
                         <div>
                             <label for="events" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Events
                             </label>
                             <select name="events[]" id="events" class="select2-dropdown w-full" multiple>
-                                @foreach(App\Models\Event::orderBy('title')->get() as $event)
+                                @foreach($filteredEvents ?? App\Models\Event::orderBy('title')->get() as $event)
                                     <option value="{{ $event->id }}">{{ $event->title }}</option>
                                 @endforeach
                             </select>
                         </div>
-
+            
                         <!-- Date Range Filters -->
                         <div>
                             <label for="date_from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -178,15 +177,20 @@
                             </label>
                             <input type="date" name="date_from" id="date_from" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
-
+            
                         <div>
                             <label for="date_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 To Date
                             </label>
                             <input type="date" name="date_to" id="date_to" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
+                        
+                        <!-- Add cluster_id as a hidden field for External Partners -->
+                        @if(auth()->user()->hasRole('External Partner') && auth()->user()->cluster_id)
+                        <input type="hidden" name="cluster_id" value="{{ auth()->user()->cluster_id }}">
+                    @endif
                     </div>
-
+            
                     <div class="flex justify-end">
                         <button type="submit" class="px-4 py-2 bg-primary-600 text-white font-medium rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                             <div class="flex items-center">
@@ -199,24 +203,24 @@
                     </div>
                 </form>
             </div>
+            
+        <!-- Stats Overview -->
+        <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Statistics</h3>
+            @livewire('App\Filament\Widgets\TotalVolunteerHoursStats', ['clusterFilter' => $clusterFilter ?? null])
+        </div>
 
-            <!-- Stats Overview -->
-            <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Statistics</h3>
-                @livewire('App\Filament\Widgets\TotalVolunteerHoursStats')
-            </div>
+        <!-- Filtered Hours -->
+        <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Hours</h3>
+            @livewire('App\Filament\Widgets\FilteredVolunteerHours', ['clusterFilter' => $clusterFilter ?? null])
+        </div>
 
-            <!-- Filtered Hours -->
-            <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Hours</h3>
-                @livewire('App\Filament\Widgets\FilteredVolunteerHours')
-            </div>
-
-            <!-- Participation List -->
-            <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Participation</h3>
-                @livewire('App\Filament\Widgets\VolunteerParticipationList')
-            </div>
+        <!-- Participation List -->
+        <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Participation</h3>
+            @livewire('App\Filament\Widgets\VolunteerParticipationList', ['clusterFilter' => $clusterFilter ?? null])
+        </div>
         </div>
 
         <!-- Opportunities Tab -->
@@ -228,7 +232,7 @@
             <!-- Add the new Event Opportunity Summary widget -->
             <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Event Opportunity Summary</h3>
-                @livewire('App\Filament\Widgets\EventOpportunitySummary')
+                @livewire('App\Filament\Widgets\EventOpportunitySummary', ['clusterFilter' => $clusterFilter ?? null])
             </div>
         </div>
 
@@ -241,19 +245,19 @@
                 <!-- Top Volunteers Section -->
                 <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Top Volunteers</h3>
-                    @livewire('App\Filament\Widgets\TopVolunteersLeaderboard')
+                    @livewire('App\Filament\Widgets\TopVolunteersLeaderboard', ['clusterFilter' => $clusterFilter ?? null])
                 </div>
-
+                
                 <!-- Top Companies Section -->
                 <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Top Business Units</h3>
-                    @livewire('App\Filament\Widgets\TopCompaniesLeaderboard')
+                    @livewire('App\Filament\Widgets\TopCompaniesLeaderboard', ['clusterFilter' => $clusterFilter ?? null])
                 </div>
-
+                
                 <!-- Age Distribution Section -->
                 <div class="bg-white rounded-lg shadow-sm dark:bg-gray-800 p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Volunteer Age Distribution</h3>
-                    @livewire('App\Filament\Widgets\VolunteerAgeDistribution')
+                    @livewire('App\Filament\Widgets\VolunteerAgeDistribution', ['ageData' => $ageDistribution ?? null, 'clusterFilter' => $clusterFilter ?? null])
                 </div>
             </div>
         </div>

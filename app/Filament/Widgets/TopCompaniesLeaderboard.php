@@ -15,6 +15,22 @@ class TopCompaniesLeaderboard extends BaseWidget
 {
     protected static ?string $heading = 'Top Business Units';
 
+     // Add cluster filter parameter
+     public ?int $clusterFilter = null;
+    
+     public function mount(?int $clusterFilter = null): void
+     {
+         // If no cluster filter is passed, check if current user is External Partner
+         if (!$clusterFilter) {
+             $user = Auth::user();
+             if ($user && $user->hasRole('External Partner') && $user->cluster_id) {
+                 $this->clusterFilter = $user->cluster_id;
+             }
+         } else {
+             $this->clusterFilter = $clusterFilter;
+         }
+     }
+
     protected function getTableQuery(): Builder
     {
         // First query: Get companies

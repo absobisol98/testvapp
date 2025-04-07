@@ -391,20 +391,30 @@ class EventRegistrationTableAction
                 })
                 ->visible(function (Event $record) {
                     // Hide EditAction button for external partners on event_type_id = 1
-                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
-                        return false;
+                    if (auth()->user()->hasRole('External Partner')) {
+                        // For type 1 events, hide completely
+                        if ($record->event_type_id == 1) {
+                            return false;
+                        }
+                        // For other event types, only show for events created by this partner
+                        return $record->created_by == auth()->id() && $record->end_date >= now();
                     }
                     return $record->end_date >= now();
                 }),
 
             \Filament\Tables\Actions\DeleteAction::make()
-                ->visible(function (Event $record) {
-                    // Hide Delete button for external partners on event_type_id = 1
-                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
+            ->visible(function (Event $record) {
+                // Hide Delete button for external partners on event_type_id = 1
+                if (auth()->user()->hasRole('External Partner')) {
+                    // For type 1 events, hide completely
+                    if ($record->event_type_id == 1) {
                         return false;
                     }
-                    return $record->end_date >= now();
-                }),
+                    // For other event types, only show for events created by this partner
+                    return $record->created_by == auth()->id() && $record->end_date >= now();
+                }
+                return $record->end_date >= now();
+            }),
 
             \Filament\Tables\Actions\ForceDeleteAction::make()
                 ->visible(function (Event $record) {
