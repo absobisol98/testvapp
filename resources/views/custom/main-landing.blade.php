@@ -481,7 +481,7 @@
                             <p class="text-[20px] font-medium">Volunteers</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ $totalHours ?? '0' }}</p>
+                            <p class="text-[80px] font-bold">{{ number_format($totalHours) ?? '0' }}</p>
                             <p class="text-[20px] font-medium">Total Volunteer Hours</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">

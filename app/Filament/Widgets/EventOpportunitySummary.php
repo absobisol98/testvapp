@@ -13,7 +13,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
-
+use Illuminate\Support\Facades\Auth;
 class EventOpportunitySummary extends Widget implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
@@ -24,9 +24,19 @@ class EventOpportunitySummary extends Widget implements HasForms, HasTable
     public $selectedEventId = null;
     public $summary = [];
 
-    public function mount(): void
+    public ?int $clusterFilter = null;
+    
+    public function mount(?int $clusterFilter = null): void
     {
-        $this->form->fill();
+        // If no cluster filter is passed, check if current user is External Partner
+        if (!$clusterFilter) {
+            $user = Auth::user();
+            if ($user && $user->hasRole('External Partner') && $user->cluster_id) {
+                $this->clusterFilter = $user->cluster_id;
+            }
+        } else {
+            $this->clusterFilter = $clusterFilter;
+        }
     }
 
     public function form(Form $form): Form

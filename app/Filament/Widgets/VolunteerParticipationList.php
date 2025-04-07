@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\EventAttendee;
-
+use Illuminate\Support\Facades\Auth;
 class VolunteerParticipationList extends BaseWidget
 {
     protected function getTableQuery(): Builder|Relation|null
@@ -20,6 +20,22 @@ class VolunteerParticipationList extends BaseWidget
             ->withCount('eventAttendees as total_opportunities')
             ->having('total_opportunities', '>', 0);
     }
+
+     // Add cluster filter parameter
+     public ?int $clusterFilter = null;
+    
+     public function mount(?int $clusterFilter = null): void
+     {
+         // If no cluster filter is passed, check if current user is External Partner
+         if (!$clusterFilter) {
+             $user = Auth::user();
+             if ($user && $user->hasRole('External Partner') && $user->cluster_id) {
+                 $this->clusterFilter = $user->cluster_id;
+             }
+         } else {
+             $this->clusterFilter = $clusterFilter;
+         }
+     }
 
 
     protected function getYearOptions(): array

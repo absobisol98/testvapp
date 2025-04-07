@@ -8,6 +8,7 @@ use App\Models\AffiliateType;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use League\Csv\Writer;
 
@@ -22,13 +23,24 @@ class VolunteerExportController extends Controller
             'events' => 'nullable|array',
             'date_from' => 'nullable|date',
             'date_to' => 'nullable|date',
+            'cluster_id' => 'nullable|integer',
         ]);
+
+        // Check if user is External Partner
+        $user = Auth::user();
+        $isExternalPartner = $user && $user->hasRole('External Partner');
+        $clusterFilter = $isExternalPartner && $user->cluster_id ? $user->cluster_id : $request->cluster_id;
 
         // Start with all volunteer users
         $volunteers = User::query()
             ->where('volunteer', 1)
             ->with(['company', 'affiliate', 'eventAttendees.event']);
 
+        // Apply cluster filter if External Partner
+        if ($clusterFilter) {
+            $volunteers->where('cluster_id', $clusterFilter);
+        }
+            
         // Apply filters
         if ($request->has('companies') && !empty($request->companies)) {
             $volunteers->whereIn('company_id', $request->companies);
@@ -72,6 +84,7 @@ class VolunteerExportController extends Controller
             'Business Unit',
             'Affiliation',
             'Position',
+            'Age Range',
             'Birthdate',
             'Joined Date',
             'Total Hours',
@@ -85,8 +98,20 @@ class VolunteerExportController extends Controller
                 return $attendee->get_totalHrs();
             });
 
+            // Format age range for display
+            $ageRange = match($volunteer->age_range) {
+                '10-17' => '10-17 years',
+                '18-24' => '18-24 years',
+                '25-34' => '25-34 years',
+                '35-44' => '35-44 years',
+                '45-54' => '45-54 years',
+                '55-64' => '55-64 years',
+                '65+' => '65+ years',
+                default => 'Not specified'
+            };
+
             // Get events participated
-            $eventsParticipated = $volunteer->eventAttendees->pluck('event.name')->unique()->implode(', ');
+            $eventsParticipated = $volunteer->eventAttendees->pluck('event.title')->unique()->implode(', ');
 
             $csv->insertOne([
                 $volunteer->id,
@@ -94,9 +119,10 @@ class VolunteerExportController extends Controller
                 $volunteer->lastname,
                 $volunteer->email,
                 $volunteer->phone ?? 'N/A',
-                $volunteer->company ? $volunteer->company->name : 'N/A',
+                $volunteer->company ? $volunteer->company->name : ($volunteer->external_company_name ?? 'N/A'),
                 $volunteer->affiliate ? $volunteer->affiliate->name : 'N/A',
                 $volunteer->position ?? 'N/A',
+                $ageRange,
                 $volunteer->birthday ? Carbon::parse($volunteer->birthday)->format('Y-m-d') : 'N/A',
                 $volunteer->created_at->format('Y-m-d'),
                 number_format($totalHours, 1),
@@ -104,8 +130,25 @@ class VolunteerExportController extends Controller
             ]);
         }
 
-        // Generate file name
-        $fileName = 'volunteers-export-' . now()->format('Y-m-d') . '.csv';
+        // Generate file name with filtering info
+        $filterInfo = [];
+        if ($clusterFilter) {
+            $filterInfo[] = 'cluster-' . $clusterFilter;
+        }
+        if ($request->date_from) {
+            $filterInfo[] = 'from-' . $request->date_from;
+        }
+        if ($request->date_to) {
+            $filterInfo[] = 'to-' . $request->date_to;
+        }
+        
+        $fileNameParts = ['volunteers'];
+        if (!empty($filterInfo)) {
+            $fileNameParts[] = implode('-', $filterInfo);
+        }
+        $fileNameParts[] = now()->format('Y-m-d');
+        
+        $fileName = implode('-', $fileNameParts) . '.csv';
 
         // Create response
         $headers = [
