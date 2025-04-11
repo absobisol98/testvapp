@@ -254,13 +254,8 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
 
                         @php
-                        if($user->program_id != null){
-                            $programs = DB::table('program_volunteer')->where('volunteer_id', $user->id)->get();
-                        } else {
-                            // Initialize as an empty collection instead of a string
-                            $programs = collect();
-                        }
-                    @endphp
+                        $programs = DB::table('program_volunteer')->where('volunteer_id', $user->id)->get();
+                        @endphp
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
@@ -532,7 +527,7 @@
                                                 @php
                                                 $latestOpportunity = $opportunity ?? null;
                                                 $mediaItems = null;
-
+                            
                                                 if ($latestOpportunity) {
                                                     $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
                                                 } else {
