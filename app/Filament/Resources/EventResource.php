@@ -502,30 +502,7 @@ class EventResource extends Resource implements HasShieldPermissions
                             default => $query,
                         };
                     }),
-                Filter::make('status')
-                    ->label('')
-                    ->form([
-                        Forms\Components\Select::make('status')
-                            ->selectablePlaceholder(false)
-                            ->label('')
-                            ->default('all')
-                            ->options([
-                                'all' => 'All Events',
-                                'upcoming_events' => 'Upcoming Events',
-                                'joined' => 'Joined Events',
-                            ]),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        if($data['status'] === 'joined') {
-                            $query->whereHas('attendees', function (Builder $query) {
-                                $query->where('attendee_id', auth()->id());
-                            });
-                        } elseif($data['status'] == 'upcoming_events'){
-                            $query->where('start_date', '>=', now()->startOfDay());
-                        }
 
-                        return $query;
-                    }),
 
                 Filter::make('tags')
                     ->label('Tags')
