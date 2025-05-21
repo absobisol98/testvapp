@@ -197,7 +197,7 @@ class RegistrationsRelationManager extends RelationManager
                         if ($record->status_id == 1) {
                             $user = auth()->user();
                             $isSuperAdmin = $user->hasRole('super_admin');
-                            $isAdmin = $user->hasRole('admin');
+                            $isAdmin = $user->hasRole('Ayala Super Admin');
                             $isCreator = $record->created_by == $user->id;
                             $isFacilitator = $record->facilitators && $record->facilitators->contains($user->id);
                             $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;

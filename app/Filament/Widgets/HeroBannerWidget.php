@@ -13,7 +13,7 @@ class HeroBannerWidget extends Widget
 {
     protected static string $view = 'filament.widgets.hero-banner-widget';
 
-    protected function getViewData(): array
+    public function getViewData(): array
     {
         $volunteer = User::role('volunteer')->count();
         $businessunit = BusinessUnit::count();
@@ -120,33 +120,23 @@ class HeroBannerWidget extends Widget
             ->sum(fn($attendance) => $attendance->get_totalHrs());
 
         // For Volunteer
-        if (false) {
+        if (auth()->user()->hasRole('Volunteer')) {
             $bgImg = 'img/ayala-foundation-bg.jpg';
-
-            // $totalStat1 = 3;
-            // $totalStat2 = 20;
-            // $totalStat3 = 203.51;
-            // $totalStat4 = 200;
-            // $totalStat5 = 0;
         }
         // For AFI Admin
-        elseif (false) {
+        elseif (auth()->user()->hasRole('super_admin')) {
             $bgImg = 'img/hero-banner-bg_2.jpg';
-            // $totalStat1 = 43;
-            // $totalStat2 = 240;
-            // $totalStat3 = 267.51;
-            // $totalStat4 = 456;
-            // $totalStat5 = 42;
+        }
+        elseif (auth()->user()->hasRole('Ayala Super Admin')) {
+            $bgImg = 'img/hero-banner-bg_2.jpg';
         }
         // For partners
-        elseif (true) {
+        elseif (auth()->user()->hasRole('External Partner')) {
             $bgImg = 'img/hero-banner-bg_3.jpg';
-            // $totalStat1 = User::role('volunteer')->count();
-            // $totalStat2 = Event::get()->count();
-            // $totalStat3 = 658.51;
-            // $totalStat4 = 980;
-            // $totalStat5 = 223;
         }
+
+        
+        $businessUnit = BusinessUnit::where('company_id', auth()->user()->company_id)->first();
 
         return [
             'opportunity' => $opportunity,
@@ -166,6 +156,7 @@ class HeroBannerWidget extends Widget
             'account_created_at' => $user_created_date->format('M d, Y'),
             'totalHours' => $totalHours,
             'joined' => $joined,
+            'businessUnit' => $businessUnit,
         ];
     }
 }

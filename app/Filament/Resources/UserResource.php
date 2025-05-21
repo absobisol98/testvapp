@@ -36,6 +36,9 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+   
+ 
+
     public static function form(Form $form): Form
     {
         return $form
@@ -121,6 +124,51 @@ class UserResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return __("menu.nav_group.access");
+    }
+
+        /**
+     * Determine if the resource should be visible in the navigation.
+     */
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+        
+        // Use case-insensitive check for any role containing "volunteer"
+        if (!$user) return false;
+        
+        foreach ($user->roles as $role) {
+            if (strtolower($role->name) === 'volunteer' || $role->name === 'External Partner') {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Determine if the user can access a specific record.
+     */
+    public static function canAccess(): bool
+    {
+        // Always return true to allow access to the resource
+        // (specific record access will be controlled by policies)
+        return true;
+    }
+
+    /**
+     * Get the policies for this resource.
+     */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        // If user is a volunteer, they can only see their own record
+        if ($user && $user->hasRole('volunteer')) {
+            $query->where('id', $user->id);
+        }
+
+        return $query;
     }
 
     public static function doResendEmailVerification($settings = null, $user): void

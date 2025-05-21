@@ -540,7 +540,7 @@
             scrollToFirstError();
         }
 
-        function setupOrganizationToggle() {
+                function setupOrganizationToggle() {
             $('input[name="affiliate_type_id"]').on('change', function() {
                 const isAyalaEmployee = $('#ayala_employee').is(':checked');
                 $('#ayala-fields').toggleClass('hidden', !isAyalaEmployee);
@@ -553,6 +553,60 @@
                     $('#clusterSelect, #companySelect').val('').trigger('change');
                 }
             });
+
+            // Initialize cluster-company filtering
+            setupClusterCompanyFilter();
+        }
+
+        function setupClusterCompanyFilter() {
+    // When cluster dropdown changes
+            $('#clusterSelect').on('change', function() {
+                const selectedClusterId = $(this).val();
+
+                // Clear the company dropdown except for the first placeholder option
+                const $firstOption = $('#companySelect option:first-child');
+                $('#companySelect').empty().append($firstOption);
+
+                // If a cluster is selected, populate with only matching companies
+                if (selectedClusterId) {
+                    // Get all original company options and filter them
+                    const companyOptions = [];
+
+                    // Loop through all companies and add only those matching the selected cluster
+                    @foreach ($companies as $company)
+                        companyOptions.push({
+                            id: {{ $company->id }},
+                            name: "{{ $company->name }}",
+                            clusterId: {{ $company->cluster_id }}
+                        });
+                    @endforeach
+
+                    // Add filtered companies to dropdown
+                    companyOptions.forEach(company => {
+                        if (company.clusterId == selectedClusterId) {
+                            $('#companySelect').append(
+                                $('<option></option>')
+                                    .attr('value', company.id)
+                                    .attr('data-cluster', company.clusterId)
+                                    .text(company.name)
+                            );
+                        }
+                    });
+                }
+
+                // Reset selection
+                $('#companySelect').val('');
+
+                // If using Select2, refresh it
+                if ($.fn.select2) {
+                    $('#companySelect').select2('destroy').select2();
+                }
+            });
+
+            // Initial setup on page load
+            if ($('#clusterSelect').val()) {
+                $('#clusterSelect').trigger('change');
+            }
         }
     </script>
 @endsection

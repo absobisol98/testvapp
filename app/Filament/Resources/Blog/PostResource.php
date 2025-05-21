@@ -76,12 +76,13 @@ class PostResource extends Resource
                         //         'title' => 'Toggle button to feature the article'
                         //     ]),
 
-                        Forms\Components\MarkdownEditor::make('content')
-                            ->required()
-                            ->columnSpan('full')
-                            ->extraAttributes([
-                                'title' => 'Input article content'
-                            ]),
+                        Forms\Components\Textarea::make('content')
+                        ->required()
+                        ->columnSpan('full')
+                        ->rows(10)
+                        ->extraAttributes([
+                            'title' => 'Input article content'
+                        ]),
 
                         Forms\Components\TextInput::make('blog_author')
                             ->label('Author')

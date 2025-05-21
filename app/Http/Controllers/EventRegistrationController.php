@@ -257,7 +257,7 @@ class EventRegistrationController extends Controller
         // Check if user is authorized (Super Admin, Admin, Creator, or Facilitator)
         $user = Auth::user();
         $isSuperAdmin = $user->hasRole('super_admin');
-        $isAdmin = $user->hasRole('admin');
+        $isAdmin = $user->hasRole('Ayala Super Admin');
         $isCreator = $event->created_by == $user->id;
         $isFacilitator = $event->facilitators->contains($user->id);
 

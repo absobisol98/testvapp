@@ -14,7 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+
 use libphonenumber\PhoneNumberType as libPhoneNumberType;
 
 final class VolunteerFields
@@ -111,13 +111,14 @@ final class VolunteerFields
 
 
                     TextInput::make('company_representative')->label('HR Representative')->columnSpanFull(),
-
-                    PhoneInput::make('company_contact_number')
-                        ->label('Contact number')
-                        ->defaultCountry('PH')
-                        ->validateFor(
-                            type: libPhoneNumberType::MOBILE | libPhoneNumberType::FIXED_LINE
-                        ),
+                   
+                    TextInput::make('company_contact_number')
+                    ->label('Contact number')
+                    ->tel()
+                    ->placeholder('09XXXXXXXXX')
+                    ->regex('/^(09|\+639)\d{9}$/')
+                    ->validationAttribute('contact number')
+                    ->helperText('Format: 09XXXXXXXXX or +639XXXXXXXXX'),
 
                     TextInput::make('company_email')
                         ->email()
@@ -130,12 +131,13 @@ final class VolunteerFields
                     TextInput::make('emergency_contact_name')->label('Contact name'),
                     TextInput::make('emergency_contact_relationship')->label(' Relationship'),
 
-                    PhoneInput::make('emergency_contact_number')
-                        ->label('Contact number')
-                        ->defaultCountry('PH')
-                        ->validateFor(
-                            type: libPhoneNumberType::MOBILE | libPhoneNumberType::FIXED_LINE
-                        ),
+                    TextInput::make('emergency_contact_number')
+                    ->label('Contact number')
+                    ->tel()
+                    ->placeholder('09XXXXXXXXX')
+                    ->regex('/^(09|\+639)\d{9}$/')
+                    ->validationAttribute('emergency contact number')
+                    ->helperText('Format: 09XXXXXXXXX or +639XXXXXXXXX'),
 
                 ]),
                 Grid::make(1)

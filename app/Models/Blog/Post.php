@@ -56,4 +56,6 @@ class Post extends Model implements HasMedia
     {
         return $this->belongsTo(Category::class, 'blog_category_id');
     }
+
+
 }

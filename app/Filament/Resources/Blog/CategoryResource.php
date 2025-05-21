@@ -49,7 +49,7 @@ class CategoryResource extends Resource
                     ->maxLength(255)
                     ->unique(Category::class, 'slug', ignoreRecord: true),
 
-                Forms\Components\MarkdownEditor::make('description')
+                Forms\Components\Textarea::make('description')
                     ->columnSpan('full'),
 
                 Forms\Components\Toggle::make('is_active')

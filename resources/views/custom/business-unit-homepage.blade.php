@@ -17,7 +17,7 @@
 
                 <a href="#opportunity-list">
                     <div
-                        class="h-[56px] w-[184px] my-8 rounded-[10px] bg-[#D43F3F] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                        class="h-[56px] w-[184px] my-8 rounded-[10px] bg-[#F55E1D] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
                         <p class="font-medium text-base text-white">SEE OPPORTUNITIES</p>
                     </div>
                 </a>
@@ -165,7 +165,7 @@
             <div class="grid grid-cols-3 gap-8">
                 <div class="col-span-3 md:col-span-1 flex flex-col items-center justify-start gap-8">
                     <p class="text-[40px] font-[400] text-black text-center">About <span
-                            class="font-[600] text-[#D43F3F]">{{$business_unit->nickname}}</span></p>
+                            class="font-[600] text-[#F55E1D]">{{$business_unit->nickname}}</span></p>
 
                     <div class="flex flex-col items-center justify-center gap-3">
                         {!! nl2br($business_unit->about ?? "Here's where your about us displayed") !!}
@@ -220,7 +220,7 @@
                                 /* Stroke color on click (active state) */
                                 #icon.active svg path,
                                 #icon-calendar.active svg path {
-                                    stroke: #CE3434;
+                                    stroke: #F55E1D;
                                     /* Change this to your desired active color */
                                 }
                             </style>
@@ -282,7 +282,7 @@
                                 </div>
 
                                 <div class="w-[200px]">
-                                    @if ( \Carbon\Carbon::parse($opportunity->created_at)->lt(now()))
+                                    @if ( \Carbon\Carbon::parse($opportunity->start_date)->gt(now()))
                                         <a href="{{route('filament.admin.resources.events.view',['record' => $opportunity->id])}}">
                                             <div
                                                 class="h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
@@ -344,54 +344,55 @@
             </div>
         </div>
 
-        <h2 class="text-2xl md:text-[36px] font-semibold m-3">Recent Event Gallery</h2>
-        <div class="w-full program-swiper-container">
-
-            <div class="swiper-wrapper">
-                @foreach ($featuredEvents as $featured)
-                    <div class="swiper-slide relative">
-                        <div class="grid grid-cols-2 lg:grid-cols-2 ">
-                            <div class="col-span-1 h-full min-h-[500px] gap-8 font-medium text-white bg-[#F55E1D]">
-                                <img src="{{  $featured->getBanner() }}" alt="" class="object-fit w-full h-full">
-                            </div>
-                            <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8 z-1">
-                                <div class="w-full flex flex-col items-start gap-4 z-10 text-[#5B5B5B] font-[400]">
-                                    <p class="text-3xl md:text-5xl">{{$featured->title}}</p>
-                                    <p class="text-xl md:text-2xl w-full max-w-[510px] text-[#494949]">
-                                        {!! nl2br($featured->description ?? "Here's where your about us displayed") !!}
-                                    </p>
+        @if ($featuredEvents->isNotEmpty())
+            <h2 class="text-2xl md:text-[36px] font-semibold m-3">Recent Event Gallery</h2>
+            <div class="w-full program-swiper-container">
+                <div class="swiper-wrapper">
+                    @foreach ($featuredEvents as $featured)
+                        <div class="swiper-slide relative">
+                            <div class="grid grid-cols-2 lg:grid-cols-2 ">
+                                <div class="col-span-1 h-full min-h-[500px] gap-8 font-medium text-white bg-[#F55E1D]">
+                                    <img src="{{  $featured->getBanner() }}" alt="" class="object-fit w-full h-full">
                                 </div>
-                                <div class="w-full z-50">
-                                    @if (auth()->check())
-                                        <a href="{{ route('filament.admin.resources.events.view',['record' => $featured->id]) }}">
-                                            <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
-                                                <p class="font-[800] text-sm text-[#D43F3F]">View Event</p>
-                                            </div>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('volunteer.form.view') }}">
-                                            <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
-                                                <p class="font-[800] text-sm text-[#D43F3F]">SIGN UP NOW!</p>
-                                            </div>
-                                        </a>
-                                    @endif
-
+                                <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8 z-1">
+                                    <div class="w-full flex flex-col items-start gap-4 z-10 text-[#5B5B5B] font-[400]">
+                                        <p class="text-3xl md:text-5xl">{{$featured->title}}</p>
+                                        <p class="text-xl md:text-2xl w-full max-w-[510px] text-[#494949]">
+                                            {!! nl2br($featured->description ?? "Here's where your about us displayed") !!}
+                                        </p>
+                                    </div>
+                                    <div class="w-full z-50">
+                                        @if (auth()->check())
+                                            <a href="{{ route('filament.admin.resources.events.view',['record' => $featured->id]) }}">
+                                                <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
+                                                    <p class="font-[800] text-sm text-[#D43F3F]">View Event</p>
+                                                </div>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('volunteer.form.view') }}">
+                                                <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
+                                                    <p class="font-[800] text-sm text-[#D43F3F]">SIGN UP NOW!</p>
+                                                </div>
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="w-full h-full p-4 col-span-2 flex items-center justify-between gap-4 absolute">
-                                <div
-                                    class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
-                                    @include('custom.icons.landing-page-icons', ['icon' => 'arrow-left'])
-                                </div>
-                                <div
-                                    class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
-                                    @include('custom.icons.landing-page-icons', ['icon' => 'arrow-right'])
+                                <div class="w-full h-full p-4 col-span-2 flex items-center justify-between gap-4 absolute">
+                                    <div
+                                        class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
+                                        @include('custom.icons.landing-page-icons', ['icon' => 'arrow-left'])
+                                    </div>
+                                    <div
+                                        class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center rounded-full shadow-lg bg-white hover:bg-gray-100">
+                                        @include('custom.icons.landing-page-icons', ['icon' => 'arrow-right'])
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
+        @endif
         </div>
 
         {{-- Featured Opportunity Modal --}}

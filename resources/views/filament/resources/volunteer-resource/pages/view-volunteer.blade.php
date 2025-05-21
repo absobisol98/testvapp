@@ -159,18 +159,18 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">First Name</p>
-                                    <p class="text-lg md:text-xl">{{ $user->firstname }}</p>
+                                    <p class="text-lg md:text-xl capitalize">{{ $user->firstname }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Middle Name</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->middle_name ? $user->middle_name : 'N/A' }}</p>
+                                    <p class="text-sm">Nickname</p>
+                                    <p class="text-lg md:text-xl capitalize">
+                                        {{ $user->nickname ? $user->nickname : 'N/A' }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Last Name</p>
-                                    <p class="text-lg md:text-xl">{{ $user->lastname }}</p>
+                                    <p class="text-lg md:text-xl capitalize">{{ $user->lastname }}</p>
                                 </div>
                             </div>
 
@@ -178,19 +178,19 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Username</p>
-                                    <p class="text-lg md:text-xl">{{ $user->username }}</p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Email</p>
                                     <p class="text-lg md:text-xl">{{ $user->email }}</p>
                                 </div>
 
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Birthday</p>
+                                    {{-- <p class="text-sm">Username</p>
+                                    <p class="text-lg md:text-xl">{{ $user->username }}</p> --}}
+                                </div>
+
+                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
+                                    <p class="text-sm">Age Range</p>
                                     <p class="text-lg md:text-xl">
-                                        {{ $user->birthday ? $user->birthday : 'N/A' }}</p>
+                                        {{ $user->age_range ? $user->age_range : 'N/A' }}</p>
                                 </div>
                             </div>
 
@@ -199,7 +199,7 @@
 
                     {{-- Company / School --}}
                     <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Company / School</p>
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Company</p>
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -226,14 +226,19 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">In Case of Emergency</p>
 
                         <div class="shadow-md p-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Person</p>
-                                    <p class="text-lg md:text-xl">
+                                    <p class="text-lg md:text-xl capitalize">
                                         {{ $user->emergency_contact_name ? $user->emergency_contact_name : 'N/A' }}
                                     </p>
                                 </div>
-
+                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
+                                    <p class="text-sm">Relationship</p>
+                                    <p class="text-lg md:text-xl capitalize">
+                                        {{ $user->emergency_contact_relationship ? $user->emergency_contact_relationship : 'N/A' }}
+                                    </p>
+                                </div>
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
                                     <p class="text-sm">Contact Number</p>
                                     <p class="text-lg md:text-xl">
@@ -247,19 +252,26 @@
                     {{-- Interest --}}
                     <div class="w-full">
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
-                        @php
-                            if($user->program_id != null){
-                                $program_name = DB::table('programs')->where('id', $user->program_id)->first()->name;
-                            }else{
-                                $program_name = 'N/A';
-                            }
 
+                        @php
+                        $programs = DB::table('program_volunteer')->where('volunteer_id', $user->id)->get();
                         @endphp
 
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-lg md:text-xl capitalize">{{ $program_name }}</p>
+                                    <p class="text-lg md:text-xl capitalize">
+                                        @if($programs->count() > 0)
+                                        @foreach($programs as $program)
+                                            @php
+                                                $prog_name = \App\Models\Program::where('id', $program->program_id)->first();
+                                            @endphp
+                                            {{ $prog_name ? $prog_name->name : 'Unknown Program' }} <br>
+                                        @endforeach
+                                    @else
+                                        No programs selected
+                                    @endif
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -365,19 +377,88 @@
                                 </div>
 
                                 <!-- Completed Challenges Second -->
-                                <h2 class="font-bold text-lg">Completed Challenges</h2>
-                                <div class="space-y-4">
-                                    <!-- Registration Challenge -->
-                                    @if($user->created_at)
+                                <!-- Completed Challenges Second -->
+                                    <h2 class="font-bold text-lg">Completed Challenges</h2>
+                                    <div class="space-y-4">
+                                        <!-- Registration Challenge -->
+                                        @if($user->created_at)
+                                            <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                                <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                                <p class="text-sm">Create an account</p>
+                                                <p class="text-xs mt-2">✓ Completed</p>
+                                            </div>
+                                        @endif
+
+                                        <!-- First Opportunity Challenge -->
+                                        @if($user->eventAttended()->count() > 0)
+                                            <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                                <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
+                                                <p class="text-sm">Register for first opportunity</p>
+                                                <p class="text-xs mt-2">✓ Completed</p>
+                                            </div>
+                                        @endif
+
+                                        <!-- Hour Milestone Challenges -->
+                                       <!-- Hour Milestone Challenges -->
+                                @php
+                                $completedHourMilestones = [];
+                                // Only include the 20-hour milestone if actually completed
+                                if ($totalHours >= 20) {
+                                    $completedHourMilestones[] = 20;
+                                }
+                                foreach ([100, 250, 500, 1000] as $milestone) {
+                                    if ($totalHours >= $milestone) {
+                                        $completedHourMilestones[] = $milestone;
+                                    }
+                                }
+                                @endphp
+
+                                        @foreach($completedHourMilestones ?? [] as $milestone)
                                         <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Create an account</p>
+                                            <p class="font-bold text-xl">+{{ match($milestone) {
+                                                20 => '50',
+                                                100 => '250',
+                                                250 => '1500',
+                                                500 => '2500',
+                                                1000 => '5000',
+                                                default => '50'
+                                            } }} <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Complete {{ $milestone }} volunteer hours</p>
                                             <p class="text-xs mt-2">✓ Completed</p>
                                         </div>
-                                    @endif
+                                        @endforeach
 
-                                    <!-- Other completed challenges... -->
-                                </div>
+                                        <!-- Opportunity Milestone Challenges -->
+                                        @foreach($completedOpportunityMilestones ?? [] as $milestone)
+                                        <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                            <p class="font-bold text-xl">+{{ match($milestone) {
+                                                5 => '50',
+                                                10 => '100',
+                                                25 => '250',
+                                                50 => '1500',
+                                                100 => '2500',
+                                                default => '50'
+                                            } }} <span class="text-sm">VP</span></p>
+                                            <p class="text-sm">Complete {{ $milestone }} volunteer positions</p>
+                                            <p class="text-xs mt-2">✓ Completed</p>
+                                        </div>
+                                        @endforeach
+
+                                        @foreach($completedOpportunityMilestones as $milestone)
+                                            <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
+                                                <p class="font-bold text-xl">+{{ match($milestone) {
+                                                    5 => '50',
+                                                    10 => '100',
+                                                    25 => '250',
+                                                    50 => '1500',
+                                                    100 => '2500',
+                                                    default => '50'
+                                                } }} <span class="text-sm">VP</span></p>
+                                                <p class="text-sm">Complete {{ $milestone }} volunteer positions</p>
+                                                <p class="text-xs mt-2">✓ Completed</p>
+                                            </div>
+                                        @endforeach
+                                    </div>
                             </div>
 
                             <!-- Progress Section -->
@@ -442,10 +523,21 @@
                                     </div>
                                 @else
                                     @foreach ($favoriteEvents as $index => $opportunity)
+
+                                                @php
+                                                $latestOpportunity = $opportunity ?? null;
+                                                $mediaItems = null;
+                            
+                                                if ($latestOpportunity) {
+                                                    $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                                                } else {
+                                                    $mediaItems = asset('img/ayala-foundation-bg.jpg');
+                                                }
+                                                @endphp
                                         <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
                                             <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
                                                 <img class="w-full h-full object-cover"
-                                                    src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
+                                                    src="{{ $mediaItems }}" alt="">
                                             </div>
 
                                             <div class="w-full">

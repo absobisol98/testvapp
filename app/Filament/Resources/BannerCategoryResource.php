@@ -48,8 +48,10 @@ class BannerCategoryResource extends Resource
                     ->maxLength(255)
                     ->unique(BannerCategory::class, 'slug', ignoreRecord: true),
 
-                Forms\Components\MarkdownEditor::make('description')
-                    ->columnSpan('full'),
+                    Forms\Components\Textarea::make('description')
+                    ->required()
+                    ->columnSpan('full')
+                    ->rows(10),
 
                 Forms\Components\Toggle::make('is_active')
                     ->default(true),

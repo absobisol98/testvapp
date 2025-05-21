@@ -152,7 +152,7 @@
 
                         <div class="flex items-center justify-between gap-4 md:gap-8">
 
-                            <a class="text-lg md:text-[20px] font-[400]" href="">VIEW</a>
+                            <p class="text-lg md:text-[20px] font-[400]">VIEW</p>
 
                             {{-- Style for the tabs --}}
                             <style>
@@ -183,10 +183,10 @@
                             <button id="icon" class="w-[32px] h-[32px] active" onclick="changeTab('list')">
                                 @include('custom.icons.landing-page-icons', ['icon' => 'list-32'])
                             </button>
-
+{{--
                             <button id="icon-calendar" class="w-[32px] h-[32px]" onclick="changeTab('calendar')">
                                 @include('custom.icons.landing-page-icons', ['icon' => 'calendar-32'])
-                            </button>
+                            </button> --}}
                         </div>
                     </div>
 
@@ -273,9 +273,9 @@
                     </div>
 
                     {{-- OPPORTUNITIES Calendar --}}
-                    <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
+                    {{-- <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
                         @livewire(\App\Filament\Widgets\CalendarWidget::class)
-                    </div>
+                    </div> --}}
 
                     {{-- Tab Scripts --}}
                     <script>
@@ -417,27 +417,45 @@
 
                 <!-- Swiper Script -->
                 <script>
-                     const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
+                    const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
                         loop: true,
-                        slidesPerView: 'auto',
-                        spaceBetween: 1, // Adjust spacing if needed
-                        // centeredSlides: true,
+                        slidesPerView: 1,
+                        spaceBetween: 16,
                         autoplay: {
                             delay: 3000,
                             disableOnInteraction: false
                         },
-                        grabCursor: true, // Makes it feel draggable
-                        autoHeight: false,
-                        freeMode: true,
+                        grabCursor: true,
                         navigation: {
                             nextEl: '.our-partners-button-next',
                             prevEl: '.our-partners-button-prev',
                         },
                         breakpoints: {
-                            1024: { slidesPerView: 5, },
-                            768: { slidesPerView: 4, },
-                            640: { slidesPerView: 3, },
-                            320: { slidesPerView: 1, }
+                            // Mobile
+                            320: {
+                                slidesPerView: 1,
+                                spaceBetween: 8
+                            },
+                            // Tablet
+                            640: {
+                                slidesPerView: 2,
+                                spaceBetween: 12
+                            },
+                            // Desktop
+                            768: {
+                                slidesPerView: 3,
+                                spaceBetween: 16
+                            },
+                            // Large Desktop
+                            1024: {
+                                slidesPerView: 4,
+                                spaceBetween: 16
+                            },
+                            // Extra Large Desktop
+                            1280: {
+                                slidesPerView: 5,
+                                spaceBetween: 16
+                            }
                         }
                     });
                 </script>
@@ -454,13 +472,17 @@
                 dd($opportunity->created_by_user);
             @endphp --}}
 
-            <div class="h-[100vh] md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
+            <div class="h-full md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
                 style="background-image: url('{{ asset('img/background-img-2.png') }}')">
                 <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
                     <div class="flex flex-col md:flex-row items-center justify-center gap-12">
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
                             <p class="text-[80px] font-bold"> {{ \App\Models\User::role('volunteer')->count() }}</p>
-                            <p class="text-[20px] font-medium">Volunteer</p>
+                            <p class="text-[20px] font-medium">Volunteers</p>
+                        </div>
+                        <div class="w-fit flex flex-col items-center justify-center gap-1">
+                            <p class="text-[80px] font-bold">{{ number_format($totalHours) ?? '0' }}</p>
+                            <p class="text-[20px] font-medium">Total Volunteer Hours</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
                             <p class="text-[80px] font-bold">{{ \App\Models\BusinessUnit::count() }}</p>
@@ -779,19 +801,26 @@
                             @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
                         </button>
                     </div>
+                    @php
+                    $latestOpportunity = $featuredOpportunity;
+                    if ($latestOpportunity) {
+                            $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                    } else {
+                            $mediaItems = asset('img/ayala-foundation-bg.jpg');
+                    }
+
+                @endphp
 
                     <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
                         <div class="flex flex-col  items-center justify-center">
                             <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center"
-                                style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
+                                style="background: url('{{ url($mediaItems) }}">
                                 <div
                                     class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
                                     <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
                                 </div>
                             </div>
-                            @php
-                                $latestOpportunity = $opportunities->sortByDesc('created_at')->first();
-                            @endphp
+
 
                             {{-- @php
                                 dd($latestOpportunity);

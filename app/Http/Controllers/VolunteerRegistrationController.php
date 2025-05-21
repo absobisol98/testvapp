@@ -18,6 +18,7 @@ use App\Settings\MailSettings;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Support\Facades\Log;
+use App\Services\EmailDomainValidator;
 
 class VolunteerRegistrationController extends Controller
 {
@@ -84,6 +85,17 @@ class VolunteerRegistrationController extends Controller
 
             $validator = Validator::make($request->all(), $rules);
 
+
+            // Add custom validation for email domain
+            $validator->after(function ($validator) use ($request) {
+                $domainValidator = new EmailDomainValidator();
+
+                if ($domainValidator->isDenied($request->email)) {
+                    $validator->errors()->add('email', 'This email domain is not allowed. Please use your company or personal email address.');
+                }
+            });
+
+
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -113,6 +125,16 @@ class VolunteerRegistrationController extends Controller
                     'referral_source' => $input['referral_source']
                 ]);
 
+
+                $volunteerRole = Role::where('name', 'Volunteer')->first();
+                if ($volunteerRole) {
+                    $user->assignRole($volunteerRole);
+                    Log::info('Volunteer role assigned to user', ['user_id' => $user->id]);
+                } else {
+                    Log::error('Volunteer role not found in the database');
+                }
+
+
                 // Attach programs
                 if (!empty($input['program_ids'])) {
                     $programData = [];
@@ -135,6 +157,23 @@ class VolunteerRegistrationController extends Controller
                     if (in_array('other', $input['program_ids']) && !empty($input['other_program'])) {
                         $user->update(['other_program' => $input['other_program']]);
                     }
+                }
+
+                try {
+                    // Load mail settings
+                    $settings = app(MailSettings::class);
+                    $settings->loadMailSettingsToConfig();
+
+                    // Send verification email
+                    $user->notify(new VerifyEmailNotification());
+
+                    Log::info('Verification email sent to new volunteer', ['email' => $user->email]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send verification email', [
+                        'email' => $user->email,
+                        'error' => $e->getMessage()
+                    ]);
+                    // Don't fail registration if email fails - user can request resend
                 }
 
                 DB::commit();
@@ -178,6 +217,9 @@ class VolunteerRegistrationController extends Controller
         if ($user->hasVerifiedEmail()) {
             return response()->json(['message' => 'Email already verified']);
         }
+
+        // Load mail settings
+
 
         $user->notify(new VerifyEmailNotification());
 

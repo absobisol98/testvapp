@@ -25,17 +25,34 @@ class EventRegistrationTableAction
 {
 
     public function execute()
-    {
-        return [
+{
+    $user = auth()->user();
+    $isExternalPartner = $user && $user->hasRole('External Partner');
+
+    $actions = [
+        \Filament\Tables\Actions\ViewAction::make()
+            ->mountUsing(function (Event $record, ComponentContainer $form){
+                $media = [];
+                foreach ($record->getMedia('event-attachments') as $media_item) {
+                    $index = strlen(storage_path('app/public/'));
+                    $media[] = substr($media_item->getPath(), $index);
+                }
+                $data['media'] = $media;
+                $form->fill($data);
+            }),
+    ];
+
+    // For type 1 events (view-only) for External Partners, only show view action
+    if (!$isExternalPartner || !isset($GLOBALS['record']) || $GLOBALS['record']->event_type_id != 1) {
+        // Add all remaining actions for non-type-1 events or non-external partners
+        $actions = array_merge($actions, [
             \Filament\Tables\Actions\Action::make('Make it as featured')
                 ->color('success')
                 ->button()
                 ->requiresConfirmation()
                 ->action(function (Event $record){
-
                     $record->is_featured = true;
                     $record->update();
-
 
                     Notification::make()
                         ->title('Event has been mark as featured.')
@@ -43,14 +60,9 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-
-                    if (auth()->user()->can('set_featured_event') &&  ($record->is_featured == false)) {
-
-                        return true;
-                    }
-
-                    return false;
-
+                    return auth()->user()->can('set_featured_event') &&
+                    $record->is_featured == false &&
+                    $record->end_date >= now();
                 }),
 
             \Filament\Tables\Actions\Action::make('Remove as is featured')
@@ -58,10 +70,8 @@ class EventRegistrationTableAction
                 ->button()
                 ->requiresConfirmation()
                 ->action(function (Event $record){
-
                     $record->is_featured = false;
                     $record->update();
-
 
                     Notification::make()
                         ->title('Event has been remove to as featured.')
@@ -69,76 +79,68 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-                    if (auth()->user()->can('set_featured_event') &&  ($record->is_featured == true)) {
-
-                        return true;
-                    }
-
-                    return false;
-
+                    return auth()->user()->can('set_featured_event') &&
+                    $record->is_featured == true;
                 }),
 
-
             \Filament\Tables\Actions\Action::make('downloadIcs')
-            ->label('Add to Calendar')
-            ->action(function ($record) {
-                // Create event
-                $event = IcsEvent::create($record->title)
-                    ->description(strip_tags($record->description))
-                    ->startsAt(Carbon::parse($record->start_date))
-                    ->endsAt(Carbon::parse($record->end_date));
+                ->label('Add to Calendar')
+                ->action(function ($record) {
+                    // Create event
+                    $event = IcsEvent::create($record->title)
+                        ->description(strip_tags($record->description))
+                        ->startsAt(Carbon::parse($record->start_date))
+                        ->endsAt(Carbon::parse($record->end_date));
 
-        // Handle recurring events
-        if ($record->recurrence_type_id != 1 && $record->repeat_until) {
-            $repeatRule = match($record->frequency) {
-                'daily' => 'daily',
-                'weekly' =>  'weekly',
-                'monthly' => 'monthly',
-                'yearly' =>  'yearly',
-                default => null
-            };
+                    // Handle recurring events
+                    if ($record->recurrence_type_id != 1 && $record->repeat_until) {
+                        $repeatRule = match($record->frequency) {
+                            'daily' => 'daily',
+                            'weekly' =>  'weekly',
+                            'monthly' => 'monthly',
+                            'yearly' =>  'yearly',
+                            default => null
+                        };
 
-                if ($repeatRule) {
-                    if($repeatRule == 'daily'){
-                        $repeatRule = RRule::frequency(RecurrenceFrequency::daily());
-                    }elseif($repeatRule == 'weekly'){
-                        $repeatRule = RRule::frequency(RecurrenceFrequency::weekly());
-                    }elseif($repeatRule == 'monthly'){
-                        $repeatRule = RRule::frequency(RecurrenceFrequency::monthly());
-                    }elseif($repeatRule == 'yearly'){
-                        $repeatRule = RRule::frequency(RecurrenceFrequency::yearly());
+                        if ($repeatRule) {
+                            if($repeatRule == 'daily'){
+                                $repeatRule = RRule::frequency(RecurrenceFrequency::daily());
+                            }elseif($repeatRule == 'weekly'){
+                                $repeatRule = RRule::frequency(RecurrenceFrequency::weekly());
+                            }elseif($repeatRule == 'monthly'){
+                                $repeatRule = RRule::frequency(RecurrenceFrequency::monthly());
+                            }elseif($repeatRule == 'yearly'){
+                                $repeatRule = RRule::frequency(RecurrenceFrequency::yearly());
+                            }
+
+                            $event->rrule(
+                                $repeatRule->until(Carbon::parse($record->repeat_until))
+                            );
+                        }
                     }
 
-                    $event->rrule(
-                        $repeatRule->until(Carbon::parse($record->repeat_until))
-                    );
-                }
-            }
+                    $calendar_title = $record->title . ' Calendar';
+                    // Create calendar and add event
+                    $calendar = Calendar::create()
+                        ->name($calendar_title)
+                        ->event($event);
 
+                    // Generate and return file download
+                    return response()->streamDownload(function () use ($calendar) {
+                        echo $calendar->get();
+                    }, $calendar_title . '.ics', [
+                        'Content-Type' => 'text/calendar; charset=utf-8',
+                        'Content-Disposition' => 'attachment; filename="my-awesome-calendar.ics"',
+                    ]);
+                })
+                ->icon('heroicon-o-calendar')
+                ->visible(function (Event $record) {
+                    $registration = $record->registrations
+                        ->where('volunteer_id', auth()->user()->id)
+                        ->first();
 
-
-            $calendar_title = $record->title . ' Calendar';
-            // Create calendar and add event
-            $calendar = Calendar::create()
-                ->name($calendar_title)
-                ->event($event);
-
-            // Generate and return file download
-            return response()->streamDownload(function () use ($calendar) {
-                echo $calendar->get();
-            }, $calendar_title . '.ics', [
-                'Content-Type' => 'text/calendar; charset=utf-8',
-                'Content-Disposition' => 'attachment; filename="my-awesome-calendar.ics"',
-            ]);
-        })
-        ->icon('heroicon-o-calendar')
-        ->visible(function (Event $record) {
-            $registration = $record->registrations
-                ->where('volunteer_id', auth()->user()->id)
-                ->first();
-
-            return $registration && $registration->status_id == 1;
-        }),
+                    return $registration && $registration->status_id == 1;
+                }),
 
             \Filament\Tables\Actions\Action::make('Register')
                 ->hidden()
@@ -161,10 +163,16 @@ class EventRegistrationTableAction
                 ->action(function (Event $record, array $data) {
                     $this->handleRegistration($record, $data);
                 })
-                ->visible(fn (Event $record) => $this->canRegister($record)),
+                ->visible(function (Event $record) {
+                    // Hide Register button for external partners on event_type_id = 1
+                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
+                        return false;
+                    }
+                    return $this->canRegister($record);
+                }),
 
             \Filament\Tables\Actions\Action::make('Cancel Registration')
-            ->hidden()
+                ->hidden()
                 ->color('warning')
                 ->button()
                 ->requiresConfirmation()
@@ -178,7 +186,13 @@ class EventRegistrationTableAction
                 ->action(function (Event $record, array $data) {
                     $this->handleCancellation($record, $data);
                 })
-                ->visible(fn (Event $record) => $this->canCancelRegistration($record)),
+                ->visible(function (Event $record) {
+                    // Hide Cancel Registration button for external partners on event_type_id = 1
+                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
+                        return false;
+                    }
+                    return $this->canCancelRegistration($record);
+                }),
 
             \Filament\Tables\Actions\Action::make('export')
                 ->color('secondary')
@@ -186,6 +200,11 @@ class EventRegistrationTableAction
                 ->label('Export')
                 ->url(fn (Event $record): string => route('volunteer.export', $record))
                 ->visible(function (Event $record){
+                    // Hide Export button for external partners on event_type_id = 1
+                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
+                        return false;
+                    }
+
                     $option = false;
                     if(is_null($record->event)){
                         $option = true;
@@ -198,7 +217,6 @@ class EventRegistrationTableAction
                         $option = false;
                     }
                     return $option;
-
                 }),
 
             \Filament\Tables\Actions\Action::make('Edit')
@@ -208,61 +226,58 @@ class EventRegistrationTableAction
                 ->button()
                 ->modalContent(fn ($record) => view('custom.event-modal', ['record' => $record]))
                 ->form(function ($record) {
+                    if(auth()->user()->birthday && Carbon::parse(auth()->user()->birthday)->age < 18) { // MINOR
+                        $description = 'Please upload parental consent';
+                        $visible = true;
+                    }elseif($record->attachment_required){
+                        $description = 'Please upload required files';
+                        $visible = true;
+                    }else{
+                        $description = '';
+                        $visible = false;
+                    }
 
-                 if(auth()->user()->birthday && Carbon::parse(auth()->user()->birthday)->age < 18) { // MINOR
-                     $description = 'Please upload parental consent';
-                     $visible = true;
-                 }elseif($record->attachment_required){
-                     $description = 'Please upload required files';
-                     $visible = true;
-                 }else{
-                     $description = '';
-                     $visible = false;
-                 }
+                    return [
+                        Radio::make('slot_type_id')
+                            ->label('')
+                            ->required(fn(Event $record) => $record->slots->first())
+                            ->options(function (Event $record) {
+                                $option = [];
+                                foreach($record->slots as $slot) {
+                                    // Only check total capacity, not existing registrations for this user
+                                    $registion_count = $record->registrations
+                                        ->where('slot_type_id', $slot->id)
+                                        ->where('status_id', '!=', 3)
+                                        ->count();
 
-                 return [
-                     Radio::make('slot_type_id')
-                         ->label('')
-                         ->required(fn(Event $record) => $record->slots->first())
-                         ->options(function (Event $record) {
-                             $option = [];
-                             foreach($record->slots as $slot) {
-                                 // Only check total capacity, not existing registrations for this user
-                                 $registion_count = $record->registrations
-                                     ->where('slot_type_id', $slot->id)
-                                     ->where('status_id', '!=', 3)
-                                     ->count();
-
-                                 if($slot->total_slots > $registion_count) {
-                                     $option[$slot->id] = $slot->shift_name.' ('.
-                                         Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('g:i A').' - '.
-                                         Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('g:i A').')';
-                                 }
-                             }
-                             return $option;
-                         }),
-                     Section::make('Attachments')
-                         ->description($description)
-                         ->visible($visible)
-                         ->schema([
-                             FileUpload::make('media')
-                                 ->directory('event-registration-attachments')
-                                 ->multiple()
-                                 ->maxFiles(5)
-                                 ->label('')
-                                 ->openable()
-                                 ->downloadable(),
-                         ])
-                         ->collapsible(),
-                 ];
+                                    if($slot->total_slots > $registion_count) {
+                                        $option[$slot->id] = $slot->shift_name.' ('.
+                                            Carbon::parse(now()->format('Y-m-d').$slot->start_time)->format('g:i A').' - '.
+                                            Carbon::parse(now()->format('Y-m-d') . $slot->end_time)->format('g:i A').')';
+                                    }
+                                }
+                                return $option;
+                            }),
+                        Section::make('Attachments')
+                            ->description($description)
+                            ->visible($visible)
+                            ->schema([
+                                FileUpload::make('media')
+                                    ->directory('event-registration-attachments')
+                                    ->multiple()
+                                    ->maxFiles(5)
+                                    ->label('')
+                                    ->openable()
+                                    ->downloadable(),
+                            ])
+                            ->collapsible(),
+                    ];
                 })
-                ->action(function (Event $record,array $data){
-
+                ->action(function (Event $record, array $data){
                     $registration = EventRegistration::where('event_id', $record->id)->where('volunteer_id',auth()->user()->id)->first();
 
                     if($registration){
                         if($record->approval_type == "Automatic"){ // Automatic approved status for registration
-
                             $attendee = EventAttendee::create([
                                 'event_id' => $record->id,
                                 'attendee_id' => auth()->user()->id,
@@ -276,12 +291,9 @@ class EventRegistrationTableAction
 
                             // Notify the registrant
                             $message = 'Your registration for '.$record->title.' on '.Carbon::parse($record->start_date)->format('M d, Y').' has been approved.';
-
                         }else{
-
                             $status = 1; // Pending
                             $message = null;
-
                         }
 
                         $registration->update([
@@ -313,7 +325,6 @@ class EventRegistrationTableAction
                         }
 
                         if (isset($data['media']) && $data['media']) {
-
                             foreach ($data['media'] as $media) {
                                 $sourcePath = storage_path('app/public/' . $media);
 
@@ -341,23 +352,17 @@ class EventRegistrationTableAction
                                 ->send();
                         }
                     }
-
                 })
                 ->visible(function (Event $record){
-
-                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
-
-                    if($registration && $registration->status_id == 1){
-                        return true;
+                    // Hide Edit button for external partners on event_type_id = 1
+                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
+                        return false;
                     }
 
-                    return false;
-
-
+                    $registration = $record->registrations->where('volunteer_id',auth()->user()->id)->first();
+                    return $registration && $registration->status_id == 1;
                 })
-                ->mountUsing(function (Event $record,ComponentContainer $form){
-
-
+                ->mountUsing(function (Event $record, ComponentContainer $form){
                     $registration = $record->registrations()->where('volunteer_id',auth()->id())->first();
 
                     if($registration){
@@ -371,23 +376,10 @@ class EventRegistrationTableAction
                         $data['media'] = $media;
                     }
                     $form->fill($data);
-
                 }),
 
-            \Filament\Tables\Actions\ViewAction::make()
-                ->mountUsing(function (Event $record,ComponentContainer $form){
-                    $media = [];
-                    foreach ($record->getMedia('event-attachments') as $media_item) {
-                        $index = strlen(storage_path('app/public/'));
-                        $media[] = substr($media_item->getPath(), $index);
-                    }
-                    $data['media'] = $media;
-
-                    $form->fill($data);
-
-                }),
             \Filament\Tables\Actions\EditAction::make()
-                ->mountUsing(function (Event $record,ComponentContainer $form){
+                ->mountUsing(function (Event $record, ComponentContainer $form){
                     $media = [];
                     foreach ($record->getMedia('event-attachments') as $media_item) {
                         $index = strlen(storage_path('app/public/'));
@@ -396,15 +388,56 @@ class EventRegistrationTableAction
                     $data['media'] = $media;
 
                     $form->fill($data);
-
+                })
+                ->visible(function (Event $record) {
+                    // Hide EditAction button for external partners on event_type_id = 1
+                    if (auth()->user()->hasRole('External Partner')) {
+                        // For type 1 events, hide completely
+                        if ($record->event_type_id == 1) {
+                            return false;
+                        }
+                        // For other event types, only show for events created by this partner
+                        return $record->created_by == auth()->id() && $record->end_date >= now();
+                    }
+                    return $record->end_date >= now();
                 }),
-            \Filament\Tables\Actions\DeleteAction::make(),
-            \Filament\Tables\Actions\ForceDeleteAction::make(),
-            \Filament\Tables\Actions\RestoreAction::make(),
 
-        ];
+            \Filament\Tables\Actions\DeleteAction::make()
+            ->visible(function (Event $record) {
+                // Hide Delete button for external partners on event_type_id = 1
+                if (auth()->user()->hasRole('External Partner')) {
+                    // For type 1 events, hide completely
+                    if ($record->event_type_id == 1) {
+                        return false;
+                    }
+                    // For other event types, only show for events created by this partner
+                    return $record->created_by == auth()->id() && $record->end_date >= now();
+                }
+                return $record->end_date >= now();
+            }),
+
+            \Filament\Tables\Actions\ForceDeleteAction::make()
+                ->visible(function (Event $record) {
+                    // Hide Force Delete button for external partners on event_type_id = 1
+                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
+                        return false;
+                    }
+                    return $record->end_date >= now();
+                }),
+
+            \Filament\Tables\Actions\RestoreAction::make()
+                ->visible(function (Event $record) {
+                    // Hide Restore button for external partners on event_type_id = 1
+                    if (auth()->user()->hasRole('External Partner') && $record->event_type_id == 1) {
+                        return false;
+                    }
+                    return true;
+                }),
+        ]);
     }
 
+    return $actions;
+}
     private function getAvailableSlots(Event $record): array
     {
         $options = [];

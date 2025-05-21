@@ -3,6 +3,24 @@
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
+header_remove('X-Powered-By');
+header_register_callback(function() {
+    // Get all headers that have been set
+    $headers = headers_list();
+    $permissionsPolicyFound = false;
+    
+    // Process each header
+    foreach ($headers as $header) {
+        if (stripos($header, 'Permissions-Policy:') === 0) {
+            // Remove all instances of Permissions-Policy header
+            header_remove('Permissions-Policy');
+            // Set one consolidated header with camera=self
+            header('Permissions-Policy: geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(self),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()');
+            break;
+        }
+    }
+});
+
 define('LARAVEL_START', microtime(true));
 
 /*

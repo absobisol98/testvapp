@@ -45,7 +45,8 @@
                     <p class="text-gray-600 text-xs">Written By:
                         <a href="#"
                             class="text-gray-800 font-medium hover:text-gray-900 transition duration-500 ease-in-out">
-                            {{ $article->author->name ?? 'Unknown' }}
+                       
+                            {{ $article->blog_author ?? 'Unknown' }}
                         </a>
                     </p>
                     <p class="text-gray-600 text-xs">Date:

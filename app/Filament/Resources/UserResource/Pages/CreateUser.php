@@ -10,6 +10,7 @@ use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Role;
 
 class CreateUser extends CreateRecord
 {
@@ -24,6 +25,11 @@ class CreateUser extends CreateRecord
     {
         $user = $this->record;
         $settings = app(MailSettings::class);
+
+        $volunteerRole = Role::where('name', 'Volunteer')->first();
+        if ($volunteerRole) {
+            $this->record->assignRole($volunteerRole);
+        }
 
         Log::info("Creating new user: {$user->email}, attempting verification email");
 

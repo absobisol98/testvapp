@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
-use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
+// use Visualbuilder\EmailTemplates\EmailTemplatesPlugin;
 use Tapp\FilamentMailLog\FilamentMailLogPlugin;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Navigation\MenuItem;
@@ -127,7 +127,7 @@ class AdminPanelProvider extends PanelProvider
                     ->locale(config('app.locale'))
                     ->plugins(['dayGrid','timeGrid'])
                     ->config([]),
-               EmailTemplatesPlugin::make(),
+               //EmailTemplatesPlugin::make(),
 //                \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
 //                    ->allowSubFolders(),
                 \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),

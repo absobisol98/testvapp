@@ -19,7 +19,7 @@
     {{-- Swiper JS --}}
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-    <title>@yield('title') - Ayala Foundation</title>
+    <title>@yield('title') - Ayala Corporate Citizenship and Volunteerism Platform</title>
 
 </head>
 

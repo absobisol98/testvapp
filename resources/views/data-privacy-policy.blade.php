@@ -57,9 +57,9 @@
                     The Foundation to collect, process, share, store, and use your personal information for the following purposes:
                 </h2>
                 <ol class="list-decimal list-inside ml-4 mt-2 space-y-2">
-                    <li>Inclusion in the Foundation's alumni community; </li>
+                    <li>Inclusion in the Foundation's volunteer management system.</li>
                     <li>Registration for Foundation events, including event planning, logistics, and sending event-related information and reminders;</li>
-                    <li>Creation and management of an alumni database for communication, updates, and future event invitations;</li>
+                    <li>Creation and management of an volunteer database for communication, updates, and future event invitations;</li>
                     <li>Participation in Foundation and/or Ayala Group projects and initiatives; and</li>
                     <li>Other legitimate purposes as required by law or the Foundation's activities. </li>
                 </ol>

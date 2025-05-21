@@ -23,7 +23,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
-
+use App\Notifications\VerifyEmailNotification;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class VolunteerResource extends Resource
 {
@@ -74,13 +77,23 @@ class VolunteerResource extends Resource
             ->columns(3);
     }
 
+   
 
     public static function table(Table $table): Table
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!auth()->user()->hasRole(['super_admin', 'admin', 'Ayala Super Admin'])) {
-                    $query = $query->where('id', auth()->id());
+                $user = Auth::user();
+                
+                if (!$user->hasRole(['super_admin', 'admin', 'Ayala Super Admin'])) {
+                    // If they're a volunteer, only show their own record
+                    if ($user->hasRole('volunteer')) {
+                        $query = $query->where('id', $user->id);
+                    } 
+                    // If they're an external partner, only show volunteers in their cluster
+                    elseif ($user->hasRole('External Partner') && $user->cluster_id) {
+                        $query = $query->where('cluster_id', $user->cluster_id);
+                    }
                 }
                 return $query;
             })
@@ -88,9 +101,9 @@ class VolunteerResource extends Resource
                 SpatieMediaLibraryImageColumn::make('media')->label('Avatar')
                     ->collection('avatars')
                     ->wrap(),
-                Tables\Columns\TextColumn::make('username')->label('Username')
-                    ->description(fn(Model $record) => $record->firstname . ' ' . $record->lastname)
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('username')->label('Username')
+                //     ->description(fn(Model $record) => $record->firstname . ' ' . $record->lastname)
+                //     ->searchable(),
                 // Tables\Columns\TextColumn::make('roles.name')->label('Role')
                 //     ->formatStateUsing(fn($state): string => Str::headline($state))
                 //     ->colors(['info'])
@@ -116,34 +129,64 @@ class VolunteerResource extends Resource
                 //         'pending' => 'warning',
                 //         default => 'secondary',
                 //     }),
-                Tables\Columns\TextColumn::make('total_hours')
-                    ->label('Volunteer Hours')
-                    ->numeric()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('total_hours')
+                //     ->label('Volunteer Hours')
+                //     ->numeric()
+                //     ->sortable(),
             ])
             ->filters([
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->visible(function (Volunteer $record) {
-                        if($record->id == auth()->user()->id){
-                            return true;
-                        }
-                        return false;
-                    }),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(fn (Volunteer $record) =>
-                        auth()->user()->hasRole(['super_admin', 'admin']) ||
+                        auth()->user()->hasRole(['super_admin', 'admin', 'External Partner']) ||
                         $record->id === auth()->id()
                     ),
+                     // Add the resend verification email action
+                Tables\Actions\Action::make('resendVerificationEmail')
+                ->label('Resend Verification Email')
+                ->icon('heroicon-o-envelope')
+                ->color('info')
+                ->visible(fn (Volunteer $record) => 
+                    is_null($record->email_verified_at) && 
+                    (auth()->user()->hasRole(['super_admin','Ayala Super Admin', 'admin','External Partner']) || $record->id === auth()->id())
+                )
+                ->action(function (Volunteer $record) {
+                    try {
+                        // Load mail settings
+                        $settings = app(MailSettings::class);
+                        $settings->loadMailSettingsToConfig();
+
+                        // Send verification email
+                        $record->notify(new VerifyEmailNotification());
+
+                        Log::info('Verification email resent to volunteer', ['email' => $record->email]);
+                        
+                        Notification::make()
+                            ->title('Verification email sent successfully')
+                            ->success()
+                            ->send();
+                            
+                    } catch (\Exception $e) {
+                        Log::error('Failed to resend verification email', [
+                            'email' => $record->email,
+                            'error' => $e->getMessage()
+                        ]);
+                        
+                        Notification::make()
+                            ->title('Failed to send verification email')
+                            ->body('Please try again later or contact support.')
+                            ->danger()
+                            ->send();
+                    }
+                }),
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make()
                         ->visible(fn () => auth()->user()->hasRole(['super_admin', 'admin'])),
 

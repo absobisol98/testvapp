@@ -35,7 +35,7 @@ class ViewVolunteer extends Page
             ->label('Edit Profile')
             ->icon('heroicon-o-pencil')
             ->url(fn () => VolunteerResource::getUrl('edit', ['record' => $this->record]))
-            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasRole('Super Admin'))
+            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasRole(['super_admin','admin', 'Ayala Super Admin', 'External Partner']))
             ->color('warning'),
         ];
 
@@ -50,7 +50,48 @@ class ViewVolunteer extends Page
         $totalOpportunities = $user->eventAttended()->count();
         $currentStreak = $user->calculateStreak();
 
-        // Calculate next goals
+        // Get badges and progress
+        $badges = $user->getBadges();
+
+        // Check if user has milestones based on badges
+        // This assumes your badge system stores information about completed milestones
+        $has20HourBadge = false;
+
+        // Loop through badges to check for 20-hour milestone
+        // Adjust this logic based on your badge data structure
+        if (isset($badges['badges']) && is_array($badges['badges'])) {
+            foreach ($badges['badges'] as $badge) {
+                if (isset($badge['name']) && strpos(strtolower($badge['name']), '20 hour') !== false) {
+                    $has20HourBadge = true;
+                    break;
+                }
+            }
+        }
+
+        // Define milestones that are completed
+        $completedHourMilestones = [];
+
+        // Add 20-hour milestone if badge exists or actual hours >= 20
+        if ($has20HourBadge || $totalHours >= 20) {
+            $completedHourMilestones[] = 20;
+        }
+
+        // Add other milestones based on actual hours
+        foreach ([100, 250, 500, 1000] as $milestone) {
+            if ($totalHours >= $milestone) {
+                $completedHourMilestones[] = $milestone;
+            }
+        }
+
+        // Define completed opportunity milestones
+        $completedOpportunityMilestones = [];
+        foreach ([5, 10, 25, 50, 100] as $milestone) {
+            if ($totalOpportunities >= $milestone) {
+                $completedOpportunityMilestones[] = $milestone;
+            }
+        }
+
+        // Calculate next goals (using actual hours)
         $hourThresholds = [4, 8, 12, 16, 20];
         $nextHourGoal = collect($hourThresholds)->first(function($threshold) use ($totalHours) {
             return $threshold > $totalHours;
@@ -60,9 +101,6 @@ class ViewVolunteer extends Page
         $nextOppGoal = collect($oppThresholds)->first(function($threshold) use ($totalOpportunities) {
             return $threshold > $totalOpportunities;
         }) ?? end($oppThresholds);
-
-        // Get badges and progress
-        $badges = $user->getBadges();
 
         return [
             'businessunit' => BusinessUnit::count(),
@@ -88,6 +126,8 @@ class ViewVolunteer extends Page
             'currentStreak' => $currentStreak,
             'nextHourGoal' => $nextHourGoal,
             'nextOppGoal' => $nextOppGoal,
+            'completedHourMilestones' => $completedHourMilestones,
+            'completedOpportunityMilestones' => $completedOpportunityMilestones,
         ];
     }
 

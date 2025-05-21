@@ -8,6 +8,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\EventAttendee;
 
 class BusinessUnit extends Model implements HasMedia
 {
@@ -98,5 +99,25 @@ class BusinessUnit extends Model implements HasMedia
     // {
     //     return $this->hasMany(Banner::class, 'banner_category_id');
     // }
+
+    // Add this method to your BusinessUnit model
+    public function getTotalVolunteerHours()
+    {
+        $attendees = EventAttendee::query()
+        ->select('event_attendees.*')
+        ->join('events', 'event_attendees.event_id', '=', 'events.id')
+        ->join('users', 'event_attendees.attendee_id', '=', 'users.id')
+        ->where('users.company_id', $this->company_id)
+        ->whereNotNull('event_attendees.time_in')
+        ->whereNotNull('event_attendees.time_out')
+        ->get();
+
+
+
+            // Calculate total hours using the existing get_totalHrs() method
+            return $attendees->reduce(function ($total, $attendee) {
+                return $total + $attendee->get_totalHrs();
+            }, 0);
+    }
 
 }

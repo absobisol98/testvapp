@@ -6,6 +6,7 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Models\Blog\Post;
 use App\Models\BusinessUnit;
+use App\Models\EventAttendee;
 use Filament\Notifications\Notification;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -46,6 +47,14 @@ class HomepageController extends Controller implements HasMedia
         // }
 
 
+              // Calculate Ayala Member hours
+            $totalHours = EventAttendee::whereNotNull(['time_in', 'time_out'])
+            ->where('is_approve', true)
+            ->get()
+            ->sum(function ($attendance) {
+                return $attendance->get_totalHrs();
+            });
+
         $articles = Post::latest()->get();
 
         $upcoming = Event::with('slots')
@@ -55,7 +64,7 @@ class HomepageController extends Controller implements HasMedia
 
         $ban = $upcoming ? $upcoming->getMedia('event-banner-attachments')->first() : null;
 
-        return view('custom.main-landing', compact('opportunities', 'articles', 'featuredOpportunity'));
+        return view('custom.main-landing', compact('opportunities', 'articles', 'featuredOpportunity','totalHours'));
     }
 
     public function businessUnitHomepageView($slug)

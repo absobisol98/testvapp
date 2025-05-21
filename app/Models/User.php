@@ -69,6 +69,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'nickname',
         'age_range',
         'password_changed_at',
+        'active_role',
+        'otp',
+        'otp_expires_at',
     ];
 
     /**
@@ -441,5 +444,43 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     public function volunteerModel()
     {
         return $this->hasOne(Volunteer::class, 'user_id', 'id');
+    }
+
+    // Add this method to your User model
+    public function isInVolunteerMode(): bool
+    {
+        return $this->active_role === 'volunteer';
+    }
+
+    public function isUsingAdminRole(): bool
+    {
+        return in_array($this->active_role, ['super_admin', 'admin', 'Ayala Super Admin']);
+    }
+
+    public function isUsingVolunteerRole(): bool
+    {
+        return $this->active_role === 'volunteer';
+    }
+
+    public function canSwitchRoles(): bool
+    {
+        // Any user with an admin role can switch to volunteer mode
+        // Check if this user was previously an admin (by looking at history)
+            $hasHistory = \App\Models\UserRoleHistory::where('user_id', $this->id)
+            ->where('can_switch_back', true)
+            ->exists();
+
+        // Allow switching if user has admin role OR if they were previously an admin
+        return $this->hasAnyRole([
+            'super_admin',
+            'admin',
+            'Ayala Super Admin',
+            'External Partner'
+        ]) || $hasHistory;
+    }
+
+    public function businessUnitsAdmin()
+    {
+        return $this->belongsToMany(BusinessUnit::class, 'business_unit_has_external_admin', 'user_id', 'business_unit_id');
     }
 }
