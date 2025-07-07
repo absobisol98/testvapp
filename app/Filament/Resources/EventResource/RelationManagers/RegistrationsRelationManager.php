@@ -53,15 +53,31 @@ class RegistrationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
 
+
+            
         return $table
             ->modifyQueryUsing(function (Builder $query){
-                if(auth()->user()->hasRole('External Partner')){ // If not super_admin
+                $user = auth()->user();
+                
+                // If super admin or external partner, return all registrations
+                if($user->hasRole('super_admin') || $user->hasRole('External Partner')){
                     return $query;
                 }
-                if(!auth()->user()->hasRole('super_admin')){ // If not super_admin
-                    $query = $query->where('volunteer_id',auth()->user()->id);
+                
+                // Get the event (owner record)
+                $event = $this->getOwnerRecord();
+                
+                // Check if user is a facilitator for this event
+                $isFacilitator = $event->facilitators->contains($user->id);
+                
+                // Check if user is the creator of this event
+                $isCreator = $event->created_by == $user->id;
+                
+                // If user is neither facilitator nor creator, only show their own registrations
+                if(!$isFacilitator && !$isCreator) {
+                    $query->where('volunteer_id', $user->id);
                 }
-
+                
                 return $query;
             })
             ->columns([
@@ -146,10 +162,15 @@ class RegistrationsRelationManager extends RelationManager
                     })
                     ->visible(function ($record){
                         if($record->status_id == 1){
-                            if(auth()->user()->can('manage_registrations_event')){
-                                return true;
-                            }
+                            $user = auth()->user();
+                            $isSuperAdmin = $user->hasRole('super_admin');
+                            $isAdmin = $user->hasRole('Ayala Super Admin');
+                            $isCreator = $record->event->created_by == $user->id;
+                            $isFacilitator = $record->event->facilitators->contains($user->id);
+                            
+                            return $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
                         }
+                        return false;
                     }),
                 Action::make('reject')
                     ->color('danger')
@@ -193,16 +214,15 @@ class RegistrationsRelationManager extends RelationManager
                             ->success()
                             ->send();
                     })
-                    ->visible(function ($record) {
+                   ->visible(function ($record) {
                         if ($record->status_id == 1) {
                             $user = auth()->user();
                             $isSuperAdmin = $user->hasRole('super_admin');
                             $isAdmin = $user->hasRole('Ayala Super Admin');
-                            $isCreator = $record->created_by == $user->id;
-                            $isFacilitator = $record->facilitators && $record->facilitators->contains($user->id);
-                            $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
-
-                            return $canManageEvent;
+                            $isCreator = $record->event->created_by == $user->id;
+                            $isFacilitator = $record->event->facilitators->contains($user->id);
+                            
+                            return $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
                         }
                         return false;
                     }),

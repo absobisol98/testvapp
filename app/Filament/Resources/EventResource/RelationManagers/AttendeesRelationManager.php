@@ -59,6 +59,9 @@ class AttendeesRelationManager extends RelationManager
                     ->formatStateUsing(function ($record) {
                         return $record->slot->shift_name;
                     }),
+         
+
+                
                 Tables\Columns\TextColumn::make('id')
                     ->label('Volunteer Name')
                     ->formatStateUsing(function ($record): string {
@@ -86,7 +89,19 @@ class AttendeesRelationManager extends RelationManager
                     Tables\Columns\TextColumn::make('event_id')
                         ->label('Total Hours')
                         ->formatStateUsing(fn ($record) => number_format($record->get_totalHrs(),1)),
-
+                               
+                    Tables\Columns\TextColumn::make('volunteer_count')
+                     ->label('Volunteer Count')
+                     ->formatStateUsing(function ($record): string {
+                 
+                        if($record->encoding_type == '3'){
+                            return $record->volunteer_count;
+                        }
+                        if($record->encoding_type == '2'){
+                            return 1;
+                        }
+                  
+                    }),
 
 
                     Tables\Columns\TextColumn::make('updated_at')

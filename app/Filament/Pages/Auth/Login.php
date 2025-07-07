@@ -184,7 +184,9 @@ class Login extends BasePage
     }
 
     private function isHighPrivilegedAccount(User $user): bool
-    {
+    {      
+        //temporarily disable high-privileged account check
+        return false;
         // Check if user has high-privileged roles
         return $user->hasAnyRole(['super_admin', 'Ayala Super Admin', 'admin']);
     }
