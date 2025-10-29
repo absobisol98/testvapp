@@ -63,7 +63,8 @@
                 <h2 class="text-3xl md:text-3xl lg:text-3xl text-gray-900 font-extrabold capitalize">{{ $record->title }}</h2>
             </div>
             <div class="flex flex-col justify-start items-start gap-2">
-                <p class="text-md md:text-lg lg:text-base font-normal capitalize">{!! strip_tags($record->description) !!}</p>
+                
+                <p class="text-md md:text-lg lg:text-base font-normal capitalize">{!! $record->description !!}</p>
                 <div class="py-2 px-4 flex items-center justify-center bg-[#FF781E] rounded-md">
                     <p class="text-md md:text-lg lg:text-base font-normal text-white capitalize">Sign In</p>
                 </div>

@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     <div id="video-container" hidden>
-        <video id="preview" controls></video>
+        <div id="preview"></div>
         <div class="overlay">
             <div class="qr-scanner">
                 <div class="scanner-line"></div>
@@ -31,106 +31,137 @@
             <span class="sr-only">Loading...</span>
         </div>
     </div>
-    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
     <script type="text/javascript">
-        let opts = {
-            // Whether to scan continuously for QR codes. If false, use scanner.scan() to manually scan.
-            // If true, the scanner emits the "scan" event when a QR code is scanned. Default true.
-            continuous: true,
-
-            // The HTML element to use for the camera's video preview. Must be a <video> element.
-            // When the camera is active, this element will have the "active" CSS class, otherwise,
-            // it will have the "inactive" class. By default, an invisible element will be created to
-            // host the video.
-            video: document.getElementById('preview'),
-
-            // Whether to horizontally mirror the video preview. This is helpful when trying to
-            // scan a QR code with a user-facing camera. Default true.
-            mirror: false,
-
-            // Whether to include the scanned image data as part of the scan result. See the "scan" event
-            // for image format details. Default false.
-            captureImage: true,
-
-            // Only applies to continuous mode. Whether to actively scan when the tab is not active.
-            // When false, this reduces CPU usage when the tab is not active. Default true.
-            backgroundScan: true,
-
-            // Only applies to continuous mode. The period, in milliseconds, before the same QR code
-            // will be recognized in succession. Default 5000 (5 seconds).
-            refractoryPeriod: 5000,
-
-            // Only applies to continuous mode. The period, in rendered frames, between scans. A lower scan period
-            // increases CPU usage but makes scan response faster. Default 1 (i.e. analyze every frame).
-            scanPeriod: 1
-        };
-        let scanner = new Instascan.Scanner(opts);
-        scanner.addListener('scan', function (content) {
-            console.log(content);
-
-            if (content) {
-                document.querySelector('.blur-overlay').style.display = 'flex';
-                scan_qr(content);
-
-            }
-        });
+        let html5QrCode;
+        let isScanning = false;
 
         function stop_scan() {
-            document.getElementById('btn_start').style.display = 'block';
-            document.getElementById('btn_stop').style.display = 'none';
-            document.getElementById('video-container').style.display = 'none';
-            scanner.stop();
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('btn_start').style.display = 'block';
+                    document.getElementById('btn_stop').style.display = 'none';
+                    document.getElementById('video-container').style.display = 'none';
+                    isScanning = false;
+                }).catch((err) => {
+                    console.error('Error stopping scanner:', err);
+                });
+            }
         }
 
-        // Replace the camera initialization part with this improved version
-        function start_scan() {
+        async function start_scan() {
             document.querySelector('.blur-overlay').style.display = 'flex';
 
-            Instascan.Camera.getCameras().then(function (cameras) {
-                if (cameras.length > 0) {
+            try {
+                // Initialize HTML5QR scanner
+                html5QrCode = new Html5Qrcode("preview");
+
+                // Get available cameras
+                const cameras = await Html5Qrcode.getCameras();
+
+                if (cameras && cameras.length > 0) {
                     document.getElementById('btn_stop').style.display = 'block';
                     document.getElementById('btn_start').style.display = 'none';
                     document.getElementById('video-container').style.display = 'block';
                     document.querySelector('.blur-overlay').style.display = 'none';
 
-                    // Improved camera detection logic
-                    let selectedCamera = cameras[0]; // default to first camera
+                    // Camera selection logic for mobile devices (iOS and Android)
+                    let selectedCameraId = cameras[0].id; // default to first camera
 
-                    // Check if running on iOS
+                    // Check if running on mobile device
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                    const isAndroid = /Android/i.test(navigator.userAgent);
 
-                    if (isIOS) {
-                        // On iOS, the back camera usually has "environment" facing mode
-                        selectedCamera = cameras.find(camera =>
-                            camera.name.toLowerCase().includes('back') ||
-                            camera.name.toLowerCase().includes('environment')
-                        ) || cameras[cameras.length - 1]; // fallback to last camera on iOS
-                    } else {
-                        // For other devices, try to find back camera
-                        selectedCamera = cameras.find(camera =>
-                            camera.name.toLowerCase().includes('back')
-                        ) || cameras[1] || cameras[0]; // fallback to second or first camera
+                    // For mobile devices, prioritize back camera (environment-facing)
+                    if (isMobile) {
+                        // First, try to find back camera by label
+                        let backCamera = cameras.find(camera => {
+                            const label = camera.label.toLowerCase();
+                            return (
+                                label.includes('back') ||
+                                label.includes('environment') ||
+                                label.includes('rear') ||
+                                label.includes('facing back') ||
+                                label.includes('camera2 0') || // Common Android back camera identifier
+                                label.includes('camera 0') ||   // Another common identifier
+                                label.includes('world facing') ||
+                                label.includes('main camera')
+                            );
+                        });
+
+                        // If no back camera found by label, use position-based logic
+                        if (!backCamera) {
+                            if (isAndroid) {
+                                // For Android, try different positions based on common patterns
+                                if (cameras.length >= 2) {
+                                    // Check if first camera is NOT front-facing
+                                    const firstCameraLabel = cameras[0].label.toLowerCase();
+                                    const isFirstCameraFront = firstCameraLabel.includes('front') ||
+                                                              firstCameraLabel.includes('user') ||
+                                                              firstCameraLabel.includes('facing user');
+
+                                    if (!isFirstCameraFront) {
+                                        backCamera = cameras[0]; // Use first camera if it's not explicitly front
+                                    } else {
+                                        backCamera = cameras[1]; // Use second camera if first is front
+                                    }
+                                }
+                            } else if (isIOS && cameras.length > 1) {
+                                // On iOS, back camera is typically the last one
+                                backCamera = cameras[cameras.length - 1];
+                            }
+                        }
+
+                        if (backCamera) {
+                            selectedCameraId = backCamera.id;
+                        }
                     }
 
-                    console.log('Available cameras:', cameras.map(c => c.name)); // Debug info
-                    console.log('Selected camera:', selectedCamera.name); // Debug info
+                    console.log('Available cameras:', cameras.map(c => c.label)); // Debug info
+                    console.log('Selected camera:', cameras.find(c => c.id === selectedCameraId)?.label); // Debug info
 
-                    scanner.start(selectedCamera).catch(function (e) {
-                        console.error('Failed to start camera:', e);
-                        // Fallback to first camera if selected camera fails
-                        scanner.start(cameras[0]);
-                    });
+                    // Camera configuration optimized for mobile devices
+                    const config = {
+                        fps: 10, // Lower FPS for better performance on mobile
+                        qrbox: { width: 250, height: 250 }, // QR scanning box
+                        aspectRatio: 1.0, // Square aspect ratio
+                        disableFlip: false, // Allow flip for user-facing cameras
+                        videoConstraints: {
+                            facingMode: isMobile ? "environment" : undefined, // Force environment camera on mobile
+                            advanced: [{ focusMode: "continuous" }] // Better focus for QR codes
+                        }
+                    };
+
+                    // Start scanning
+                    await html5QrCode.start(
+                        selectedCameraId,
+                        config,
+                        (decodedText, decodedResult) => {
+                            console.log('QR Code detected:', decodedText);
+                            if (decodedText && isScanning) {
+                                document.querySelector('.blur-overlay').style.display = 'flex';
+                                scan_qr(decodedText);
+                            }
+                        },
+                        (errorMessage) => {
+                            // Handle scan errors silently (they're frequent and normal)
+                        }
+                    );
+
+                    isScanning = true;
 
                 } else {
                     document.querySelector('.blur-overlay').style.display = 'none';
                     alert('No cameras found.');
                 }
-            }).catch(function (e) {
+
+            } catch (err) {
                 document.querySelector('.blur-overlay').style.display = 'none';
-                alert('Failed to start camera: ' + e.message);
-                console.error(e);
-            });
+                console.error('Error starting camera:', err);
+                alert('Failed to start camera: ' + err.message);
+            }
         }
 
         // Update the scan_qr function to handle notifications better
@@ -181,14 +212,20 @@
 
         #video-container {
             position: relative;
-            width: 100%; /* adjust as needed */
-            height: 100%; /* adjust as needed */
+            width: 100%;
+            height: 400px; /* Set a fixed height for better mobile experience */
         }
 
-        #video-container video {
+        #preview {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+        }
+
+        #preview video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover; /* Better mobile camera display */
+            border-radius: 8px;
         }
 
         .overlay {

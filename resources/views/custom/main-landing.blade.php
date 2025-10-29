@@ -56,14 +56,14 @@
                 </div>
 
                 <div class="h-[100vh] col-span-3 clip-path-custom"
-                    style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+                    style="background: url('{{ asset('img/banner.jpg') }}') no-repeat center center; background-size: cover;">
                 </div>
             </div>
         </section>
         {{-- Tablet & mobile: Hero Banner Section --}}
         <section
             class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative"
-            style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+            style="background: url('{{ asset('img/banner.jpg') }}') no-repeat center center; background-size: cover;">
             <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
                 <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>
@@ -78,9 +78,9 @@
                     $mediaItems = null;
 
                     if ($latestOpportunity) {
-                        $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                        $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/fallback.jpg');
                     } else {
-                        $mediaItems = asset('img/ayala-foundation-bg.jpg');
+                        $mediaItems = asset('img/fallback.jpg');
                     }
                     @endphp
             <div class="flex flex-col md:flex-row items-center justify-center gap-4">
@@ -105,7 +105,7 @@
                                     <p><span class="font-[600]"></span>{{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('h:i A') }}
                                         - {{ \Carbon\Carbon::parse($featuredOpportunity->end_date)->format('h:i A') }}</p>
                                 </div>
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                <!-- <div class="w-fit flex flex-col items-start justify-between gap-1">
                                     <p><span class="font-[600]">NUMBER OF SHIFTS:</span> {{$featuredOpportunity->slots->count()}}
                                     </p>
                                     <div class="flex items-center justify-start gap-4">
@@ -114,7 +114,7 @@
                                         @endforeach
                                         </p>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
                                 <button onclick="openModal()" class="w-full">
@@ -209,7 +209,7 @@
                                                 alt="{{ $opportunity->title }}">
                                         @else
                                             <img class="w-full h-full object-cover"
-                                                src="{{ url('img/ayala-foundation-bg.jpg') }}"
+                                                src="{{ url('img/fallback.jpg') }}"
                                                 alt="{{ $opportunity->title }}">
                                         @endif
                                     </div>
@@ -226,7 +226,7 @@
                                                     {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
                                                     {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
                                             </div>
-                                            <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                            <!-- <div class="w-fit flex flex-col items-start justify-between gap-1">
                                                 <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{ $opportunity->slots->count() }}</p>
                                                 <div class="flex items-center justify-start gap-4">
                                                 @foreach ($opportunity->slots as $key=> $slot)
@@ -235,7 +235,7 @@
                                                     @endforeach
                                                 </p>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
 
@@ -331,50 +331,6 @@
                 <div class="our-partners-swiper-container swiper w-full overflow-hidden">
                     <div class="swiper-wrapper w-full">
 
-                        {{-- Partner Slide Item 1 --}}
-                        <div class="swiper-slide flex items-center justify-center">
-                            <a href="" class="block w-[255px] h-[255px] p-4">
-                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
-                                    <img class="w-full h-full object-contain"
-                                        src="{{ asset('img\AC-Logistics.png') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-                        {{-- Partner Slide Item 2 --}}
-                        <div class="swiper-slide flex items-center justify-center">
-                            <a href="" class="block w-[255px] h-[255px] p-4">
-                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
-                                    <img class="w-full h-full object-contain"
-                                        src="{{ asset('img\ALI.jpg') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-                        {{-- Partner Slide Item 3 --}}
-                        <div class="swiper-slide flex items-center justify-center">
-                            <a href="" class="block w-[255px] h-[255px] p-4">
-                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
-                                    <img class="w-full h-full object-contain"
-                                        src="{{ asset('img\Ayala_AC_Health.jpg') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-                        {{-- Partner Slide Item 4 --}}
-                        <div class="swiper-slide flex items-center justify-center">
-                            <a href="" class="block w-[255px] h-[255px] p-4">
-                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
-                                    <img class="w-full h-full object-contain"
-                                        src="{{ asset('img/Ayala_AC_Industrials.jpg') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
                         {{-- Partner Slide Item 5 --}}
                         <div class="swiper-slide flex items-center justify-center">
                             <a href="" class="block w-[255px] h-[255px] p-4">
@@ -407,6 +363,62 @@
                                 </div>
                             </a>
                         </div>
+
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img/ACEN.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+
+                        {{-- Partner Slide Item 3 --}}
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img\Ayala_AC_Health.jpg') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 1 --}}
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img\AC-Logistics.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 4 --}}
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img/Ayala_AC_Industrials.jpg') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 2 --}}
+                        <div class="swiper-slide flex items-center justify-center">
+                            <a href="" class="block w-[255px] h-[255px] p-4">
+                                <div class="w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm">
+                                    <img class="w-full h-full object-contain"
+                                        src="{{ asset('img\ALI.jpg') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
                     </div>
                 </div>
 
@@ -760,10 +772,10 @@
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
                         </div>
 
-                        <p class="px-0 md:px-2 py-0 md:py-4 text-xl md:text-[28px] md:text-[36px]">Volunteering with Ayala Foundation has been one of the most rewarding experiences of my life.
-                            Not only did I get to make a real difference in the lives of others,
-                            but I also gained valuable skills and met incredible people who share my passion for giving back.
-                            It’s a joy to be part of such a supportive and impactful community.</p>
+                        <p class="px-0 md:px-2 py-0 md:py-4 text-xl md:text-[28px] md:text-[36px] leading-none">Working alongside other volunteers under Brigadang Ayala was not only a fun experience, 
+                            but also truly rewarding. It’s an activity that leaves you feeling more refreshed instead of tired, 
+                            more energized instead of exhausted—because you know you’ve done something meaningful beyond yourself. 
+                            I’m grateful that I could use my humble skills to help create a safer learning environment for hundreds of children.</p>
 
                         <div class="w-8 md:w-16 h-full flex items-end">
                             @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
@@ -771,8 +783,8 @@
                     </div>
 
                     <div class="w-full px-8 md:px-16">
-                        <p class="text-xl md:text-2xl fornt-bold">JUAN DELA CRUZ</p>
-                        <p class="text-base md:text-xl text-[#817B7B]">Business Associate, Company Name</p>
+                        <p class="text-xl md:text-2xl fornt-bold">JAY BOSI</p>
+                        <p class="text-base md:text-xl text-[#817B7B]">Globe Telecom CDO</p>
                     </div>
                 </div>
             </div>
@@ -781,7 +793,7 @@
             <div class="absolute inset-0 flex items-center justify-between z-0">
                 <div class="w-[40%] h-full"></div>
                 <div class="w-[60%] h-full bg-cover bg-center"
-                    style="background-image: linear-gradient(to top right, black, rgba(0, 0, 0, 0)), url('{{ asset('img/ayala-foundation-bg-2.jpg') }}');">
+                    style="background-image: linear-gradient(to top right, black, rgba(0, 0, 0, 0)), url('{{ asset('img/jay.jpg') }}');">
                 </div>
             </div>
         </div>
@@ -804,9 +816,9 @@
                     @php
                     $latestOpportunity = $featuredOpportunity;
                     if ($latestOpportunity) {
-                            $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                            $mediaItems = $latestOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/fallback.jpg');
                     } else {
-                            $mediaItems = asset('img/ayala-foundation-bg.jpg');
+                            $mediaItems = asset('img/fallback.jpg');
                     }
 
                 @endphp
@@ -840,7 +852,7 @@
                                     &emsp; &emsp;{!! strip_tags($latestOpportunity->description) !!}
                                 </p>
 
-                                <div
+                                <!-- <div
                                     class="w-full flex flex-col items-start justify-start text-base md:text-xl font-normal gap-2 my-8 md:my-16">
                                     <p><span class="font-semibold">Date:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i:s A') }} - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i:s A') }}</p>
                                     <p><span class="font-semibold"> NUMBER OF SHIFTS:</span>
@@ -850,7 +862,7 @@
                                     <p><span class="font-semibold">BATCH {{$key+1}}:</span>  {{ $opportunity->type->name }} - {{\Carbon\Carbon::parse($latestOpportunity?->start_date)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($latestOpportunity?->end_date)->isoFormat('hh:mm A')}}
                                     @endforeach
                                     </p>
-                                </div>
+                                </div> -->
 
                                 <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                     @guest

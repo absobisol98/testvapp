@@ -204,7 +204,7 @@
                         class="w-full h-full absolute bg-gradient-to-r from-[#03488d8a] via-[#03488d8a] to-[#03488d8a] z-[1]">
                     </div>
 
-                    <img class="w-full h-full object-cover z-0 hidden md:block" src="{{ asset($bgImg) }}"
+                    <img class="w-full h-full object-cover z-0 hidden md:block" src="{{ asset('img/dashboard.jpg') }}"
                         alt="">
                 </div>
 

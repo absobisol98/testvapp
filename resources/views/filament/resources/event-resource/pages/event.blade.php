@@ -157,7 +157,7 @@
 
             <div>
                 <p class="text-xl font-bold">About the Opportunity</p>
-                <p class="text-md md:text-lg lg:text-base font-normal text-justify whitespace-pre-wrap">{!! strip_tags($record->description) !!}</p>
+                <p class="text-md md:text-lg lg:text-base font-normal text-justify whitespace-pre-wrap">{!! $record->description !!}</p>
             </div>
             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
         </div>
@@ -489,7 +489,7 @@
                                     </p>
                                     <p class="text-lg font-semibold leading-none">Key Responsibility</p>
                                     <p class="text-md overflow-y-scroll custom-scrollbar max-h-[200px] md:text-lg lg:text-base pr-4 font-normal">
-                                        {{ $slot->responsibilities }}
+                                        {!! $slot->responsibilities !!}
                                     </p>
                                 </div>
 

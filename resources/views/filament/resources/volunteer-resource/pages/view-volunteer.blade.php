@@ -249,7 +249,7 @@
                         </div>
                     </div>
 
-                    {{-- Interest --}}
+                    Interest
                     <div class="w-full">
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
 
@@ -598,8 +598,11 @@
                                                                     <div>
                                                                         <p class="font-semibold text-[#03498D]">{{ $slot->shift_name }}</p>
                                                                         <p class="text-sm text-gray-600">
-                                                                            {{ \Carbon\Carbon::parse($slot->start_time)->format('M-d-Y h:i A') }} -
-                                                                            {{ \Carbon\Carbon::parse($slot->end_time)->format('M-d-Y h:i A') }}
+                                                                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}     {{ \Carbon\Carbon::parse($slot->start_time)->format('h:i A') }} -
+                                                                         
+                                                                            {{ \Carbon\Carbon::parse($slot->end_time)->format(' h:i A') }} 
+
+                                                                   
                                                                         </p>
                                                                         @if($slotAttendee->time_in && $slotAttendee->time_out)
                                                                             <p class="text-sm text-green-600 mt-2">

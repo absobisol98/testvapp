@@ -19,6 +19,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -93,7 +94,7 @@ class EventResource extends Resource implements HasShieldPermissions
                         'title' => 'Enter event title'
                     ]),
 
-                Forms\Components\RichEditor::make('description')
+                Forms\Components\Textarea::make('description')
                     ->columnSpanFull()
                     ->required()
                     ->extraAttributes([

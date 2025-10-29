@@ -40,12 +40,12 @@
                     </div>
                 </div>
 
-                <div class="h-[100vh] col-span-3 clip-path-custom" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center left; background-size: cover;">
+                <div class="h-[100vh] col-span-3 clip-path-custom" style="background: url('{{ asset('img/banner.jpg') }}') no-repeat center left; background-size: cover;">
                 </div>
             </div>
         </section>
         {{-- Tablet & mobile: Hero Banner Section --}}
-        <section class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+        <section class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative" style="background: url('{{ asset('img/banner.jpg') }}') no-repeat center center; background-size: cover;">
             <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
                 <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>

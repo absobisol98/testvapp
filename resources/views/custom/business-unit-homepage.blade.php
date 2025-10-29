@@ -7,22 +7,25 @@
     <div id="bpiHomePage" class="w-full flex flex-col items-center justify-center">
         {{-- Desktop: Hero Banner Section --}}
         <section class="hidden lg:block h-fit w-full bg-[#03498D] mt-[128px]">
-            <div class="h-[90vh] w-full p-8 flex flex-col justify-center items-center gap-4 text-white"
+            <div class="h-[90vh] w-full p-8 flex flex-col justify-center items-center gap-4 text-white relative"
                 style="background: url('{{$eventCover }}') no-repeat center center; background-size: cover;">
-                <img class="w-[280px]" src="{{ $logo }}" alt="bpi-logo">
-                <p class="font-[700] text-[50px] text-center">{{$business_unit->header_tagline}}</p>
-                <p class="font-medium text-center text-lg max-w-[900px]">
+                <!-- Overlay for color opacity above the background image -->
+                <div class="absolute inset-0 bg-[#03498D] bg-opacity-40 pointer-events-none"></div>
+                <!-- Content above overlay -->
+                <img class="w-[280px] relative z-10" src="{{ $logo }}" alt="bpi-logo">
+                <p class="font-[700] text-[50px] text-center relative z-10">{{$business_unit->header_tagline}}</p>
+                <p class="font-medium text-center text-lg max-w-[900px] relative z-10">
                     {{$business_unit->header_description}}
                 </p>
 
                 <a href="#opportunity-list">
                     <div
-                        class="h-[56px] w-[184px] my-8 rounded-[10px] bg-[#F55E1D] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                        class="h-[56px] w-[184px] my-8 rounded-[10px] bg-[#F55E1D] flex items-center justify-center relative z-10 p-2 hover:bg-[#E97C7C]">
                         <p class="font-medium text-base text-white">SEE OPPORTUNITIES</p>
                     </div>
                 </a>
 
-                <div class="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-12">
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-4 relative z-10 md:gap-12">
                     <div class="col-span-1 flex flex-col items-center justify-center">
                         <p class="font-[700] text-[40px] text-center">{{$opportunities->count()}}</p>
                         <p class="font-medium text-center text-sm text-[#FDFDFD]">Number of Opportunities</p>
@@ -30,7 +33,7 @@
 
                     <div class="col-span-1 flex flex-col items-center justify-center">
                         <p class="font-[700] text-[40px] text-center">{{$total_volunteers}}</p>
-                        <p class="font-medium text-center text-sm text-[#FDFDFD]">All of Volunteers</p>
+                        <p class="font-medium text-center text-sm text-[#FDFDFD]">Volunteers</p>
                     </div>
                 </div>
             </div>
@@ -39,20 +42,23 @@
         <section
             class="h-fit w-full flex lg:hidden flex-col items-center justify-center p-[5%] text-white relative mt-[87px] gap-4 py-8"
             style="background: url('{{ $eventCover }}') no-repeat center center; background-size: cover;">
-            <img class="w-[60%] max-w-[220px]" src="{{ $logo }}" alt="bpi-logo">
-            <p class="font-[700] text-[40px] text-center">{{$business_unit->header_tagline}}</p>
-            <p class="font-medium text-center text-lg max-w-[700px]">
+            <!-- Overlay for color opacity above the background image -->
+            <div class="absolute inset-0 bg-[#03498D] bg-opacity-40 pointer-events-none"></div>
+            <!-- Content above overlay -->
+            <img class="w-[60%] max-w-[220px] relative z-10" src="{{ $logo }}" alt="bpi-logo">
+            <p class="font-[700] text-[40px] text-center relative z-10">{{$business_unit->header_tagline}}</p>
+            <p class="font-medium text-center text-lg max-w-[700px] relative z-10">
                 {{$business_unit->header_description}}
             </p>
 
             <a href="#opportunity-list">
                 <div
-                    class="h-[56px] w-[184px] my-8 rounded-[10px] bg-[#D43F3F] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                    class="h-[56px] w-[184px] my-8 rounded-[10px] bg-[#F55E1D] relative z-10 flex items-center justify-center p-2 hover:bg-[#E97C7C]">
                     <p class="font-medium text-base text-white">SEE OPPORTUNITIES</p>
                 </div>
             </a>
 
-            <div class="grid grid-cols-2 gap-4 md:gap-12 justify-center">
+            <div class="grid grid-cols-2 gap-4 md:gap-12 justify-center relative z-10">
                 <div class="col-span-1 flex flex-col items-center justify-center">
                     <p class="font-[700] text-[40px] text-center">{{$opportunities->count()}}</p>
                     <p class="font-medium text-center text-sm text-[#FDFDFD]">Number of Opportunities</p>
@@ -60,7 +66,7 @@
 
                 <div class="col-span-1 flex flex-col items-center justify-center">
                     <p class="font-[700] text-[40px] text-center">{{$total_volunteers}}</p>
-                    <p class="font-medium text-center text-sm text-[#FDFDFD]">All of Volunteers</p>
+                    <p class="font-medium text-center text-sm text-[#FDFDFD]">Volunteers</p>
                 </div>
             </div>
         </section>
@@ -68,7 +74,7 @@
 
         {{-- Opportunity Section --}}
 
-        <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] py-4 mb-8 px-[16px] xl:px-[80px] gap-8"  id="opportunity-list">
+        @if(count($galleries) > 0 || $upcoming)
             <div class="grid grid-cols-2 lg:grid-cols-3 w-full gap-4">
                 @if (count($galleries) > 0)
                     <div class="w-full program-swiper-container2 col-span-2  h-full w-full overflow-hidden ">
@@ -109,13 +115,11 @@
                     </div>
                 @endif
 
-
-
                 <div class="col-span-2 md:col-span-1 flex flex-col items-start justify-start gap-2">
                     @if ($upcoming)
                         <p class="text-[18px] font-[400]">UPCOMING OPPORTUNITY</p>
                         <div class="flex flex-col items-start justify-between">
-                            <p class="text-[40px] font-[700] text-[#D43F3F] mt-3 leading-none">{{$upcoming->title}}</p>
+                            <p class="text-[40px] font-[700] bg-[#F55E1D] mt-3 leading-none">{{$upcoming->title}}</p>
 
                             <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
 
@@ -125,7 +129,7 @@
                                     <p class="font-[600]">DATE: {{\Carbon\Carbon::parse($upcoming?->start_date)->isoFormat('MMMM DD, YYYY')}}</p>
                                     <p class="font-[600]">{{\Carbon\Carbon::parse($upcoming?->start_date)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($upcoming?->end_date)->isoFormat('hh:mm A')}}</p>
                                 </div>
-                                <div class="w-fit flex flex-col items-start justify-between gap-2">
+                                <!-- <div class="w-fit flex flex-col items-start justify-between gap-2">
                                     <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage actively in the session</p>
                                         <div class="flex flex-col items-center justify-start">
                                             @foreach ($upcoming->slots as $key => $slot)
@@ -133,7 +137,7 @@
                                             @endforeach
 
                                         </div>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="w-full flex items-center justify-start gap-4 mt-8 max-w-[416px]">
@@ -145,7 +149,7 @@
                                 </button>
                                 <a href="{{route('filament.admin.resources.events.view',['record' => $upcoming->id])}}" class="w-full">
                                     <div
-                                        class="h-[48px] w-full bg-[#D43F3F] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                                        class="h-[48px] w-full bg-[#F55E1D] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
                                         <p class="font-[400] text-[18px] text-white">JOIN</p>
                                     </div>
                                 </a>
@@ -161,8 +165,10 @@
                     @endif
                 </div>
             </div>
+        @endif
 
-            <div class="grid grid-cols-3 gap-8">
+        <div class="w-full flex flex-col items-center justify-between bg-[#FFFFFFE5] py-4 mb-8 px-[16px] xl:px-[80px] gap-8"  id="opportunity-list">
+            <div class="w-full grid grid-cols-3 gap-8">
                 <div class="col-span-3 md:col-span-1 flex flex-col items-center justify-start gap-8">
                     <p class="text-[40px] font-[400] text-black text-center">About <span
                             class="font-[600] text-[#F55E1D]">{{$business_unit->nickname}}</span></p>
@@ -174,7 +180,7 @@
                     <div class="flex flex-col items-center justify-center gap-3">
                         @if ($website)
                             <a href="{{$website->link}}" target="_blank">
-                                <p class="text-lg font-[400] text-[#D43F3F] text-center">{{$website->link}}</p>
+                                <p class="text-lg font-[400] bg-[#F55E1D] text-center">{{$website->link}}</p>
                             </a>
                         @endif
                     </div>
@@ -253,21 +259,25 @@
                                     <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
 
                                     <p class="text-[18px] font-[400] mb-3 capitalize">
-                                        {{ $opportunity->location }}</p>
+                                        {{ $opportunity->location }}
+                                    </p>
 
-                                    <div
-                                        class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                    <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                        <div class="w-full flex flex-col items-start justify-start gap-1">
                                             <p class="font-[600]">DATE:
-                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
-                                            <p class="font-[600]">
+                                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }} | 
                                                 {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
-                                                {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
+                                                {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}
+                                            </p>
+
+                                            <p><span class="font-[600]">NUMBER OF SHIFTS:</span> {{$opportunity->slots->count()}}</p>
+
                                         </div>
-                                        <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                            <p><span class="font-[600]">SHIFTS:</span> Listen attentively and engage
-                                                actively
-                                                in the session</p>
+                                        <!-- <div class="w-fit flex flex-col items-start justify-start gap-1">
+                                            
+                                            <p><strong>Volunteer Slots: &nbsp;</strong>{{ $opportunity->slots->sum('total_slots') }}</p>
+
+                                            
                                             <div class="flex items-center justify-start gap-4">
                                                 @foreach ($opportunity->slots as $index => $slot)
                                                     <p>
@@ -276,8 +286,8 @@
                                                         {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                                     </p>
                                                 @endforeach
-                                            </div>
-                                        </div>
+                                            </div>  
+                                        </div> -->
                                     </div>
                                 </div>
 
@@ -285,15 +295,15 @@
                                     @if ( \Carbon\Carbon::parse($opportunity->start_date)->gt(now()))
                                         <a href="{{route('filament.admin.resources.events.view',['record' => $opportunity->id])}}">
                                             <div
-                                                class="h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
+                                                class="h-auto md:h-[48px] w-[200px] bg-[#F55E1D] flex items-center justify-center p-2 hover:bg-[#E97C7C]">
                                                 <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
                                             </div>
                                         </a>
                                     @else
 
                                         <div
-                                            class="opacity-50 h-auto md:h-[48px] w-[200px] bg-[#CE3434] flex items-center justify-center p-2">
-                                            <p class="font-[400] text-base md:text-[18px] text-white ">Event Done</p>
+                                            class="opacity-50 h-auto md:h-[48px] w-[200px] bg-[#F55E1D] flex items-center justify-center p-2">
+                                            <p class="font-[400] text-base md:text-[18px] text-white ">Oppotunity Done</p>
                                         </div>
 
                                     @endif
@@ -364,14 +374,14 @@
                                     <div class="w-full z-50">
                                         @if (auth()->check())
                                             <a href="{{ route('filament.admin.resources.events.view',['record' => $featured->id]) }}">
-                                                <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
-                                                    <p class="font-[800] text-sm text-[#D43F3F]">View Event</p>
+                                                <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#F55E1D] hover:bg-[#fff6f6]">
+                                                    <p class="font-[800] text-sm text-[#F55E1D]">View Event</p>
                                                 </div>
                                             </a>
                                         @else
                                             <a href="{{ route('volunteer.form.view') }}">
-                                                <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#D43F3F] hover:bg-[#fff6f6]">
-                                                    <p class="font-[800] text-sm text-[#D43F3F]">SIGN UP NOW!</p>
+                                                <div class="h-12 w-[260px] flex items-center justify-center rounded-[10px] border border-[#F55E1D] hover:bg-[#fff6f6]">
+                                                    <p class="font-[800] text-sm text-[#F55E1D]">SIGN UP NOW!</p>
                                                 </div>
                                             </a>
                                         @endif
