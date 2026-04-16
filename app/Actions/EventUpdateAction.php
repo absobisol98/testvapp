@@ -43,10 +43,16 @@ final class EventUpdateAction
         }
         unset($data['tags']);
 
+        $facilitator_arr = array();
+        if(isset($data['facilitators']) && $data['facilitators']){
+            $facilitator_arr = $data['facilitators'];
+        }
+        unset($data['facilitators']);
+
         // Check if this should become a recurring event
         if(isset($data['recurrence_type_id']) && $data['recurrence_type_id'] == 2 && !$record->event_recurring_id){
             // Converting one-time event to recurring event
-            $this->convertToRecurringEvent($data, $record, $tag_arr);
+            $this->convertToRecurringEvent($data, $record, $tag_arr, $facilitator_arr);
 
             Notification::make()
                 ->title('Event successfully converted to recurring.')
@@ -59,7 +65,7 @@ final class EventUpdateAction
         // Check if recurring event should become one-time event
         if((!isset($data['recurrence_type_id']) || $data['recurrence_type_id'] != 2) && $record->event_recurring_id){
             // Converting recurring event to one-time event
-            $this->convertToOneTimeEvent($data, $record, $tag_arr);
+            $this->convertToOneTimeEvent($data, $record, $tag_arr, $facilitator_arr);
 
             Notification::make()
                 ->title('Event successfully converted to one-time event.')
@@ -70,6 +76,9 @@ final class EventUpdateAction
         }
 
         if($record->event_recurring_id){ // Recurring Events
+
+            // Sync facilitators on the current record itself (not included in future events query)
+            $record->facilitators()->sync($facilitator_arr);
 
             // Get all future events
             $records = Event::where('event_recurring_id',$record->event_recurring_id)->where('start_date', '>', Carbon::parse($record->start_date)->startOfDay())->get();
@@ -92,6 +101,9 @@ final class EventUpdateAction
 
             // Insert Event Tags
             (new SaveEventTagsAction())->execute($event,$tag_arr,true);
+
+            // Sync Facilitators
+            $event->facilitators()->sync($facilitator_arr);
 
         }
 
@@ -117,7 +129,7 @@ final class EventUpdateAction
         return $result;
     }
 
-    private function convertToRecurringEvent($data, $record, $tag_arr)
+    private function convertToRecurringEvent($data, $record, $tag_arr, $facilitator_arr = [])
     {
         // Recurring Function (same as in EventCreateAction)
         $recurrences = [
@@ -161,6 +173,7 @@ final class EventUpdateAction
             (new SaveEventSlotsAction())->execute($record, $data, true);
             (new SaveEventCompaniesAction())->execute($record, $data, true);
             (new SaveEventTagsAction())->execute($record, $tag_arr, true);
+            $record->facilitators()->sync($facilitator_arr);
 
             // Create additional recurring events
             while ($start->format('Y-m-d') < $repeat_until->format('Y-m-d'))
@@ -199,6 +212,9 @@ final class EventUpdateAction
 
                 // Insert Event Tags
                 (new SaveEventTagsAction())->execute($event, $tag_arr, false);
+
+                // Sync Facilitators
+                $event->facilitators()->sync($facilitator_arr);
             }
         }
     }
@@ -290,7 +306,7 @@ final class EventUpdateAction
         // Certificate Update media - End
     }
 
-    private function convertToOneTimeEvent($data, $record, $tag_arr)
+    private function convertToOneTimeEvent($data, $record, $tag_arr, $facilitator_arr = [])
     {
         $event_recurring_id = $record->event_recurring_id;
 
@@ -306,6 +322,7 @@ final class EventUpdateAction
         (new SaveEventSlotsAction())->execute($record, $data, true);
         (new SaveEventCompaniesAction())->execute($record, $data, true);
         (new SaveEventTagsAction())->execute($record, $tag_arr, true);
+        $record->facilitators()->sync($facilitator_arr);
 
         // Delete all future events in this recurring series
         Event::where('event_recurring_id', $event_recurring_id)

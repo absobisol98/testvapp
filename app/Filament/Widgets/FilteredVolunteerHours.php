@@ -57,17 +57,34 @@ class FilteredVolunteerHours extends BaseWidget
                     ->placeholder('N/A'),
                 Tables\Columns\TextColumn::make('attendee.name')
                     ->label('Volunteer')
-                    ->searchable()
-                    ->sortable()
+                    ->searchable(['firstname', 'lastname'])
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->join('users', 'event_attendees.attendee_id', '=', 'users.id')
+                            ->orderBy('users.firstname', $direction)
+                            ->orderBy('users.lastname', $direction)
+                            ->select('event_attendees.*');
+                    })
                     ->placeholder('N/A'),
                 Tables\Columns\TextColumn::make('slot.shift_name')
                     ->label('Shift Name')
                     ->searchable()
                     ->sortable()
                     ->placeholder('N/A'),
-                Tables\Columns\TextColumn::make('Total Hours')
+                Tables\Columns\TextColumn::make('total_hours')
+                    ->label('Total Hours')
                     ->getStateUsing(function(EventAttendee $record) {
                         return $record->get_totalHrs();
+                    })
+                    ->numeric()
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->orderByRaw("
+                            CASE 
+                                WHEN time_in IS NOT NULL AND time_out IS NOT NULL THEN
+                                    (TIMESTAMPDIFF(HOUR, time_in, time_out) + (DATEDIFF(time_out, time_in) * 24)) *
+                                    CASE WHEN encoding_type = 3 THEN volunteer_count ELSE 1 END
+                                ELSE 0
+                            END {$direction}
+                        ");
                     }),
 
                 Tables\Columns\TextColumn::make('time_in')

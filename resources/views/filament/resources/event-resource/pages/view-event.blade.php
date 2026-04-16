@@ -35,9 +35,7 @@
         </button>
     </div>
 
-    {{-- @php
-        dd($record->slots);
-    @endphp --}}
+   
     <div class="w-full bg-white rounded-xl shadow">
         <div class="px-4 py-4 space-y-4">
               {{-- Hero Banner --}}
@@ -77,9 +75,7 @@
             <h2 class="text-black md:pl-10 lg:pl-0 text-lg text-start font-extrabold">
                 Volunteer Opportunities Details
             </h2>
-            {{-- @php
-                dd($record->facilitators);
-            @endphp --}}
+            
             <div class="w-full flex flex-col md:flex-row space-y-4" style="width:100%">
                 <div class="w-full md:w-3/5 flex flex-col space-y-2" style="width:100%">
                     <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">

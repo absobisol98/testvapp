@@ -20,6 +20,12 @@ final class EventCreateAction
             unset($data['tags']);
         }
 
+        $facilitator_arr = array();
+        if(isset($data['facilitators']) && $data['facilitators']){
+            $facilitator_arr = $data['facilitators'];
+        }
+        unset($data['facilitators']);
+
         $data['created_by'] = auth()->id();
         $data['created_at'] = now();
         if(auth()->user()->hasRole('External Partner')){
@@ -99,6 +105,9 @@ final class EventCreateAction
                     // Insert Event Tags
                     (new SaveEventTagsAction())->execute($event,$tag_arr,false);
 
+                    // Sync Facilitators
+                    $event->facilitators()->sync($facilitator_arr);
+
                 }
                 while ($start->format('Y-m-d') < $repeat_until->format('Y-m-d'))
                 {
@@ -139,6 +148,9 @@ final class EventCreateAction
 
                     // Insert Event Tags
                     (new SaveEventTagsAction())->execute($event,$tag_arr,false);
+
+                    // Sync Facilitators
+                    $event->facilitators()->sync($facilitator_arr);
                 }
             }
         }else{ // One time event
@@ -176,6 +188,9 @@ final class EventCreateAction
 
             // Insert Event Tags
             (new SaveEventTagsAction())->execute($event,$tag_arr,false);
+
+            // Sync Facilitators
+            $event->facilitators()->sync($facilitator_arr);
         }
 
         Notification::make()

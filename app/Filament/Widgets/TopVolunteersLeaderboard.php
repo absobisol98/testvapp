@@ -56,8 +56,7 @@ class TopVolunteersLeaderboard extends BaseWidget
                     })
                     ->selectRaw('SUM(TIME_TO_SEC(TIMEDIFF(time_out, time_in))/3600)')
             ])
-            ->having('total_opportunities', '>', 0)
-            ->orderByDesc('computed_hours');
+            ->having('total_opportunities', '>', 0);
             
         // Filter users directly by cluster_id if External Partner
         if ($this->clusterFilter) {
@@ -70,29 +69,13 @@ class TopVolunteersLeaderboard extends BaseWidget
     protected function getTableColumns(): array
     {
         return [
-            TextColumn::make('rank')
-                ->getStateUsing(static function ($rowLoop): string {
-                    return match($rowLoop->iteration) {
-                        1 => '🏆 1st',
-                        2 => '🥈 2nd',
-                        3 => '🥉 3rd',
-                        default => (string) $rowLoop->iteration . 'th'
-                    };
-                })
-                ->label('Rank')
-                ->alignCenter()
-                ->weight('bold')
-                ->color(fn ($record, $state) => match(substr($state, -3)) {
-                    '1st' => 'warning', // Gold
-                    '2nd' => 'gray',    // Silver
-                    '3rd' => 'orange',  // Bronze
-                    default => null
-                }),
+            TextColumn::make('index')
+                ->label('No. ')
+                ->rowIndex(),
 
             TextColumn::make('name')
-                ->label('Volunteer')
-                ->searchable()
-                ->sortable(),
+            ->label('Volunteer')
+            ->searchable(),
 
             TextColumn::make('affiliate_type_id')
                 ->label('Affiliation')
@@ -101,29 +84,30 @@ class TopVolunteersLeaderboard extends BaseWidget
                     2 => 'Non-Ayala',
                     default => 'N/A'
                 }),
-
             TextColumn::make('total_hours')
-                ->label('Total Hours')
-                ->getStateUsing(function ($record) {
-                    $query = $record->eventAttendees()
-                        ->where('encoding_type', '!=', 3);
-                    
-                    // Apply cluster filter if set
-                    if ($this->clusterFilter) {
-                        $query = $query->whereHas('attendee', function ($q) {
-                            $q->where('cluster_id', $this->clusterFilter);
-                        });
-                    }
-                    
-                    return $query->get()
-                        ->sum(fn($attendance) => $attendance->get_totalHrs());
-                })
-                ->numeric()
-                ->alignEnd(),
-
+            ->label('Total Hours')
+            ->getStateUsing(function ($record) {
+                $query = $record->eventAttendees()
+                    ->where('encoding_type', '!=', 3);
+                
+                // Apply cluster filter if set
+                if ($this->clusterFilter) {
+                    $query = $query->whereHas('attendee', function ($q) {
+                        $q->where('cluster_id', $this->clusterFilter);
+                    });
+                }
+                
+                return $query->get()
+                    ->sum(fn($attendance) => $attendance->get_totalHrs());
+            })
+            ->numeric()
+            ->sortable(query: function (Builder $query, string $direction): Builder {
+                return $query->orderBy('computed_hours', $direction);
+            })
+            ->alignEnd(),
             TextColumn::make('total_opportunities')
                 ->label('Total Events')
-                ->sortable()
+                
                 ->alignEnd(),
         ];
     }
@@ -172,6 +156,15 @@ class TopVolunteersLeaderboard extends BaseWidget
                     });
                 }),
         ];
+    }
+    
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query($this->getTableQuery())
+            ->columns($this->getTableColumns())
+            ->filters($this->getTableFilters())
+            ->defaultSort('computed_hours', 'desc');
     }
     
     public function getTableHeading(): string

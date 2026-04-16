@@ -14,6 +14,29 @@ use Illuminate\Support\Facades\Storage;
 
 class PDFController extends Controller
 {
+
+    public function tester()
+    {
+
+    $event = Event::first();
+    $attendee = User::first();
+    $certificates = [
+        [
+            'record' => EventAttendee::first(),
+            'certificateNumber' => 'AF-2024-0001-0001-01-ABC',
+            'hoursServed' => 5
+        ]
+    ];
+        return PDF::loadView('pdf.tester', compact(
+            'event',
+            'attendee',
+            'certificates'
+        ))
+        ->setPaper('Letter')
+        ->setOption('margin-bottom', 0)
+        ->setOrientation('landscape')
+        ->inline('certificates.pdf');
+    }
     public function generateCertificate($event_id, $attendee_id)
     {
         $event = Event::find($event_id);

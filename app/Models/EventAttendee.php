@@ -78,23 +78,23 @@ class EventAttendee extends Model
 	}
 
 	public function get_totalHrs()
-	{
-		$hrs = 0;
-		if($this->time_in && $this->time_out){
+{
+    $hrs = 0;
+    if($this->time_in && $this->time_out){
 
-            $timeIn = \Carbon\Carbon::parse($this->time_in);
-            $timeOut = \Carbon\Carbon::parse($this->time_out);
-            $diff = $timeOut->diff($timeIn);
-            $hrs = $diff->h + ($diff->days * 24);
+        $timeIn = \Carbon\Carbon::parse($this->time_in);
+        $timeOut = \Carbon\Carbon::parse($this->time_out);
+        
+        // Use Carbon's diffInHours() for accurate calculation
+        $hrs = (int) $timeIn->diffInHours($timeOut);
 
-			//for bulk encoding
-			if($this->encoding_type == 3){
-				$hrs*=$this->volunteer_count;
-			}
-		}
-		return $hrs;
-	}
-
+        //for bulk encoding
+        if($this->encoding_type == 3){
+            $hrs *= $this->volunteer_count;
+        }
+    }
+    return $hrs;
+}
     public function slot()
     {
         return $this->belongsTo(EventSlot::class, 'slot_type_id');

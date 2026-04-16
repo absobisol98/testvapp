@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\SurveysResource;
 
 use App\Actions\EventRegistrationTableAction;
 use App\Filament\Resources\EventResource\Pages;

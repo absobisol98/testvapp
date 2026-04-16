@@ -76,7 +76,7 @@
         .certificate-number {
             position: absolute;
             top: 20px;
-            right: 20px;
+            left: 20px;
             font-size: 14px;
             color: #666;
         }
@@ -126,7 +126,7 @@
             <p class="date">Presented on: {{ \Carbon\Carbon::parse($event->end_date)->format('F d, Y') }}</p>
 
             <div class="validation-note">
-                To verify this certificate's authenticity, please contact the Ayala Foundation administrator
+                To verify this certificate's authenticity, <br> please contact the Ayala Foundation administrator
                 with the certificate number shown above.
             </div>
         </div>

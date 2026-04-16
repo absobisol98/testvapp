@@ -1,5 +1,7 @@
 @extends('custom.layouts.app')
 
+@section('title', 'Home')
+
 @section('content')
     {{-- Consolidated Styles --}}
     <style>

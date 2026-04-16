@@ -72,6 +72,8 @@ Route::get('/survey/{survey}/{token}', [SurveyResponseController::class, 'show']
 Route::post('/survey/{survey}', [SurveyResponseController::class, 'store'])
     ->name('survey.submit');
 
+Route::get('/repeat3r/cert34', [PDFController::class, 'tester'])->name('pdf.tester');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [VolunteerRegistrationController::class, 'sendVerificationEmail'])
         ->name('verification.send');
@@ -82,6 +84,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/volunteer/certificate/{event_id}/{attendee_id}', [PDFController::class, 'generateCertificate'])
         ->name('volunteer.certificate');
+
+    
 
     Route::post('/event/{event}/register-slot/{slot}', [EventRegistrationController::class, 'registerSlot'])
         ->name('event.register-slot');
@@ -113,11 +117,11 @@ Route::middleware(['web', 'guest'])->group(function () {
 });
 
 // Apply throttling middleware to login routes
-Route::middleware(['throttle.login'])->group(function () {
-    Route::match(['get', 'post'], '/admin/login', function () {
-        return redirect()->route('filament.admin.auth.login');
-    });
-});
+// Route::middleware(['throttle:60,1'])->group(function () {
+//     Route::match(['get', 'post'], '/admin/login', function () {
+//         return redirect()->route('filament.admin.auth.login');
+//     });
+// });
 
 //Test Routes
 

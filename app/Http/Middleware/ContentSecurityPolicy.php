@@ -25,7 +25,7 @@ class ContentSecurityPolicy
         // Set Content-Security-Policy header
         $response->headers->set(
             'Content-Security-Policy',
-            "connect-src 'self' https://l.sharethis.com/ https://bam.nr-data.net/; img-src https://platform-cdn.sharethis.com/ https://ui-avatars.com/ 'self' data:; font-src data: https://fonts.gstatic.com/ https://fonts.bunny.net; default-src 'self'; script-src 'unsafe-eval' 'unsafe-inline'; script-src-elem 'self' https://rawgit.com/ https://code.jquery.com/ https://cdnjs.cloudflare.com/ https://unpkg.com/  https://cdn.tailwindcss.com/ https://js-agent.newrelic.com/ https://buttons-config.sharethis.com/ https://platform-api.sharethis.com/ https://cdn.jsdelivr.net/npm/ 'self' 'unsafe-inline'; style-src https://unpkg.com/  https://fonts.googleapis.com/ 'self' https://cdnjs.cloudflare.com/ https://cdn.jsdelivr.net/npm/ https://fonts.bunny.net/  'unsafe-inline';"
+            "connect-src 'self' https://l.sharethis.com/ https://bam.nr-data.net/; img-src https://platform-cdn.sharethis.com/ https://ui-avatars.com/ blob: 'self' data:; font-src data: https://fonts.gstatic.com/ https://fonts.bunny.net; default-src 'self'; script-src 'self' blob: 'unsafe-eval' 'unsafe-inline'; script-src-elem 'self' https://rawgit.com/ https://code.jquery.com/ https://cdnjs.cloudflare.com/ https://unpkg.com/  https://cdn.tailwindcss.com/ https://js-agent.newrelic.com/ https://buttons-config.sharethis.com/ https://platform-api.sharethis.com/ https://cdn.jsdelivr.net/npm/ 'self' 'unsafe-inline'; style-src https://unpkg.com/  https://fonts.googleapis.com/ 'self' https://cdnjs.cloudflare.com/ https://cdn.jsdelivr.net/npm/ https://fonts.bunny.net/  'unsafe-inline';"
         );
         return $response;
     }

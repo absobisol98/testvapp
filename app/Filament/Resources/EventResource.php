@@ -84,6 +84,7 @@ class EventResource extends Resource implements HasShieldPermissions
                             ->extraAttributes([
                                 'title' => 'Upload event banner here'
                             ]),
+
                     ])
                     ->collapsible(),
                 Forms\Components\TextInput::make('title')

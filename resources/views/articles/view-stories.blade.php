@@ -1,5 +1,7 @@
 @extends('custom.layouts.app')
 
+@section('title', 'Stories')
+
 @section('content')
     <div id="StoriesPage" class="w-full flex flex-col items-center justify-center">
         <div class="w-full grid grid-cols-1 lg:grid-cols-2 mt-[128px]">

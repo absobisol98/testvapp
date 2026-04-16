@@ -131,6 +131,7 @@ class RegistrationsRelationManager extends RelationManager
                             'event_id' => $record->event_id,
                             'attendee_id' => $record->volunteer_id,
                             'facilitator_id' => auth()->id(),
+                            'slot_type_id' => $record->slot_type_id,
                         ]);
 
                         // Generate QR code for attendee

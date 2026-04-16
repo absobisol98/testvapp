@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use League\Csv\Writer;
+use App\Filament\Resources\EventResource;
 
 class EventRegistrationController extends Controller
 {
@@ -62,7 +63,7 @@ class EventRegistrationController extends Controller
                 ->body('Registration period for this event has ended.')
                 ->danger()
                 ->send();
-            return back();
+            return redirect(EventResource::getUrl('view', ['record' => $event]));
         }
 
         // Check if slot is available
@@ -77,7 +78,7 @@ class EventRegistrationController extends Controller
                 ->body('This shift is already full.')
                 ->danger()
                 ->send();
-            return back();
+            return redirect(EventResource::getUrl('view', ['record' => $event]));
         }
 
         // Check for existing registration
@@ -93,7 +94,7 @@ class EventRegistrationController extends Controller
                 ->body('You are already registered for this shift.')
                 ->danger()
                 ->send();
-            return back();
+            return redirect(EventResource::getUrl('view', ['record' => $event]));
         }
 
         try {
@@ -138,7 +139,7 @@ class EventRegistrationController extends Controller
                     ->send();
             }
 
-            return back();
+            return redirect(EventResource::getUrl('view', ['record' => $event]));
 
         } catch (\Exception $e) {
             Notification::make()
@@ -146,7 +147,7 @@ class EventRegistrationController extends Controller
                 ->body('An error occurred while processing your registration.')
                 ->danger()
                 ->send();
-            return back();
+            return redirect(EventResource::getUrl('view', ['record' => $event]));
         }
     }
 

@@ -25,6 +25,7 @@ final class SaveEventCompaniesAction
             EventCompany::where('event_id',$event->id)->delete();
         }
 
+        
         if(isset($data['companies']) && $data['companies']){ // If company exists, insert companies into event_companies table
 
             foreach ($data['companies'] as $company) {

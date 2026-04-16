@@ -165,6 +165,7 @@ class AttendeesRelationManager extends RelationManager
                                 Select::make('select_volunteers')
                                     ->label('Select Volunteers')
                                     ->multiple()
+                                    ->live()
                                     ->columnSpan(2)
                                     ->options(function (\Filament\Forms\Get $get) {
                                         $options = [];
@@ -383,7 +384,8 @@ class AttendeesRelationManager extends RelationManager
                                 ->schema([
 
                                     TextInput::make('id')
-                                        ->hidden(),
+                                        ->hidden()
+                                        ->dehydratedWhenHidden(),
 
                                     TextInput::make('label')
                                         ->label('Name')
@@ -423,6 +425,7 @@ class AttendeesRelationManager extends RelationManager
                     ])
                     ->action(function (Collection $records, array $data){
                         foreach ($data['volunteers'] as $volunteer) {
+                         
                             $volunteer['updated_by'] = auth()->user()->id;
                             $volunteer['updated_at'] = now();
                             $update = EventAttendee::where('id', $volunteer['id'])->first();

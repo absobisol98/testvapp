@@ -57,36 +57,69 @@ class VolunteerParticipationList extends BaseWidget
     protected function getTableColumns(): array
     {
         return [
-            TextColumn::make('name')
-                ->label('Volunteer')
-                ->searchable()
-                ->sortable(),
+           TextColumn::make('name')
+            ->label('Volunteer')
+            ->searchable()
+            ->sortable(query: function (Builder $query, string $direction): Builder {
+                return $query->orderBy('firstname', $direction)
+                            ->orderBy('lastname', $direction);
+            }),
 
             TextColumn::make('affiliate_type')
-                ->label('Affiliation')
-                ->getStateUsing(fn ($record) => match($record->affiliate_type_id) {
-                    1 => 'Ayala',
-                    2 => 'Non-Ayala',
-                    default => 'N/A'
-                })
-                ->sortable(),
+            ->label('Affiliation')
+            ->getStateUsing(fn ($record) => match($record->affiliate_type_id) {
+                1 => 'Ayala',
+                2 => 'Non-Ayala',
+                default => 'N/A'
+            })
+            ->sortable(query: function (Builder $query, string $direction): Builder {
+                return $query->orderBy('affiliate_type_id', $direction);
+            }),
 
             TextColumn::make('total_opportunities')
                 ->label('Total Opportunities')
                 ->sortable()
                 ->alignEnd(),
 
-            TextColumn::make('total_hours')
-                ->label('Total Hours')
-                ->getStateUsing(function ($record) {
-                    return $record->eventAttendees()
-                        ->get()
-                        ->sum(fn($attendance) => $attendance->get_totalHrs());
-                })
-                ->numeric()
-                ->sortable()
-                ->alignEnd(),
-
+TextColumn::make('total_hours')
+    ->label('Total Hours')
+    ->getStateUsing(function ($record) {
+        $total = $record->eventAttendees()
+            ->get()
+            ->sum(fn($attendance) => $attendance->get_totalHrs());
+        
+        // Debug edge case
+        if ($record->name === 'Marmykl Ting') {
+            \Log::info('Marmykl Ting hours breakdown:', [
+                'attendances' => $record->eventAttendees->map(fn($a) => [
+                    'time_in' => $a->time_in,
+                    'time_out' => $a->time_out,
+                    'encoding_type' => $a->encoding_type,
+                    'volunteer_count' => $a->volunteer_count,
+                    'calculated_hours' => $a->get_totalHrs()
+                ])
+            ]);
+        }
+        
+        return $total;
+    })
+    ->numeric()
+    ->sortable(query: function (Builder $query, string $direction): Builder {
+        return $query->addSelect([
+            'calculated_hours' => EventAttendee::selectRaw('
+                COALESCE(SUM(
+                    CASE 
+                        WHEN time_in IS NOT NULL AND time_out IS NOT NULL THEN
+                            (TIMESTAMPDIFF(HOUR, time_in, time_out) + (DATEDIFF(time_out, time_in) * 24)) *
+                            CASE WHEN encoding_type = 3 THEN volunteer_count ELSE 1 END
+                        ELSE 0
+                    END
+                ), 0)
+            ')
+            ->whereColumn('event_attendees.attendee_id', 'users.id')
+        ])->orderBy('calculated_hours', $direction);
+    })
+    ->alignEnd(),
             TextColumn::make('latest_participation')
                 ->label('Latest Participation')
                 ->getStateUsing(function ($record) {

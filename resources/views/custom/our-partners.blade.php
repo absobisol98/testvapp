@@ -1,6 +1,6 @@
 @extends('custom.layouts.app')
 
-
+@section('title', 'Our Partners')
 @section('content')
     <div id="StoriesPage" class="w-full flex flex-col items-center justify-center">
 

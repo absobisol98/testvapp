@@ -105,8 +105,7 @@ class TopCompaniesLeaderboard extends BaseWidget
 
             TextColumn::make('name')
                 ->label('Business Unit')
-                ->searchable()
-                ->sortable(),
+                ->searchable(),
 
             TextColumn::make('volunteer_count')
                 ->label('Total Volunteers')
@@ -116,7 +115,11 @@ class TopCompaniesLeaderboard extends BaseWidget
                         ->count();
                 })
                 ->numeric()
-                ->sortable()
+                ->sortable(query: function (Builder $query, string $direction): Builder {
+                    return $query->withCount(['users as volunteer_count' => function ($q) {
+                        $q->where('volunteer', 1);
+                    }])->orderBy('volunteer_count', $direction);
+                })
                 ->alignEnd(),
 
             TextColumn::make('total_hours')
@@ -136,7 +139,26 @@ class TopCompaniesLeaderboard extends BaseWidget
                         return $attendee->get_totalHrs();
                     });
                 })
-                ->sortable()
+                ->sortable(query: function (Builder $query, string $direction): Builder {
+                    return $query->addSelect([
+                        'computed_hours' => EventAttendee::selectRaw('
+                            COALESCE(SUM(
+                                CASE 
+                                    WHEN event_attendees.time_in IS NOT NULL AND event_attendees.time_out IS NOT NULL THEN
+                                        (TIMESTAMPDIFF(HOUR, event_attendees.time_in, event_attendees.time_out) + 
+                                        (DATEDIFF(event_attendees.time_out, event_attendees.time_in) * 24)) *
+                                        CASE WHEN event_attendees.encoding_type = 3 THEN event_attendees.volunteer_count ELSE 1 END
+                                    ELSE 0
+                                END
+                            ), 0)
+                        ')
+                        ->join('users', 'event_attendees.attendee_id', '=', 'users.id')
+                        ->whereColumn('users.company_id', 'companies.id')
+                        ->where('event_attendees.encoding_type', '!=', 3)
+                        ->where('event_attendees.is_approve', true)
+                        ->whereNotNull(['event_attendees.time_in', 'event_attendees.time_out'])
+                    ])->orderBy('computed_hours', $direction);
+                })
                 ->alignEnd(),
         ];
     }
