@@ -137,7 +137,7 @@
 </style>
 
 <div class="vreg">
-    <div style="padding:36px 0 80px;">
+    <div style="padding:110px 0 80px;">
         <div class="vreg-wrap">
 
             {{-- Back link --}}

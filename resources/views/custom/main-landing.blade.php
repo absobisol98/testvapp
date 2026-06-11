@@ -140,7 +140,7 @@
 <div class="vapp-page">
 
 {{-- ===================== HERO ===================== --}}
-<section style="background: linear-gradient(180deg,#fff 0%,var(--bg-tint) 100%); overflow: hidden; padding-top: 30px;">
+<section style="background: linear-gradient(180deg,#fff 0%,var(--bg-tint) 100%); overflow: hidden; padding-top: 110px;">
     <div class="vapp-wrap">
         <div class="vapp-hero-grid" style="display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center; padding:60px 0 70px;">
 
