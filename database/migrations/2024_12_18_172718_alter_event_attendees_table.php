@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('event_attendees', function (Blueprint $table) {
             $table->boolean('is_approve')->default(false);
             $table->dateTime('updated_at')->nullable();
-            $table->char('updated_by', 36)->nullable()->index('updated_by');
+            $table->char('updated_by', 36)->nullable()->index();
             $table->foreign(['updated_by'], 'event_attendees_ibfk_4')->references(['id'])->on('users')->onUpdate('cascade')->onDelete('cascade');
 
         });

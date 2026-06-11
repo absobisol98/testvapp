@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,6 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
         Schema::table('events', function (Blueprint $table) {
             $table->foreign(['event_type_id'], 'events_ibfk_1')->references(['id'])->on('event_types')->onUpdate('cascade')->onDelete('set null');
             $table->foreign(['approval_status_id'], 'events_ibfk_2')->references(['id'])->on('event_approval_status')->onUpdate('cascade')->onDelete('set null');
@@ -25,6 +29,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
         Schema::table('events', function (Blueprint $table) {
             $table->dropForeign('events_ibfk_1');
             $table->dropForeign('events_ibfk_2');

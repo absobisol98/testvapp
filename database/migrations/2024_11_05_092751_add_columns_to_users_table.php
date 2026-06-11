@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->text('school_address')->nullable()->after('school');
-            $table->integer('company_id')->nullable()->index('company_id')->after('affiliate_type_id')->nullable();
+            $table->integer('company_id')->nullable()->index()->after('affiliate_type_id')->nullable();
 
             $table->foreign(['company_id'], 'user_company_fk')->references(['id'])->on('companies')->onUpdate('cascade')->onDelete('set null');
 

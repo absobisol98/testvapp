@@ -17,8 +17,8 @@ return new class extends Migration
             $table->dropColumn('deleted_at');
             $table->dropColumn('name');
 
-            $table->unsignedInteger('event_id')->index('event_id');
-            $table->integer('tag_id')->index('tag_id');
+            $table->unsignedInteger('event_id')->index();
+            $table->integer('tag_id')->index();
         });
     }
 

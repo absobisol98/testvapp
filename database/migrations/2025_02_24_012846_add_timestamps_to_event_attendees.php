@@ -6,25 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('event_attendees', function (Blueprint $table) {
-            $table->timestamps();
+            if (!Schema::hasColumn('event_attendees', 'created_at')) {
+                $table->timestamp('created_at')->nullable();
+            }
+            if (!Schema::hasColumn('event_attendees', 'updated_at')) {
+                $table->timestamp('updated_at')->nullable();
+            }
         });
 
-         // Backfill existing records with current timestamp
         \DB::table('event_attendees')->update([
             'created_at' => now(),
             'updated_at' => now(),
         ]);
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('event_attendees', function (Blueprint $table) {

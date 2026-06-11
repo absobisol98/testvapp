@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('event_companies', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('event_id')->index('event_id');
-            $table->integer('company_id')->index('company_id');
+            $table->unsignedInteger('event_id')->index();
+            $table->integer('company_id')->index();
         });
     }
 

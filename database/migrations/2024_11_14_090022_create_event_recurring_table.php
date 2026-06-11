@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('frequency')->nullable();
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
-            $table->char('created_by', 36)->index('created_by');
-            $table->char('updated_by', 36)->nullable()->index('updated_by');
+            $table->char('created_by', 36)->index();
+            $table->char('updated_by', 36)->nullable()->index();
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->useCurrentOnUpdate()->nullable();
             $table->dateTime('deleted_at')->nullable();

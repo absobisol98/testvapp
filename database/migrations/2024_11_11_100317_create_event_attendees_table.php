@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('event_attendees', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('event_id')->index('event_id');
-            $table->string('attendee_id', 36)->index('attendee_id');
-            $table->string('facilitator_id', 36)->nullable()->index('facilitator_id');
+            $table->unsignedInteger('event_id')->index();
+            $table->string('attendee_id', 36)->index();
+            $table->string('facilitator_id', 36)->nullable()->index();
             $table->dateTime('time_in')->nullable();
             $table->dateTime('time_out')->nullable();
         });

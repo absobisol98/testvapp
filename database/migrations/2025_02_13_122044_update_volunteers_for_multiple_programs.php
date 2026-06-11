@@ -23,17 +23,18 @@ return new class extends Migration
     });
 
         // Migrate existing data from users table
-        DB::statement('
+        $now = DB::getDriverName() === 'sqlite' ? "datetime('now')" : 'NOW()';
+        DB::statement("
             INSERT INTO program_volunteer (program_id, volunteer_id, is_primary, created_at, updated_at)
-            SELECT program_id, id, true, NOW(), NOW()
+            SELECT program_id, id, 1, {$now}, {$now}
             FROM users
             WHERE program_id IS NOT NULL
             AND EXISTS (
                 SELECT 1 FROM model_has_roles
                 WHERE model_id = users.id
-                AND role_id = (SELECT id FROM roles WHERE name = "Volunteer")
+                AND role_id = (SELECT id FROM roles WHERE name = 'Volunteer')
             )
-        ');
+        ");
     }
 
     /**

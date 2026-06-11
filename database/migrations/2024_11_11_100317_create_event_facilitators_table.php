@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('event_facilitators', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('event_id')->index('event_id');
-            $table->string('facilitator_id', 36)->index('facilitator_id');
+            $table->unsignedInteger('event_id')->index();
+            $table->string('facilitator_id', 36)->index();
         });
     }
 

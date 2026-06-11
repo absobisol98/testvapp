@@ -68,6 +68,7 @@ class Event extends Model implements HasMedia
 		'recurrence_type_id' => 'int',
 		'start_date' => 'datetime',
 		'end_date' => 'datetime',
+		'registration_end_date' => 'datetime',
 		'program_id' => 'int',
 		'approval_status_id' => 'int',
 		'sign_up_approval_required' => 'bool',
@@ -102,7 +103,8 @@ class Event extends Model implements HasMedia
         'created_at',
         'updated_at',
 		'is_published',
-		'is_featured'
+		'is_featured',
+		'registration_end_date',
 	];
 
 	public function event_type()

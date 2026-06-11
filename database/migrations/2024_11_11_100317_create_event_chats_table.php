@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('event_chats', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('event_id')->index('event_id');
+            $table->unsignedInteger('event_id')->index();
             $table->text('message')->nullable();
-            $table->string('sender_id', 36)->index('sender_id');
+            $table->string('sender_id', 36)->index();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
         });

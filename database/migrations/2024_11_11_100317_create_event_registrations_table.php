@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('event_registrations', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('event_id')->index('event_id');
-            $table->string('volunteer_id', 36)->index('volunteer_id');
-            $table->unsignedInteger('slot_type_id')->index('slot_type_id');
+            $table->unsignedInteger('event_id')->index();
+            $table->string('volunteer_id', 36)->index();
+            $table->unsignedInteger('slot_type_id')->index();
             $table->boolean('is_approved')->nullable()->default(false);
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->nullable()->useCurrent();
