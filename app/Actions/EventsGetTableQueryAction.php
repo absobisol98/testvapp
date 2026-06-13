@@ -55,6 +55,27 @@ class EventsGetTableQueryAction
 
         }
 
+        // For recurring series, show only the next upcoming instance (or most recent past one)
+        $events->where(function ($q) {
+            $q->whereNull('event_recurring_id')
+              ->orWhereIn('id', function ($sub) {
+                  // Per series: prefer the earliest future event; fall back to latest past
+                  $sub->selectRaw('
+                      COALESCE(
+                          (SELECT e2.id FROM events e2
+                           WHERE e2.event_recurring_id = events.event_recurring_id
+                             AND e2.start_date >= NOW()
+                           ORDER BY e2.start_date ASC LIMIT 1),
+                          (SELECT e3.id FROM events e3
+                           WHERE e3.event_recurring_id = events.event_recurring_id
+                           ORDER BY e3.start_date DESC LIMIT 1)
+                      )')
+                      ->from('events')
+                      ->whereNotNull('event_recurring_id')
+                      ->groupBy('event_recurring_id');
+              });
+        });
+
         return $events;
     }
 }

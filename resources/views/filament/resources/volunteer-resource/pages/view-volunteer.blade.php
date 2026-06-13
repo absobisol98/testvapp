@@ -61,16 +61,29 @@
 
 
                     <div>
-                        @if($user->volunteer_id)
-                            <span class="inline-block px-3 py-1 mb-2 text-xs font-bold tracking-widest text-white rounded-full"
-                                  style="background:#005096;">
-                                {{ $user->volunteer_id }}
-                            </span>
-                        @endif
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                            @if($user->volunteer_id)
+                                <span class="inline-block px-3 py-1 text-xs font-bold tracking-widest text-white rounded-full"
+                                      style="background:#005096;">
+                                    {{ $user->volunteer_id }}
+                                </span>
+                            @endif
+                            @if($canEdit)
+                                <a href="{{ $editUrl }}"
+                                   class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-white rounded-full hover:opacity-80 transition"
+                                   style="background:#F55E1D;">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2a2 2 0 01.586-1.414z"/>
+                                    </svg>
+                                    Edit Profile
+                                </a>
+                            @endif
+                        </div>
                         <p class="text-[20px] font-[500] capitalize">{{ $user->name }}</p>
                         <p><span class="text-[14px] font-[300] font-bold">Member Since:</span>
                             {{ $user->created_at->format('F j, Y') }}</p>
-                        <p class="text-[18px] font-bold text-[#F55E1D]">LEVEL: 1</p>
+                        <p class="text-[18px] font-bold text-[#F55E1D]">{{ $badges['current_rank']['name'] ?? 'Volunteer' }}</p>
                     </div>
                 </div>
 
@@ -132,6 +145,26 @@
             </div>
 
             <div class="w-full border-t border-[#E1E1E1] mt-8"></div>
+
+            {{-- Stat Cards --}}
+            <div class="w-full grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
+                    <p class="text-2xl font-bold text-[#005096]">{{ number_format($totalHours, 1) }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Total Hours</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
+                    <p class="text-2xl font-bold text-[#005096]">{{ $totalOpportunities }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Events Attended</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
+                    <p class="text-2xl font-bold text-[#F55E1D]">{{ $badges['points'] }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Volunteer Points</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
+                    <p class="text-2xl font-bold text-[#005096]">{{ $currentStreak }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Current Streak</p>
+                </div>
+            </div>
         </div>
 
         {{-- Profile Details Tabs --}}
@@ -255,13 +288,11 @@
                         <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
                         @php
                             if($user->program_id != null){
-                                $program_name = DB::table('programs')->where('id', $user->program_id)->first()->name;
+                                $program_name = DB::table('programs')->where('id', $user->program_id)->first()->name ?? 'N/A';
                             }else{
                                 $program_name = 'N/A';
                             }
-
                         @endphp
-
                         <div class="shadow-md p-8">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-1 flex flex-col items-start justify-center gap-1">
@@ -271,7 +302,43 @@
                         </div>
                     </div>
 
-                    {{-- @dd(auth()->user()) --}}
+                    {{-- Skills --}}
+                    @if(!empty($user->skills))
+                    <div class="w-full">
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Skills</p>
+                        <div class="shadow-md p-8">
+                            <div class="flex flex-wrap gap-2">
+                                @foreach((array) $user->skills as $skill)
+                                    <span class="inline-block px-3 py-1 text-sm font-medium rounded-full text-white"
+                                          style="background:#005096;">
+                                        {{ $skill }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Participation --}}
+                    <div class="w-full">
+                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Activity Summary</p>
+                        <div class="shadow-md p-8">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="flex flex-col gap-1">
+                                    <p class="text-sm text-gray-500">Total Hours</p>
+                                    <p class="text-xl font-bold text-[#005096]">{{ number_format($totalHours, 1) }}</p>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <p class="text-sm text-gray-500">Events Attended</p>
+                                    <p class="text-xl font-bold text-[#005096]">{{ $totalOpportunities }}</p>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <p class="text-sm text-gray-500">Participation Rate</p>
+                                    <p class="text-xl font-bold text-[#005096]">{{ $participationFrequency }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
 

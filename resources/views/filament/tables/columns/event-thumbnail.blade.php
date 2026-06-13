@@ -50,6 +50,9 @@
             <span class="text-xs font-semibold px-2 py-0.5 rounded-full {{ $typeBadge['color'] }}">
                 {{ $typeBadge['label'] }}
             </span>
+            @if($record->event_recurring_id)
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">↻ Recurring</span>
+            @endif
             @if($isFinished)
                 <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">Completed</span>
             @elseif($isOngoing)
