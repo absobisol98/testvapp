@@ -149,7 +149,7 @@ class Event extends Model implements HasMedia
 
 	public function facilitators()
 	{
-        return $this->BelongsToMany(User::class, 'event_facilitators', 'event_id', 'facilitator_id');
+        return $this->belongsToMany(User::class, 'event_facilitators', 'event_id', 'facilitator_id');
 	}
 
 	public function registrations()
@@ -176,12 +176,12 @@ class Event extends Model implements HasMedia
 
     public function created_by_user(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function updated_by_user(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     // This gets the parent event
@@ -191,12 +191,12 @@ class Event extends Model implements HasMedia
     }
     public function companies(): BelongsToMany
     {
-        return $this->BelongsToMany(Company::class, 'event_companies', 'event_id', 'company_id')
+        return $this->belongsToMany(Company::class, 'event_companies', 'event_id', 'company_id')
             ->withTimestamps();
     }
     public function tags(): BelongsToMany
     {
-        return $this->BelongsToMany(TagsEvent::class, 'event_tags', 'event_id', 'tag_id');
+        return $this->belongsToMany(TagsEvent::class, 'event_tags', 'event_id', 'tag_id');
     }
 
 	public function notifiable()
