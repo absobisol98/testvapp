@@ -35,7 +35,7 @@ class ViewVolunteer extends Page
             ->label('Edit Profile')
             ->icon('heroicon-o-pencil')
             ->url(fn () => VolunteerResource::getUrl('edit', ['record' => $this->record]))
-            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasRole('Ayala Super Admin'))
+            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasActiveRole('Ayala Super Admin'))
             ->color('warning'),
         ];
 
@@ -83,7 +83,7 @@ class ViewVolunteer extends Page
             'nextHourGoal' => $nextHourGoal,
             'nextOppGoal' => $nextOppGoal,
             'participationFrequency' => $user->getParticipationFrequency(),
-            'canEdit' => auth()->id() == $this->record->id || auth()->user()->hasRole(['Ayala Super Admin', 'admin']),
+            'canEdit' => auth()->id() == $this->record->id || auth()->user()->isAdminRole(),
             'editUrl' => VolunteerResource::getUrl('edit', ['record' => $this->record]),
         ];
     }

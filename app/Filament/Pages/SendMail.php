@@ -52,7 +52,7 @@ class SendMail extends Page implements HasForms
     {
         $user = Auth::user();
 
-        if ($user->hasRole(['admin', 'Ayala Super Admin'])) {
+        if ($user->isAdminRole()) {
             return [
                 '1' => 'All Volunteers',
                 '2' => 'Business Unit',
@@ -70,7 +70,7 @@ class SendMail extends Page implements HasForms
     {
         $user = Auth::user();
 
-        if ($user->hasRole(['admin', 'Ayala Super Admin'])) {
+        if ($user->isAdminRole()) {
             return Company::pluck('name', 'id')->toArray();
         }
 
@@ -83,7 +83,7 @@ class SendMail extends Page implements HasForms
     {
         $user = Auth::user();
 
-        if ($user->hasRole(['admin', 'Ayala Super Admin'])) {
+        if ($user->isAdminRole()) {
             return Event::pluck('title', 'id')->toArray();
         }
 
@@ -149,7 +149,7 @@ class SendMail extends Page implements HasForms
         $user = Auth::user();
 
         // Validate user has permission to send emails
-        if (!$user->hasRole(['admin', 'Ayala Super Admin'])) {
+        if (!$user->isAdminRole()) {
             if ($mail_info['filter_type'] == 1) {
                 // Prevent non-admin users from sending to all volunteers
                 Notification::make()

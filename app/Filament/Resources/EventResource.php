@@ -130,7 +130,7 @@ class EventResource extends Resource implements HasShieldPermissions
                                 Forms\Components\Toggle::make('is_public')
                                     ->label('Open to All Business Units')
                                     ->helperText('Allows volunteers from other Business Units to see and join this opportunity.')
-                                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
+                                    ->visible(fn () => auth()->user()->isAdminRole()),
                             ]),
 
                         // ── Tab 2: Schedule ──────────────────────────────────────
@@ -563,7 +563,7 @@ class EventResource extends Resource implements HasShieldPermissions
                     ->label('Export Registrants')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('gray')
-                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->visible(fn () => auth()->user()->isAdminRole())
                     ->action(fn () => Excel::download(new EventRegistrantsExport(), 'event-registrants-' . now()->format('Y-m-d') . '.xlsx')),
             ])
             ->bulkActions([
@@ -571,7 +571,7 @@ class EventResource extends Resource implements HasShieldPermissions
                     Tables\Actions\BulkAction::make('export_registrants')
                         ->label('Export Registrants')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                        ->visible(fn () => auth()->user()->isAdminRole())
                         ->action(fn (\Illuminate\Support\Collection $records) =>
                             Excel::download(
                                 new EventRegistrantsExport($records->pluck('id')->toArray()),
