@@ -64,20 +64,20 @@
                     <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                         <a href="{{ route('filament.admin.resources.events.index') }}"
                            class="hover:text-[#FF9141] transition-colors duration-200">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $availableOpportunities }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $partnerAvailableOpportunities }}</p>
                             <p class="text-sm font-bold text-[#03498D]">AVAILABLE OPPORTUNITIES</p>
                         </a>
                     </div>
                     <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                         <a href="{{ route('filament.admin.resources.events.index') }}"
                            class="hover:text-[#FF9141] transition-colors duration-200">
-                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $upcomingCount }}</p>
+                            <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $partnerUpcomingOpportunities }}</p>
                             <p class="text-sm font-bold text-[#03498D]">UPCOMING OPPORTUNITIES</p>
                         </a>
                     </div>
                     <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
-                        <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalVolunteerHours }}</p>
-                        <p class="text-sm font-bold text-[#03498D]">TOTAL HOURS RENDERED</p>
+                        <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $partnerHours }}</p>
+                        <p class="text-sm font-bold text-[#03498D]">TOTAL BUSINESS UNIT HOURS</p>
                     </div>
                 </div>
                 @endif

@@ -44,7 +44,35 @@ class HeroBannerWidget extends Widget
             ->sum(fn ($a) => $a->get_totalHrs());
 
         // External Partner-facing
-        $upcomingCount = Event::where('start_date', '>=', now())->count();
+        $bu          = $user->currentBU();
+        $buCompanyId = $bu?->company_id;
+
+        $partnerEventScope = function ($q) use ($buCompanyId) {
+            $q->where(function ($inner) use ($buCompanyId) {
+                if ($buCompanyId) {
+                    $inner->whereHas('companies', fn ($sq) => $sq->where('companies.id', $buCompanyId));
+                }
+                $inner->orWhere('is_public', true);
+            });
+        };
+
+        $partnerAvailableOpportunities = Event::where(function ($q) {
+            $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+        })->where($partnerEventScope)->count();
+
+        $partnerUpcomingOpportunities = Event::where('start_date', '>=', now())
+            ->where($partnerEventScope)
+            ->count();
+
+        $partnerHours = 0;
+        if ($buCompanyId) {
+            $buVolunteerIds = User::where('company_id', $buCompanyId)->pluck('id');
+            $partnerHours = EventAttendee::where('is_approve', true)
+                ->whereNotNull(['time_in', 'time_out'])
+                ->whereIn('attendee_id', $buVolunteerIds)
+                ->get()
+                ->sum(fn ($a) => $a->get_totalHrs());
+        }
 
         $bgImg = match (true) {
             $activeRole === 'Volunteer'          => 'img/ayala-foundation-bg.jpg',
@@ -60,8 +88,10 @@ class HeroBannerWidget extends Widget
             'myCertificates'          => $myCertificates,
             'totalVolunteers'         => $totalVolunteers,
             'totalVolunteerHours'     => number_format($totalVolunteerHours, 1),
-            'upcomingCount'           => $upcomingCount,
-            'bgImg'                   => $bgImg,
+            'partnerAvailableOpportunities'  => $partnerAvailableOpportunities,
+            'partnerUpcomingOpportunities'   => $partnerUpcomingOpportunities,
+            'partnerHours'                   => number_format($partnerHours, 1),
+            'bgImg'                          => $bgImg,
         ];
     }
 }
