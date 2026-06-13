@@ -7,6 +7,10 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\MenuResource;
+use App\Filament\Resources\EventResource;
+use App\Filament\Resources\VolunteerResource;
+use App\Filament\Resources\CertificateResource;
+use App\Filament\Resources\BusinessUnitResource;
 use App\Filament\Widgets\Welcome;
 use App\Livewire\MyProfileExtended;
 use App\Settings\GeneralSettings;
@@ -113,6 +117,51 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->navigation(function (\Filament\Navigation\NavigationBuilder $builder): \Filament\Navigation\NavigationBuilder {
+                $user = auth()->user();
+
+                // Guests and admins see everything (respects each resource's shouldRegisterNavigation)
+                if (!$user || $user->isAdminRole()) {
+                    return $builder->includingDefaultItems();
+                }
+
+                // Non-admin roles: build an explicit, minimal navigation
+                $isVolunteer = $user->hasActiveRole('Volunteer');
+
+                $items = [
+                    \Filament\Navigation\NavigationItem::make($isVolunteer ? 'My Volunteer Opportunities' : 'Volunteer Opportunities')
+                        ->url(EventResource::getUrl('index'))
+                        ->icon('heroicon-s-calendar-date-range')
+                        ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.events.*')),
+
+                    \Filament\Navigation\NavigationItem::make($isVolunteer ? 'My Volunteer Profile' : 'Volunteers')
+                        ->url($isVolunteer
+                            ? VolunteerResource::getUrl('view', ['record' => $user->id])
+                            : VolunteerResource::getUrl('index'))
+                        ->icon('heroicon-o-bell')
+                        ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.volunteers.*')),
+
+                    \Filament\Navigation\NavigationItem::make('Certificates')
+                        ->url(CertificateResource::getUrl('index'))
+                        ->icon('heroicon-o-document-check')
+                        ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.certificates.*')),
+                ];
+
+                if (!$isVolunteer) {
+                    $buLabel = $user->hasActiveRole('External Partner') ? 'My Business Unit' : 'Business Units';
+                    $items[] = \Filament\Navigation\NavigationItem::make($buLabel)
+                        ->url(BusinessUnitResource::getUrl('index'))
+                        ->icon('heroicon-o-users')
+                        ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.business-units.*'));
+
+                    $items[] = \Filament\Navigation\NavigationItem::make('QR Scanner')
+                        ->url(\App\Filament\Pages\QrScanner::getUrl())
+                        ->icon('heroicon-o-qr-code')
+                        ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.qr-scanner'));
+                }
+
+                return $builder->items($items);
+            })
             ->renderHook(
                 PanelsRenderHook::BODY_START,
                 fn (): \Illuminate\Contracts\View\View => view('filament.partials.preloader'),
