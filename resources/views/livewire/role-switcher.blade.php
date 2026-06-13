@@ -1,3 +1,4 @@
+<div>
 @if($availableRoles->count() > 1)
 <div class="flex items-center px-3 py-1" x-data="{ open: false }">
     <div class="relative">
@@ -33,3 +34,4 @@
     </div>
 </div>
 @endif
+</div>
