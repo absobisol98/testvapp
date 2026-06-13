@@ -28,7 +28,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\Action;
-use Tapp\FilamentGoogleAutocomplete\Forms\Components\GoogleAutocomplete;
 use Filament\Infolists\Components\TextEntry;
 
 class EventResource extends Resource implements HasShieldPermissions
@@ -228,17 +227,10 @@ class EventResource extends Resource implements HasShieldPermissions
                                             ->inline(),
 
                                         // ── Onsite fields ──
-                                        GoogleAutocomplete::make('google_search')
-                                            ->label('Search Location')
-                                            ->countries(['PH'])
-                                            ->withFields([
-                                                Forms\Components\TextInput::make('location')
-                                                    ->extraInputAttributes([
-                                                        'data-google-field' => '{formatted_address}',
-                                                    ])
-                                                    ->columnSpan('full')
-                                                    ->readOnly(),
-                                            ])
+                                        Forms\Components\TextInput::make('location')
+                                            ->label('Location / Address')
+                                            ->placeholder('Enter the full address')
+                                            ->columnSpanFull()
                                             ->visible(fn ($get) => $get('event_format') !== 'virtual'),
 
                                         Forms\Components\TextInput::make('location_details')
