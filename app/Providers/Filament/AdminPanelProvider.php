@@ -115,7 +115,7 @@ class AdminPanelProvider extends PanelProvider
                 fn (): \Illuminate\Contracts\View\View => view('filament.partials.preloader'),
             )
             ->renderHook(
-                PanelsRenderHook::BODY_START,
+                PanelsRenderHook::BODY_END,
                 fn (): \Illuminate\Contracts\View\View => view('filament.partials.guided-tour'),
             )
             ->renderHook(
