@@ -58,9 +58,6 @@ class MyProfileExtended extends MyProfileComponent
                         ->avatar()
                         ->required(),
                     Grid::make()->schema([
-                        TextInput::make('username')
-                            ->disabled()
-                            ->required(),
                         TextInput::make('email')
                             ->disabled()
                             ->required(),
