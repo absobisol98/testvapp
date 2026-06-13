@@ -28,8 +28,8 @@ final class EventUpdateAction
     {
         $data['updated_by'] = auth()->id();
         $data['updated_at'] = now();
-        $data['start_date'] = $data['date'].' '.$data['start_time'].':00';
-        $data['end_date'] = $data['date'].' '.$data['end_time'].':00';
+        // start_date and end_date come directly from DateTimePicker fields
+        unset($data['date'], $data['start_time'], $data['end_time']);
 
         $new_start_date = Carbon::parse($record->start_date)->diffInSeconds($data['start_date'], false);
         $new_end_date = Carbon::parse($record->end_date)->diffInSeconds($data['end_date'], false);

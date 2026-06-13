@@ -25,8 +25,8 @@ final class EventCreateAction
         if(auth()->user()->hasRole('External Partner')){
             $data['is_published'] = false;
         }
-        $data['start_date'] = $data['date'].' '.$data['start_time'].':00';
-        $data['end_date'] = $data['date'].' '.$data['end_time'].':00';
+        // start_date and end_date come directly from DateTimePicker fields
+        unset($data['date'], $data['start_time'], $data['end_time']);
 
         if($data['recurrence_type_id'] == 2){ // Recurring
 

@@ -76,6 +76,7 @@ class Event extends Model implements HasMedia
 		'is_published' => 'bool',
 		'is_featured' => 'bool',
 		'is_public' => 'bool',
+		'selected_days' => 'array',
 	];
 
 	protected $fillable = [
@@ -106,6 +107,8 @@ class Event extends Model implements HasMedia
 		'is_featured',
 		'is_public',
 		'registration_end_date',
+		'event_format',
+		'meeting_link',
 	];
 
 	public function event_type()
