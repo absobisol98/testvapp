@@ -1,69 +1,78 @@
-# Role Switching
+# Role Switching & Role Definitions
 
-This document explains how multi-role users can switch between their roles without logging out.
+This document explains the role system, intended permission boundaries, and how multi-role users can switch between roles without logging out.
 
-## Overview
+## Role Definitions
 
-A user can hold multiple Spatie Permission roles (e.g., `admin` **and** `Volunteer`). At any time one role is "active," which controls what navigation items, labels, and data scopes they see inside the Filament admin panel.
+| Role | Who they are | What they manage |
+|------|-------------|-----------------|
+| `Ayala Super Admin` | Ayala Foundation IT / system owners | Full access to everything — bypasses all permission checks (Filament Shield super-admin) |
+| `admin` | BU staff who create and manage volunteer opportunities | Create/edit opportunities for their Business Unit, manage registrations, send announcements |
+| `author` | Content team members | Create/publish blog posts and announcements **only** — NOT volunteer opportunities. Same dashboard as `admin` but Shield permissions should restrict them to content resources |
+| `Facilitator` | Nominated by admins to run events | Scan QR attendance, manage attendees for events they are assigned to; cannot create opportunities |
+| `External Partner` | External company admins | Manage opportunities and volunteers scoped to their Business Unit; have their own workspace view |
+| `Volunteer` | End-user volunteers | Register for opportunities, view own profile and history, earn certificates |
 
-The active role is stored in the PHP session and persists across page loads until the user switches again or logs out.
+> **`admin` vs `author`:** These are **not duplicates**. An `admin` manages volunteer opportunities; an `author` manages blog/content. A user can hold both if they do both jobs. Enforce the boundary via Filament Shield permissions — `author` should have access to the blog resource, NOT to EventResource create/edit.
 
-## Roles Available
+## Default Active-Role Priority
 
-| Role | What they see |
-|------|---------------|
-| `super_admin` | Full access to everything |
-| `Ayala Super Admin` | Same as super_admin |
-| `admin` | Manage events, volunteers, reports |
-| `Facilitator` | Assigned event management |
-| `External Partner` | Company-scoped view |
-| `Volunteer` | Own profile & registrations only |
-
-## How It Works
-
-### Default role on login
-
-When a user logs in, `SetActiveRole` middleware runs on the first authenticated request and writes the default active role to the session. Priority order:
+When a user logs in, the first role that matches in this list becomes active:
 
 ```
-super_admin → Ayala Super Admin → admin → Facilitator → External Partner → Volunteer
+Ayala Super Admin → admin → author → Facilitator → External Partner → Volunteer
 ```
 
-The highest-priority role the user **actually holds** becomes the default.
+## Dashboard per Role
 
-### Switching roles
+| Active Role | Dashboard widgets shown |
+|-------------|------------------------|
+| `Ayala Super Admin` | AFI Admin Opportunities · Business Unit overview · Volunteers table |
+| `admin` | Same as Ayala Super Admin |
+| `author` | Same as admin (restrict via Shield permissions) |
+| `Facilitator` | **My Facilitated Events** table (events they are nominated for) |
+| `External Partner` | Partner ongoing opportunities · Partner opportunities · Facilitator list |
+| `Volunteer` | Ads · Upcoming opportunities feed |
 
-A dropdown appears in the top-right of the topbar **only when the user holds more than one role**. Clicking a role name calls `RoleSwitcher::switchRole()`, which:
+## How Role Switching Works
+
+A dropdown appears in the topbar **only when the user holds more than one role**. Clicking a role:
 
 1. Validates the user actually holds that role.
-2. Updates `active_role` in the session.
-3. Reloads the current page so navigation and data scopes refresh.
+2. Updates `active_role` in the PHP session.
+3. Reloads the current page so navigation, labels, and data scopes refresh.
 
 ### Where active-role checks are used
 
-| File | Method | Effect |
-|------|--------|--------|
-| `VolunteerResource` | `getNavigationLabel()` | Shows "My Volunteer Profile" vs "Volunteers" |
-| `VolunteerResource` | `getNavigationUrl()` | Links directly to own profile vs the list |
-| `VolunteerResource` | `table()->modifyQueryUsing()` | Restricts list to own record when not an admin role |
-| `EventResource` | `getNavigationLabel()` | Shows "My Volunteer Opportunities" vs "Volunteer Opportunities" |
+| File | Effect |
+|------|--------|
+| `dashboard.blade.php` | Shows role-specific widget blocks |
+| `HeroBannerWidget` | Shows role-specific stat cards |
+| `VolunteerResource::getNavigationLabel()` | "My Volunteer Profile" vs "Volunteers" |
+| `VolunteerResource::getNavigationUrl()` | Own profile vs list index |
+| `VolunteerResource` table query | Restricts to own record for non-admin roles |
+| `EventResource::getNavigationLabel()` | "My Volunteer Opportunities" vs "Volunteer Opportunities" |
+| `User::currentBU()` | Returns BU only when active role is External Partner |
 
-### Adding new role-aware behaviour
+### Rule of thumb
 
-Use `auth()->user()->hasActiveRole('RoleName')` anywhere you previously used `hasRole('RoleName')` for **view-level** differentiation. Keep using `hasRole()` for **permission guards** (creating, deleting, etc.) where the check should be independent of which role is currently active.
+- Use `hasActiveRole()` for **view-level** differentiation (navigation, labels, dashboard blocks).
+- Use `hasRole()` for **permission guards** (can they create/delete?) — these should be independent of which role is active.
 
 ## Key Files
 
 ```
-app/Models/User.php                              — activeRole(), hasActiveRole(), switchRole(), availableRoles()
-app/Http/Middleware/SetActiveRole.php            — seeds session on first authenticated request
-app/Livewire/RoleSwitcher.php                   — Livewire component handling the dropdown
-resources/views/livewire/role-switcher.blade.php — dropdown UI
-app/Providers/Filament/AdminPanelProvider.php   — registers middleware + topbar render hook
+app/Models/User.php                               — activeRole(), hasActiveRole(), switchRole(), availableRoles(), currentBU()
+app/Http/Middleware/SetActiveRole.php             — seeds session on first authenticated request
+app/Livewire/RoleSwitcher.php                    — Livewire component handling the dropdown
+resources/views/livewire/role-switcher.blade.php  — dropdown UI
+app/Providers/Filament/AdminPanelProvider.php    — registers middleware + topbar render hook
+resources/views/filament/pages/dashboard.blade.php — role-aware widget blocks
 ```
 
 ## Adding a New Role
 
-1. Create the role via `php artisan shield:generate` or a seeder.
-2. Decide where it falls in the priority list in `User::activeRole()` and add it.
-3. Use `hasActiveRole('YourRole')` in resources/pages to customise the experience.
+1. Create the role: `php artisan shield:generate` or a seeder/migration.
+2. Add it to the priority list in `User::activeRole()`.
+3. Add a dashboard block in `dashboard.blade.php` gated by `$activeRole === 'YourRole'`.
+4. Use `hasActiveRole('YourRole')` in resources/pages to customise the experience.

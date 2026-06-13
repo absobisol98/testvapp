@@ -24,7 +24,7 @@ class TopVolunteers extends BaseWidget
             ->with('companies');
 
         // If user is not super admin, only show volunteers from their companies
-        if (!auth()->user()->hasRole('super_admin')) {
+        if (!auth()->user()->hasRole('Ayala Super Admin')) {
             $adminCompanyIds = auth()->user()->adminCompanies()->pluck('companies.id');
             $query->whereHas('companies', function ($query) use ($adminCompanyIds) {
                 $query->whereIn('companies.id', $adminCompanyIds);
@@ -58,7 +58,7 @@ class TopVolunteers extends BaseWidget
 
     protected function getTableFilters(): array
     {
-        $companyOptions = auth()->user()->hasRole('super_admin')
+        $companyOptions = auth()->user()->hasRole('Ayala Super Admin')
             ? Company::pluck('name', 'id')
             : auth()->user()->adminCompanies()->pluck('name', 'id');
 

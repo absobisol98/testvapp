@@ -156,7 +156,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             return $sessionRole;
         }
 
-        $priority = ['super_admin', 'Ayala Super Admin', 'admin', 'author', 'Facilitator', 'External Partner', 'Volunteer'];
+        $priority = ['Ayala Super Admin', 'admin', 'author', 'Facilitator', 'External Partner', 'Volunteer'];
         foreach ($priority as $role) {
             if ($available->contains($role)) {
                 return $role;
@@ -222,7 +222,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $totalHrs;
     }
     public function currentBU(){
-        if($this->hasRole('External Partner')){
+        if($this->hasActiveRole('External Partner')){
             $id = DB::table('business_unit_has_external_admin')->where('user_id',$this->id)->first();
             if($id){
                 return BusinessUnit::find($id->business_unit_id);

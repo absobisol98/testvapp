@@ -74,8 +74,8 @@ class Event extends Model implements HasMedia
 		'sign_up_approval_required' => 'bool',
 		'attachment_required' => 'bool',
 		'is_published' => 'bool',
-		'is_featured' => 'bool'
-
+		'is_featured' => 'bool',
+		'is_public' => 'bool',
 	];
 
 	protected $fillable = [
@@ -104,6 +104,7 @@ class Event extends Model implements HasMedia
         'updated_at',
 		'is_published',
 		'is_featured',
+		'is_public',
 		'registration_end_date',
 	];
 
@@ -207,7 +208,7 @@ class Event extends Model implements HasMedia
 			$notifiable[$facilitator->id] = $facilitator;
 		}
 
-		foreach(User::role('super_admin')->get() as $super_admin){
+		foreach(User::role('Ayala Super Admin')->get() as $super_admin){
 			$notifiable[$super_admin->id] = $super_admin;
 		}
 		return $notifiable;

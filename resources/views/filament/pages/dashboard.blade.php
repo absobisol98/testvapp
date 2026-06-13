@@ -1,6 +1,5 @@
 <x-filament-panels::page>
     <style>
-        /* For Volunteer Dashboard Container(Start) */
         .fi-main {
             margin: 0px !important;
             padding: 0px 0px !important;
@@ -15,39 +14,32 @@
         .fi-page section {
             padding: 0px 0px 32px 0px !important;
         }
-
-        /* For Volunteer Dashboard Container(End) */
     </style>
+
+    @php $activeRole = auth()->user()->activeRole(); @endphp
 
     <div class="w-full flex flex-col gap-8">
         @livewire(\App\Filament\Widgets\HeroBannerWidget::class)
 
-
-        {{-- If the user is a Volunteer --}}
-        @if (auth()->user()->hasRole('Volunteer'))
+        @if($activeRole === 'Volunteer')
             @livewire(\App\Filament\Widgets\AdsDashboardWidget::class)
             @livewire(\App\Filament\Widgets\UpcomingOpportunityWidget::class)
-            {{-- @livewire(\App\Filament\Widgets\RecentOpportunitiesWidget::class) --}}
         @endif
 
-        {{-- If the user is an AFI Admin --}}
-        @if (auth()->user()->hasRole('super_admin'))
+        @if(in_array($activeRole, ['Ayala Super Admin', 'admin', 'author']))
             @livewire(\App\Filament\Widgets\AFIAdminOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\BusinessUnitOrExternalPartersWidget::class)
             @livewire(\App\Filament\Widgets\VolunteersWidget::class)
         @endif
 
-        @if (auth()->user()->hasRole('Ayala Super Admin'))
-        @livewire(\App\Filament\Widgets\AFIAdminOpportunitiesWidget::class)
-        @livewire(\App\Filament\Widgets\BusinessUnitOrExternalPartersWidget::class)
-        @livewire(\App\Filament\Widgets\VolunteersWidget::class)
-        @endif
-
-        {{-- If the user is a Partner --}}
-        @if (auth()->user()->hasRole('External Partner'))
+        @if($activeRole === 'External Partner')
             @livewire(\App\Filament\Widgets\PartnersOnGoingOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\PartnersMyOpportunitiesWidget::class)
             @livewire(\App\Filament\Widgets\FacilitatorWidget::class)
+        @endif
+
+        @if($activeRole === 'Facilitator')
+            @livewire(\App\Filament\Widgets\MyFacilitatedEventsWidget::class)
         @endif
     </div>
 </x-filament-panels::page>

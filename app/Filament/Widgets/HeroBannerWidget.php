@@ -2,12 +2,13 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\BusinessUnit;
+use App\Models\Certificate;
 use App\Models\Event;
-use App\Models\User;
-use App\Models\Program;
-use Filament\Widgets\Widget;
 use App\Models\EventAttendee;
+use App\Models\EventRegistration;
+use App\Models\User;
+use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\DB;
 
 class HeroBannerWidget extends Widget
 {
@@ -15,146 +16,109 @@ class HeroBannerWidget extends Widget
 
     protected function getViewData(): array
     {
-        $volunteer = User::role('volunteer')->count();
-        $businessunit = BusinessUnit::count();
-        $opportunity = Event::with('slots', 'tags', 'program')
-            ->orderBy('created_at', 'desc')
-            ->first();
+        $user       = auth()->user();
+        $activeRole = $user->activeRole();
 
-        // Calculate Ayala Member hours
-        $ayalaHours = EventAttendee::whereHas('attendee', function ($query) {
-                $query->where('affiliate_type_id', 1); // Ayala members
-            })
-            ->whereNotNull(['time_in', 'time_out'])
-            ->where('is_approve', true)
-            ->get()
-            ->sum(function ($attendance) {
-                return $attendance->get_totalHrs();
-            });
+        // Volunteer-facing stats
+        $availableOpportunities = Event::where(function ($q) {
+            $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+        })->count();
 
-        // Calculate Non-Ayala Member hours
-        $nonAyalaHours = EventAttendee::whereHas('attendee', function ($query) {
-                $query->where('affiliate_type_id', 2); // Non-Ayala members
-            })
-            ->whereNotNull(['time_in', 'time_out'])
-            ->where('is_approve', true)
-            ->get()
-            ->sum(function ($attendance) {
-                return $attendance->get_totalHrs();
-            });
+        // Exclude Rejected registrations so the count reflects real upcoming commitments
+        $myUpcomingOpportunities = EventRegistration::where('volunteer_id', $user->id)
+            ->whereHas('event', fn ($q) => $q->where('start_date', '>=', now()))
+            ->whereHas('status', fn ($q) => $q->where('name', '!=', 'Rejected'))
+            ->count();
 
-        // Get volunteer counts
-        $ayalaVolunteers = User::where('affiliate_type_id', 1)->count();
-        $nonAyalaVolunteers = User::where('affiliate_type_id', 2)->count();
-        $totalVolunteers = $ayalaVolunteers + $nonAyalaVolunteers;
+        $myHoursRendered = self::sumApprovedHours(
+            EventAttendee::where('attendee_id', $user->id)->where('is_approve', true)
+        );
 
-        $bgImg = '';
+        $myCertificates = Certificate::where('attendee_id', $user->id)->count();
 
-        $user_created_date = auth()->user()->created_at;
-        $total_hours_since_creation = Event::whereHas('attendees', function ($query) {
-            $query->where('attendee_id', auth()->id())
-                ->where('is_approve', true)
-                ->whereNotNull('time_in')
-                ->whereNotNull('time_out');
-        })
-        ->where('created_at', '>=', $user_created_date)
-        ->with('attendees')
-        ->get()
-        ->sum(function ($event) {
-            return $event->attendees
-                ->where('attendee_id', auth()->id())
-                ->where('is_approve', true)
-                ->sum(function ($attendee) {
-                    return $attendee->get_totalHrs();
-                });
-        });
+        // Admin-facing stats
+        $totalVolunteers = User::role('Volunteer')->count();
 
-        $progNames = array();
-        $count = array();
-        $overall_hrs = 0;
-        $programs = Program::all();
-        foreach ($programs as $program){
-            $tot_hrs = 0;
-            if(!empty( $program->events)){
-                foreach($program->events as $event){
-                    if(!empty( $event->attendees)){
-                        foreach ($event->attendees as $attendee){
-                            if($attendee->time_in && $attendee->time_out){
-                                if($attendee->is_approve){
-                                    $tot_hrs += $attendee->get_totalHrs();
-                                }
-                            }
-                        }
-                    }
+        $totalVolunteerHours = self::sumApprovedHours(
+            EventAttendee::where('is_approve', true)
+        );
+
+        // External Partner-facing
+        $bu          = $user->currentBU();
+        $buCompanyId = $bu?->company_id;
+
+        $partnerEventScope = function ($q) use ($buCompanyId) {
+            $q->where(function ($inner) use ($buCompanyId) {
+                if ($buCompanyId) {
+                    $inner->whereHas('companies', fn ($sq) => $sq->where('companies.id', $buCompanyId));
                 }
-            }
-            if($tot_hrs > 0){
-                $single_count = (double)number_format($tot_hrs,1);
-                array_push($progNames, $program->name .': '. $single_count .' Hrs');
-                array_push($count,$single_count);
-            }
-            $overall_hrs += $tot_hrs;
+                $inner->orWhere('is_public', true);
+            });
+        };
+
+        $partnerAvailableOpportunities = Event::where(function ($q) {
+            $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+        })->where($partnerEventScope)->count();
+
+        $partnerUpcomingOpportunities = Event::where('start_date', '>=', now())
+            ->where($partnerEventScope)
+            ->count();
+
+        $partnerHours = 0;
+        if ($buCompanyId) {
+            $buVolunteerIds = User::where('company_id', $buCompanyId)->pluck('id');
+            $partnerHours = self::sumApprovedHours(
+                EventAttendee::where('is_approve', true)->whereIn('attendee_id', $buVolunteerIds)
+            );
         }
 
-        $currentDate = now();
-
-        $upcoming = Event::query()
-        ->where('start_date', '>=', $currentDate)
-        ->orderBy('start_date', 'asc')
-        ->get();
-
-        $opportunities = Event::with('slots')->orderBy('created_at','desc')->get();
-
-        $totalHours = EventAttendee::whereNotNull(['time_in', 'time_out'])
-            ->get()
-            ->sum(fn($attendance) => $attendance->get_totalHrs());
-
-        // For Volunteer
-        if (false) {
-            $bgImg = 'img/ayala-foundation-bg.jpg';
-
-            // $totalStat1 = 3;
-            // $totalStat2 = 20;
-            // $totalStat3 = 203.51;
-            // $totalStat4 = 200;
-            // $totalStat5 = 0;
-        }
-        // For AFI Admin
-        elseif (false) {
-            $bgImg = 'img/hero-banner-bg_2.jpg';
-            // $totalStat1 = 43;
-            // $totalStat2 = 240;
-            // $totalStat3 = 267.51;
-            // $totalStat4 = 456;
-            // $totalStat5 = 42;
-        }
-        // For partners
-        elseif (true) {
-            $bgImg = 'img/hero-banner-bg_3.jpg';
-            // $totalStat1 = User::role('volunteer')->count();
-            // $totalStat2 = Event::get()->count();
-            // $totalStat3 = 658.51;
-            // $totalStat4 = 980;
-            // $totalStat5 = 223;
-        }
+        $bgImg = match (true) {
+            $activeRole === 'Volunteer'        => 'img/ayala-foundation-bg.jpg',
+            $activeRole === 'External Partner' => 'img/hero-banner-bg_3.jpg',
+            default                            => 'img/hero-banner-bg_2.jpg',
+        };
 
         return [
-            'opportunity' => $opportunity,
-            'businessunit' => $businessunit,
-            'volunteer' => $volunteer,
-            'bgImg' => $bgImg,
-            'overall_hrs' =>  number_format($overall_hrs, 1),
-            'ayala_hours' => number_format($ayalaHours, 1),
-            'non_ayala_hours' => number_format($nonAyalaHours, 1),
-            'total_volunteer_hours' => number_format($ayalaHours + $nonAyalaHours, 1),
-            'ayala_volunteers' => $ayalaVolunteers,
-            'non_ayala_volunteers' => $nonAyalaVolunteers,
-            'total_volunteers' => $totalVolunteers,
-            'total_hours_since_creation' => number_format($total_hours_since_creation, 1),
-            'opportunities' => $opportunities,
-            'upcoming' => $upcoming,
-            'account_created_at' => $user_created_date->format('M d, Y'),
-            'totalHours' => $totalHours,
+            'activeRole'                     => $activeRole,
+            'availableOpportunities'         => $availableOpportunities,
+            'myUpcomingOpportunities'        => $myUpcomingOpportunities,
+            'myHoursRendered'                => number_format($myHoursRendered, 1),
+            'myCertificates'                 => $myCertificates,
+            'totalVolunteers'                => $totalVolunteers,
+            'totalVolunteerHours'            => number_format($totalVolunteerHours, 1),
+            'partnerAvailableOpportunities'  => $partnerAvailableOpportunities,
+            'partnerUpcomingOpportunities'   => $partnerUpcomingOpportunities,
+            'partnerHours'                   => number_format($partnerHours, 1),
+            'bgImg'                          => $bgImg,
         ];
+    }
+
+    /**
+     * Sum volunteer hours efficiently.
+     * On MySQL uses TIMESTAMPDIFF to avoid loading all rows; bulk-encoded
+     * records (encoding_type = 3) are handled separately in PHP since they
+     * multiply hours by volunteer_count.
+     */
+    private static function sumApprovedHours(\Illuminate\Database\Eloquent\Builder $base): float
+    {
+        $base = $base->whereNotNull(['time_in', 'time_out']);
+
+        if (DB::getDriverName() === 'sqlite') {
+            return (float) $base->get()->sum(fn ($a) => $a->get_totalHrs());
+        }
+
+        // Non-bulk: calculate entirely in DB
+        $regularHours = (clone $base)
+            ->where(fn ($q) => $q->whereNull('encoding_type')->orWhere('encoding_type', '!=', 3))
+            ->selectRaw('COALESCE(SUM(TIMESTAMPDIFF(HOUR, time_in, time_out)), 0) as total')
+            ->value('total') ?? 0;
+
+        // Bulk rows: need PHP because hours *= volunteer_count
+        $bulkHours = (clone $base)
+            ->where('encoding_type', 3)
+            ->get(['time_in', 'time_out', 'encoding_type', 'volunteer_count'])
+            ->sum(fn ($a) => $a->get_totalHrs());
+
+        return (float) ($regularHours + $bulkHours);
     }
 }

@@ -57,7 +57,7 @@ class RegistrationsRelationManager extends RelationManager
                 if(auth()->user()->hasRole('External Partner')){ // If not super_admin
                     return $query;
                 }
-                if(!auth()->user()->hasRole('super_admin')){ // If not super_admin
+                if(!auth()->user()->hasRole('Ayala Super Admin')){ // If not Ayala Super Admin
                     $query = $query->where('volunteer_id',auth()->user()->id);
                 }
 

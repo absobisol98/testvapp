@@ -45,8 +45,8 @@ class QrController extends Controller
 
         $facilitator_ids = $event->facilitators()->pluck('id')->toArray();
 
-        // Check if user is authorized (Super Admin or Facilitator)
-        if (!auth()->user()->hasRole('super_admin') && !in_array(auth()->id(), $facilitator_ids)) {
+        // Check if user is authorized (Ayala Super Admin or Facilitator)
+        if (!auth()->user()->hasRole('Ayala Super Admin') && !in_array(auth()->id(), $facilitator_ids)) {
             Notification::make()
                 ->title('Unauthorized Facilitator')
                 ->warning()
