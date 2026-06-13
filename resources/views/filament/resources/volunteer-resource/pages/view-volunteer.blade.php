@@ -1,770 +1,463 @@
 <x-filament-panels::page>
-    <head>
-        <link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet">
-        <!-- Include Swiper CSS and JS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    </head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
-    <style>
-        /* For Profile Page Container(Start) */
-        .fi-main {
-            margin: 0px !important;
-            padding: 0px 0px !important;
-            margin-top: 0px !important;
-            margin-bottom: 0px !important;
-            padding-top: 0px !important;
-            padding-bottom: 0px !important;
-            border-radius: 0px !important;
-            max-width: 100% !important;
-        }
+<style>
+    .fi-main { margin:0!important; padding:0!important; max-width:100%!important; }
+    .fi-page section { padding:0 0 48px 0!important; }
+    .fi-header { display:none; }
+    .profile-tab-btn { transition: all .2s; }
+    .profile-tab-btn.active { color:#005096; border-bottom:3px solid #005096; font-weight:600; }
+    .profile-tab-btn:not(.active) { color:#6B7280; border-bottom:3px solid transparent; }
+    .info-label { font-size:.75rem; font-weight:500; color:#9CA3AF; text-transform:uppercase; letter-spacing:.05em; }
+    .info-value { font-size:1rem; color:#111827; margin-top:.2rem; }
+</style>
 
-        .fi-page section {
-            padding: 0px 0px 32px 0px !important;
-        }
+@php
+    $primaryBlue = '#005096';
+    $accentOrange = '#F55E1D';
+@endphp
 
-        .fi-header {
-            display: none;
-        }
+{{-- ── Hero Banner ─────────────────────────────────────────────────────── --}}
+<div class="w-full" style="background: linear-gradient(135deg, #003d75 0%, #005096 60%, #1A67B1 100%); min-height: 180px; position: relative;">
+    {{-- subtle pattern overlay --}}
+    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 28px 28px;"></div>
+    <div class="relative px-8 pt-10 pb-20 flex items-end gap-6">
+        <div class="w-28 h-28 rounded-full border-4 border-white shadow-xl overflow-hidden flex-shrink-0">
+            <img class="w-full h-full object-cover"
+                 src="{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}"
+                 alt="{{ $user->name }}">
+        </div>
+        <div class="pb-2 text-white">
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+                @if($user->volunteer_id)
+                    <span class="text-xs font-bold tracking-widest px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm">
+                        {{ $user->volunteer_id }}
+                    </span>
+                @endif
+                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full" style="background:{{ $accentOrange }};">
+                    {{ $badges['current_rank']['name'] ?? 'Volunteer' }}
+                </span>
+                @if($canEdit)
+                    <a href="{{ $editUrl }}"
+                       class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/20 hover:bg-white/30 transition flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2a2 2 0 01.586-1.414z"/>
+                        </svg>
+                        Edit Profile
+                    </a>
+                @endif
+            </div>
+            <h1 class="text-2xl font-bold capitalize">{{ $user->name }}</h1>
+            <p class="text-white/70 text-sm">Member since {{ $user->created_at->format('F Y') }}</p>
+        </div>
+    </div>
+</div>
 
-        /* For Profile Page Container(End) */
-
-        .badge-overlay {
-            background-color: rgba(31, 41, 55, 0.7); /* This is equivalent to bg-gray-800 with 70% opacity */
-        }
-
-        .badge-overlay:hover {
-            background-color: rgba(31, 41, 55, 0.5); /* Optional: lighter on hover */
-            transition: background-color 0.3s ease;
-        }
-    </style>
-
-    <div class="flex justify-end mb-8 pt-8 mr-8">
-        @foreach($this->getHeaderActions() as $action)
-            {{ $action }}
+{{-- ── Stat Cards (overlap hero) ───────────────────────────────────────── --}}
+<div class="px-8 -mt-10 mb-6 relative z-10">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        @foreach([
+            ['value' => number_format($totalHours, 1), 'label' => 'Total Hours',       'icon' => '⏱'],
+            ['value' => $totalOpportunities,            'label' => 'Events Attended',   'icon' => '📅'],
+            ['value' => $badges['points'],              'label' => 'Volunteer Points',  'icon' => '🏆'],
+            ['value' => $currentStreak,                 'label' => 'Current Streak',    'icon' => '🔥'],
+        ] as $stat)
+        <div class="bg-white rounded-xl shadow-md border border-gray-100 p-4 flex items-center gap-3">
+            <span class="text-2xl">{{ $stat['icon'] }}</span>
+            <div>
+                <p class="text-xl font-bold" style="color:{{ $primaryBlue }}">{{ $stat['value'] }}</p>
+                <p class="text-xs text-gray-400">{{ $stat['label'] }}</p>
+            </div>
+        </div>
         @endforeach
     </div>
+</div>
 
-    <div class="w-full flex flex-col items-center justify-center gap-8">
-        {{-- Profile Badge --}}
-        <div class="w-full px-8">
-            <div class="w-full flex flex-col lg:flex-row items-center justify-between gap-8">
-                <div
-                    class="w-full min-w-[400px] max-w-[400px] flex flex-row items-center justify-center lg:justify-start text-start gap-4">
-                    <div
-                        class="w-[120px] h-[120px] flex items-center justify-center overflow-hidden rounded-full relative">
-                        <img class="h-full w-full object-cover"
-                            src="{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}"
-                            alt="User Profile Image">
-                    </div>
+{{-- ── Tab Bar ──────────────────────────────────────────────────────────── --}}
+<div class="px-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
+        {{-- Tab navigation --}}
+        <div class="border-b border-gray-100 flex overflow-x-auto">
+            @foreach([
+                ['id' => 'opportunities', 'label' => 'My Opportunities', 'icon' => '📅'],
+                ['id' => 'personal',      'label' => 'Personal Info',     'icon' => '👤'],
+                ['id' => 'badges',        'label' => 'Badges & Rank',     'icon' => '🏅'],
+            ] as $tab)
+            <button
+                id="tab-{{ $tab['id'] }}"
+                onclick="switchTab('{{ $tab['id'] }}')"
+                class="profile-tab-btn flex-shrink-0 flex items-center gap-2 px-6 py-4 text-sm whitespace-nowrap {{ $tab['id'] === 'opportunities' ? 'active' : '' }}">
+                <span>{{ $tab['icon'] }}</span>
+                {{ $tab['label'] }}
+            </button>
+            @endforeach
+        </div>
 
-                    <div>
-                        <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            @if($user->volunteer_id)
-                                <span class="inline-block px-3 py-1 text-xs font-bold tracking-widest text-white rounded-full"
-                                      style="background:#005096;">
-                                    {{ $user->volunteer_id }}
-                                </span>
-                            @endif
-                            @if($canEdit)
-                                <a href="{{ $editUrl }}"
-                                   class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-white rounded-full hover:opacity-80 transition"
-                                   style="background:#F55E1D;">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2a2 2 0 01.586-1.414z"/>
-                                    </svg>
-                                    Edit Profile
-                                </a>
-                            @endif
-                        </div>
-                        <p class="text-[20px] font-[500] capitalize">{{ $user->name }}</p>
-                        <p><span class="text-[14px] font-[300] font-bold">Member Since:</span>
-                            {{ $user->created_at->format('F j, Y') }}</p>
-                        <p class="text-[18px] font-bold text-[#F55E1D]">{{ $badges['current_rank']['name'] ?? 'Volunteer' }}</p>
-                    </div>
+        {{-- ── OPPORTUNITIES TAB ────────────────────────────────────────── --}}
+        <div id="panel-opportunities" class="p-6">
+            @if($allEvents->isEmpty())
+                <div class="flex flex-col items-center justify-center py-16 text-gray-400">
+                    <span class="text-5xl mb-3">📭</span>
+                    <p class="text-base font-medium">No opportunities attended yet</p>
+                    <p class="text-sm mt-1">Registered events will appear here once attendance is confirmed.</p>
                 </div>
+            @else
+                <div class="space-y-4">
+                    @foreach($allEvents as $opportunity)
+                    @php
+                        $att_details = $opportunity->attendees->where('attendee_id', $user->id)->first();
+                        $isFinished  = \Carbon\Carbon::parse($opportunity->end_date)->isPast();
+                    @endphp
+                    <div class="flex flex-col md:flex-row gap-4 p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition">
+                        {{-- Event image --}}
+                        <div class="w-full md:w-32 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                            <img class="w-full h-full object-cover"
+                                 src="{{ $opportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg') }}"
+                                 alt="{{ $opportunity->title }}">
+                        </div>
 
-                {{-- Badges Container --}}
-                <div class="swiper-container w-full max-w-[700px] overflow-hidden">
-                    <div class="swiper-wrapper justify-center md:justify-end">
-                            <!-- Badge 1 -->
-                            <div class="swiper-slide flex items-center text-center w-auto">
-                                @if ($badges['current_rank'] !== null)
-
-                                <div>You are now a <b>{{$badges['current_rank']['name']}}!</b></div>
-                                <div class="w-[120px] h-[120px] flex  justify-self-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{$badges['current_rank']['medal']}}"
-                                        alt="Badge 1">
-
+                        {{-- Event info --}}
+                        <div class="flex-grow">
+                            <div class="flex items-start justify-between gap-2 flex-wrap">
+                                <div>
+                                    <p class="font-semibold text-gray-800">{{ $opportunity->title }}</p>
+                                    <p class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M d, Y') }}
+                                        @if($opportunity->location) · {{ $opportunity->location }} @endif
+                                    </p>
                                 </div>
-                                @endif
-                                @if ($badges['next_rank'] !== null)
-                                    <span class="justify-self-center">{{$badges['points'] }}/{{$badges['next_rank']['required']}}</span><br>
-                                    <span>Next Badge: <b>{{$badges['next_rank']['name']}}</b></span>
+                                @if($isFinished)
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Completed</span>
+                                @else
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">Upcoming</span>
                                 @endif
                             </div>
+
+                            {{-- Slots --}}
+                            @foreach($opportunity->slots as $slot)
+                            @php
+                                $slotAtt = $opportunity->attendees()
+                                    ->where('attendee_id', $user->id)
+                                    ->where('slot_type_id', $slot->id)
+                                    ->first();
+                            @endphp
+                            @if($slotAtt)
+                            <div class="mt-2 flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 text-sm flex-wrap gap-2">
+                                <div>
+                                    <span class="font-medium text-gray-700">{{ $slot->shift_name }}</span>
+                                    <span class="text-gray-400 mx-1">·</span>
+                                    <span class="text-gray-500 text-xs">
+                                        {{ \Carbon\Carbon::parse($slot->start_time)->format('h:i A') }}
+                                        – {{ \Carbon\Carbon::parse($slot->end_time)->format('h:i A') }}
+                                    </span>
+                                    @if($slotAtt->time_in && $slotAtt->time_out)
+                                    @php
+                                        $diff = \Carbon\Carbon::parse($slotAtt->time_out)->diff(\Carbon\Carbon::parse($slotAtt->time_in));
+                                        $hrs  = $diff->h + ($diff->days * 24);
+                                    @endphp
+                                    <span class="ml-2 text-green-600 font-semibold">{{ $hrs }}h {{ $diff->i }}m</span>
+                                    @endif
+                                </div>
+                                @if($slotAtt->is_approve)
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">Approved</span>
+                                @elseif($slotAtt->is_rejected)
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">Rejected</span>
+                                @else
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-medium">Pending</span>
+                                @endif
+                            </div>
+                            @endif
+                            @endforeach
+                        </div>
+
+                        {{-- Actions --}}
+                        @if($att_details)
+                        <div class="flex md:flex-col gap-2 flex-shrink-0 justify-end">
+                            <a href="{{ secure_asset(\Illuminate\Support\Facades\Storage::url($att_details->id . '-qr-code.png')) }}"
+                               onclick="event.preventDefault(); forceDownload(this)"
+                               data-filename="qr-code.png"
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition"
+                               style="background:{{ $primaryBlue }}">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                QR Code
+                            </a>
+                            @if($isFinished)
+                            <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id]) }}"
+                               target="_blank"
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg hover:opacity-90 transition"
+                               style="background:{{ $accentOrange }}">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                </svg>
+                                Certificate
+                            </a>
+                            @endif
+                        </div>
+                        @endif
                     </div>
+                    @endforeach
                 </div>
+            @endif
+        </div>
 
-                <!-- Swiper JS Initialization -->
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const swiper = new Swiper('.swiper-container', {
-                            slidesPerView: 'auto',
-                            spaceBetween: 16,
-                            grabCursor: true,
-                            freeMode: true,
-                            centeredSlides: false,
-                            breakpoints: {
-                                640: {
-                                    slidesPerView: 3,
-                                    spaceBetween: 20,
-                                },
-                                // For screens >= 1024px
-                                1024: {
-                                    slidesPerView: 4,
-                                    spaceBetween: 24,
-                                },
-                            },
-                        });
-                    });
-                </script>
+        {{-- ── PERSONAL INFO TAB ────────────────────────────────────────── --}}
+        <div id="panel-personal" class="p-6 hidden">
 
-                {{-- Swiper JS Style --}}
-                <style>
-                    /* Ensure Swiper slides are sized correctly */
-                    .swiper-slide {
-                        width: auto !important;
-                        /* Make each slide match its content width */
-                    }
-                </style>
+            {{-- Name & Contact --}}
+            <div class="mb-6">
+                <h3 class="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <span class="w-1 h-5 rounded-full inline-block" style="background:{{ $accentOrange }}"></span>
+                    Personal Details
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-5 p-5 bg-gray-50 rounded-xl">
+                    @foreach([
+                        ['label' => 'First Name',   'value' => $user->firstname],
+                        ['label' => 'Middle Name',  'value' => $user->middle_name ?? '—'],
+                        ['label' => 'Last Name',    'value' => $user->lastname],
+                        ['label' => 'Email',        'value' => $user->email],
+                        ['label' => 'Birthday',     'value' => $user->birthday ? \Carbon\Carbon::parse($user->birthday)->format('F d, Y') : '—'],
+                        ['label' => 'Age Range',    'value' => $user->formatted_age_range ?? '—'],
+                    ] as $field)
+                    <div>
+                        <p class="info-label">{{ $field['label'] }}</p>
+                        <p class="info-value">{{ $field['value'] }}</p>
+                    </div>
+                    @endforeach
+                </div>
             </div>
 
-            <div class="w-full border-t border-[#E1E1E1] mt-8"></div>
+            {{-- Company / Affiliation --}}
+            <div class="mb-6">
+                <h3 class="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <span class="w-1 h-5 rounded-full inline-block" style="background:{{ $accentOrange }}"></span>
+                    Company / Affiliation
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 p-5 bg-gray-50 rounded-xl">
+                    @foreach([
+                        ['label' => 'Company / School', 'value' => $user->company_name ?? '—'],
+                        ['label' => 'Address',          'value' => $user->company_address ?? '—'],
+                    ] as $field)
+                    <div>
+                        <p class="info-label">{{ $field['label'] }}</p>
+                        <p class="info-value">{{ $field['value'] }}</p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
 
-            {{-- Stat Cards --}}
-            <div class="w-full grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
-                    <p class="text-2xl font-bold text-[#005096]">{{ number_format($totalHours, 1) }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Total Hours</p>
+            {{-- Emergency Contact --}}
+            <div class="mb-6">
+                <h3 class="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <span class="w-1 h-5 rounded-full inline-block" style="background:{{ $accentOrange }}"></span>
+                    Emergency Contact
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 p-5 bg-gray-50 rounded-xl">
+                    @foreach([
+                        ['label' => 'Contact Person', 'value' => $user->emergency_contact_name ?? '—'],
+                        ['label' => 'Contact Number', 'value' => $user->emergency_contact_number ?? '—'],
+                    ] as $field)
+                    <div>
+                        <p class="info-label">{{ $field['label'] }}</p>
+                        <p class="info-value">{{ $field['value'] }}</p>
+                    </div>
+                    @endforeach
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
-                    <p class="text-2xl font-bold text-[#005096]">{{ $totalOpportunities }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Events Attended</p>
+            </div>
+
+            {{-- Skills --}}
+            @if(!empty($user->skills))
+            <div class="mb-6">
+                <h3 class="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <span class="w-1 h-5 rounded-full inline-block" style="background:{{ $accentOrange }}"></span>
+                    Skills
+                </h3>
+                <div class="p-5 bg-gray-50 rounded-xl flex flex-wrap gap-2">
+                    @foreach((array)$user->skills as $skill)
+                    <span class="px-3 py-1 text-sm font-medium text-white rounded-full" style="background:{{ $primaryBlue }}">
+                        {{ $skill }}
+                    </span>
+                    @endforeach
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
-                    <p class="text-2xl font-bold text-[#F55E1D]">{{ $badges['points'] }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Volunteer Points</p>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
-                    <p class="text-2xl font-bold text-[#005096]">{{ $currentStreak }}</p>
-                    <p class="text-xs text-gray-500 mt-1">Current Streak</p>
+            </div>
+            @endif
+
+            {{-- Activity Summary --}}
+            <div>
+                <h3 class="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <span class="w-1 h-5 rounded-full inline-block" style="background:{{ $accentOrange }}"></span>
+                    Activity Summary
+                </h3>
+                <div class="grid grid-cols-3 gap-4">
+                    @foreach([
+                        ['label' => 'Total Hours',          'value' => number_format($totalHours, 1)],
+                        ['label' => 'Events Attended',      'value' => $totalOpportunities],
+                        ['label' => 'Participation Rate',   'value' => $participationFrequency],
+                    ] as $s)
+                    <div class="p-4 bg-gray-50 rounded-xl text-center">
+                        <p class="text-xl font-bold" style="color:{{ $primaryBlue }}">{{ $s['value'] }}</p>
+                        <p class="text-xs text-gray-400 mt-1">{{ $s['label'] }}</p>
+                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
 
-        {{-- Profile Details Tabs --}}
-        <div class="w-full px-8 flex flex-col lg:flex-row items-start justify-center gap-8">
-            {{-- Tab Buttons --}}
-            <div class="w-full lg:max-w-[250px] flex flex-col items-center justify-center text-white gap-4">
-                <button id="events-btn" onclick="changeTab('events')" class="w-full p-4 text-start hover:!bg-[#1A67B1]"
-                style="background: #005096;">
-                My Volunteer Opportunities
-            </button>
+        {{-- ── BADGES TAB ───────────────────────────────────────────────── --}}
+        <div id="panel-badges" class="p-6 hidden">
+            @php
+                $currentRank = $badges['current_rank'];
+                $nextRank    = $badges['next_rank'];
+                $points      = $badges['points'];
+                $pct = ($nextRank['required'] > $currentRank['required'])
+                    ? min(round(($points - $currentRank['required']) / ($nextRank['required'] - $currentRank['required']) * 100), 100)
+                    : 100;
+            @endphp
 
-            <button id="personal-info-btn" onclick="changeTab('personal-info')"
-                class="w-full p-4 text-start hover:!bg-[#1A67B1]" style="background: #9E9E9E;">
-                Personal Information
-            </button>
+            {{-- Current rank card --}}
+            <div class="flex flex-col md:flex-row items-center gap-6 p-6 rounded-2xl mb-8 text-white"
+                 style="background: linear-gradient(135deg, #003d75, #1A67B1);">
+                <img src="{{ $currentRank['medal'] }}" alt="{{ $currentRank['name'] }}" class="w-24 h-24 drop-shadow-lg">
+                <div class="text-center md:text-left">
+                    <p class="text-sm uppercase tracking-widest opacity-80 mb-1">Current Rank</p>
+                    <h2 class="text-3xl font-bold">{{ $currentRank['name'] }}</h2>
+                    <p class="text-white/70 mt-1">{{ number_format($points) }} Volunteer Points</p>
 
-                <button id="badges-achievements-btn" onclick="changeTab('badges-achievements')"
-                    class="w-full p-4 text-start hover:!bg-[#1A67B1]" style="background: #9E9E9E;">
-                    Badges / Achievements
-                </button>
-            </div>
-
-            {{-- Tab Contents --}}
-            <div class="w-full flex flex-col items-center justify-center">
-                <div id="personal-info-content" class="w-full flex flex-col items-center justify-center gap-8 hidden">
-                    {{-- Personal Information --}}
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Personal Infomation</p>
-
-                        <div class="shadow-md p-8">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">First Name</p>
-                                    <p class="text-lg md:text-xl">{{ $user->firstname }}</p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Middle Name</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->middle_name ? $user->middle_name : 'N/A' }}</p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Last Name</p>
-                                    <p class="text-lg md:text-xl">{{ $user->lastname }}</p>
-                                </div>
-                            </div>
-
-                            <div class="w-full border-t border-[#E1E1E1] my-4"></div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Username</p>
-                                    <p class="text-lg md:text-xl">{{ $user->username }}</p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Email</p>
-                                    <p class="text-lg md:text-xl">{{ $user->email }}</p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Birthday</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->birthday ? $user->birthday : 'N/A' }}</p>
-                                </div>
-                            </div>
-
+                    @if($nextRank && $nextRank['required'] > $currentRank['required'])
+                    <div class="mt-3">
+                        <div class="flex justify-between text-xs text-white/60 mb-1">
+                            <span>{{ number_format($points) }} VP</span>
+                            <span>{{ number_format($nextRank['required']) }} VP to {{ $nextRank['name'] }}</span>
                         </div>
-                    </div>
-
-                    {{-- Company / School --}}
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Company / School</p>
-
-                        <div class="shadow-md p-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Company Name</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->company_name ? $user->company_name : 'N/A' }}</p>
-                                </div>
-
-
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Address</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->company_address ? $user->company_address : 'N/A' }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- In Case of Emergency --}}
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">In Case of Emergency</p>
-
-                        <div class="shadow-md p-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Contact Person</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->emergency_contact_name ? $user->emergency_contact_name : 'N/A' }}
-                                    </p>
-                                </div>
-
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-sm">Contact Number</p>
-                                    <p class="text-lg md:text-xl">
-                                        {{ $user->emergency_contact_number ? $user->emergency_contact_number : 'N/A' }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Interest --}}
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Program</p>
-                        @php
-                            if($user->program_id != null){
-                                $program_name = DB::table('programs')->where('id', $user->program_id)->first()->name ?? 'N/A';
-                            }else{
-                                $program_name = 'N/A';
-                            }
-                        @endphp
-                        <div class="shadow-md p-8">
-                            <div class="grid grid-cols-3 gap-4">
-                                <div class="col-span-1 flex flex-col items-start justify-center gap-1">
-                                    <p class="text-lg md:text-xl capitalize">{{ $program_name }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Skills --}}
-                    @if(!empty($user->skills))
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Skills</p>
-                        <div class="shadow-md p-8">
-                            <div class="flex flex-wrap gap-2">
-                                @foreach((array) $user->skills as $skill)
-                                    <span class="inline-block px-3 py-1 text-sm font-medium rounded-full text-white"
-                                          style="background:#005096;">
-                                        {{ $skill }}
-                                    </span>
-                                @endforeach
-                            </div>
+                        <div class="w-full bg-white/20 rounded-full h-2">
+                            <div class="h-2 rounded-full bg-white transition-all" style="width:{{ $pct }}%"></div>
                         </div>
                     </div>
                     @endif
-
-                    {{-- Participation --}}
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Activity Summary</p>
-                        <div class="shadow-md p-8">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="flex flex-col gap-1">
-                                    <p class="text-sm text-gray-500">Total Hours</p>
-                                    <p class="text-xl font-bold text-[#005096]">{{ number_format($totalHours, 1) }}</p>
-                                </div>
-                                <div class="flex flex-col gap-1">
-                                    <p class="text-sm text-gray-500">Events Attended</p>
-                                    <p class="text-xl font-bold text-[#005096]">{{ $totalOpportunities }}</p>
-                                </div>
-                                <div class="flex flex-col gap-1">
-                                    <p class="text-sm text-gray-500">Participation Rate</p>
-                                    <p class="text-xl font-bold text-[#005096]">{{ $participationFrequency }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div id="badges-achievements-content" class="w-full flex items-center justify-center gap-8 hidden">
-                    {{-- Badges / Achievements --}}
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Badges / Achievements</p>
-
-                        <div class="shadow-md p-8 min-h-[50vh] flex flex-col lg:flex-row gap-6">
-                            <!-- Challenges Section -->
-                            <div class="w-full h-[400px] lg:w-1/3 space-y-4 overflow-y-scroll custom-scrollbar">
-                                <!-- Pending Challenges First -->
-                                <h2 class="font-bold text-lg">Pending Challenges</h2>
-                                <div class="space-y-4 mb-8">
-                                    <!-- Registration Challenge -->
-                                    @if(!$user->created_at)
-                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Create an account</p>
-                                        </div>
-                                    @endif
-
-                                    <!-- First Opportunity -->
-                                    @if($user->eventAttended()->count() == 0)
-                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Register for first opportunity</p>
-                                        </div>
-                                    @endif
-
-                                    <!-- Next Hour Goal -->
-                                    @if($totalHours < 20)
-                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Complete {{ $nextHourGoal }} hours</p>
-                                            <p class="text-xs">{{ $totalHours }}/{{ $nextHourGoal }} hours completed</p>
-                                            <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
-                                                <div class="h-2 bg-white rounded-full" style="width: {{ min(($totalHours/$nextHourGoal * 100), 100) }}%"></div>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <!-- Other pending challenges... -->
-
-                                    <!-- Hour-based challenges -->
-                                    @php
-                                        $hourMilestones = [100, 250, 500, 1000];
-                                        $nextHourMilestone = null;
-                                        foreach ($hourMilestones as $milestone) {
-                                            if ($totalHours < $milestone) {
-                                                $nextHourMilestone = $milestone;
-                                                break;
-                                            }
-                                        }
-                                    @endphp
-                                    @if($nextHourMilestone)
-                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+{{ match($nextHourMilestone) {
-                                                100 => '250',
-                                                250 => '1500',
-                                                500 => '2500',
-                                                1000 => '5000'
-                                            } }} <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Complete {{ $nextHourMilestone }} volunteer hours</p>
-                                            <p class="text-xs">{{ $totalHours }}/{{ $nextHourMilestone }} hours completed</p>
-                                            <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
-                                                <div class="h-2 bg-white rounded-full" style="width: {{ min(($totalHours/$nextHourMilestone * 100), 100) }}%"></div>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <!-- Opportunity-based challenges -->
-                                    @php
-                                        $opportunityMilestones = [25, 50, 100];
-                                        $nextOpportunityMilestone = null;
-                                        foreach ($opportunityMilestones as $milestone) {
-                                            if ($user->eventAttended()->count() < $milestone) {
-                                                $nextOpportunityMilestone = $milestone;
-                                                break;
-                                            }
-                                        }
-                                    @endphp
-                                    @if($nextOpportunityMilestone)
-                                        <div class="bg-blue-700 text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+{{ match($nextOpportunityMilestone) {
-                                                25 => '250',
-                                                50 => '1500',
-                                                100 => '2500'
-                                            } }} <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Complete {{ $nextOpportunityMilestone }} volunteer positions</p>
-                                            <p class="text-xs">{{ $user->eventAttended()->count() }}/{{ $nextOpportunityMilestone }} positions completed</p>
-                                            <div class="w-full h-2 bg-gray-300 rounded-full mt-2">
-                                                <div class="h-2 bg-white rounded-full" style="width: {{ min(($user->eventAttended()->count()/$nextOpportunityMilestone * 100), 100) }}%"></div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <!-- Completed Challenges Second -->
-                                <h2 class="font-bold text-lg">Completed Challenges</h2>
-                                <div class="space-y-4">
-                                    <!-- Registration Challenge -->
-                                    @if($user->created_at)
-                                        <div class="bg-[#F55E1D] text-white p-4 rounded-md shadow">
-                                            <p class="font-bold text-xl">+50 <span class="text-sm">VP</span></p>
-                                            <p class="text-sm">Create an account</p>
-                                            <p class="text-xs mt-2">✓ Completed</p>
-                                        </div>
-                                    @endif
-
-                                    <!-- Other completed challenges... -->
-                                </div>
-                            </div>
-
-                            <!-- Progress Section -->
-                            <div class="w-full lg:w-2/3 space-y-4">
-                                @php
-                                    $badges = $user->getBadges();
-                                    $currentRank = $badges['current_rank'];
-
-                                    $nextRank = $badges['next_rank'];
-                                @endphp
-
-                                <h2 class="font-bold text-lg">Next Badge: <span class="text-orange-600">{{ $nextRank['name'] }}</span></h2>
-                                <p class="text-sm font-bold">{{ $badges['points'] }}/{{ $nextRank['required'] }}</p>
-                                <div class="w-full h-2 bg-gray-300 rounded-full">
-                                    <div class="h-2 bg-orange-600" style="width: {{ min((($badges['points'] - $currentRank['required']) / ($nextRank['required'] - $currentRank['required'])) * 100, 100) }}%"></div>
-                                </div>
-
-                                <!-- Progress List -->
-                                <h2 class="font-bold text-lg mt-4">Progress</h2>
-                                <div class="space-y-3">
-                                    @foreach(['No Rank', 'Bronze', 'Silver', 'Gold', 'Platinum'] as $rank)
-                                        <div class="flex items-center justify-between border-b pb-2 {{ $currentRank['name'] !== $rank ? 'opacity-50' : '' }}">
-                                            <div class="flex items-center gap-2">
-                                                <img src="{{ asset('medals/'.strtolower(str_replace(' ', '-', $rank)).'.png') }}" alt="{{ $rank }}" class="w-10 h-10">
-                                                <span class="font-bold text-sm {{ $currentRank['name'] === $rank ? 'text-orange-600' : 'text-gray-500' }}">{{ $rank }}</span>
-                                            </div>
-                                            <span class="text-sm text-gray-600">{{ $rank === 'No Rank' ? '1250' : ($rank === 'Bronze' ? '2500' : ($rank === 'Silver' ? '5000' : ($rank === 'Gold' ? '10000' : '10000+'))) }}VP</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div id="events-content" class="w-full flex items-center justify-center gap-8">
-                    {{-- Events --}}
-                    <div class="w-full">
-                        <p class="text-[#F55E1D] text-2xl md:text-3xl mb-4">Events</p>
-
-                        {{-- Tab Buttons --}}
-                        <div class="w-full flex items-center justify-start text-white gap-4 mb-4">
-                            <button id="all-events-btn" onclick="changeEventsTab('all-events')"
-                                class="py-2 px-4 text-base md:text-lg text-start bg-[#005096] hover:bg-[#1A67B1]">
-                                All Joined Opportunities
-                            </button>
-
-                            <button id="favorite-events-btn" onclick="changeEventsTab('favorite-events')"
-                                class="py-2 px-4 text-base md:text-lg text-start bg-[#F55E1D] hover:bg-[#FF9141]">
-                                My Favorite Opportunities
-                            </button>
-                        </div>
-
-                        <div class="shadow-md p-8">
-                            {{-- All Events --}}
-                            <div id="all-events-content" class="w-full flex flex-col items-center justify-center">
-                                {{-- List --}}
-                                @if ($allEvents->isEmpty())
-                                    <div class="w-full flex items-center justify-center py-8">
-                                        <p class="text-[18px] text-gray-500">No opportunities available at the moment.</p>
-                                    </div>
-                                @else
-                                    @foreach ($favoriteEvents as $index => $opportunity)
-                                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                                            <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                                <img class="w-full h-full object-cover"
-                                                    src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
-                                            </div>
-
-                                            <div class="w-full">
-                                                <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
-                                                <p class="text-[18px] font-[400]">{{ $opportunity->location }}</p>
-                                                <p class="font-[600]">DATE:
-                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
-                                                </p>
-                                            </div>
-                                            @php
-                                                $att_details = $opportunity->attendees->where('attendee_id', $user->id)->first();
-                                            @endphp
-                                            @if ($att_details)
-                                                <div class="w-[200px]">
-                                                    <a href="{{ secure_asset(Storage::url($att_details->id . '-qr-code.png')) }}"
-                                                        onclick="event.preventDefault(); forceDownload(this)"
-                                                        data-filename="qr-code.png"
-                                                        class="cursor-pointer">
-                                                         <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141] transition duration-300 ease-in-out">
-                                                             <p class="font-medium text-base md:text-[18px] text-white">Download QR</p>
-                                                         </div>
-                                                     </a>
-                                                </div>
-
-                                                @php
-                                                    $isEventFinished = \Carbon\Carbon::parse($opportunity->end_date)->isPast();
-
-                                                @endphp
-
-                                                @if ($isEventFinished)
-                                                    <div class="w-[200px]">
-                                                        <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id ]) }}"
-                                                           class="cursor-pointer">
-                                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141] transition duration-300 ease-in-out">
-                                                                <p class="font-medium text-base md:text-[18px] text-white">Download Certificate</p>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                @endif
-                                            @endif
-                                        </div>
-
-                                        @if ($att_details)
-                                            <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8 mt-4">
-                                                <div class="w-full">
-                                                    <p class="text-[20px] font-[400] text-[#03498D]">Registered Slots:</p>
-                                                    @foreach ($opportunity->slots as $slot)
-                                                        @php
-                                                            // Find attendee record for this specific slot
-                                                            $slotAttendee = $opportunity->attendees()
-                                                                ->where('attendee_id', $user->id)
-                                                                ->where('slot_type_id', $slot->id)
-                                                                ->first();
-                                                        @endphp
-                                                        @if ($slotAttendee)
-                                                            <div class="text-[18px] font-[400] p-4 bg-gray-50 rounded-lg mb-2">
-                                                                <div class="flex justify-between items-start">
-                                                                    <div>
-                                                                        <p class="font-semibold text-[#03498D]">{{ $slot->shift_name }}</p>
-                                                                        <p class="text-sm text-gray-600">
-                                                                            {{ \Carbon\Carbon::parse($slot->start_time)->format('M-d-Y h:i A') }} -
-                                                                            {{ \Carbon\Carbon::parse($slot->end_time)->format('M-d-Y h:i A') }}
-                                                                        </p>
-                                                                        @if($slotAttendee->time_in && $slotAttendee->time_out)
-                                                                            <p class="text-sm text-green-600 mt-2">
-                                                                                @php
-                                                                                    $timeIn = \Carbon\Carbon::parse($slotAttendee->time_in);
-                                                                                    $timeOut = \Carbon\Carbon::parse($slotAttendee->time_out);
-                                                                                    $diff = $timeOut->diff($timeIn);
-                                                                                    $hours = $diff->h + ($diff->days * 24);
-                                                                                    $minutes = $diff->i;
-                                                                                @endphp
-                                                                                <span class="font-medium">Hours Completed:</span>
-                                                                                {{ $hours }}H {{ $minutes }}M
-                                                                            </p>
-                                                                        @else
-                                                                            <p class="text-sm text-orange-600 mt-2">
-                                                                                <span class="font-medium">Status:</span>
-                                                                                Pending Attendance
-                                                                            </p>
-                                                                        @endif
-                                                                    </div>
-                                                                    @if($slotAttendee->is_approve)
-                                                                        <span class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded">
-                                                                            Approved
-                                                                        </span>
-                                                                    @elseif($slotAttendee->is_rejected)
-                                                                        <span class="px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded">
-                                                                            Rejected
-                                                                        </span>
-                                                                    @else
-                                                                        <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded">
-                                                                            Pending
-                                                                        </span>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        @if (!$loop->last)
-                                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                                        @endif
-                                    @endforeach
-                                @endif
-                            </div>
-
-                            {{-- Favorite Events --}}
-                             <div id="favorite-events-content"
-                                class="w-full flex flex-col items-center justify-center hidden">
-                                {{-- List
-                                @if ($allEvents->isEmpty())
-                                    <div class="w-full flex items-center justify-center py-8">
-                                        <p class="text-[18px] text-gray-500">No favorite opportunities.</p>
-                                    </div>
-                                @else
-                                    @foreach ($allEvents as $index => $opportunity)
-                                        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                                            <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                                <img class="w-full h-full object-cover"
-                                                    src="{{ asset('img/ayala-foundation-bg.jpg') }}" alt="">
-                                            </div>
-
-                                            <div class="w-full">
-                                                <p class="text-[28px] font-[400] text-[#03498D]">{{ $opportunity->title }}</p>
-                                                <p class="text-[18px] font-[400]">{{ $opportunity->location }}</p>
-                                                <p class="font-[600]">DATE:
-                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}
-                                                </p>
-                                            </div>
-
-                                            <div class="w-[200px]">
-                                                <a href="">
-                                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                                        <p class="font-[400] text-base md:text-[18px] text-white">Download QR</p>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        @if (!$loop->last)
-                                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                                        @endif
-                                    @endforeach
-                                @endif
-
-                            </div> --}}
-                        </div>
-
-                        {{-- Tab Scripts --}}
-                        <script>
-                            // Get button and content elementss
-                            const allEventsBtn = document.getElementById('all-events-btn');
-                            const favoriteEventsBtn = document.getElementById('favorite-events-btn');
-
-                            const allEventsContent = document.getElementById('all-events-content');
-                            const favoriteEventsContent = document.getElementById('favorite-events-content');
-
-                            // Change Tab function
-                            function changeEventsTab(tabType) {
-                                // Hide all content sections
-                                allEventsContent.classList.add('hidden');
-                                favoriteEventsContent.classList.add('hidden');
-
-                                // Set the clicked button to the active color and show the corresponding content
-                                if (tabType === 'all-events') {
-                                    allEventsContent.classList.remove('hidden');
-                                } else if (tabType === 'favorite-events') {
-                                    favoriteEventsContent.classList.remove('hidden');
-                                }
-                            }
-                        </script>
-
-                    </div>
                 </div>
             </div>
 
-            {{-- Tab Scripts --}}
-            <script>
-                function forceDownload(link) {
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("GET", link.href, true);
-                    xhr.responseType = "blob";
+            {{-- Rank ladder --}}
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Rank Ladder</h3>
+            <div class="space-y-3 mb-8">
+                @foreach([
+                    ['name' => 'Volunteer',         'required' => 0,     'pts' => '1,250'],
+                    ['name' => 'Bronze Volunteer',  'required' => 1250,  'pts' => '2,500'],
+                    ['name' => 'Silver Volunteer',  'required' => 2500,  'pts' => '5,000'],
+                    ['name' => 'Gold Volunteer',    'required' => 5000,  'pts' => '10,000'],
+                    ['name' => 'Platinum Volunteer','required' => 10000, 'pts' => '10,000+'],
+                ] as $rank)
+                @php $isActive = ($currentRank['name'] === $rank['name']); @endphp
+                <div class="flex items-center gap-4 p-3 rounded-xl {{ $isActive ? 'ring-2' : 'opacity-50' }}"
+                     style="{{ $isActive ? 'ring-color:'.$accentOrange.'; background:#FFF7F4;' : '' }}">
+                    <img src="{{ asset('medals/'.strtolower(str_replace([' '], ['-'], $rank['name'])).'.png') }}"
+                         alt="{{ $rank['name'] }}" class="w-10 h-10">
+                    <div class="flex-grow">
+                        <p class="font-semibold text-sm {{ $isActive ? 'text-orange-600' : 'text-gray-600' }}">
+                            {{ $rank['name'] }}
+                            @if($isActive) <span class="ml-1 text-xs">← Current</span> @endif
+                        </p>
+                    </div>
+                    <span class="text-xs text-gray-400 font-medium">{{ $rank['pts'] }} VP</span>
+                </div>
+                @endforeach
+            </div>
 
-                    xhr.onload = function() {
-                        var blob = xhr.response;
-                        var a = document.createElement('a');
-                        a.href = window.URL.createObjectURL(blob);
-                        a.download = link.getAttribute('data-filename');
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(a.href);
-                    };
+            {{-- Challenges --}}
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Challenges</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                    xhr.send();
-                }
-                </script>
-            <script>
-                // Get button and content elements
-                const personalInfoBtn = document.getElementById('personal-info-btn');
-                const badgesAchievementsBtn = document.getElementById('badges-achievements-btn');
-                const eventsBtn = document.getElementById('events-btn');
+                {{-- Completed --}}
+                @if($user->created_at)
+                <div class="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-100">
+                    <span class="text-2xl">✅</span>
+                    <div class="flex-grow">
+                        <p class="text-sm font-semibold text-green-800">Account created</p>
+                        <p class="text-xs text-green-600">+50 VP · Completed</p>
+                    </div>
+                </div>
+                @endif
 
-                const personalInfoContent = document.getElementById('personal-info-content');
-                const badgesAchievementsContent = document.getElementById('badges-achievements-content');
-                const eventsContent = document.getElementById('events-content');
+                @if($totalOpportunities >= 1)
+                <div class="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-100">
+                    <span class="text-2xl">✅</span>
+                    <div class="flex-grow">
+                        <p class="text-sm font-semibold text-green-800">First opportunity attended</p>
+                        <p class="text-xs text-green-600">+50 VP · Completed</p>
+                    </div>
+                </div>
+                @endif
 
-                // Change Tab function
-                function changeTab(tabType) {
-                    // Reset all buttons to the inactive color
-                    personalInfoBtn.style.background = '#9E9E9E';
-                    badgesAchievementsBtn.style.background = '#9E9E9E';
-                    eventsBtn.style.background = '#9E9E9E';
+                {{-- Pending hour milestones --}}
+                @foreach([4=>50, 8=>50, 12=>50, 16=>50, 20=>50, 100=>250, 250=>1500, 500=>2500, 1000=>5000] as $hrs => $vp)
+                @if($totalHours < $hrs)
+                <div class="flex items-center gap-3 p-4 rounded-xl bg-blue-50 border border-blue-100">
+                    <span class="text-2xl">⏱</span>
+                    <div class="flex-grow">
+                        <p class="text-sm font-semibold text-blue-800">Complete {{ $hrs }} volunteer hours</p>
+                        <p class="text-xs text-blue-500">+{{ $vp }} VP</p>
+                        <div class="mt-1.5 w-full bg-blue-200 rounded-full h-1.5">
+                            <div class="h-1.5 bg-blue-500 rounded-full" style="width:{{ min(round($totalHours/$hrs*100),100) }}%"></div>
+                        </div>
+                        <p class="text-xs text-blue-400 mt-0.5">{{ round($totalHours, 1) }} / {{ $hrs }} hrs</p>
+                    </div>
+                </div>
+                @break
+                @endif
+                @endforeach
 
-                    // Hide all content sections
-                    personalInfoContent.classList.add('hidden');
-                    badgesAchievementsContent.classList.add('hidden');
-                    eventsContent.classList.add('hidden');
-
-                    // Set the clicked button to the active color and show the corresponding content
-                    if (tabType === 'personal-info') {
-                        personalInfoBtn.style.background = '#005096';
-                        personalInfoContent.classList.remove('hidden');
-                    } else if (tabType === 'badges-achievements') {
-                        badgesAchievementsBtn.style.background = '#005096';
-                        badgesAchievementsContent.classList.remove('hidden');
-                    } else if (tabType === 'events') {
-                        eventsBtn.style.background = '#005096';
-                        eventsContent.classList.remove('hidden');
-                    }
-                }
-            </script>
+                {{-- Pending opportunity milestones --}}
+                @foreach([10=>50, 25=>250, 50=>1500, 100=>2500] as $opp => $vp)
+                @if($totalOpportunities < $opp)
+                <div class="flex items-center gap-3 p-4 rounded-xl bg-purple-50 border border-purple-100">
+                    <span class="text-2xl">📅</span>
+                    <div class="flex-grow">
+                        <p class="text-sm font-semibold text-purple-800">Attend {{ $opp }} opportunities</p>
+                        <p class="text-xs text-purple-500">+{{ $vp }} VP</p>
+                        <div class="mt-1.5 w-full bg-purple-200 rounded-full h-1.5">
+                            <div class="h-1.5 bg-purple-500 rounded-full" style="width:{{ min(round($totalOpportunities/$opp*100),100) }}%"></div>
+                        </div>
+                        <p class="text-xs text-purple-400 mt-0.5">{{ $totalOpportunities }} / {{ $opp }}</p>
+                    </div>
+                </div>
+                @break
+                @endif
+                @endforeach
+            </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    </div>{{-- end main card --}}
+</div>
 
-    <script>
-        const lightbox = GLightbox({
-            selector: '.glightbox',
-            touchNavigation: true,
-            loop: true,
-        });
-    </script>
+<script>
+function switchTab(tab) {
+    ['opportunities','personal','badges'].forEach(function(t) {
+        document.getElementById('panel-' + t).classList.add('hidden');
+        var btn = document.getElementById('tab-' + t);
+        btn.classList.remove('active');
+    });
+    document.getElementById('panel-' + tab).classList.remove('hidden');
+    document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function forceDownload(link) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", link.href, true);
+    xhr.responseType = "blob";
+    xhr.onload = function() {
+        var a = document.createElement('a');
+        a.href = window.URL.createObjectURL(xhr.response);
+        a.download = link.getAttribute('data-filename');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+    xhr.send();
+}
+</script>
+
 </x-filament-panels::page>
