@@ -3,57 +3,43 @@
 namespace App\Observers;
 
 use App\Models\EventRegistration;
-use App\Models\MessageRoom;
-use App\Models\MessageRoomParticipant;
-
+use App\Notifications\VolunteerRegistrationConfirmed;
+use Illuminate\Support\Facades\Log;
 
 class EventRegistrationObserver
 {
-    /**
-     * Handle the EventRegistration "created" event.
-     */
     public function created(EventRegistration $eventRegistration): void
     {
-        //
+        try {
+            $volunteer = $eventRegistration->volunteer;
+            $event     = $eventRegistration->event;
 
-
-        // $room = MessageRoom::where('event_id',$eventRegistration->event_id)->first();
-
-        // // Add event owner as participant
-        // MessageRoomParticipant::create([
-        //     'message_room_id' => $room->id,
-        //     'user_id' => $eventRegistration->volunteer_id,
-        // ]);
-
+            if ($volunteer && $event) {
+                $volunteer->notify(new VolunteerRegistrationConfirmed($event, $eventRegistration));
+            }
+        } catch (\Exception $e) {
+            Log::error('Registration confirmation email failed', [
+                'registration_id' => $eventRegistration->id,
+                'error'           => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Handle the EventRegistration "updated" event.
-     */
     public function updated(EventRegistration $eventRegistration): void
     {
         //
     }
 
-    /**
-     * Handle the EventRegistration "deleted" event.
-     */
     public function deleted(EventRegistration $eventRegistration): void
     {
         //
     }
 
-    /**
-     * Handle the EventRegistration "restored" event.
-     */
     public function restored(EventRegistration $eventRegistration): void
     {
         //
     }
 
-    /**
-     * Handle the EventRegistration "force deleted" event.
-     */
     public function forceDeleted(EventRegistration $eventRegistration): void
     {
         //
