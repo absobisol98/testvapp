@@ -115,8 +115,16 @@ class AdminPanelProvider extends PanelProvider
                 fn (): \Illuminate\Contracts\View\View => view('filament.partials.preloader'),
             )
             ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn (): \Illuminate\Contracts\View\View => view('filament.partials.guided-tour'),
+            )
+            ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
                 fn (): \Illuminate\Contracts\View\View => view('filament.partials.role-switcher-mount'),
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_END,
+                fn (): \Illuminate\Contracts\View\View => view('filament.partials.help-button'),
             )
             ->plugins([
                 AuthUIEnhancerPlugin::make()
