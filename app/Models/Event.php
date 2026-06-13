@@ -109,6 +109,7 @@ class Event extends Model implements HasMedia
 		'registration_end_date',
 		'event_format',
 		'meeting_link',
+		'location_details',
 	];
 
 	public function event_type()
