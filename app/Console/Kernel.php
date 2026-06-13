@@ -7,25 +7,22 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('events:send-reminders')->everyMinute();
+        // Shift reminders — runs daily at 8 AM, covers shifts starting the next day
+        $schedule->command('events:send-shift-reminders')->dailyAt('08:00');
+
+        // Completion summaries — runs every hour to catch shifts that ended ~1hr ago
+        $schedule->command('events:send-completion-summaries')->hourly();
+
+        // Daily registration digest — sent to admins at 7 AM each morning
+        $schedule->command('events:send-daily-digest')->dailyAt('07:00');
     }
 
-    /**
-     * Register the commands for the application.
-     */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
-
-
     }
-
-
 }
