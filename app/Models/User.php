@@ -156,7 +156,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             return $sessionRole;
         }
 
-        $priority = ['super_admin', 'Ayala Super Admin', 'admin', 'Facilitator', 'External Partner', 'Volunteer'];
+        $priority = ['super_admin', 'Ayala Super Admin', 'admin', 'author', 'Facilitator', 'External Partner', 'Volunteer'];
         foreach ($priority as $role) {
             if ($available->contains($role)) {
                 return $role;
