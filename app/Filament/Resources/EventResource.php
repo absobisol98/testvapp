@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Actions\EventRegistrationTableAction;
+use App\Exports\EventRegistrantsExport;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Filament\Resources\EventResource\RelationManagers\AttendeesRelationManager;
@@ -28,8 +29,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\Action;
-use Tapp\FilamentGoogleAutocomplete\Forms\Components\GoogleAutocomplete;
 use Filament\Infolists\Components\TextEntry;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EventResource extends Resource implements HasShieldPermissions
 {
@@ -228,17 +229,10 @@ class EventResource extends Resource implements HasShieldPermissions
                                             ->inline(),
 
                                         // ── Onsite fields ──
-                                        GoogleAutocomplete::make('google_search')
-                                            ->label('Search Location')
-                                            ->countries(['PH'])
-                                            ->withFields([
-                                                Forms\Components\TextInput::make('location')
-                                                    ->extraInputAttributes([
-                                                        'data-google-field' => '{formatted_address}',
-                                                    ])
-                                                    ->columnSpan('full')
-                                                    ->readOnly(),
-                                            ])
+                                        Forms\Components\TextInput::make('location')
+                                            ->label('Location / Address')
+                                            ->placeholder('Enter the full address')
+                                            ->columnSpanFull()
                                             ->visible(fn ($get) => $get('event_format') !== 'virtual'),
 
                                         Forms\Components\TextInput::make('location_details')
@@ -564,8 +558,26 @@ class EventResource extends Resource implements HasShieldPermissions
 
             ], layout: FiltersLayout::AboveContent)
             ->actions((new EventRegistrationTableAction())->execute())
+            ->headerActions([
+                Tables\Actions\Action::make('export_registrants')
+                    ->label('Export Registrants')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('gray')
+                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->action(fn () => Excel::download(new EventRegistrantsExport(), 'event-registrants-' . now()->format('Y-m-d') . '.xlsx')),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('export_registrants')
+                        ->label('Export Registrants')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                        ->action(fn (\Illuminate\Support\Collection $records) =>
+                            Excel::download(
+                                new EventRegistrantsExport($records->pluck('id')->toArray()),
+                                'event-registrants-selected-' . now()->format('Y-m-d') . '.xlsx'
+                            )
+                        ),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),

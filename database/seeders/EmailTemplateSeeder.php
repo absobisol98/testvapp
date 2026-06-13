@@ -103,6 +103,64 @@ class EmailTemplateSeeder extends Seeder
                                 <p>You can disable this email in your account notification preferences.</p>
                                 <p>Kind Regards,<br>##config.app.name##</p>"
             ],
+
+            // ── Volunteer / Opportunity Templates ────────────────────────
+            [
+                'key'       => 'volunteer-registration-confirmed',
+                'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
+                'name'      => 'Volunteer Registration Confirmed',
+                'title'     => 'Registration Confirmed',
+                'subject'   => 'You\'re registered for ##event.title##',
+                'preheader' => 'Your spot is confirmed!',
+                'content'   => "<p>Dear ##user.firstname##,</p>
+                                <p>Great news! Your registration for <strong>##event.title##</strong> has been confirmed.</p>
+                                <p><strong>Date:</strong> ##event.start_date##<br>
+                                <strong>Location:</strong> ##event.location##</p>
+                                <p>Please make sure to arrive on time. If you have any questions, don't hesitate to reach out to us.</p>
+                                <p>Thank you for volunteering with ##config.app.name##!</p>
+                                <p>Kind Regards,<br>##config.app.name##</p>"
+            ],
+            [
+                'key'       => 'volunteer-shift-reminder',
+                'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
+                'name'      => 'Volunteer Shift Reminder',
+                'title'     => 'Reminder: Your Shift is Tomorrow',
+                'subject'   => 'Reminder: ##event.title## is coming up!',
+                'preheader' => 'Don\'t forget — your shift is tomorrow.',
+                'content'   => "<p>Dear ##user.firstname##,</p>
+                                <p>This is a friendly reminder that you have an upcoming volunteer shift for <strong>##event.title##</strong>.</p>
+                                <p><strong>Date:</strong> ##event.start_date##<br>
+                                <strong>Location:</strong> ##event.location##</p>
+                                <p>If you need to make any changes to your registration, please contact us as soon as possible.</p>
+                                <p>We look forward to seeing you!</p>
+                                <p>Kind Regards,<br>##config.app.name##</p>"
+            ],
+            [
+                'key'       => 'event-cancelled',
+                'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
+                'name'      => 'Event Cancelled',
+                'title'     => 'Event Cancellation Notice',
+                'subject'   => 'Important: ##event.title## has been cancelled',
+                'preheader' => 'We regret to inform you of a cancellation.',
+                'content'   => "<p>Dear ##user.firstname##,</p>
+                                <p>We regret to inform you that <strong>##event.title##</strong> has been cancelled.</p>
+                                <p>We apologise for any inconvenience this may cause. Your commitment to volunteering is greatly appreciated, and we hope to see you at a future opportunity.</p>
+                                <p>If you have any questions, please don't hesitate to contact us.</p>
+                                <p>Kind Regards,<br>##config.app.name##</p>"
+            ],
+            [
+                'key'       => 'volunteer-completion-summary',
+                'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
+                'name'      => 'Volunteer Completion Summary',
+                'title'     => 'Thank You for Volunteering!',
+                'subject'   => 'Thank you for volunteering at ##event.title##',
+                'preheader' => 'Your contribution made a difference.',
+                'content'   => "<p>Dear ##user.firstname##,</p>
+                                <p>Thank you so much for volunteering at <strong>##event.title##</strong>!</p>
+                                <p>Your time and effort are truly appreciated by ##config.app.name## and the community you served. Your volunteer hours have been recorded and added to your profile.</p>
+                                <p>We hope to see you at more volunteer opportunities soon. Keep an eye out for upcoming events on the platform.</p>
+                                <p>With gratitude,<br>##config.app.name##</p>"
+            ],
         ];
 
         EmailTemplate::factory()

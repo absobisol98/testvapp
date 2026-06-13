@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Actions\UserCreateField;
 use App\Actions\VolunteerFields;
+use App\Exports\VolunteerListExport;
 use App\Filament\Resources\VolunteerResource\Pages;
 use App\Filament\Resources\VolunteerResource\RelationManagers\EventsRelationManager;
 use App\Models\User;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Facades\Excel;
 
 class VolunteerResource extends Resource
 {
@@ -108,28 +110,37 @@ class VolunteerResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->visible(function (Volunteer $record) {
-                        if($record->id == auth()->user()->id){
-                            return true;
-                        }
-                        return false;
-                    }),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(fn (Volunteer $record) =>
                         auth()->user()->hasRole(['Ayala Super Admin', 'admin']) ||
                         $record->id === auth()->id()
                     ),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('export_all')
+                    ->label('Export All')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('gray')
+                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->action(fn () => Excel::download(new VolunteerListExport(), 'volunteers-' . now()->format('Y-m-d') . '.xlsx')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('export')
+                        ->label('Export Selected')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                        ->action(fn (\Illuminate\Support\Collection $records) =>
+                            Excel::download(
+                                new VolunteerListExport($records->pluck('id')->toArray()),
+                                'volunteers-selected-' . now()->format('Y-m-d') . '.xlsx'
+                            )
+                        ),
                     Tables\Actions\DeleteBulkAction::make()
                         ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
-
                 ]),
             ]);
     }
