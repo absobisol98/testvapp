@@ -38,13 +38,17 @@ class BusinessUnitResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ! (bool) auth()->user()?->hasActiveRole('Volunteer');
+    }
+
     public static function getNavigationLabel(): string
     {
         if(auth()->user()->hasActiveRole('External Partner')){
             return 'My Business Unit';
         }
         return 'Business Units';
-
     }
 
 

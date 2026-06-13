@@ -23,6 +23,11 @@ class BannerCategoryResource extends Resource
     protected static ?string $navigationIcon = 'fluentui-stack-20';
     protected static ?string $navigationLabel = 'Categories';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
 
     public static function form(Form $form): Form
     {

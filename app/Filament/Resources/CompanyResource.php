@@ -25,6 +25,11 @@ class CompanyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

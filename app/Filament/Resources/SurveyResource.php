@@ -19,6 +19,11 @@ class SurveyResource extends Resource
     protected static ?string $model = Survey::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

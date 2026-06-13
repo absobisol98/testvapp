@@ -21,6 +21,11 @@ class ClusterResource extends Resource
 
     protected static ?string $navigationIcon = 'fas-circle-nodes';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
