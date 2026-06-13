@@ -58,7 +58,7 @@ class EventsGetTableQueryAction
         // For recurring series, show only the next upcoming instance (or most recent past one)
         $events->where(function ($q) {
             $q->whereNull('event_recurring_id')
-              ->orWhereIn('id', function ($sub) {
+              ->orWhereIn('events.id', function ($sub) {
                   // Per series: prefer the earliest future event; fall back to latest past
                   $sub->selectRaw('
                       COALESCE(
