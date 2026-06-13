@@ -7,20 +7,24 @@ use App\Actions\VolunteerFields;
 use App\Exports\VolunteerListExport;
 use App\Filament\Resources\VolunteerResource\Pages;
 use App\Filament\Resources\VolunteerResource\RelationManagers\EventsRelationManager;
+use App\Imports\VolunteersImport;
 use App\Models\User;
 use App\Models\Volunteer;
 use App\Settings\MailSettings;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
@@ -120,6 +124,43 @@ class VolunteerResource extends Resource
                     ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
             ])
             ->headerActions([
+                Tables\Actions\Action::make('download_template')
+                    ->label('CSV Template')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('gray')
+                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->action(function () {
+                        $headers = "volunteer_id,first_name,last_name,email,company,skills,emergency_contact_name,emergency_contact_number\n";
+                        $example = "V001,Juan,Dela Cruz,juan@example.com,Ayala Corporation,\"Teaching,Mentoring\",Maria Dela Cruz,09171234567\n";
+                        return Response::make($headers . $example, 200, [
+                            'Content-Type'        => 'text/csv',
+                            'Content-Disposition' => 'attachment; filename="volunteer-import-template.csv"',
+                        ]);
+                    }),
+
+                Tables\Actions\Action::make('import_volunteers')
+                    ->label('Import Volunteers')
+                    ->icon('heroicon-o-arrow-up-tray')
+                    ->color('warning')
+                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->form([
+                        Forms\Components\FileUpload::make('file')
+                            ->label('CSV / Excel File')
+                            ->acceptedFileTypes(['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'])
+                            ->required()
+                            ->disk('local')
+                            ->directory('imports'),
+                    ])
+                    ->action(function (array $data) {
+                        $import = new VolunteersImport();
+                        Excel::import($import, storage_path('app/' . $data['file']));
+                        Notification::make()
+                            ->title('Import complete')
+                            ->body("Created: {$import->created} · Updated: {$import->updated} · Skipped: {$import->skipped}")
+                            ->success()
+                            ->send();
+                    }),
+
                 Tables\Actions\Action::make('export_all')
                     ->label('Export All')
                     ->icon('heroicon-o-arrow-down-tray')

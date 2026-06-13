@@ -27,7 +27,7 @@ class EventsGetTableQueryAction
         $ayala = Company::where('cluster_id',1)->pluck('id')->toArray();
         $non_ayala = Company::where('cluster_id','!=',1)->pluck('id')->toArray();
 
-        if ($user->hasRole(['Volunteer'])) { // For Volunteer
+        if ($user->hasActiveRole('Volunteer')) { // For Volunteer
             $events = Event::query()
                 ->where('is_published', true)
                 ->leftJoin('event_companies', 'event_companies.event_id', '=', 'events.id')

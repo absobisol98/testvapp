@@ -44,7 +44,7 @@
                         ? 'border-primary-500 text-primary-600 border-b-2'
                         : 'border-transparent text-gray-500 hover:text-primary-600 hover:border-gray-300'"
                     class="inline-flex items-center gap-2 px-5 py-3 border-b-2 rounded-t-lg transition-colors">
-                    <x-dynamic-component :component="'{{ $t['icon'] }}'" class="w-4 h-4" />
+                    <x-dynamic-component :component="$t['icon']" class="w-4 h-4" />
                     {{ $t['label'] }}
                 </button>
             </li>
