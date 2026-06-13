@@ -6,8 +6,8 @@
     x-init="init()"
     x-show="open"
     x-cloak
-    class="fixed inset-0 z-[9999] flex items-center justify-center"
-    style="background: rgba(0,0,0,0.55);"
+    class="fixed inset-0 flex items-center justify-center"
+    style="background: rgba(0,0,0,0.55); z-index: 2147483647;"
 >
     <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden" @click.stop>
 
@@ -69,6 +69,8 @@ function vappTour() {
             { emoji: '✅', title: "You're all set!",         body: 'Click the ? button in the top bar any time to relaunch this tour. Enjoy volunteering!' },
         ],
         init() {
+            // Move to body root so z-index beats Filament's topbar stacking context
+            document.body.appendChild(this.$el);
             window.__vappTour = this;
             if (! localStorage.getItem('vapp_tour_done_v1')) {
                 this.open = true;
