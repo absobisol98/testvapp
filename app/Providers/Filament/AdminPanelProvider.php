@@ -53,6 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
             ->brandLogo(fn() => $this->getLogo())
             ->darkMode(false)
+            ->sidebarCollapsibleOnDesktop()
             ->brandLogoHeight(fn (GeneralSettings $settings) => $settings->brand_logoHeight)
             ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
@@ -109,6 +110,10 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn (): \Illuminate\Contracts\View\View => view('filament.partials.preloader'),
+            )
             ->renderHook(
                 PanelsRenderHook::TOPBAR_END,
                 fn (): \Illuminate\Contracts\View\View => view('filament.partials.role-switcher-mount'),
