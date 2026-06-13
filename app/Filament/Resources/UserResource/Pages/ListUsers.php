@@ -52,7 +52,7 @@ class ListUsers extends ListRecords
         $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id)->where('volunteer',0);
 
         if (!$user->isSuperAdmin()) {
-            if(auth()->user()->hasRole('Ayala Super Admin')){
+            if(auth()->user()->hasActiveRole('Ayala Super Admin')){
                 $model = (new (static::$resource::getModel()))->with('roles')->where('id', '!=', auth()->user()->id)->where('volunteer',0);
             }
             else{

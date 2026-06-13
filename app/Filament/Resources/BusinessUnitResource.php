@@ -40,7 +40,7 @@ class BusinessUnitResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        if(auth()->user()->hasRole('External Partner')){
+        if(auth()->user()->hasActiveRole('External Partner')){
             return 'My Business Unit';
         }
         return 'Business Units';

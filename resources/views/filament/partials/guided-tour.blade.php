@@ -1,5 +1,8 @@
-{{-- Guided Tour — shown on first login, re-launchable via window.__vappTour.restart() --}}
+{{-- Guided Tour — shown on first login after email verification, re-launchable via window.__vappTour.restart() --}}
 @auth
+@if(auth()->user()->hasVerifiedEmail())
+@php $forceShowTour = session()->pull('vapp_show_tour', false); @endphp
+<script>window.__vappForceShowTour = {{ $forceShowTour ? 'true' : 'false' }};</script>
 @verbatim
 <div
     x-data="vappTour()"
@@ -73,10 +76,10 @@ function vappTour() {
             window.__vappTour = this;
             const params = new URLSearchParams(window.location.search);
             const replay = params.get('replay_tour') === '1';
-            if (replay || ! localStorage.getItem('vapp_tour_done_v1')) {
+            const forceShow = window.__vappForceShowTour === true;
+            if (replay || forceShow || ! localStorage.getItem('vapp_tour_done_v1')) {
                 localStorage.removeItem('vapp_tour_done_v1');
                 this.open = true;
-                // Remove the query param without a page reload
                 params.delete('replay_tour');
                 const clean = window.location.pathname + (params.toString() ? '?' + params : '');
                 window.history.replaceState({}, '', clean);
@@ -94,4 +97,5 @@ function vappTour() {
 }
 </script>
 @endverbatim
+@endif
 @endauth

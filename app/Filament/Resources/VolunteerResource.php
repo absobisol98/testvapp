@@ -117,18 +117,18 @@ class VolunteerResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(fn (Volunteer $record) =>
-                        auth()->user()->hasRole(['Ayala Super Admin', 'admin']) ||
+                        auth()->user()->isAdminRole() ||
                         $record->id === auth()->id()
                     ),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
+                    ->visible(fn () => auth()->user()->isAdminRole()),
             ])
             ->headerActions([
                 Tables\Actions\Action::make('download_template')
                     ->label('CSV Template')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('gray')
-                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->visible(fn () => auth()->user()->isAdminRole())
                     ->action(function () {
                         $headers = "volunteer_id,first_name,last_name,email,company,skills,emergency_contact_name,emergency_contact_number\n";
                         $example = "V001,Juan,Dela Cruz,juan@example.com,Ayala Corporation,\"Teaching,Mentoring\",Maria Dela Cruz,09171234567\n";
@@ -142,7 +142,7 @@ class VolunteerResource extends Resource
                     ->label('Import Volunteers')
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('warning')
-                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->visible(fn () => auth()->user()->isAdminRole())
                     ->form([
                         Forms\Components\FileUpload::make('file')
                             ->label('CSV / Excel File')
@@ -165,7 +165,7 @@ class VolunteerResource extends Resource
                     ->label('Export All')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('gray')
-                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                    ->visible(fn () => auth()->user()->isAdminRole())
                     ->action(fn () => Excel::download(new VolunteerListExport(), 'volunteers-' . now()->format('Y-m-d') . '.xlsx')),
             ])
             ->bulkActions([
@@ -173,7 +173,7 @@ class VolunteerResource extends Resource
                     Tables\Actions\BulkAction::make('export')
                         ->label('Export Selected')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin']))
+                        ->visible(fn () => auth()->user()->isAdminRole())
                         ->action(fn (\Illuminate\Support\Collection $records) =>
                             Excel::download(
                                 new VolunteerListExport($records->pluck('id')->toArray()),
@@ -181,7 +181,7 @@ class VolunteerResource extends Resource
                             )
                         ),
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
+                        ->visible(fn () => auth()->user()->isAdminRole()),
                 ]),
             ]);
     }

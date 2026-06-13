@@ -23,7 +23,7 @@ class ListBusinessUnits extends ListRecords
     }
 
     public function verifyuser(){
-        if(auth()->user()->hasRole('External Partner')){
+        if(auth()->user()->hasActiveRole('External Partner')){
             redirect()->route('filament.admin.resources.business-units.edit',['record' => auth()->user()->currentBU()->id]);
         }
     }

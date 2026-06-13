@@ -194,6 +194,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $this->activeRole() === $role;
     }
 
+    public function isAdminRole(): bool
+    {
+        return in_array($this->activeRole(), ['Ayala Super Admin', 'admin']);
+    }
+
     public function switchRole(string $role): void
     {
         if ($this->availableRoles()->contains($role)) {
