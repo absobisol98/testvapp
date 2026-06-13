@@ -18,9 +18,7 @@ final class EventFillFormAction
 {
     public function execute($record,$data)
     {
-        $data['date'] = $record->start_date;
-        $data['start_time'] = $record->start_date;
-        $data['end_time'] = $record->end_date;
+        // start_date and end_date are auto-filled by Filament from model attributes
 
         // Tags
         $data['tags'] = $record->tags->pluck('name')->toArray();

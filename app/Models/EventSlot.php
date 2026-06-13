@@ -31,7 +31,8 @@ class EventSlot extends Model
 	protected $casts = [
 		'event_id' => 'int',
 		'slot_type_id' => 'int',
-		'total_slots' => 'int'
+		'total_slots' => 'int',
+		'ends_next_day' => 'bool',
 	];
 
 	protected $fillable = [
@@ -40,6 +41,7 @@ class EventSlot extends Model
 		'slot_type_id',
         'start_time',
         'end_time',
+		'ends_next_day',
 		'total_slots',
         'responsibilities'
 	];

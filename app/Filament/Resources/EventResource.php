@@ -69,342 +69,314 @@ class EventResource extends Resource implements HasShieldPermissions
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Event Banner')
-                    ->schema([
-                        Forms\Components\FileUpload::make('media_banner')
-                            ->directory('event-banner-attachments')
-                            ->maxFiles(1)
-                            ->multiple()
-                            ->label('')
-                            ->openable()
-                            ->downloadable()
-                            ->helpertext('Upload an event banner (Recommended: 1200x500px, Max: 10MB). Drag & drop or click Browse.')
-                            ->extraAttributes([
-                                'title' => 'Upload event banner here'
-                            ]),
-                    ])
-                    ->collapsible(),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->columnSpanFull()
-                    ->maxLength(255)
-                    ->extraAttributes([
-                        'title' => 'Enter event title'
-                    ]),
+                Forms\Components\Tabs::make('Event')
+                    ->tabs([
 
-                Forms\Components\RichEditor::make('description')
-                    ->columnSpanFull()
-                    ->required()
-                    ->extraAttributes([
-                        'title' => 'Enter event description'
-                    ]),
-
-                Forms\Components\Grid::make()
-                    ->columns(3)
-                    ->schema([
-                        Forms\Components\Select::make('program_id')
-                            ->relationship('program', 'name')
-                            ->required()
-                            ->extraAttributes([
-                                'title' => 'Please select program in the list'
-                            ]),
-                        Forms\Components\Select::make('point_of_contact_id')
-                            ->label('HR Representative (Point-of-contact)')
-                            ->required()
-                            ->preload()
-                            ->extraAttributes([
-                                'title' => 'Please select representative in the list'
-                            ])
-                            ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
-                            ->relationship(
-                                name: 'point_of_contact',
-                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
-                            )
-                            ->searchable(['firstname','middle_name', 'lastname']),
-                        Forms\Components\Select::make('event_type_id')
-                        ->relationship('event_type', 'name')
-                        ->required()
-                        ->extraAttributes([
-                            'title' => 'Please select event in the list'
-                        ])
-                        ->reactive(),
-                            ]),
-
-                Forms\Components\Select::make('companies')
-                    ->label('Companies')
-                    ->required()
-                    ->multiple()
-                    ->options(function (){
-                        $options = [];
-
-                        $clusters = Cluster::with(['companies'])->get();
-
-                        foreach ($clusters as $cluster) {
-                            $options[$cluster->name] = collect($cluster->companies)->mapWithKeys(function ($company) {
-                                return [$company->id => $company->name];
-                            })->toArray();
-                        }
-
-                        return $options;
-                    })
-                    ->visible(fn ($get) => $get('event_type_id') == 3), // Hybrid
-
-                Forms\Components\Fieldset::make('Schedule')
-                    ->schema([
-                        Forms\Components\Grid::make(3)
+                        // ── Tab 1: Basic Info ────────────────────────────────────
+                        Forms\Components\Tabs\Tab::make('Basic Info')
+                            ->icon('heroicon-o-information-circle')
                             ->schema([
-                                Forms\Components\DatePicker::make('date')
-                                    ->label('Date')
+                                Forms\Components\TextInput::make('title')
                                     ->required()
-                                    ->live()
-                                    ->minDate(now()->startOfDay())
-                                    ->default(now())
-                                    ->extraAttributes([
-                                        'title' => 'Please select event date'
-                                    ]),
-                                Forms\Components\TimePicker::make('start_time')
+                                    ->columnSpanFull()
+                                    ->maxLength(255),
 
-                                    ->label('Start')
-                                    ->default('08:00')
+                                Forms\Components\RichEditor::make('description')
+                                    ->columnSpanFull()
+                                    ->required(),
+
+                                Forms\Components\Grid::make(3)
+                                    ->schema([
+                                        Forms\Components\Select::make('program_id')
+                                            ->relationship('program', 'name')
+                                            ->required(),
+                                        Forms\Components\Select::make('point_of_contact_id')
+                                            ->label('HR Representative (Point-of-contact)')
+                                            ->required()
+                                            ->preload()
+                                            ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
+                                            ->relationship(
+                                                name: 'point_of_contact',
+                                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
+                                            )
+                                            ->searchable(['firstname', 'middle_name', 'lastname']),
+                                        Forms\Components\Select::make('event_type_id')
+                                            ->label('Audience Type')
+                                            ->relationship('event_type', 'name')
+                                            ->required()
+                                            ->live(),
+                                    ]),
+
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\Select::make('event_format')
+                                            ->label('Event Format')
+                                            ->options([
+                                                'onsite'  => 'Onsite',
+                                                'virtual' => 'Virtual',
+                                                'hybrid'  => 'Hybrid (Onsite + Virtual)',
+                                            ])
+                                            ->default('onsite')
+                                            ->required()
+                                            ->live(),
+                                        Forms\Components\TextInput::make('meeting_link')
+                                            ->label('Meeting Link / URL')
+                                            ->url()
+                                            ->placeholder('https://meet.google.com/...')
+                                            ->helperText('Shown to volunteers once registered or approved.')
+                                            ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid'])),
+                                    ]),
+
+                                Forms\Components\Select::make('companies')
+                                    ->label('Companies')
+                                    ->required()
+                                    ->multiple()
+                                    ->options(function () {
+                                        $options = [];
+                                        $clusters = Cluster::with(['companies'])->get();
+                                        foreach ($clusters as $cluster) {
+                                            $options[$cluster->name] = collect($cluster->companies)
+                                                ->mapWithKeys(fn ($company) => [$company->id => $company->name])
+                                                ->toArray();
+                                        }
+                                        return $options;
+                                    })
+                                    ->visible(fn ($get) => $get('event_type_id') == 3),
+
+                                Forms\Components\TagsInput::make('tags')
+                                    ->suggestions(fn () => TagsEvent::orderBy('id')->pluck('name')->toArray()),
+
+                                Forms\Components\Toggle::make('is_public')
+                                    ->label('Open to All Business Units')
+                                    ->helperText('Allows volunteers from other Business Units to see and join this opportunity.')
+                                    ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
+                            ]),
+
+                        // ── Tab 2: Schedule ──────────────────────────────────────
+                        Forms\Components\Tabs\Tab::make('Schedule')
+                            ->icon('heroicon-o-calendar-days')
+                            ->schema([
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\DateTimePicker::make('start_date')
+                                            ->label('Start Date & Time')
+                                            ->required()
+                                            ->live()
+                                            ->seconds(false)
+                                            ->default(now()->setTime(8, 0))
+                                            ->minDate(now()->startOfDay()),
+                                        Forms\Components\DateTimePicker::make('end_date')
+                                            ->label('End Date & Time')
+                                            ->required()
+                                            ->seconds(false)
+                                            ->default(now()->setTime(17, 0))
+                                            ->afterOrEqual('start_date'),
+                                    ]),
+
+                                Forms\Components\DateTimePicker::make('registration_end_date')
+                                    ->label('Registration Deadline')
                                     ->seconds(false)
-                                    ->extraAttributes([
-                                        'title' => 'Event start schedule'
+                                    ->helperText('Leave empty for no registration deadline.')
+                                    ->beforeOrEqual('start_date'),
+
+                                Forms\Components\Grid::make(3)
+                                    ->schema([
+                                        Forms\Components\Select::make('recurrence_type_id')
+                                            ->label('Recurrence Type')
+                                            ->options([
+                                                1 => 'One Time',
+                                                2 => 'Recurring',
+                                            ])
+                                            ->required()
+                                            ->live()
+                                            ->default(1),
+                                        Forms\Components\Select::make('frequency')
+                                            ->label('Frequency')
+                                            ->options([
+                                                'daily'   => 'Daily',
+                                                'weekly'  => 'Weekly',
+                                                'monthly' => 'Monthly',
+                                                'yearly'  => 'Yearly',
+                                            ])
+                                            ->required()
+                                            ->live()
+                                            ->visible(fn ($get) => $get('recurrence_type_id') == 2),
+                                        Forms\Components\DatePicker::make('repeat_until')
+                                            ->label('Repeat Until')
+                                            ->minDate(fn ($get) => $get('start_date'))
+                                            ->maxDate(now()->addYears(5))
+                                            ->default(now())
+                                            ->required()
+                                            ->visible(fn ($get) => $get('recurrence_type_id') == 2),
                                     ]),
-                                Forms\Components\TimePicker::make('end_time')
-                                    ->label('End')
-                                    ->default('17:00')
-                                    ->seconds(false)
-                                    ->extraAttributes([
-                                        'title' => 'Event end schedule'
-                                    ]),
-                            ]),
-                        Forms\Components\Grid::make(3)
-                            ->schema([
-                                Forms\Components\Select::make('recurrence_type_id')
-                                    ->label('Recurrence type')
+
+                                Forms\Components\CheckboxList::make('selected_days')
+                                    ->label('Repeat on These Days')
+                                    ->default([\Carbon\Carbon::now()->dayOfWeek])
                                     ->options([
-                                        1 => 'One Time',
-                                        2 => 'Recurring',
+                                        0 => 'Sunday',
+                                        1 => 'Monday',
+                                        2 => 'Tuesday',
+                                        3 => 'Wednesday',
+                                        4 => 'Thursday',
+                                        5 => 'Friday',
+                                        6 => 'Saturday',
                                     ])
-                                    ->required()
-                                    ->live()
-                                    ->default(1)
-                                    ->extraAttributes([
-                                        'title' => 'Select event recurrence type'
-                                    ]),
-
-                                Forms\Components\Select::make('frequency')
-                                    ->label('Frequency')
-                                    ->options([
-                                        'daily' => 'Daily',
-                                        'weekly' => 'Weekly',
-                                        'monthly' => 'Monthly',
-                                        'yearly' => 'Yearly',
-                                    ])
-                                    ->required()
-                                    ->live()
+                                    ->columnSpanFull()
+                                    ->columns(7)
                                     ->visible(fn ($get) =>
-                                        $get('recurrence_type_id') == 2
+                                        $get('recurrence_type_id') == 2 &&
+                                        $get('frequency') == 'weekly'
                                     ),
-
-                                Forms\Components\DatePicker::make('repeat_until')
-                                    ->label('Repeat Until')
-                                    ->minDate(fn ($get) => $get('date'))
-                                    ->maxDate(now()->addYears(5))
-                                    ->default(now())
-                                    ->required()
-                                    ->visible(fn ($get) =>
-                                        $get('recurrence_type_id') == 2
-                                    ),
-
-//                                        Forms\Components\CheckboxList::make('selected_days')
-//                                            ->label('On These Days')
-//                                            ->default([\Carbon\Carbon::now()->dayOfWeek]) // Get current day index
-//                                            ->options([
-//                                                0 => 'Sunday',
-//                                                1 => 'Monday',
-//                                                2 => 'Tuesday',
-//                                                3 => 'Wednesday',
-//                                                4 => 'Thursday',
-//                                                5 => 'Friday',
-//                                                6 => 'Saturday',
-//                                            ])
-//                                            ->columnSpanFull()
-//                                            ->columns(7)
-//                                            ->visible(fn ($get) =>
-//                                                $get('recurrence_type_id') == 2 &&
-//                                                $get('frequency') == 'weekly'
-//                                            ),
-//
-//                                        Forms\Components\Select::make('monthly_days')
-//                                            ->label('On These Days')
-//                                            ->multiple()
-//                                            ->options(array_combine(
-//                                                range(1, 31),
-//                                                range(1, 31)
-//                                            ))
-//                                            ->visible(fn ($get) =>
-//                                                $get('recurrence_type_id') == 2 &&
-//                                                $get('frequency') == 'monthly'
-//                                            ),
-                            ]),
-                            GoogleAutocomplete::make('google_search')
-                            ->label('Search Location')
-                            ->extraAttributes([
-                                'title' => 'Search event location'
-                            ])
-                            ->countries([
-                                'PH',
-                            ])
-                            ->withFields([
-                                Forms\Components\TextInput::make('location')
-                                    ->extraInputAttributes([
-                                        'data-google-field' => '{formatted_address}',
-                                    ])->columnSpan('full')
-                                    ->readOnly(),
-
                             ]),
 
-                            Forms\Components\TagsInput::make('tags')
-                            ->suggestions(fn() => TagsEvent::orderBy('id')->pluck('name')->toArray())
-                            ->extraAttributes([
-                                'title' => 'Input event tags'
-                            ]),
-
-                    ]),
-
-
-                Forms\Components\Repeater::make('slots')
-                    ->required()
-                    ->schema([
-                        Forms\Components\Grid::make()
+                        // ── Tab 3: Location ──────────────────────────────────────
+                        Forms\Components\Tabs\Tab::make('Location')
+                            ->icon('heroicon-o-map-pin')
                             ->schema([
-
-                                Forms\Components\TextInput::make('shift_name')
-                                    ->required()
-                                    ->minValue(0)
-                                    ->label('Shift name')
-                                    ->extraAttributes([
-                                        'title' => 'Enter shift name'
-                                    ]),
-                                Forms\Components\TextInput::make('total_slots')
-                                    ->required()
-                                    ->label('Number of Volunteer')
-                                    ->minValue(0)
-                                    ->numeric()
-                                    ->extraAttributes([
-                                        'title' => 'Enter number of volunteer'
+                                GoogleAutocomplete::make('google_search')
+                                    ->label('Search Location')
+                                    ->countries(['PH'])
+                                    ->withFields([
+                                        Forms\Components\TextInput::make('location')
+                                            ->extraInputAttributes([
+                                                'data-google-field' => '{formatted_address}',
+                                            ])
+                                            ->columnSpan('full')
+                                            ->readOnly(),
                                     ]),
                             ]),
-                        Forms\Components\Select::make('slot_type_id')
-                            ->label('Type')
-                            ->default(1)
-                            ->required()
-                            ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray()),
-                        Forms\Components\TimePicker::make('start_time')
-                            ->required()
-                            ->label('Start time')
-                            ->default('8:00')
-                            ->seconds(false),
-                        Forms\Components\TimePicker::make('end_time')
-                            ->required()
-                            ->label('End time')
-                            ->default('11:00')
-                            ->seconds(false),
-                        Forms\Components\Textarea::make('responsibilities')
-                            ->required()
-                            ->columnSpanFull()
-                            ->extraAttributes([
-                                'title' => 'Enter volunteer responsibilities'
+
+                        // ── Tab 4: Shifts ────────────────────────────────────────
+                        Forms\Components\Tabs\Tab::make('Shifts')
+                            ->icon('heroicon-o-clock')
+                            ->schema([
+                                Forms\Components\Repeater::make('slots')
+                                    ->required()
+                                    ->schema([
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                Forms\Components\TextInput::make('shift_name')
+                                                    ->required()
+                                                    ->label('Shift Name'),
+                                                Forms\Components\TextInput::make('total_slots')
+                                                    ->required()
+                                                    ->label('Number of Volunteers')
+                                                    ->minValue(0)
+                                                    ->numeric(),
+                                            ]),
+                                        Forms\Components\Select::make('slot_type_id')
+                                            ->label('Type')
+                                            ->default(1)
+                                            ->required()
+                                            ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray()),
+                                        Forms\Components\Grid::make(3)
+                                            ->schema([
+                                                Forms\Components\TimePicker::make('start_time')
+                                                    ->required()
+                                                    ->label('Start Time')
+                                                    ->default('08:00')
+                                                    ->seconds(false),
+                                                Forms\Components\TimePicker::make('end_time')
+                                                    ->required()
+                                                    ->label('End Time')
+                                                    ->default('11:00')
+                                                    ->seconds(false),
+                                                Forms\Components\Toggle::make('ends_next_day')
+                                                    ->label('Ends Next Day')
+                                                    ->helperText('Enable for overnight shifts (e.g. 10 PM – 2 AM).')
+                                                    ->default(false),
+                                            ]),
+                                        Forms\Components\Textarea::make('responsibilities')
+                                            ->required()
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columnSpanFull()
+                                    ->columns(3),
                             ]),
-                    ])
-                    ->columnSpanFull()
-                    ->columns(3),
 
+                        // ── Tab 5: Settings ──────────────────────────────────────
+                        Forms\Components\Tabs\Tab::make('Settings')
+                            ->icon('heroicon-o-cog-6-tooth')
+                            ->schema([
+                                Forms\Components\Select::make('facilitators')
+                                    ->preload()
+                                    ->multiple()
+                                    ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
+                                    ->relationship(
+                                        name: 'facilitators',
+                                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
+                                    )
+                                    ->searchable(['firstname', 'middle_name', 'lastname']),
 
-                Forms\Components\Section::make('')
-                    ->schema([
-                        Forms\Components\Select::make('facilitators')
-                        ->preload()
-                        ->multiple()
-                        ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->firstname} {$record->middle_name} {$record->lastname}")
-                        ->relationship(
-                            name: 'facilitators',
-                            modifyQueryUsing: fn (Builder $query) => $query->orderBy('firstname')->orderBy('lastname'),
-                        )
-                        ->extraAttributes([
-                            'title' => 'Please select facilitator in the list'
-                        ])
-                        ->searchable(['firstname','middle_name', 'lastname']),
+                                Forms\Components\Radio::make('approval_type')
+                                    ->options([
+                                        'Automatic'         => 'Automatic',
+                                        'Requires Approval' => 'Requires Facilitator Approval',
+                                    ])
+                                    ->default('Requires Approval')
+                                    ->required(),
 
-                        Forms\Components\Toggle::make('attachment_required')
-                        ->reactive()
-                        ->extraAttributes([
-                            'title' => 'toggle button if attachment is required'
-                        ]),
+                                Forms\Components\Toggle::make('attachment_required')
+                                    ->reactive(),
 
-                        Forms\Components\Toggle::make('is_public')
-                        ->label('Open to All Business Units')
-                        ->helperText('Allows volunteers from other Business Units to see and join this opportunity.')
-                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
-                    ])->columnSpan(1),
-
-                    Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\Radio::make('approval_type')
-                        ->options([
-                            'Automatic' => 'Automatic',
-                            'Requires Approval' => 'Requires Facilitator Approval',
-                        ])
-                        ->default(2)
-                        ->required(),
-                    ])->columnSpan(1),
-
-                Repeater::make('other_fields')
-                    ->relationship()
-                    ->columnSpanFull()
-                    ->defaultItems(0)
-                    ->schema([
-                        Grid::make(2)->schema([
-                            TextInput::make('label')->label('Field Label')->required(),
-                            TextInput::make('text')->required('Value')
-                        ]),
-                    ]),
-
-                Forms\Components\Section::make('Attachments')
-                    ->schema([
-                        Forms\Components\FileUpload::make('media')
-                            ->directory('event-attachments')
-                            ->multiple()
-                            ->maxFiles(5)
-                            ->label('')
-                            ->openable()
-                            ->downloadable()
-                            ->extraAttributes([
-                                'title' => 'Upload attachments here'
+                                Repeater::make('other_fields')
+                                    ->relationship()
+                                    ->columnSpanFull()
+                                    ->defaultItems(0)
+                                    ->schema([
+                                        Grid::make(2)->schema([
+                                            TextInput::make('label')->label('Field Label')->required(),
+                                            TextInput::make('text')->required(),
+                                        ]),
+                                    ]),
                             ]),
-                    ])
-                    ->collapsible(),
-                    Forms\Components\Section::make('Event Certificate')
-                    ->schema([
-                            Forms\Components\FileUpload::make('certificate_background')
-                            ->directory('certificate_background')
-                            ->multiple()
-                            ->maxFiles(1)
-                            ->label('')
-                            ->openable()
-                            ->downloadable()
-                            ->helpertext('Upload an event certificate background (Recommended: 1200x500px, Max: 10MB). Drag & drop or click Browse.')
-                            ->extraAttributes([
-                                'title' => 'Upload certificate background here'
+
+                        // ── Tab 6: Media ─────────────────────────────────────────
+                        Forms\Components\Tabs\Tab::make('Media')
+                            ->icon('heroicon-o-photo')
+                            ->schema([
+                                Forms\Components\Section::make('Event Banner')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('media_banner')
+                                            ->directory('event-banner-attachments')
+                                            ->maxFiles(1)
+                                            ->multiple()
+                                            ->label('')
+                                            ->openable()
+                                            ->downloadable()
+                                            ->helperText('Recommended: 1200x500px, Max: 10MB.'),
+                                    ])
+                                    ->collapsible(),
+
+                                Forms\Components\Section::make('Attachments')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('media')
+                                            ->directory('event-attachments')
+                                            ->multiple()
+                                            ->maxFiles(5)
+                                            ->label('')
+                                            ->openable()
+                                            ->downloadable(),
+                                    ])
+                                    ->collapsible(),
+
+                                Forms\Components\Section::make('Event Certificate')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('certificate_background')
+                                            ->directory('certificate_background')
+                                            ->multiple()
+                                            ->maxFiles(1)
+                                            ->label('')
+                                            ->openable()
+                                            ->downloadable()
+                                            ->helperText('Recommended: 1200x500px, Max: 10MB.'),
+                                    ])
+                                    ->collapsible(),
                             ]),
+
                     ])
-                    ->collapsible(),
-
-
-
-//                        Forms\Components\TagsInput::make('required_document_types')
-//                            ->visible(fn ($get) => $get('requires_documents')),
+                    ->columnSpanFull(),
             ]);
     }
 
