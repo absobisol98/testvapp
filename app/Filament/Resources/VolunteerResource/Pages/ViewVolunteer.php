@@ -64,23 +64,17 @@ class ViewVolunteer extends Page
         // Get badges and progress
         $badges = $user->getBadges();
 
+        $allEvents = Event::with(['slots', 'attendees' => fn ($q) => $q->where('attendee_id', $this->record)])
+            ->whereHas('attendees', fn ($q) => $q->where('attendee_id', $this->record))
+            ->orderByDesc('start_date')
+            ->get();
+
         return [
             'businessunit' => BusinessUnit::count(),
             'user' => $user,
             'volunteer' => User::role('volunteer')->count(),
-            'opportunity' => Event::with('slots', 'tags', 'program')
-                ->orderBy('created_at', 'desc')
-                ->first(),
-            'allEvents' => Event::with('slots')
-                ->whereHas('attendees', function ($query) {
-                    $query->where('attendee_id', $this->record);
-                })
-                ->get(),
-            'favoriteEvents' => Event::with('slots')
-                ->whereHas('attendees', function ($query) {
-                    $query->where('attendee_id', $this->record);
-                })
-                ->get(),
+            'allEvents' => $allEvents,
+            'favoriteEvents' => $allEvents,
             'bgImg' => 'img/ayala-foundation-bg-2.jpg',
             'badges' => $badges,
             'totalHours' => $totalHours,
@@ -88,6 +82,9 @@ class ViewVolunteer extends Page
             'currentStreak' => $currentStreak,
             'nextHourGoal' => $nextHourGoal,
             'nextOppGoal' => $nextOppGoal,
+            'participationFrequency' => $user->getParticipationFrequency(),
+            'canEdit' => auth()->id() == $this->record->id || auth()->user()->hasRole(['Ayala Super Admin', 'admin']),
+            'editUrl' => VolunteerResource::getUrl('edit', ['record' => $this->record]),
         ];
     }
 
