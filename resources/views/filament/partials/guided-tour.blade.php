@@ -11,25 +11,25 @@
 >
     <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden" @click.stop>
 
-        {{-- Progress bar --}}
+        <!-- Progress bar -->
         <div class="h-1 bg-gray-100">
             <div class="h-1 bg-primary-500 transition-all duration-300"
                  :style="'width:' + Math.round(((step+1)/steps.length)*100) + '%'"></div>
         </div>
 
-        {{-- Icon --}}
+        <!-- Icon -->
         <div class="flex items-center justify-center pt-8 pb-4">
             <span class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-50 text-4xl"
                   x-text="steps[step].emoji"></span>
         </div>
 
-        {{-- Body --}}
+        <!-- Body -->
         <div class="px-8 pb-2 text-center">
             <h2 class="text-xl font-bold text-gray-800 mb-2" x-text="steps[step].title"></h2>
             <p class="text-sm text-gray-500 leading-relaxed" x-text="steps[step].body"></p>
         </div>
 
-        {{-- Step dots --}}
+        <!-- Step dots -->
         <div class="flex justify-center gap-2 py-4">
             <template x-for="(s, i) in steps" :key="i">
                 <button
@@ -40,7 +40,7 @@
             </template>
         </div>
 
-        {{-- Footer --}}
+        <!-- Footer -->
         <div class="flex items-center justify-between px-8 pb-6 gap-3">
             <button @click="done()" class="text-xs text-gray-400 hover:text-gray-600 underline">Skip tour</button>
             <div class="flex gap-2">
