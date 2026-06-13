@@ -44,7 +44,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->userMenuItems([
                 'profile' => MenuItem::make()->icon('heroicon-s-pencil-square')->label('Edit profile')->url(fn (): string => route('filament.admin.resources.users.edit',['record' => auth()->user()->id])),
-                // ...
+                MenuItem::make()
+                    ->label('Help & Tour')
+                    ->icon('heroicon-o-question-mark-circle')
+                    ->url('?replay_tour=1'),
             ])
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)

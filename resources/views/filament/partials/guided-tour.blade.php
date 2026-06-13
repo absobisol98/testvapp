@@ -69,11 +69,17 @@ function vappTour() {
             { emoji: '✅', title: "You're all set!",         body: 'Click the ? button in the top bar any time to relaunch this tour. Enjoy volunteering!' },
         ],
         init() {
-            // Move to body root so z-index beats Filament's topbar stacking context
             document.body.appendChild(this.$el);
             window.__vappTour = this;
-            if (! localStorage.getItem('vapp_tour_done_v1')) {
+            const params = new URLSearchParams(window.location.search);
+            const replay = params.get('replay_tour') === '1';
+            if (replay || ! localStorage.getItem('vapp_tour_done_v1')) {
+                localStorage.removeItem('vapp_tour_done_v1');
                 this.open = true;
+                // Remove the query param without a page reload
+                params.delete('replay_tour');
+                const clean = window.location.pathname + (params.toString() ? '?' + params : '');
+                window.history.replaceState({}, '', clean);
             }
         },
         done() {
