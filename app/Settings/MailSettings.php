@@ -32,14 +32,17 @@ class MailSettings extends Settings
 
     public function loadMailSettingsToConfig($data = null): void
     {
+        // Only override config when the DB setting is non-empty; otherwise keep .env values
+        $only = fn ($db, $key) => ($db ?? '') !== '' ? $db : config($key);
+
         config([
-            'mail.mailers.smtp.host' => $data['host'] ?? $this->host,
-            'mail.mailers.smtp.port' => $data['port'] ?? $this->port,
-            'mail.mailers.smtp.encryption' => $data['encryption'] ?? $this->encryption,
-            'mail.mailers.smtp.username' => $data['username'] ?? $this->username,
-            'mail.mailers.smtp.password' => $data['password'] ?? $this->password,
-            'mail.from.address' => $data['from_address'] ?? $this->from_address,
-            'mail.from.name' => $data['from_name'] ?? $this->from_name,
+            'mail.mailers.smtp.host'       => $only($data['host']         ?? $this->host,       'mail.mailers.smtp.host'),
+            'mail.mailers.smtp.port'       => $only($data['port']         ?? $this->port,       'mail.mailers.smtp.port'),
+            'mail.mailers.smtp.encryption' => $only($data['encryption']   ?? $this->encryption, 'mail.mailers.smtp.encryption'),
+            'mail.mailers.smtp.username'   => $only($data['username']     ?? $this->username,   'mail.mailers.smtp.username'),
+            'mail.mailers.smtp.password'   => $only($data['password']     ?? $this->password,   'mail.mailers.smtp.password'),
+            'mail.from.address'            => $only($data['from_address'] ?? $this->from_address, 'mail.from.address'),
+            'mail.from.name'               => $only($data['from_name']    ?? $this->from_name,  'mail.from.name'),
         ]);
     }
 
