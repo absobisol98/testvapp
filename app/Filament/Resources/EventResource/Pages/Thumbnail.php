@@ -33,7 +33,7 @@ class Thumbnail extends ListRecords
             $query->where('is_published', true);
         }
 
-        return $query;
+        return $query->with(['slots', 'registrations', 'program']);
     }
 
     public function table(\Filament\Tables\Table $table): \Filament\Tables\Table
@@ -44,7 +44,6 @@ class Thumbnail extends ListRecords
             ->columns([
                 View::make('filament.tables.columns.event-thumbnail'),
             ])
-            ->with(['slots', 'registrations', 'program'])
             ->filters([
                 Filter::make('status')
                     ->label('Show')
