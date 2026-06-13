@@ -18,23 +18,19 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // create permissions
-        Permission::create(['name' => 'access_log_viewer']);
+        // create permissions (idempotent)
+        $logPermission = Permission::firstOrCreate(['name' => 'access_log_viewer', 'guard_name' => 'web']);
 
         $roles = ["super_admin", "admin", "author", "Volunteer", "Facilitator", "External Partner", "Ayala Super Admin"];
 
-        foreach ($roles as $key => $role) {
-            $roleCreated = (new (RoleResource::getModel()))->create(
-                [
-                    'name' => $role,
-                    'guard_name' => 'web',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
+        foreach ($roles as $role) {
+            $roleCreated = (new (RoleResource::getModel()))->firstOrCreate(
+                ['name' => $role, 'guard_name' => 'web'],
+                ['created_at' => now(), 'updated_at' => now()]
             );
 
-            if ($role == 'super_admin') {
-                $roleCreated->givePermissionTo('access_log_viewer');
+            if ($role === 'super_admin' && ! $roleCreated->hasPermissionTo('access_log_viewer')) {
+                $roleCreated->givePermissionTo($logPermission);
             }
         }
     }
