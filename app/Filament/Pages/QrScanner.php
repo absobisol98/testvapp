@@ -13,5 +13,10 @@ class QrScanner extends Page
 
     protected static ?string $title = 'QR Scanner';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return ! (bool) auth()->user()?->hasActiveRole('Volunteer');
+    }
+
     protected static string $view = 'filament.pages.qr-scanner';
 }

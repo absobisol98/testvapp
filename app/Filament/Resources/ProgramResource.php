@@ -21,6 +21,11 @@ class ProgramResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-calendar';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

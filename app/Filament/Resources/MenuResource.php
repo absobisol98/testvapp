@@ -10,6 +10,11 @@ class MenuResource extends BaseMenuResource
 
     protected static ?string $navigationIcon = 'fluentui-navigation-16';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return __("menu.nav_group.settings");

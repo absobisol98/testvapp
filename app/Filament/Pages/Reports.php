@@ -19,6 +19,11 @@ class Reports extends Page
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static string  $view           = 'filament.pages.reports';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     // Summary stats shown at the top of the page
     public array $summary = [];
 

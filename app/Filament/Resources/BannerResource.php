@@ -24,6 +24,11 @@ class BannerResource extends Resource
     protected static ?int $navigationSort = -1;
     protected static ?string $navigationIcon = 'fluentui-image-shadow-24';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     protected static function getLastSortValue(): int
     {
         return Banner::max('sort') ?? 0;

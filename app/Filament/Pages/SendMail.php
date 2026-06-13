@@ -30,6 +30,11 @@ class SendMail extends Page implements HasForms
 
     protected static string $view = 'filament.pages.send-mail';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     public $name;
     public $email;
     public $filter_type;
