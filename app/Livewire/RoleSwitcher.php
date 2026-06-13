@@ -10,7 +10,7 @@ class RoleSwitcher extends Component
     {
         auth()->user()->switchRole($role);
 
-        $this->redirect(request()->url(), navigate: false);
+        $this->redirect(request()->header('Referer') ?: url('/admin'));
     }
 
     public function render()
