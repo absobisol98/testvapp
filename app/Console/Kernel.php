@@ -17,6 +17,9 @@ class Kernel extends ConsoleKernel
 
         // Daily registration digest — sent to admins at 7 AM each morning
         $schedule->command('events:send-daily-digest')->dailyAt('07:00');
+
+        // Re-cache Filament components nightly to prevent discovery timeouts
+        $schedule->command('filament:optimize')->dailyAt('03:00');
     }
 
     protected function commands(): void
