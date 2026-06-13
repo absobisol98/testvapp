@@ -6,11 +6,18 @@ use Livewire\Component;
 
 class RoleSwitcher extends Component
 {
+    public string $pageUrl = '';
+
+    public function mount(): void
+    {
+        $this->pageUrl = url()->current();
+    }
+
     public function switchRole(string $role): void
     {
         auth()->user()->switchRole($role);
 
-        $this->js('window.location.reload()');
+        $this->redirect($this->pageUrl ?: url('/admin'));
     }
 
     public function render()
