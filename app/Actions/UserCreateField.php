@@ -89,7 +89,7 @@ final class UserCreateField
                     ->icon('heroicon-o-information-circle')
                     ->schema([
                         TextInput::make('username')
-                            ->required()
+                            ->required(fn () => auth()->user()?->isAdminRole())
                             ->maxLength(255)
                             ->live()
                             ->rules(function ($record) {
@@ -97,7 +97,8 @@ final class UserCreateField
                                 return $userId
                                     ? ['unique:users,username,' . $userId]
                                     : ['unique:users,username'];
-                            }),
+                            })
+                            ->visible(fn () => auth()->user()?->isAdminRole()),
 
                         TextInput::make('email')
                             ->email()
