@@ -208,7 +208,7 @@ class Event extends Model implements HasMedia
 			$notifiable[$facilitator->id] = $facilitator;
 		}
 
-		foreach(User::role('super_admin')->get() as $super_admin){
+		foreach(User::role('Ayala Super Admin')->get() as $super_admin){
 			$notifiable[$super_admin->id] = $super_admin;
 		}
 		return $notifiable;

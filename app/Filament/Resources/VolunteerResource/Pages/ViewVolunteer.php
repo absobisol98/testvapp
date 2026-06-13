@@ -35,7 +35,7 @@ class ViewVolunteer extends Page
             ->label('Edit Profile')
             ->icon('heroicon-o-pencil')
             ->url(fn () => VolunteerResource::getUrl('edit', ['record' => $this->record]))
-            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasRole('Super Admin'))
+            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasRole('Ayala Super Admin'))
             ->color('warning'),
         ];
 

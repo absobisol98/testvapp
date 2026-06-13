@@ -79,7 +79,7 @@ class VolunteerResource extends Resource
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 $activeRole = auth()->user()->activeRole();
-                if (! in_array($activeRole, ['super_admin', 'admin', 'Ayala Super Admin'])) {
+                if (! in_array($activeRole, ['Ayala Super Admin', 'admin', 'Ayala Super Admin'])) {
                     $query = $query->where('id', auth()->id());
                 }
                 return $query;
@@ -137,7 +137,7 @@ class VolunteerResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(fn (Volunteer $record) =>
-                        auth()->user()->hasRole(['super_admin', 'admin']) ||
+                        auth()->user()->hasRole(['Ayala Super Admin', 'admin']) ||
                         $record->id === auth()->id()
                     ),
             ])
@@ -145,7 +145,7 @@ class VolunteerResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => auth()->user()->hasRole(['super_admin', 'admin'])),
+                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
 
                 ]),
             ]);
