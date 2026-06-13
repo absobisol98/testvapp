@@ -32,7 +32,8 @@ class EventSlot extends Model
 		'event_id' => 'int',
 		'slot_type_id' => 'int',
 		'total_slots' => 'int',
-		'ends_next_day' => 'bool',
+		'shift_date' => 'date',
+		'shift_end_date' => 'date',
 	];
 
 	protected $fillable = [
@@ -41,7 +42,10 @@ class EventSlot extends Model
 		'slot_type_id',
         'start_time',
         'end_time',
-		'ends_next_day',
+		'shift_date',
+		'shift_end_date',
+		'slot_format',
+		'meeting_link',
 		'total_slots',
         'responsibilities'
 	];

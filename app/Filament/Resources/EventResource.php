@@ -107,26 +107,6 @@ class EventResource extends Resource implements HasShieldPermissions
                                             ->live(),
                                     ]),
 
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\Select::make('event_format')
-                                            ->label('Event Format')
-                                            ->options([
-                                                'onsite'  => 'Onsite',
-                                                'virtual' => 'Virtual',
-                                                'hybrid'  => 'Hybrid (Onsite + Virtual)',
-                                            ])
-                                            ->default('onsite')
-                                            ->required()
-                                            ->live(),
-                                        Forms\Components\TextInput::make('meeting_link')
-                                            ->label('Meeting Link / URL')
-                                            ->url()
-                                            ->placeholder('https://meet.google.com/...')
-                                            ->helperText('Shown to volunteers once registered or approved.')
-                                            ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid'])),
-                                    ]),
-
                                 Forms\Components\Select::make('companies')
                                     ->label('Companies')
                                     ->required()
@@ -234,16 +214,45 @@ class EventResource extends Resource implements HasShieldPermissions
                         Forms\Components\Tabs\Tab::make('Location')
                             ->icon('heroicon-o-map-pin')
                             ->schema([
-                                GoogleAutocomplete::make('google_search')
-                                    ->label('Search Location')
-                                    ->countries(['PH'])
-                                    ->withFields([
-                                        Forms\Components\TextInput::make('location')
-                                            ->extraInputAttributes([
-                                                'data-google-field' => '{formatted_address}',
+                                Forms\Components\Section::make('Location & Type')
+                                    ->schema([
+                                        Forms\Components\Radio::make('event_format')
+                                            ->label('Opportunity Type')
+                                            ->options([
+                                                'onsite'  => 'Onsite',
+                                                'virtual' => 'Virtual',
                                             ])
-                                            ->columnSpan('full')
-                                            ->readOnly(),
+                                            ->default('onsite')
+                                            ->required()
+                                            ->live()
+                                            ->inline(),
+
+                                        // ── Onsite fields ──
+                                        GoogleAutocomplete::make('google_search')
+                                            ->label('Search Location')
+                                            ->countries(['PH'])
+                                            ->withFields([
+                                                Forms\Components\TextInput::make('location')
+                                                    ->extraInputAttributes([
+                                                        'data-google-field' => '{formatted_address}',
+                                                    ])
+                                                    ->columnSpan('full')
+                                                    ->readOnly(),
+                                            ])
+                                            ->visible(fn ($get) => $get('event_format') !== 'virtual'),
+
+                                        Forms\Components\TextInput::make('location_details')
+                                            ->label('Secondary Location Details')
+                                            ->placeholder('Room number, building name, or landmark')
+                                            ->visible(fn ($get) => $get('event_format') !== 'virtual'),
+
+                                        // ── Virtual fields ──
+                                        Forms\Components\TextInput::make('meeting_link')
+                                            ->label('Meeting Link / URL')
+                                            ->url()
+                                            ->placeholder('https://meet.google.com/...')
+                                            ->helperText('Shown to volunteers once their registration is approved.')
+                                            ->visible(fn ($get) => $get('event_format') === 'virtual'),
                                     ]),
                             ]),
 
@@ -252,8 +261,11 @@ class EventResource extends Resource implements HasShieldPermissions
                             ->icon('heroicon-o-clock')
                             ->schema([
                                 Forms\Components\Repeater::make('slots')
+                                    ->label('Slots')
                                     ->required()
+                                    ->cloneable()
                                     ->schema([
+                                        // Row 1: Shift name | Number of volunteers
                                         Forms\Components\Grid::make(2)
                                             ->schema([
                                                 Forms\Components\TextInput::make('shift_name')
@@ -265,34 +277,60 @@ class EventResource extends Resource implements HasShieldPermissions
                                                     ->minValue(0)
                                                     ->numeric(),
                                             ]),
-                                        Forms\Components\Select::make('slot_type_id')
-                                            ->label('Type')
-                                            ->default(1)
-                                            ->required()
-                                            ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray()),
-                                        Forms\Components\Grid::make(3)
+
+                                        // Row 2: Type | Shift Date | Start Time | End Date | End Time
+                                        Forms\Components\Grid::make(5)
                                             ->schema([
+                                                Forms\Components\Select::make('slot_type_id')
+                                                    ->label('Type')
+                                                    ->default(1)
+                                                    ->required()
+                                                    ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray()),
+                                                Forms\Components\DatePicker::make('shift_date')
+                                                    ->label('Shift Date')
+                                                    ->helperText('Must be within the event date range.'),
                                                 Forms\Components\TimePicker::make('start_time')
                                                     ->required()
                                                     ->label('Start Time')
                                                     ->default('08:00')
                                                     ->seconds(false),
+                                                Forms\Components\DatePicker::make('shift_end_date')
+                                                    ->label('End Date')
+                                                    ->helperText('Leave blank if same day. Set for overnight or multi-day shifts.'),
                                                 Forms\Components\TimePicker::make('end_time')
                                                     ->required()
                                                     ->label('End Time')
-                                                    ->default('11:00')
+                                                    ->default('17:00')
                                                     ->seconds(false),
-                                                Forms\Components\Toggle::make('ends_next_day')
-                                                    ->label('Ends Next Day')
-                                                    ->helperText('Enable for overnight shifts (e.g. 10 PM – 2 AM).')
-                                                    ->default(false),
                                             ]),
+
+                                        // Row 3: Slot Type override (Inherit / Onsite / Virtual)
+                                        Forms\Components\Select::make('slot_format')
+                                            ->label('Slot Type (override)')
+                                            ->options([
+                                                ''        => 'Inherit from event',
+                                                'onsite'  => 'Onsite',
+                                                'virtual' => 'Virtual',
+                                            ])
+                                            ->default('')
+                                            ->live()
+                                            ->helperText("Leave blank to use the event's type. Set only to override for this specific shift."),
+
+                                        // Row 4: Per-shift meeting link (virtual override only)
+                                        Forms\Components\TextInput::make('meeting_link')
+                                            ->label('Shift Meeting Link')
+                                            ->url()
+                                            ->placeholder('https://meet.google.com/...')
+                                            ->helperText('Optional. Overrides the event-level meeting link for this shift.')
+                                            ->visible(fn ($get) => $get('slot_format') === 'virtual'),
+
+                                        // Row 5: Responsibilities
                                         Forms\Components\Textarea::make('responsibilities')
+                                            ->label('Key Responsibilities')
                                             ->required()
                                             ->columnSpanFull(),
                                     ])
-                                    ->columnSpanFull()
-                                    ->columns(3),
+                                    ->columnSpanFull(),
                             ]),
 
                         // ── Tab 5: Settings ──────────────────────────────────────
