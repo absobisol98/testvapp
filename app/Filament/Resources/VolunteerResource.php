@@ -32,7 +32,7 @@ class VolunteerResource extends Resource
 
     public static function getNavigationUrl(): string
     {
-        if (auth()->user()?->hasRole('Volunteer')) {
+        if (auth()->user()?->hasActiveRole('Volunteer')) {
             $volunteerId = auth()->id();
             return static::getUrl('view', ['record' => $volunteerId]);
         }
@@ -42,7 +42,7 @@ class VolunteerResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        if(auth()->user()?->hasRole('Volunteer')){
+        if (auth()->user()?->hasActiveRole('Volunteer')) {
             return 'My Volunteer Profile';
         }
         return 'Volunteers';
@@ -78,7 +78,8 @@ class VolunteerResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if (!auth()->user()->hasRole(['super_admin', 'admin', 'Ayala Super Admin'])) {
+                $activeRole = auth()->user()->activeRole();
+                if (! in_array($activeRole, ['super_admin', 'admin', 'Ayala Super Admin'])) {
                     $query = $query->where('id', auth()->id());
                 }
                 return $query;

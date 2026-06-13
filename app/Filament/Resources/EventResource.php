@@ -41,11 +41,10 @@ class EventResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationLabel(): string
     {
-        if(auth()->user()->hasRole('Volunteer')){
+        if (auth()->user()->hasActiveRole('Volunteer')) {
             return 'My Volunteer Opportunities';
         }
         return 'Volunteer Opportunities';
-
     }
 
     public static function getPermissionPrefixes(): array

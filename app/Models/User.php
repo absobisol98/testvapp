@@ -142,6 +142,42 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $this->hasRole(config('filament-shield.super_admin.name'));
     }
 
+    public function availableRoles(): \Illuminate\Support\Collection
+    {
+        return $this->roles->pluck('name');
+    }
+
+    public function activeRole(): string
+    {
+        $sessionRole = session('active_role');
+        $available = $this->availableRoles();
+
+        if ($sessionRole && $available->contains($sessionRole)) {
+            return $sessionRole;
+        }
+
+        $priority = ['super_admin', 'Ayala Super Admin', 'admin', 'Facilitator', 'External Partner', 'Volunteer'];
+        foreach ($priority as $role) {
+            if ($available->contains($role)) {
+                return $role;
+            }
+        }
+
+        return $available->first() ?? 'Volunteer';
+    }
+
+    public function hasActiveRole(string $role): bool
+    {
+        return $this->activeRole() === $role;
+    }
+
+    public function switchRole(string $role): void
+    {
+        if ($this->availableRoles()->contains($role)) {
+            session(['active_role' => $role]);
+        }
+    }
+
     public function registerMediaConversions(Media|null $media = null): void
     {
         $this->addMediaConversion('thumb')
