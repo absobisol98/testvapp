@@ -61,6 +61,12 @@
 
 
                     <div>
+                        @if($user->volunteer_id)
+                            <span class="inline-block px-3 py-1 mb-2 text-xs font-bold tracking-widest text-white rounded-full"
+                                  style="background:#005096;">
+                                {{ $user->volunteer_id }}
+                            </span>
+                        @endif
                         <p class="text-[20px] font-[500] capitalize">{{ $user->name }}</p>
                         <p><span class="text-[14px] font-[300] font-bold">Member Since:</span>
                             {{ $user->created_at->format('F j, Y') }}</p>
