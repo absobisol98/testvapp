@@ -17,6 +17,9 @@ export default {
 
     theme: {
         extend: {
+            fontFamily: {
+                sans: ['"NB International Pro"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+            },
             screens: {
                 sm: '640px',
                 md: '768px',
