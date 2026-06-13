@@ -50,23 +50,26 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
      * @var array<int, string>
      */
     protected $fillable = [
+        'volunteer_id',
         'volunteer',
         'firstname',
         'lastname',
         'middle_name',
+        'nickname',
         'email',
         'password',
         'birthday',
+        'age_range',
+        'program_interests',
+        'skills',
+        'referral_source',
+        'other_program',
         'emergency_contact_name',
         'emergency_contact_number',
         'affiliate_type_id',
         'cluster_id',
         'company_id',
         'external_company_name',
-        'referral_source',
-        'other_program',
-        'nickname',
-        'age_range',
     ];
 
     /**
@@ -88,8 +91,23 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'referral_source' => 'array',
+        'program_interests' => 'array',
+        'skills' => 'array',
         'birthday' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->volunteer_id)) {
+                $max = static::whereNotNull('volunteer_id')
+                    ->orderByDesc('volunteer_id')
+                    ->value('volunteer_id');
+                $next = $max ? (intval(substr($max, 1)) + 1) : 1;
+                $user->volunteer_id = 'V' . str_pad($next, 3, '0', STR_PAD_LEFT);
+            }
+        });
+    }
 
     public function getFilamentName(): string
     {

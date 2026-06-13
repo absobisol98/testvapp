@@ -141,8 +141,28 @@ final class VolunteerFields
 
             Select::make('program_id')
                 ->columnSpanFull()
-                ->label('Interests')
+                ->label('Primary Program Assignment')
                 ->options(Program::all()->pluck('name', 'id')->toArray()),
+
+            \Filament\Forms\Components\CheckboxList::make('program_interests')
+                ->columnSpanFull()
+                ->label('What programs are you interested in?')
+                ->columns(2)
+                ->options([
+                    'education'            => 'Education',
+                    'disaster_relief'      => 'Disaster Relief Operations',
+                    'financial_literacy'   => 'Financial Literacy',
+                    'health'               => 'Health',
+                    'environment'          => 'Environment',
+                    'report'               => 'Report',
+                    'others'               => 'Others',
+                ]),
+
+            \Filament\Forms\Components\TagsInput::make('skills')
+                ->columnSpanFull()
+                ->label('Skills')
+                ->placeholder('Type a skill and press Enter')
+                ->helperText('Add skills relevant to your volunteer experience (e.g. First Aid, Teaching, Web Development).'),
         ];
 
     }
