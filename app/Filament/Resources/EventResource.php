@@ -431,106 +431,138 @@ class EventResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-//                Tables\Columns\TextColumn::make('event_type_id')
-//                    ->numeric()
-//                    ->sortable(),
+                // 1 — Status badge (computed from dates + is_published)
+                Tables\Columns\TextColumn::make('computed_status')
+                    ->label('Status')
+                    ->badge()
+                    ->getStateUsing(function (Event $record): string {
+                        if (! $record->is_published) return 'Draft';
+                        if ($record->start_date > now()) return 'Upcoming';
+                        if ($record->end_date && $record->end_date >= now()) return 'Ongoing';
+                        return 'Completed';
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'Draft'     => 'gray',
+                        'Upcoming'  => 'info',
+                        'Ongoing'   => 'success',
+                        'Completed' => 'warning',
+                        default     => 'gray',
+                    }),
 
+                // 2 — Title
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable()
+                    ->wrap(),
+
+                // 3 — Date
                 Tables\Columns\TextColumn::make('start_date')
                     ->label('Date')
                     ->date('M d, Y')
                     ->sortable(),
 
+                // 4 — Recurrence Type
                 Tables\Columns\TextColumn::make('recurrence_type_id')
-                    ->label('Recurrence type')
-                    ->formatStateUsing(function (Event $record,string $state){
-                        if($state == 2){
-                            return ucfirst($record->frequency);
-
-                        }
+                    ->label('Recurrence')
+                    ->formatStateUsing(function (Event $record, string $state): string {
+                        if ($state == 2) return ucfirst($record->frequency);
                         return $record->event_recurrence_type->name;
                     })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('point_of_contact_id')
-                    ->label('HR Representative (Point-of-contact)')
-                    ->formatStateUsing(function (Event $record,string $state){
-                        $user = User::find($state);
-                        return $user->firstname.' '.$user->lastname;
-                    })
-                    ->searchable(),
+
+                // 5 — Program
                 Tables\Columns\TextColumn::make('program.name')
-                    ->numeric()
+                    ->label('Program')
                     ->sortable(),
-                Tables\Columns\IconColumn::make('sign_up_approval_required')
-                    ->label('Approval Required')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('attachment_required')
-                    ->boolean(),
 
-                Tables\Columns\IconColumn::make('is_featured')
-                    ->label('Featured')
-                    ->visible(auth()->user()->can('set_featured_event'))
-                    ->boolean(),
-
-                Tables\Columns\TextColumn::make('created_by_user.firstname')
-                    ->label('Opportunity By')
-                    ->searchable(),
+                // 6 — Type badge (Onsite / Virtual / Hybrid)
+                Tables\Columns\TextColumn::make('event_format')
+                    ->label('Type')
+                    ->badge()
+                    ->getStateUsing(function (Event $record): string {
+                        // Auto-detect hybrid: any slot has a different format from the event level
+                        $eventFormat = $record->event_format ?? 'onsite';
+                        $hasConflict = $record->slots->contains(fn ($slot) =>
+                            $slot->slot_format && $slot->slot_format !== $eventFormat
+                        );
+                        if ($hasConflict) return 'Hybrid';
+                        return ucfirst($eventFormat);
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'Virtual' => 'info',
+                        'Hybrid'  => 'warning',
+                        default   => 'success', // Onsite
+                    }),
             ])
             ->filters([
-                Filter::make('status')
-                    ->label('')
+                // Opportunity Status
+                Filter::make('opportunity_status')
+                    ->label('Status')
                     ->form([
                         Forms\Components\Select::make('status')
-                            ->selectablePlaceholder(false)
-                            ->label('')
-                            ->default('all')
+                            ->label('Opportunity Status')
+                            ->placeholder('All')
                             ->options([
-                                'all' => 'All Events',
-                                'upcoming_events' => 'Upcoming Events',
-                                'joined' => 'Joined Events',
+                                'draft'     => 'Draft',
+                                'upcoming'  => 'Upcoming',
+                                'ongoing'   => 'Ongoing',
+                                'completed' => 'Completed',
+                                'joined'    => 'Joined (mine)',
                             ]),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if($data['status'] === 'joined') {
-                            $query->whereHas('attendees', function (Builder $query) {
-                                $query->where('attendee_id', auth()->id());
-                            });
-                        } elseif($data['status'] == 'upcoming_events'){
-                            $query->where('start_date', '>=', now()->startOfDay());
-                        }
-
-                        return $query;
+                        return match ($data['status'] ?? null) {
+                            'draft'     => $query->where('is_published', false),
+                            'upcoming'  => $query->where('is_published', true)->where('start_date', '>', now()),
+                            'ongoing'   => $query->where('is_published', true)->where('start_date', '<=', now())->where('end_date', '>=', now()),
+                            'completed' => $query->where('is_published', true)->where('end_date', '<', now()),
+                            'joined'    => $query->whereHas('attendees', fn ($q) => $q->where('attendee_id', auth()->id())),
+                            default     => $query,
+                        };
                     }),
 
+                // Tags
                 Filter::make('tags')
                     ->label('Tags')
                     ->form([
                         Forms\Components\Select::make('tags')
-                            ->selectablePlaceholder(false)
-                            ->label('')
+                            ->label('Tags')
                             ->placeholder('All Tags')
-                            ->selectablePlaceholder(false)
                             ->multiple()
-                            ->options( function(){
-                                $option = array();
-                                foreach(TagsEvent::orderBy('name')->get() as $tag){
-                                    $option[$tag->id] = $tag->name;
-                                }
-                                return $option;
-                            } ),
+                            ->options(fn () => TagsEvent::orderBy('name')->pluck('name', 'id')->toArray()),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if(!empty($data['tags'])) {
-                            $query->whereHas('tags', function (Builder $query) use($data) {
-                                $query->whereIn('tag_id', $data['tags']);
-                            });
-                            return $query;
+                        if (! empty($data['tags'])) {
+                            $query->whereHas('tags', fn ($q) => $q->whereIn('tag_id', $data['tags']));
                         }
-                        // dd($query->get());
                         return $query;
                     }),
-            ],layout: FiltersLayout::AboveContent)
+
+                // Program
+                Tables\Filters\SelectFilter::make('program_id')
+                    ->label('Program')
+                    ->relationship('program', 'name')
+                    ->placeholder('All Programs'),
+
+                // Opportunity Type (Virtual / Onsite)
+                Tables\Filters\SelectFilter::make('event_format')
+                    ->label('Type')
+                    ->options([
+                        'onsite'  => 'Onsite',
+                        'virtual' => 'Virtual',
+                    ])
+                    ->placeholder('All Types')
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['value'])) return $query;
+                        if ($data['value'] === 'onsite') {
+                            // Treat null event_format as onsite (legacy records)
+                            return $query->where(fn ($q) =>
+                                $q->where('event_format', 'onsite')->orWhereNull('event_format')
+                            );
+                        }
+                        return $query->where('event_format', $data['value']);
+                    }),
+
+            ], layout: FiltersLayout::AboveContent)
             ->actions((new EventRegistrationTableAction())->execute())
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
