@@ -342,6 +342,11 @@ class EventResource extends Resource implements HasShieldPermissions
                         ->extraAttributes([
                             'title' => 'toggle button if attachment is required'
                         ]),
+
+                        Forms\Components\Toggle::make('is_public')
+                        ->label('Open to All Business Units')
+                        ->helperText('Allows volunteers from other Business Units to see and join this opportunity.')
+                        ->visible(fn () => auth()->user()->hasRole(['Ayala Super Admin', 'admin'])),
                     ])->columnSpan(1),
 
                     Forms\Components\Section::make()
