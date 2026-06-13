@@ -83,7 +83,7 @@ class ViewVolunteer extends Page
             'nextHourGoal' => $nextHourGoal,
             'nextOppGoal' => $nextOppGoal,
             'participationFrequency' => $user->getParticipationFrequency(),
-            'canEdit' => auth()->id() == $this->record->id || auth()->user()->isAdminRole(),
+            'canEdit' => auth()->id() == $this->record || auth()->user()->isAdminRole(),
             'editUrl' => VolunteerResource::getUrl('edit', ['record' => $this->record]),
         ];
     }
