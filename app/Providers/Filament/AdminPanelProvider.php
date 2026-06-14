@@ -80,6 +80,12 @@ class AdminPanelProvider extends PanelProvider
             ])
 
             ->navigationItems([
+                Navigation\NavigationItem::make('Dashboard')
+                    ->icon('heroicon-o-home')
+                    ->url(url('/admin'))
+                    ->isActiveWhen(fn (): bool => request()->path() === 'admin')
+                    ->sort(-2),
+
                 Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang
                     ->visible(fn(): bool => auth()->user()->can('access_log_viewer'))
                     ->url(config('app.url').'/'.config('log-viewer.route_path'), shouldOpenInNewTab: true)
