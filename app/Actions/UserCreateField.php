@@ -42,6 +42,7 @@ final class UserCreateField
                             }),
                     ])
                         ->hiddenOn('create')
+                        ->visible(fn(): bool => (bool) auth()->user()?->isAdminRole())
                         ->fullWidth(),
 
                     Section::make()
@@ -133,7 +134,7 @@ final class UserCreateField
                         ->columns(2),
 
                     Tab::make('Roles')
-                        ->visible(fn() => auth()->user()->can('update_shield::role'))
+                        ->visible(fn() => auth()->user()?->isAdminRole() && auth()->user()->can('update_shield::role'))
                         ->hidden(fn() => $not_from_user_resorce)
                         ->icon('fluentui-shield-task-48')
                         ->schema([

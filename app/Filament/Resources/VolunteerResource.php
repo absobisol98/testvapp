@@ -85,11 +85,29 @@ class VolunteerResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $activeRole = auth()->user()->activeRole();
-                if (! in_array($activeRole, ['Ayala Super Admin', 'admin', 'Ayala Super Admin'])) {
-                    $query = $query->where('id', auth()->id());
+                $user = auth()->user();
+                $activeRole = $user->activeRole();
+
+                if ($user->isAdminRole()) {
+                    // Ayala Super Admin / admin: see all volunteers
+                    return $query;
                 }
-                return $query;
+
+                if ($activeRole === 'External Partner') {
+                    $bu = $user->currentBU();
+                    if ($bu && $bu->cluster_id) {
+                        // Scope to volunteers whose cluster matches this BU's cluster
+                        return $query->where(function ($q) use ($bu, $user) {
+                            $q->where('cluster_id', $bu->cluster_id)
+                              ->orWhere('id', $user->id);
+                        });
+                    }
+                    // No BU assigned — see only self
+                    return $query->where('id', $user->id);
+                }
+
+                // Volunteer, Facilitator, and any other role — own record only
+                return $query->where('id', $user->id);
             })
             ->columns([
                 Tables\Columns\TextColumn::make('volunteer_id')

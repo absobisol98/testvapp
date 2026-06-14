@@ -42,6 +42,32 @@ class UserResource extends Resource
         return (bool) auth()->user()?->isAdminRole();
     }
 
+    public static function canViewAny(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
+    public static function canCreate(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->isAdminRole() || $user->id === $record->id);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
