@@ -32,7 +32,9 @@ class Dashboard extends BasePage
 
         $opportunities = Event::with(['slots', 'media', 'program', 'tags'])
             ->where('is_published', true)
-            ->where('start_date', '>=', now())
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
             ->orderBy('start_date', 'asc')
             ->take(6)
             ->get();

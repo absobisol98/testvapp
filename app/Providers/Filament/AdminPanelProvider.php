@@ -238,12 +238,16 @@ class AdminPanelProvider extends PanelProvider
             $allowed
         ));
 
+        $dashboardUrl = url('/admin');
+
         $css = <<<CSS
 <style>
 /* Role-based navigation filter ({$user->activeRole()}) */
 .fi-sidebar-group { display: none !important; }
 {$showGroups} { display: flex !important; }
 .fi-sidebar-item{$notHas} { display: none !important; }
+/* Always show Dashboard home item for all roles */
+.fi-sidebar-item:has(a[href="{$dashboardUrl}"]) { display: flex !important; }
 </style>
 CSS;
 

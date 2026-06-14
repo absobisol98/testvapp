@@ -224,31 +224,6 @@
         @endif
     </div>
 
-    {{-- ═══════════════════════════════════
-         SECTION 3 — Role-specific widgets
-         (existing widgets, unchanged logic)
-    ═══════════════════════════════════ --}}
-    @if($isVolunteer)
-        @livewire(\App\Filament\Widgets\AdsDashboardWidget::class)
-        @livewire(\App\Filament\Widgets\UpcomingOpportunityWidget::class)
-    @endif
-
-    @if($isAdmin)
-        @livewire(\App\Filament\Widgets\AFIAdminOpportunitiesWidget::class)
-        @livewire(\App\Filament\Widgets\BusinessUnitOrExternalPartersWidget::class)
-        @livewire(\App\Filament\Widgets\VolunteersWidget::class)
-    @endif
-
-    @if($isPartner)
-        @livewire(\App\Filament\Widgets\PartnersOnGoingOpportunitiesWidget::class)
-        @livewire(\App\Filament\Widgets\PartnersMyOpportunitiesWidget::class)
-        @livewire(\App\Filament\Widgets\FacilitatorWidget::class)
-    @endif
-
-    @if($isFacilitator)
-        @livewire(\App\Filament\Widgets\MyFacilitatedEventsWidget::class)
-    @endif
-
 </div>
 
 <script>
