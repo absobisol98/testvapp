@@ -22,8 +22,19 @@
 
         <!-- Icon -->
         <div class="flex items-center justify-center pt-8 pb-4">
-            <span class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-50 text-4xl"
-                  x-text="steps[step].emoji"></span>
+            <span class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-50">
+                <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          :d="{
+                            hand:     'M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11',
+                            calendar: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
+                            users:    'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+                            chart:    'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+                            star:     'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z',
+                            check:    'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                          }[steps[step].icon]"></path>
+                </svg>
+            </span>
         </div>
 
         <!-- Body -->
@@ -64,12 +75,12 @@ function vappTour() {
         open: false,
         step: 0,
         steps: [
-            { emoji: '👋', title: 'Welcome to VAPP!',        body: 'This is the Ayala Foundation Volunteer Activity Platform. Let us walk you through the key areas so you can get started quickly.' },
-            { emoji: '📅', title: 'Opportunities',           body: 'Browse upcoming volunteer events in card or list view. Admins can create events, manage slots, and track registrations — all in one place.' },
-            { emoji: '👥', title: 'Volunteers',              body: 'View volunteer profiles, export records to Excel, or bulk-import new volunteers from a CSV file. Each profile shows hours, badges, and certificates.' },
-            { emoji: '📊', title: 'Reports',                 body: 'Live stats: total hours, attendance rate, top volunteers, and monthly registration charts. Switch tabs to explore opportunities and leaderboard data.' },
-            { emoji: '🏆', title: 'Badges & Certificates',  body: 'Volunteers earn badges and rank up as they log hours. Certificates are generated automatically once attendance is confirmed.' },
-            { emoji: '✅', title: "You're all set!",         body: 'Click the ? button in the top bar any time to relaunch this tour. Enjoy volunteering!' },
+            { icon: 'hand', title: 'Welcome to VAPP!',        body: 'This is the Ayala Foundation Volunteer Activity Platform. Let us walk you through the key areas so you can get started quickly.' },
+            { icon: 'calendar', title: 'Opportunities',        body: 'Browse upcoming volunteer events in card or list view. Admins can create events, manage slots, and track registrations — all in one place.' },
+            { icon: 'users', title: 'Volunteers',              body: 'View volunteer profiles, export records to Excel, or bulk-import new volunteers from a CSV file. Each profile shows hours, badges, and certificates.' },
+            { icon: 'chart', title: 'Reports',                 body: 'Live stats: total hours, attendance rate, top volunteers, and monthly registration charts. Switch tabs to explore opportunities and leaderboard data.' },
+            { icon: 'star', title: 'Badges & Certificates',    body: 'Volunteers earn badges and rank up as they log hours. Certificates are generated automatically once attendance is confirmed.' },
+            { icon: 'check', title: "You're all set!",         body: 'Click the Help button in the top bar any time to relaunch this tour. Enjoy volunteering!' },
         ],
         init() {
             document.body.appendChild(this.$el);

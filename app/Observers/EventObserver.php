@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\MessageRoom;
 use App\Models\MessageRoomParticipant;
 use App\Models\Survey;
+use App\Models\User;
 use App\Notifications\EventCancelledNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -45,6 +46,18 @@ class EventObserver
                 ['question' => 'Do you have any suggestions for improvement?', 'type' => 'text'],
             ],
         ]);
+    }
+
+    public function saved(Event $event): void
+    {
+        $facilitatorIds = $event->facilitators()->pluck('users.id');
+
+        foreach ($facilitatorIds as $userId) {
+            $user = User::find($userId);
+            if ($user && ! $user->hasRole('Facilitator')) {
+                $user->assignRole('Facilitator');
+            }
+        }
     }
 
     public function updated(Event $event): void

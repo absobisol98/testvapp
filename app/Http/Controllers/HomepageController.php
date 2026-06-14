@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Models\Program;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Blog\Post;
 use App\Models\BusinessUnit;
 use Filament\Notifications\Notification;
@@ -51,21 +48,21 @@ class HomepageController extends Controller implements HasMedia
 
         $articles = Post::latest()->get();
 
-        // Stats for the impact band
-        $statsVolunteers = User::role('volunteer')->count();
-        $statsHours = (int) DB::table('event_attendees')
-            ->whereNotNull('time_in')
-            ->whereNotNull('time_out')
-            ->selectRaw('SUM(TIMESTAMPDIFF(HOUR, time_in, time_out)) as total_hours')
-            ->value('total_hours');
-        $statsPrograms = Program::count();
-        $statsOpen = Event::where('is_published', true)
-            ->whereDate('end_date', '>=', now())
-            ->count();
+        $upcoming = Event::with('slots')
+            ->whereDate('start_date', '>=', now())
+            ->orderBy('start_date', 'desc')
+            ->first();
+
+        $ban = $upcoming ? $upcoming->getMedia('event-banner-attachments')->first() : null;
+
+        $volunteerCount   = \App\Models\User::role('volunteer')->whereYear('created_at', date('Y'))->count();
+        $opportunityCount = \App\Models\Event::whereYear('start_date', date('Y'))->where('is_published', true)->count();
+        $businessUnitCount = \App\Models\BusinessUnit::count();
+        $programCount      = \App\Models\Program::count();
 
         return view('custom.main-landing', compact(
             'opportunities', 'articles', 'featuredOpportunity',
-            'statsVolunteers', 'statsHours', 'statsPrograms', 'statsOpen'
+            'volunteerCount', 'opportunityCount', 'businessUnitCount', 'programCount'
         ));
     }
 

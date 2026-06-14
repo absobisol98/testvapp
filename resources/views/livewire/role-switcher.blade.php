@@ -6,7 +6,6 @@
             @click="open = !open"
             class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition"
         >
-            <x-heroicon-o-user-circle class="w-4 h-4 text-gray-500" />
             <span>{{ $currentRole }}</span>
             <x-heroicon-o-chevron-down class="w-3 h-3 text-gray-400" />
         </button>

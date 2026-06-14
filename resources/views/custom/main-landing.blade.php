@@ -1,604 +1,915 @@
 @extends('custom.layouts.app')
 
-@section('title', 'Home')
-
 @section('content')
-
-{{-- Design tokens + Google Fonts --}}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-
-<style>
-:root {
-    --blue-900: #072b54;
-    --blue-800: #0a3a6e;
-    --blue-700: #0e4f99;
-    --blue-600: #1565c4;
-    --blue-500: #2a7de0;
-    --blue-400: #4a93e8;
-    --blue-100: #d6e6f8;
-    --blue-50:  #eef4fc;
-    --orange-600: #d9650c;
-    --orange-500: #f07a1e;
-    --orange-400: #f79544;
-    --orange-50:  #fef2e7;
-    --green-600: #1d8a52;
-    --green-50:  #eaf7f0;
-    --ink:   #0d1b2e;
-    --slate: #4a5568;
-    --muted: #8896a4;
-    --faint: #c4cdd6;
-    --line:  #e8ecf0;
-    --line-soft: #f0f3f6;
-    --bg-soft: #f7f9fb;
-    --bg-tint: #f0f4f8;
-    --font-display: "Bricolage Grotesque", system-ui, sans-serif;
-    --font-body:    "Public Sans", system-ui, sans-serif;
-    --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
-    --sh-sm: 0 1px 4px rgba(13,27,46,.07);
-    --sh-md: 0 4px 16px rgba(13,27,46,.09);
-    --sh-lg: 0 8px 32px rgba(13,27,46,.12);
-    --sh-blue: 0 8px 24px rgba(14,79,153,.35);
-    --maxw: 1180px;
-}
-
-/* Base */
-.vapp-page { font-family: var(--font-body); color: var(--ink); }
-.vapp-page h1,.vapp-page h2,.vapp-page h3,.vapp-page h4 {
-    font-family: var(--font-display); margin: 0; line-height: 1.08; letter-spacing: -.015em; font-weight: 700;
-}
-.vapp-wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
-.vapp-section { padding: 80px 0; }
-.vapp-eyebrow {
-    font-family: var(--font-body); font-weight: 700; font-size: 12px;
-    letter-spacing: .14em; text-transform: uppercase; color: var(--orange-600);
-    display: inline-flex; align-items: center; gap: 6px;
-}
-.vapp-eyebrow.on-dark { color: var(--orange-400); }
-
-/* Buttons */
-.vapp-btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-    font-family: var(--font-body); font-weight: 700; font-size: 15px;
-    padding: 12px 22px; border-radius: var(--r-md); border: none; cursor: pointer;
-    text-decoration: none; transition: all .18s; white-space: nowrap; line-height: 1;
-}
-.vapp-btn svg { width: 18px; height: 18px; }
-.vapp-btn-primary { background: var(--orange-500); color: #fff; box-shadow: 0 6px 16px rgba(240,122,30,.28); }
-.vapp-btn-primary:hover { background: var(--orange-600); transform: translateY(-1px); box-shadow: 0 10px 22px rgba(240,122,30,.34); color: #fff; }
-.vapp-btn-ghost { background: transparent; color: var(--blue-700); border: 1.5px solid var(--line); }
-.vapp-btn-ghost:hover { border-color: var(--blue-500); background: var(--blue-50); color: var(--blue-700); }
-.vapp-btn-ghost.on-dark { color: #fff; border-color: rgba(255,255,255,.4); }
-.vapp-btn-ghost.on-dark:hover { background: rgba(255,255,255,.12); border-color: #fff; }
-.vapp-btn-white { background: #fff; color: var(--blue-800); }
-.vapp-btn-white:hover { transform: translateY(-1px); box-shadow: var(--sh-md); color: var(--blue-800); }
-.vapp-btn-lg { padding: 15px 30px; font-size: 16px; }
-.vapp-btn-sm { padding: 9px 16px; font-size: 13.5px; }
-.vapp-btn-block { width: 100%; }
-
-/* Cards */
-.vapp-card {
-    background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg);
-    overflow: hidden; display: flex; flex-direction: column;
-    transition: box-shadow .2s, transform .2s;
-}
-.vapp-card:hover { box-shadow: var(--sh-lg); transform: translateY(-3px); }
-
-/* Progress bar */
-.vapp-progress { height: 7px; background: var(--line); border-radius: var(--r-pill); overflow: hidden; }
-.vapp-progress-fill { display: block; height: 100%; background: var(--orange-500); border-radius: var(--r-pill); }
-
-/* Badge/chip */
-.vapp-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-family: var(--font-body); font-weight: 700; font-size: 12px;
-    padding: 5px 10px; border-radius: var(--r-pill);
-}
-
-/* Meta row */
-.vapp-meta { display: flex; align-items: center; gap: 7px; color: var(--slate); font-size: 13.5px; font-weight: 500; }
-.vapp-meta svg { width: 15px; height: 15px; color: var(--muted); flex: none; }
-
-/* Image placeholder */
-.vapp-img-ph {
-    background: var(--bg-tint); position: relative; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-}
-.vapp-img-ph::after {
-    content: ''; position: absolute; inset: 0;
-    background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(14,79,153,.04) 8px, rgba(14,79,153,.04) 16px);
-}
-
-/* Animations */
-@keyframes vapp-fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
-.vapp-fade-up { animation: vapp-fadeUp .5s cubic-bezier(.2,.7,.2,1) both; }
-@keyframes vapp-pop { from { opacity:0; transform:scale(.9); } to { opacity:1; transform:none; } }
-.vapp-pop { animation: vapp-pop .6s cubic-bezier(.2,.7,.2,1) both; }
-
-/* Section head */
-.vapp-section-head { margin-bottom: 44px; }
-
-/* Responsive */
-@media (max-width: 980px) {
-    .vapp-hero-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
-    .vapp-hero-visual { order: -1; }
-    .vapp-stat-grid { grid-template-columns: 1fr 1fr !important; }
-    .vapp-cards-3 { grid-template-columns: 1fr 1fr !important; }
-    .vapp-two-up { grid-template-columns: 1fr !important; }
-    .vapp-foot-grid { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
-}
-@media (max-width: 640px) {
-    .vapp-cards-3 { grid-template-columns: 1fr !important; }
-    .vapp-stat-grid { grid-template-columns: 1fr 1fr !important; gap: 18px !important; }
-    .vapp-wrap { padding: 0 18px; }
-    .vapp-section { padding: 56px 0; }
-    .vapp-foot-grid { grid-template-columns: 1fr !important; }
-}
-</style>
-
-<div class="vapp-page">
-
-{{-- ===================== HERO ===================== --}}
-<section style="background: linear-gradient(180deg,#fff 0%,var(--bg-tint) 100%); overflow: hidden; padding-top: 110px;">
-    <div class="vapp-wrap">
-        <div class="vapp-hero-grid" style="display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center; padding:60px 0 70px;">
-
-            {{-- Left: Text --}}
-            <div class="vapp-fade-up">
-                <div class="vapp-badge" style="background:var(--orange-50); color:var(--orange-600); margin-bottom:22px; font-size:13px;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></svg>
-                    Brigada 2026 is now open
-                </div>
-                <h1 style="font-size:clamp(36px,5vw,58px); line-height:1.02; letter-spacing:-.03em;">
-                    Your time can<br>change a <span style="color:var(--blue-700);">community.</span>
-                </h1>
-                <p style="margin-top:20px; font-size:clamp(16px,1.4vw,18px); line-height:1.65; color:var(--slate); max-width:480px;">
-                    Find a volunteer opportunity that fits your skills and schedule — and join thousands across our partner network making a real difference.
-                </p>
-                <div style="display:flex; gap:12px; margin-top:28px; flex-wrap:wrap;">
-                    @guest
-                        <a href="{{ route('volunteer.form.view') }}" class="vapp-btn vapp-btn-primary vapp-btn-lg">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0"/></svg>
-                            Become a Volunteer
-                        </a>
-                        <a href="#sec-opportunities" class="vapp-btn vapp-btn-ghost vapp-btn-lg">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.3-4.3"/></svg>
-                            Browse Opportunities
-                        </a>
-                    @endguest
-                    @auth
-                        <a href="/admin/events" class="vapp-btn vapp-btn-primary vapp-btn-lg">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.3-4.3"/></svg>
-                            Browse Opportunities
-                        </a>
-                        <a href="/admin" class="vapp-btn vapp-btn-ghost vapp-btn-lg">
-                            Dashboard
-                        </a>
-                    @endauth
-                </div>
-                {{-- Social proof --}}
-                <div style="display:flex; align-items:center; gap:14px; margin-top:28px;">
-                    <div style="display:flex;">
-                        @php $avatarColors = ['#0e4f99','#1565c4','#f07a1e','#1d8a52']; $avatarLabels = ['MR','JB','CT','AL']; @endphp
-                        @foreach($avatarColors as $i => $color)
-                        <div style="width:34px;height:34px;border-radius:50%;background:{{ $color }};border:2.5px solid #fff;margin-left:{{ $i ? '-10px' : '0' }};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;z-index:{{ 4-$i }};">
-                            {{ $avatarLabels[$i] }}
-                        </div>
-                        @endforeach
-                    </div>
-                    <div style="font-size:14px; color:var(--slate); font-weight:500;">
-                        <strong style="color:var(--ink);">{{ number_format($statsVolunteers) }}+ volunteers</strong> have joined this year
-                    </div>
-                </div>
-            </div>
-
-            {{-- Right: Visual --}}
-            <div class="vapp-hero-visual" style="position:relative;">
-                @php
-                    $heroBanner = $featuredOpportunity?->getFirstMediaUrl('event-banner-attachments');
-                @endphp
-                @if($heroBanner)
-                    <img src="{{ $heroBanner }}" alt="Volunteers" style="width:100%;height:440px;object-fit:cover;border-radius:var(--r-xl);box-shadow:var(--sh-lg);">
-                @else
-                    <div class="vapp-img-ph" style="height:440px;border-radius:var(--r-xl);box-shadow:var(--sh-lg);">
-                        <span style="font-size:13px;color:var(--blue-700);background:rgba(255,255,255,.86);padding:8px 14px;border-radius:var(--r-pill);z-index:1;">Volunteers smiling together at an outreach event</span>
-                    </div>
-                @endif
-
-                {{-- Floating: hours card --}}
-                <div class="vapp-pop" style="position:absolute;left:-20px;bottom:36px;background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-lg);padding:14px 18px;display:flex;align-items:center;gap:14px;animation-delay:.3s;">
-                    <div style="width:44px;height:44px;border-radius:12px;background:var(--green-50);color:var(--green-600);display:flex;align-items:center;justify-content:center;flex:none;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M11 20A7 7 0 0 1 4 13c0-6 7-10 16-10 0 9-4 16-9 17ZM4 21c2-4 5-7 9-9"/></svg>
-                    </div>
-                    <div>
-                        <div style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--ink);line-height:1;">{{ number_format($statsHours) }}</div>
-                        <div style="font-size:12px;color:var(--muted);font-weight:600;">hours given back</div>
-                    </div>
-                </div>
-
-                {{-- Floating: open opportunities --}}
-                <div class="vapp-pop" style="position:absolute;right:-14px;top:30px;background:var(--blue-700);color:#fff;border-radius:var(--r-md);box-shadow:var(--sh-blue);padding:12px 16px;animation-delay:.45s;">
-                    <div style="font-size:11px;opacity:.8;font-weight:600;">This weekend</div>
-                    <div style="font-weight:700;font-size:15px;">{{ $statsOpen }} ways to help</div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-{{-- ===================== LIVE STATS BAND ===================== --}}
-<section style="background:var(--blue-800);">
-    <div class="vapp-wrap" style="padding:44px 28px;">
-        <div class="vapp-stat-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;">
-            @php
-                $statItems = [
-                    ['label'=>'Volunteers','value'=>$statsVolunteers,'icon'=>'users'],
-                    ['label'=>'Hours rendered','value'=>$statsHours,'icon'=>'clock'],
-                    ['label'=>'Active programs','value'=>$statsPrograms,'icon'=>'grid'],
-                    ['label'=>'Open opportunities','value'=>$statsOpen,'icon'=>'hand'],
-                ];
-                $statIcons = [
-                    'users' => 'M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2|M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 20v-2a4 4 0 0 0-3-3.87M16 3.13A4 4 0 0 1 16 11',
-                    'clock' => 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 7v5l3 2',
-                    'grid'  => 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z',
-                    'hand'  => 'M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0',
-                ];
-            @endphp
-            @foreach($statItems as $stat)
-            <div style="display:flex;align-items:center;gap:16px;">
-                <div style="width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.1);color:var(--orange-400);display:flex;align-items:center;justify-content:center;flex:none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;">
-                        @foreach(explode('|', $statIcons[$stat['icon']]) as $d)
-                            <path d="{{ $d }}"/>
-                        @endforeach
-                    </svg>
-                </div>
-                <div>
-                    <div class="vapp-stat-num" style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,3vw,36px);color:#fff;line-height:1;" data-target="{{ $stat['value'] }}">0</div>
-                    <div style="font-size:13px;color:rgba(255,255,255,.72);font-weight:600;margin-top:4px;">{{ $stat['label'] }}</div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        <div style="margin-top:22px;font-size:12px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:8px;">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--green-600);box-shadow:0 0 0 3px rgba(29,138,82,.3);display:inline-block;"></span>
-            Updated live — numbers grow as volunteers like you sign up
-        </div>
-    </div>
-</section>
-
-{{-- ===================== FEATURED OPPORTUNITIES ===================== --}}
-<section class="vapp-section" id="sec-opportunities">
-    <div class="vapp-wrap">
-        {{-- Section head --}}
-        <div class="vapp-section-head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;">
-            <div>
-                <div class="vapp-eyebrow" style="margin-bottom:10px;">Opportunities</div>
-                <h2 style="font-size:clamp(26px,3.4vw,38px);">Ways to help this month</h2>
-                <p style="margin-top:12px;font-size:16px;line-height:1.6;color:var(--slate);">Hand-picked opportunities across the partner network. New ones are added every week.</p>
-            </div>
-            @guest
-                <a href="{{ route('volunteer.form.view') }}" class="vapp-btn vapp-btn-ghost" style="white-space:nowrap;">
-                    See all opportunities
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </a>
-            @endguest
-            @auth
-                <a href="/admin/events" class="vapp-btn vapp-btn-ghost" style="white-space:nowrap;">
-                    See all opportunities
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </a>
-            @endauth
-        </div>
-
-        @if($opportunities->count() > 0)
-        <div class="vapp-cards-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
-            @foreach($opportunities->take(3) as $opportunity)
-            @php
-                $opMedia = $opportunity->getFirstMediaUrl('event-banner-attachments');
-                $totalSlots = $opportunity->slots->count();
-                $spotsTotal = 40;
-                $spotsFilled = rand(5, 35);
-                $spotsLeft = max(0, $spotsTotal - $spotsFilled);
-                $pct = min(100, round($spotsFilled / $spotsTotal * 100));
-                $urgent = $spotsLeft <= 8;
-            @endphp
-            <article class="vapp-card">
-                {{-- Image --}}
-                <div style="position:relative;">
-                    @if($opMedia)
-                        <img src="{{ $opMedia }}" alt="{{ $opportunity->title }}" style="width:100%;height:172px;object-fit:cover;">
-                    @else
-                        <div class="vapp-img-ph" style="height:172px;">
-                            <span style="font-size:11px;color:var(--blue-700);background:rgba(255,255,255,.86);padding:5px 10px;border-radius:var(--r-pill);z-index:1;">{{ $opportunity->title }}</span>
-                        </div>
-                    @endif
-                    {{-- Program badge --}}
-                    @if($opportunity->program)
-                    <span class="vapp-badge" style="position:absolute;top:12px;left:12px;background:var(--blue-700);color:#fff;">
-                        {{ $opportunity->program->name }}
-                    </span>
-                    @endif
-                </div>
-                {{-- Content --}}
-                <div style="padding:16px 18px 18px;display:flex;flex-direction:column;gap:11px;flex:1;">
-                    <h3 style="font-size:17px;line-height:1.25;font-weight:700;">{{ $opportunity->title }}</h3>
-                    <div style="display:flex;flex-direction:column;gap:6px;">
-                        <div class="vapp-meta">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg>
-                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M j, Y') }} · {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }}
-                        </div>
-                        <div class="vapp-meta">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><path d="M12 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg>
-                            {{ $opportunity->location ?? 'Location TBA' }}
-                        </div>
-                    </div>
-                    <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;">
-                        {{-- Spots bar --}}
-                        <div>
-                            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
-                                <span style="font-size:12.5px;font-weight:700;color:{{ $urgent ? 'var(--orange-600)' : 'var(--slate)' }};">
-                                    {{ $spotsLeft > 0 ? $spotsLeft . ' spot' . ($spotsLeft === 1 ? '' : 's') . ' left' : 'Fully booked' }}
-                                </span>
-                                <span style="font-size:12px;color:var(--muted);font-weight:600;">{{ $spotsFilled }}/{{ $spotsTotal }} joined</span>
-                            </div>
-                            <div class="vapp-progress">
-                                <span class="vapp-progress-fill" style="width:{{ $pct }}%;"></span>
-                            </div>
-                        </div>
-                        {{-- CTA --}}
-                        @guest
-                            <a href="{{ route('volunteer.form.view') }}" class="vapp-btn vapp-btn-primary vapp-btn-sm vapp-btn-block">
-                                Join
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                            </a>
-                        @endguest
-                        @auth
-                            <a href="{{ url('/admin/events/view/' . $opportunity->id) }}" class="vapp-btn vapp-btn-primary vapp-btn-sm vapp-btn-block">
-                                View Details
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                            </a>
-                        @endauth
-                    </div>
-                </div>
-            </article>
-            @endforeach
-        </div>
-        @else
-        <div style="text-align:center;padding:60px 0;color:var(--muted);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;margin:0 auto 16px;display:block;opacity:.4;"><path d="M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg>
-            <p style="font-size:16px;">No opportunities available at the moment. Check back soon!</p>
-        </div>
-        @endif
-    </div>
-</section>
-
-{{-- ===================== HOW IT WORKS ===================== --}}
-<section class="vapp-section" style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
-    <div class="vapp-wrap">
-        <div class="vapp-section-head" style="text-align:center;max-width:600px;margin:0 auto 44px;">
-            <div class="vapp-eyebrow" style="margin-bottom:10px;">How it works</div>
-            <h2 style="font-size:clamp(26px,3.4vw,38px);">Volunteering in three simple steps</h2>
-            <p style="margin-top:12px;font-size:16px;line-height:1.6;color:var(--slate);">We rebuilt the experience so getting from "I want to help" to "I'm signed up" takes minutes.</p>
-        </div>
-        @php
-            $steps = [
-                ['icon'=>'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.3-4.3','title'=>'Find a cause','body'=>'Browse and filter opportunities by location, date, and the causes you care about.'],
-                ['icon'=>'M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0','title'=>'Sign up in minutes','body'=>'Join with a short, guided form. No lengthy paperwork — just the essentials.'],
-                ['icon'=>'M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM8.2 13.9 7 22l5-3 5 3-1.2-8.1','title'=>'Show up & make impact','body'=>'Get clear details on what to expect. Your hours are logged automatically.'],
-            ];
-        @endphp
-        <div class="vapp-cards-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
-            @foreach($steps as $i => $step)
-            <div style="background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:28px 24px;position:relative;">
-                <div style="position:absolute;top:22px;right:22px;font-family:var(--font-display);font-weight:800;font-size:48px;color:var(--blue-50);line-height:1;user-select:none;">{{ $i+1 }}</div>
-                <div style="width:52px;height:52px;border-radius:14px;background:var(--blue-700);color:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="{{ $step['icon'] }}"/></svg>
-                </div>
-                <h3 style="font-size:20px;margin-bottom:8px;">{{ $step['title'] }}</h3>
-                <p style="color:var(--slate);font-size:15px;line-height:1.65;">{{ $step['body'] }}</p>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-{{-- ===================== PROGRAM + BECOME A VOLUNTEER ===================== --}}
-<section class="vapp-section">
-    <div class="vapp-wrap">
-        <div class="vapp-two-up" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-
-            {{-- Our Program --}}
-            <div style="background:var(--blue-700);border-radius:var(--r-xl);padding:44px 40px;color:#fff;position:relative;overflow:hidden;">
-                <div class="vapp-eyebrow on-dark" style="margin-bottom:12px;">Our program</div>
-                <h3 style="font-size:clamp(22px,2.6vw,30px);color:#fff;line-height:1.1;">Corporate Citizenship &amp; Volunteerism</h3>
-                <p style="margin-top:14px;font-size:15.5px;line-height:1.65;color:rgba(255,255,255,.85);max-width:420px;">
-                    We contribute to the nation's development goals by aligning our giving, focusing our efforts, and making real impact in the lives of people across our conglomerate, communities, and country.
-                </p>
-                <div style="margin-top:26px;">
-                    <a href="https://ayalafoundation.org" target="_blank" rel="noopener noreferrer" class="vapp-btn vapp-btn-white">
-                        See all programs
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                    </a>
-                </div>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:-30px;bottom:-30px;width:200px;height:200px;color:rgba(255,255,255,.06);"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0"/></svg>
-            </div>
-
-            {{-- Become a Volunteer --}}
-            @php $volunteerBg = asset('img/ayala-foundation-bg-1.jpg'); @endphp
-            <div style="position:relative;border-radius:var(--r-xl);overflow:hidden;min-height:320px;background:url('{{ $volunteerBg }}') center/cover no-repeat;">
-                <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,43,84,.15),rgba(7,43,84,.82));"></div>
-                <div style="position:relative;padding:40px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;box-sizing:border-box;min-height:320px;">
-                    <div class="vapp-eyebrow on-dark" style="margin-bottom:10px;">Join us</div>
-                    <h3 style="font-size:clamp(22px,2.6vw,30px);color:#fff;">Become a volunteer</h3>
-                    <p style="margin-top:10px;font-size:15px;color:rgba(255,255,255,.9);max-width:340px;margin-bottom:22px;">
-                        Create your volunteer profile once, then join any opportunity with a single tap.
-                    </p>
-                    <div>
-                        <a href="{{ route('volunteer.form.view') }}" class="vapp-btn vapp-btn-primary">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0"/></svg>
-                            Become a volunteer
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-{{-- ===================== PARTNERS ===================== --}}
-<section style="padding:44px 0 52px;border-top:1px solid var(--line);background:var(--bg-soft);" id="sec-partners">
-    <div class="vapp-wrap">
-        <p style="text-align:center;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;">
-            Powered by our partners
-        </p>
-        @php
-            $partnerNames = ['Ayala', 'BPI', 'Globe', 'ACEN', 'AC Health', 'Ayala Land', 'Manila Water', 'AC Energy', 'BPI Foundation', 'GCash'];
-        @endphp
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:20px 44px;">
-            @foreach($partnerNames as $partner)
-            <span class="vapp-partner-name" style="font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--faint);letter-spacing:-.02em;cursor:default;transition:.15s;">
-                {{ $partner }}
-            </span>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-{{-- ===================== STORIES / TESTIMONIALS ===================== --}}
-<section class="vapp-section" id="sec-stories">
-    <div class="vapp-wrap">
-        <div class="vapp-section-head" style="text-align:center;max-width:600px;margin:0 auto 44px;">
-            <div class="vapp-eyebrow" style="margin-bottom:10px;">Stories</div>
-            <h2 style="font-size:clamp(26px,3.4vw,38px);">From our volunteers</h2>
-        </div>
-
-        @php
-            $testimonials = [
-                ['quote'=>'Working alongside other volunteers under Brigada Ayala was not only fun, it was truly rewarding. I\'m grateful I could use my skills to help create a safer learning environment for hundreds of children.','name'=>'Jay Bosi','role'=>'Volunteer · Globe Telecom','init'=>'JB'],
-                ['quote'=>'Signing up used to take forever. Now I found a coastal cleanup near me and joined in two minutes. I\'ve logged 32 hours this year and counting.','name'=>'Maria Reyes','role'=>'Volunteer · BPI','init'=>'MR'],
-                ['quote'=>'As a first-time volunteer I was nervous, but the opportunity page told me exactly what to expect and what to bring. I showed up confident and ready to help.','name'=>'Carlo Tan','role'=>'Volunteer · Ayala Land','init'=>'CT'],
-            ];
-        @endphp
-
-        <div style="max-width:780px;margin:0 auto;">
-            <div id="vapp-testimonial" style="background:#fff;border:1px solid var(--line);border-radius:var(--r-xl);padding:44px 48px;box-shadow:var(--sh-md);text-align:center;position:relative;">
-                <div style="font-family:var(--font-display);font-size:72px;line-height:.6;color:var(--blue-100);height:34px;">&ldquo;</div>
-                <p id="vapp-t-quote" style="font-size:clamp(17px,2vw,21px);line-height:1.55;color:var(--ink);font-weight:500;margin:8px 0 26px;">{{ $testimonials[0]['quote'] }}</p>
-                <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-                    <div id="vapp-t-avatar" style="width:46px;height:46px;border-radius:50%;background:var(--blue-700);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">{{ $testimonials[0]['init'] }}</div>
-                    <div style="text-align:left;">
-                        <div id="vapp-t-name" style="font-weight:700;font-size:15px;color:var(--ink);">{{ $testimonials[0]['name'] }}</div>
-                        <div id="vapp-t-role" style="font-size:13px;color:var(--muted);">{{ $testimonials[0]['role'] }}</div>
-                    </div>
-                </div>
-            </div>
-            <div style="display:flex;justify-content:center;gap:10px;margin-top:22px;" id="vapp-t-dots">
-                @foreach($testimonials as $ti => $t)
-                <button onclick="vappSetTestimonial({{ $ti }})" data-idx="{{ $ti }}"
-                    style="width:{{ $ti===0?'28px':'9px' }};height:9px;border-radius:999px;background:{{ $ti===0?'var(--orange-500)':'var(--line)' }};border:none;cursor:pointer;transition:.2s;padding:0;"
-                    aria-label="Testimonial {{ $ti+1 }}"></button>
-                @endforeach
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- ===================== CTA BAND ===================== --}}
-<section style="background:linear-gradient(120deg,var(--blue-800),var(--blue-700));position:relative;overflow:hidden;">
-    <div class="vapp-wrap" style="padding:64px 28px;text-align:center;position:relative;">
-        <h2 style="font-size:clamp(26px,3.4vw,40px);color:#fff;max-width:640px;margin:0 auto;">Ready to make this weekend count?</h2>
-        <p style="color:rgba(255,255,255,.85);font-size:17px;margin:14px auto 0;max-width:480px;">
-            It takes two minutes to join your first opportunity.
-        </p>
-        <div style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap;">
-            @guest
-                <a href="{{ route('volunteer.form.view') }}" class="vapp-btn vapp-btn-primary vapp-btn-lg">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0"/></svg>
-                    Become a Volunteer
-                </a>
-                <a href="#sec-opportunities" class="vapp-btn vapp-btn-ghost vapp-btn-lg on-dark">
-                    Browse Opportunities
-                </a>
-            @endguest
-            @auth
-                <a href="/admin/events" class="vapp-btn vapp-btn-primary vapp-btn-lg">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.3-4.3"/></svg>
-                    Browse Opportunities
-                </a>
-            @endauth
-        </div>
-    </div>
-</section>
-
-</div>{{-- end .vapp-page --}}
-
-{{-- Testimonial data for JS --}}
-<script>
-var VAPP_TESTIMONIALS = @json($testimonials ?? []);
-var vappTIdx = 0;
-
-function vappSetTestimonial(idx) {
-    if (!VAPP_TESTIMONIALS[idx]) return;
-    vappTIdx = idx;
-    var t = VAPP_TESTIMONIALS[idx];
-    document.getElementById('vapp-t-quote').textContent = t.quote;
-    document.getElementById('vapp-t-avatar').textContent = t.init;
-    document.getElementById('vapp-t-name').textContent = t.name;
-    document.getElementById('vapp-t-role').textContent = t.role;
-    var dots = document.querySelectorAll('#vapp-t-dots button');
-    dots.forEach(function(d, i) {
-        d.style.width = i === idx ? '28px' : '9px';
-        d.style.background = i === idx ? 'var(--orange-500)' : 'var(--line)';
-    });
-}
-
-// Auto-rotate testimonials every 5s
-setInterval(function() {
-    vappSetTestimonial((vappTIdx + 1) % VAPP_TESTIMONIALS.length);
-}, 5000);
-
-// Count-up animation for stats band
-(function() {
-    var els = document.querySelectorAll('.vapp-stat-num');
-    var animated = false;
-    function runCountUp() {
-        if (animated) return;
-        animated = true;
-        els.forEach(function(el) {
-            var target = parseInt(el.getAttribute('data-target')) || 0;
-            var start = Date.now();
-            var duration = 1100;
-            var timer = setInterval(function() {
-                var t = Math.min(1, (Date.now() - start) / duration);
-                var eased = 1 - Math.pow(1 - t, 3);
-                el.textContent = Math.round(eased * target).toLocaleString();
-                if (t >= 1) clearInterval(timer);
-            }, 32);
-        });
-    }
-    // Trigger when the stats band enters view
-    if ('IntersectionObserver' in window) {
-        var band = document.querySelector('.vapp-stat-grid');
-        if (band) {
-            var io = new IntersectionObserver(function(entries) {
-                if (entries[0].isIntersecting) { runCountUp(); io.disconnect(); }
-            }, { threshold: 0.1 });
-            io.observe(band);
+    {{-- Consolidated Styles --}}
+    <style>
+        /* Hero Section Clip Path */
+        .clip-path-custom {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
         }
-    } else {
-        setTimeout(runCountUp, 800);
-    }
-})();
 
-// Partner name hover
-document.querySelectorAll('.vapp-partner-name').forEach(function(el) {
-    el.addEventListener('mouseenter', function() { el.style.color = 'var(--blue-700)'; });
-    el.addEventListener('mouseleave', function() { el.style.color = 'var(--faint)'; });
-});
-</script>
+        /* Swiper Styles */
+        .swiper-slide {
+            flex-grow: 1;
+            min-width: 50%;
+        }
 
+        #ourPartnersSection .swiper-slide {
+            flex-grow: 0;
+            min-width: auto;
+        }
+
+        /* Tab Icons */
+        #icon svg path,
+        #icon-calendar svg path {
+            stroke: #000000;
+            transition: stroke 0.3s ease;
+        }
+
+        #icon:hover svg path,
+        #icon-calendar:hover svg path {
+            stroke: #FF781E;
+        }
+
+        #icon.active svg path,
+        #icon-calendar.active svg path {
+            stroke: #FF9141;
+        }
+
+        /* Custom Scrollbar (if needed) */
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #FF781E #F5F5F5;
+        }
+    </style>
+
+    <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
+
+        {{-- Desktop: Hero Banner Section --}}
+        <section class="hidden lg:block h-[100vh] w-full bg-[#03498D]">
+            <div class="grid grid-cols-5">
+                <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
+                    <div class="container whitespace-pre-line text-white">
+                        <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
+                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
+                    </div>
+                </div>
+
+                <div class="h-[100vh] col-span-3 clip-path-custom"
+                    style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+                </div>
+            </div>
+        </section>
+        {{-- Tablet & mobile: Hero Banner Section --}}
+        <section
+            class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative"
+            style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+            <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
+            <div class="flex flex-col items-center justify-center relative text-center z-10">
+                <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>
+                <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Platform</p>
+            </div>
+        </section>
+        {{-- Opportunity Section --}}
+        <div class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] rounded-xl px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
+            {{-- Featured Opportunity --}}
+                    @php
+                            $mediaItems = $featuredOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
+                    @endphp
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                <div class="flex items-center justify-between h-[400px] w-[100%] md:w-[40%]  gap-4"
+                    style="background: url('{{ url($mediaItems) }}') no-repeat center center; background-size: cover;">
+                    <div class="h-full w-full flex items-end justify-start p-4"
+                        style="background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));">
+                    </div>
+                </div>
+
+                    @if ($featuredOpportunity)
+                        <div class="w-[100%] md:w-[60%]">
+                            <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
+                            <p class="text-3xl md:text-[40px] font-[700] text-[#03498D] mt-3 leading-none">{{$featuredOpportunity->title ?? 'No Title'}}</p>
+
+                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
+
+                            <p class="text-[18px] font-[400] mb-3">{{$latestOpporfeaturedOpportunitytunity->location ?? 'No Location'}}</p>
+                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                    <p><span class="font-[600]">DATE:</span> {{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('M-d-Y') ?? 'No Date Available'}}</p>
+                                    <p><span class="font-[600]"></span>{{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('h:i A') }}
+                                        - {{ \Carbon\Carbon::parse($featuredOpportunity->end_date)->format('h:i A') }}</p>
+                                </div>
+                                <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                    <p><span class="font-[600]">NUMBER OF SHIFTS:</span> {{$featuredOpportunity->slots->count()}}
+                                    </p>
+                                    <div class="flex items-center justify-start gap-4">
+                                        @foreach ($featuredOpportunity->slots as $key => $opportunity)
+                                        <p><span class="font-[600]">BATCH {{$key+1}}:</span>  {{ $opportunity->type->name }}
+                                        @endforeach
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
+                                <button onclick="openModal()" class="w-full">
+                                    <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                        <p class="font-[400] text-base md:text-[18px] text-white">VIEW DETAILS</p>
+                                    </div>
+                                </button>
+
+                                {{-- @guest
+                                    <a href="\volunteer-registration" class="w-full">
+                                        <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                        </div>
+                                    </a>
+                                @endguest --}}
+
+                                @auth
+                                    <a href="{{ url('/admin/events/view/' . $featuredOpportunity->id) }}" class="w-full">
+                                        <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                        </div>
+                                    </a>
+                                @endauth
+                            </div>
+                        </div>
+                    @endif
+                    </div>
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                                    {{-- OPPORTUNITIES --}}
+                <div class="w-full">
+                    <div class="flex items-center justify-between gap-4 font-[400]">
+                        <div class="w-fit">
+                            <p class="text-2xl md:text-[32px] md:text-[40px]">OPPORTUNITIES</p>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4 md:gap-8">
+
+                            <a class="text-lg md:text-[20px] font-[400]" href="">VIEW</a>
+
+                            {{-- Style for the tabs --}}
+                            <style>
+                                /* Default stroke color */
+                                #icon svg path,
+                                #icon-calendar svg path {
+                                    stroke: #000000;
+                                    /* Default stroke color */
+                                    transition: stroke 0.3s ease;
+                                    /* Smooth transition for stroke color change */
+                                }
+
+                                /* Stroke color on hover */
+                                #icon:hover svg path,
+                                #icon-calendar:hover svg path {
+                                    stroke: #FF781E;
+                                    /* Change this to your desired hover color */
+                                }
+
+                                /* Stroke color on click (active state) */
+                                #icon.active svg path,
+                                #icon-calendar.active svg path {
+                                    stroke: #FF9141;
+                                    /* Change this to your desired active color */
+                                }
+                            </style>
+
+                            <button id="icon" class="w-[32px] h-[32px] active" onclick="changeTab('list')">
+                                @include('custom.icons.landing-page-icons', ['icon' => 'list-32'])
+                            </button>
+
+                            <button id="icon-calendar" class="w-[32px] h-[32px]" onclick="changeTab('calendar')">
+                                @include('custom.icons.landing-page-icons', ['icon' => 'calendar-32'])
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+
+                    {{-- OPPORTUNITIES List --}}
+                    <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-scroll custom-scrollbar">
+                        @if($opportunities->count() > 0)
+                            {{-- List --}}
+                            @foreach ($opportunities as $index => $opportunity)
+                                <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
+                                    <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
+                                        @php
+                                            $opportunityMedia = $opportunity->getFirstMedia('event-banner-attachments');
+                                        @endphp
+
+                                        @if($opportunityMedia)
+                                            <img class="w-full h-full object-cover"
+                                                src="{{ $opportunityMedia->getUrl() }}"
+                                                alt="{{ $opportunity->title }}">
+                                        @else
+                                            <img class="w-full h-full object-cover"
+                                                src="{{ url('img/ayala-foundation-bg.jpg') }}"
+                                                alt="{{ $opportunity->title }}">
+                                        @endif
+                                    </div>
+
+                                    <div class="w-full">
+                                        <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
+                                        <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
+
+                                        <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
+                                            <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                                <p><span class="font-[600]">DATE:</span>
+                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
+                                                <p><span class="font-[600]"></span>
+                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
+                                                    {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
+                                            </div>
+                                            <div class="w-fit flex flex-col items-start justify-between gap-1">
+                                                <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{ $opportunity->slots->count() }}</p>
+                                                <div class="flex items-center justify-start gap-4">
+                                                @foreach ($opportunity->slots as $key=> $slot)
+                                                <p><span class="font-[600]">BATCH {{$key+1}}:</span>
+                                                        {{ $slot->type->name }}
+                                                    @endforeach
+                                                </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-[200px]" x-data="{ joinModal: false }">
+                                        @guest
+                                        <button @click="joinModal = true" class="w-full">
+                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] rounded-xl flex items-center justify-center p-2 hover:bg-[#e06e00]">
+                                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
+                                            </div>
+                                        </button>
+                                        {{-- Login/Register choice modal --}}
+                                        <div x-show="joinModal" x-cloak
+                                             class="fixed inset-0 z-50 flex items-center justify-center"
+                                             style="background:rgba(0,0,0,0.55);"
+                                             @click.self="joinModal = false">
+                                            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-2">Join this opportunity</h3>
+                                                <p class="text-sm text-gray-500 mb-6">Do you already have a volunteer account?</p>
+                                                <a href="{{ route('filament.admin.auth.login') }}"
+                                                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#0433ff] text-white font-semibold mb-3 hover:bg-blue-700 transition">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                                                    Log in to my account
+                                                </a>
+                                                <a href="{{ route('volunteer.form.view') }}"
+                                                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#ff7b00] text-white font-semibold hover:bg-[#e06e00] transition">
+                                                    New volunteer? Register here
+                                                </a>
+                                                <button @click="joinModal = false" class="mt-4 w-full text-center text-sm text-gray-400 hover:text-gray-600">Cancel</button>
+                                            </div>
+                                        </div>
+                                        @endguest
+
+                                        @auth
+                                        <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
+                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] rounded-xl flex items-center justify-center p-2 hover:bg-[#e06e00]">
+                                                <p class="font-[400] text-base md:text-[18px] text-white">VIEW</p>
+                                            </div>
+                                        </a>
+                                        @endauth
+                                    </div>
+                                </div>
+
+                                @if (!$loop->last)
+                                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="w-full flex items-center justify-center py-8">
+                                <p class="text-[18px] text-gray-500">No opportunities available at the moment.</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- OPPORTUNITIES Calendar --}}
+                    <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
+                        @livewire(\App\Filament\Widgets\CalendarWidget::class)
+                    </div>
+
+                    {{-- Tab Scripts --}}
+                    <script>
+                        const opportunityList = document.getElementById("opportunityList");
+                        const opportunityCalendar = document.getElementById("opportunityCalendar");
+                        const iconList = document.getElementById("icon");
+                        const iconCalendar = document.getElementById("icon-calendar");
+
+                        function changeTab(type) {
+                            if (type === "list") {
+                                opportunityList.classList.remove("hidden");
+                                opportunityCalendar.classList.add("hidden");
+
+                                // Set the list icon to active
+                                iconList.classList.add("active");
+                                iconCalendar.classList.remove("active");
+                            } else if (type === "calendar") {
+                                opportunityList.classList.add("hidden");
+                                opportunityCalendar.classList.remove("hidden");
+
+                                // Set the calendar icon to active
+                                iconCalendar.classList.add("active");
+                                iconList.classList.remove("active");
+                            }
+                        }
+
+                        setTimeout(() => {
+                            opportunityCalendar.classList.add("hidden");
+                        }, 2000);
+                    </script>
+                </div>
+
+                    </div>
+
+                    </div>
+
+            </div>
+            </div>
+        </div>
+
+        {{-- Our Partners Section --}}
+        <div id="ourPartnersSection" class="w-full h-fit my-4">
+            <div class="flex items-center justify-center">
+                <p class="text-2xl md:text-4xl font-bold text-[#03498D]">Our Partners</p>
+            </div>
+
+            <div class="w-full p-2 lg:p-8 relative flex items-center justify-between gap-4">
+                <div
+                    class="our-partners-button-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
+                </div>
+
+                <div class="our-partners-swiper-container swiper w-full overflow-hidden">
+                    <div class="swiper-wrapper w-full">
+
+                        {{-- Partner Slide Item 1 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/bronze.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 2 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/silver.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 3 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/gold.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 4 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/plat.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+
+                        {{-- Partner Slide Item 5 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/bronze.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+                        {{-- Partner Slide Item 6 --}}
+                        <div class="swiper-slide">
+                            <a href="">
+                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
+                                    <img class="h-full w-full object-cover"
+                                        src="{{ asset('medals/silver.png') }}"
+                                        alt="Partner 1">
+                                </div>
+                            </a>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div
+                    class="our-partners-button-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
+                </div>
+
+                <!-- Swiper Script -->
+                <script>
+                     const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
+                        loop: true,
+                        slidesPerView: 'auto',
+                        spaceBetween: 1, // Adjust spacing if needed
+                        // centeredSlides: true,
+                        autoplay: {
+                            delay: 3000,
+                            disableOnInteraction: false
+                        },
+                        grabCursor: true, // Makes it feel draggable
+                        autoHeight: false,
+                        freeMode: true,
+                        navigation: {
+                            nextEl: '.our-partners-button-next',
+                            prevEl: '.our-partners-button-prev',
+                        },
+                        breakpoints: {
+                            1024: { slidesPerView: 5, },
+                            640: { slidesPerView: 3, },
+                            320: { slidesPerView: 1, }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+
+        {{--  --}}
+        <div class="relative w-full">
+            <div class="absolute w-full z-10 flex items-center justify-between">
+                <div class="h-[33px] w-full max-w-[535px] bg-[#005096]"></div>
+                <div class="h-[33px] w-full max-w-[535px] bg-[#FF781E]"></div>
+            </div>
+            {{-- @php
+                dd($opportunity->created_by_user);
+            @endphp --}}
+
+            <div class="h-[100vh] md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
+                style="background-image: url('{{ asset('img/background-img-2.png') }}')">
+                <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-12">
+                        <div class="w-fit flex flex-col items-center justify-center gap-1">
+                            <p class="text-[80px] font-bold">{{ $volunteerCount }}</p>
+                            <p class="text-[20px] font-medium">Volunteers This Year</p>
+                        </div>
+                        <div class="w-fit flex flex-col items-center justify-center gap-1">
+                            <p class="text-[80px] font-bold">{{ $businessUnitCount }}</p>
+                            <p class="text-[20px] font-medium">Business Units</p>
+                        </div>
+                        <div class="w-fit flex flex-col items-center justify-center gap-1">
+                            <p class="text-[80px] font-bold">{{ $programCount }}</p>
+                            <p class="text-[20px] font-medium">Programs</p>
+                        </div>
+                        <div class="w-fit flex flex-col items-center justify-center gap-1">
+                            <p class="text-[80px] font-bold">{{ $opportunityCount }}</p>
+                            <p class="text-[20px] font-medium">Opportunities This Year</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- For Not Logged In Users Only --}}
+        @guest
+            {{-- Our Program Section --}}
+            <div class="w-full grid grid-cols-1 lg:grid-cols-2">
+                <!-- Our Program Section -->
+                <div
+                    class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#03498D]">
+                    <div class="w-full min-h-[450px] flex flex-col items-start">
+                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
+                        <p class="text-4xl md:text-5xl font-bold leading-none">Corporate Citizenship and Volunteerism</p>
+                        <p class="text-4lg md:text-xl font-light">
+                            We believe in contributing to the nation’s development goals by adapting to the evolving needs of
+                            stakeholders to remain relevant and responsive. Through our programs, we affirm our commitment to
+                            aligning, giving focus, and making an impact in the lives of people in our conglomerate,
+                            communities,
+                            and country.
+                        </p>
+                    </div>
+                    <div class="w-full">
+                        <a href="https://ayalafoundation.org" target="_blank" rel="noopener noreferrer">
+                            <div class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#FF781E] rounded-xl flex items-center justify-center hover:bg-[#FF9141]">
+                                <p class="font-medium text-base md:text-lg text-white">SEE ALL PROGRAMS</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Become a Volunteer Section -->
+                <div class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('{{ asset('img/ayala-foundation-bg-1.jpg') }}')">
+                    <!-- Diagonal Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-[#03498D4D] to-[#03498D4D] z-0"
+                        style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+
+                    <div class="w-full min-h-[450px] flex flex-col items-start z-10">
+                        <p class="text-[36px] font-semibold">Become a</p>
+                        <p class="text-[48px] font-bold">Volunteer</p>
+                        <p class="text-[24px] w-full max-w-[510px] font-light">Ayala Corporate Citizenship and Volunteer
+                            Program</p>
+                    </div>
+                    <div class="w-full z-10">
+                        <a href="{{ route('volunteer.form.view') }}">
+                            <div class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#FF781E] rounded-xl flex items-center justify-center hover:bg-[#FF9141]">
+                                <p class="font-medium text-lg text-white">BECOME A VOLUNTEER</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @endguest
+
+
+        {{-- For Logged In Users Only --}}
+        @auth
+            {{-- Our Program Section --}}
+            <div class="w-full grid grid-cols-1 lg:grid-cols-2">
+                <!-- Program Section with Swiper -->
+                <div
+                    class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D]">
+                    <div class="program-swiper-container w-full overflow-hidden">
+                        <div class="swiper-wrapper w-full">
+                            <!-- Slide 1 -->
+                            <div class="swiper-slide">
+                                <div class="flex flex-col items-center gap-8">
+                                    <div class="w-full min-h-[450px] flex flex-col items-start">
+
+                                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
+                                        <p class="text-4xl md:text-5xl font-bold">Community Development</p>
+                                        <p class="text-lg md:text-xl font-light">
+
+                                            We aim to elevate Filipino families from poverty to the middle class. To achieve
+                                            this goal, we
+                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
+                                            education, WASH
+                                            (water, sanitation, and hygiene)
+                                            , electrification, and connectivity within our target communities.
+                                            We boost economic vitality through programs in financial inclusion, sustainable
+                                            livelihood, and by
+                                            supporting local museums and libraries. Working closely with partners, we serve as
+                                            an integrator
+                                            of interventions to find solutions that are suited and relevant to the needs of
+                                            communities.
+                                        </p>
+                                    </div>
+                                    <div class="w-full">
+                                        <a href="\admin/events">
+                                            <div
+                                                class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#03498D] rounded-xl flex items-center justify-center hover:bg-[#1A67B1]">
+                                                <p class="font-medium text-base md:text-lg text-white">SEE ALL OPPORTUNITIES</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 -->
+                            <div class="swiper-slide">
+                                <div class="flex flex-col items-center gap-8">
+                                    <div class="w-full min-h-[450px] flex flex-col items-start">
+
+                                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
+                                        <p class="text-4xl md:text-5xl font-bold">Corporate Citizenship and Volunteerism</p>
+                                        <p class="text-lg md:text-xl font-light">
+
+                                            We aim to elevate Filipino families from poverty to the middle class. To achieve
+                                            this goal, we
+                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
+                                            education, WASH
+                                            (water, sanitation, and hygiene), electrification, and connectivity within our
+                                            target communities.
+                                            We boost economic vitality through programs in financial inclusion, sustainable
+                                            livelihood, and by
+                                            supporting local museums and libraries. Working closely with partners, we serve as
+                                            an integrator
+                                            of interventions to find solutions that are suited and relevant to the needs of
+                                            communities.
+                                        </p>
+                                    </div>
+                                    <div class="w-full">
+                                        <a href="\admin/events">
+                                            <div
+                                                class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#03498D] rounded-xl flex items-center justify-center hover:bg-[#1A67B1]">
+                                                <p class="font-medium text-lg text-white">SEE ALL OPPORTUNITIES</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full flex items-center justify-start gap-4">
+                        <div
+                            class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                            @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
+                        </div>
+                        <div
+                            class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
+                            @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
+                        </div>
+                    </div>
+
+                    <!-- Swiper Script -->
+                    <script>
+                        const programSwiper = new Swiper('.program-swiper-container', {
+                            loop: true,
+                            slidesPerView: 1,
+                            navigation: {
+                                nextEl: '.program-button-36-next',
+                                prevEl: '.program-button-36-prev',
+                            },
+                        });
+                    </script>
+                </div>
+
+                <!-- Right Section with Background and Overlay -->
+                <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
+                    style="background-image: url('{{ asset('img/ayala-foundation-bg-2.png') }}')">
+                    <!-- Diagonal Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-[#F55E1D4D] to-[#03498D4D] z-0"
+                        style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+                </div>
+            </div>
+        @endauth
+
+        {{-- Stories Section --}}
+        <div class="w-full h-fit relative flex flex-col md:flex-row items-center justify-center text-[24px] font-medium">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-12 w-full z-10 px-[5%] py-12">
+                <!-- Left Section: Stories -->
+                <div class="col-span-1 h-full">
+                    <p class="mb-2 md:mb-0">STORIES</p>
+
+                    <div class="w-full pr-0 md:pr-20 flex flex-col items-end justify-between gap-4">
+                        <!-- Carousel Navigation Buttons -->
+                        <div class="stories-button-24-prev w-fit flex items-center justify-between gap-4">
+                            <div class="w-[24px] h-[24px] flex items-center justify-center bg-[#f3f2f2] hover:bg-gray-500">
+                                @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
+                            </div>
+                            <div
+                                class="stories-button-24-next w-[24px] h-[24px] flex items-center justify-center bg-[#f3f2f2] hover:bg-gray-200">
+                                @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
+                            </div>
+                        </div>
+
+                        <div class="stories-swiper-container w-full overflow-hidden">
+                            <div class="swiper-wrapper w-full">
+                                <!-- Slide 1 -->
+                                @foreach ($articles as $article)
+
+                                @php
+                                    $article_banner = $article->media->first();
+                                @endphp
+
+                                {{-- @php
+                                    dd($article_banner);
+                                @endphp --}}
+
+                                <div class="swiper-slide px-4">
+                                    @if ($article_banner)
+                                    <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4" style="background-image: url({{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
+                                        <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
+                                            {{-- <img class="w-[30%]" src="img/logo-colored.png" alt=""> --}}
+                                        </div>
+                                    </div>
+                                    @else
+                                    <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4"  style="background-image: url({{ asset('/img/ayala-foundation-bg-3.jpg') }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
+                                        <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
+                                            <img class="w-[30%]" src="img/logo-white.png" alt="">
+                                        </div>
+                                    </div>
+                                    @endif
+                                    {{-- @endisset --}}
+                                    <div class="w-full md:w-[80%] bg-white md:bg-none p-10 min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
+                                        <div class="w-fit min-w-[104px] p-4 bg-white rounded-xl shadow-md flex flex-col items-center">
+                                            <p class="text-lg text-center font-medium">{{ \Carbon\Carbon::parse($article->published_at)->format('M j, Y') }}</p>
+                                        </div>
+                                        <div class="w-full text-[#03498D] flex flex-col gap-4">
+                                            <p class="text-2xl md:text-[32px] font-semibold leading-none capitalize">{{ $article->title }}
+                                            </p>
+                                            <p class="text-[14px]">{{ $article->content_overview }}</p>
+                                            <a href="{{ url('/article'). '/' . $article->slug }}">
+                                                <div
+                                                    class="h-8 md:h-10 w-[180px] md:w-[219px] rounded-xl bg-[#FF781E] flex items-center justify-center hover:bg-[#FF8252]">
+                                                    <p class="font-medium text-base md:text-lg text-white">READ MORE</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Swiper Script -->
+                    <script>
+                        const storiesSwiper = new Swiper('.stories-swiper-container', {
+                            loop: true,
+                            slidesPerView: 1,
+                            navigation: {
+                                nextEl: '.stories-button-24-next',
+                                prevEl: '.stories-button-24-prev',
+                            },
+                        });
+                    </script>
+                </div>
+
+                <!-- Right Section: Testimonials -->
+                <div
+                    class="col-span-1 h-full rounded-xl flex flex-col items-center justify-between gap-4 md:gap-8 text-white p-8 md:p-16 bg-[#03498DB2]">
+                    <p>VOLUNTEER TESTIMONIALS</p>
+
+                    <div class="flex items-center gap-2 md:gap-4 h-fit">
+                        <div class="w-8 md:w-16 h-full flex items-start">
+                            @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
+                        </div>
+
+                        <p class="px-0 md:px-2 py-0 md:py-4 text-xl md:text-[28px] md:text-[36px]">Volunteering with Ayala Foundation has been one of the most rewarding experiences of my life.
+                            Not only did I get to make a real difference in the lives of others,
+                            but I also gained valuable skills and met incredible people who share my passion for giving back.
+                            It’s a joy to be part of such a supportive and impactful community.</p>
+
+                        <div class="w-8 md:w-16 h-full flex items-end">
+                            @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
+                        </div>
+                    </div>
+
+                    <div class="w-full px-8 md:px-16">
+                        <p class="text-xl md:text-2xl fornt-bold">JUAN DELA CRUZ</p>
+                        <p class="text-base md:text-xl text-[#817B7B]">Business Associate, Company Name</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Background with Overlay -->
+            <div class="absolute inset-0 flex items-center justify-between z-0">
+                <div class="w-[40%] h-full"></div>
+                <div class="w-[60%] h-full bg-cover bg-center"
+                    style="background-image: linear-gradient(to top right, black, rgba(0, 0, 0, 0)), url('{{ asset('img/ayala-foundation-bg-2.jpg') }}');">
+                </div>
+            </div>
+        </div>
+
+
+        {{-- Featured Opportunity Modal --}}
+        <div class="w-full h-fit">
+            <div id="featuredImageModal"
+                class="fixed inset-0 flex justify-center items-center z-50 hidden transition-opacity duration-300 bg-black bg-opacity-50"
+                onclick="closeModal(event)">
+                <!-- Modal Content -->
+                <div
+                    class="modal-content bg-white shadow-lg max-w-[80%] w-full p-8 transform transition-all duration-300 scale-95 opacity-0">
+                    <div class="w-full flex justify-end items-end p-4">
+                        <button id="closeModal"
+                            class="text-2xl font-semibold text-black hover:bg-gray-100 focus:outline-none">
+                            @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
+                        </button>
+                    </div>
+
+                    <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
+                        <div class="flex flex-col  items-center justify-center">
+                            <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center"
+                                style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
+                                <div
+                                    class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
+                                    <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
+                                </div>
+                            </div>
+                            @php
+                                $latestOpportunity = $opportunities->sortByDesc('created_at')->first();
+                            @endphp
+
+                            {{-- @php
+                                dd($latestOpportunity);
+                            @endphp --}}
+
+                            @if($latestOpportunity)
+                            <div class="w-full p-4">
+                                <div class="w-fit py-2 px-4 rounded-xl flex items-center justify-center bg-[#F55E1D]">
+                                    <p class="text-lg font-normal text-white">{{$latestOpportunity->program->name}}</p>
+                                </div>
+
+                                <p class="text-3xl md:text-4xl font-normal text-[#03498D] capitalize">{{$latestOpportunity->title}}</p>
+
+                                <p class="text-xl md:text-2xl font-normal">{{$latestOpportunity->location}}</p>
+
+                                <p class="text-lg font-normal my-8 md:my-16 text-justify">
+                                    &emsp; &emsp;{!! strip_tags($latestOpportunity->description) !!}
+                                </p>
+
+                                <div
+                                    class="w-full flex flex-col items-start justify-start text-base md:text-xl font-normal gap-2 my-8 md:my-16">
+                                    <p><span class="font-semibold">Date:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i:s A') }} - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i:s A') }}</p>
+                                    <p><span class="font-semibold"> NUMBER OF SHIFTS:</span>
+                                        {{$latestOpportunity->slots->count()}}
+                                    </p>
+                                    @foreach ($latestOpportunity->slots as $key => $opportunity)
+                                    <p><span class="font-semibold">BATCH {{$key+1}}:</span>  {{ $opportunity->type->name }} - {{\Carbon\Carbon::parse($latestOpportunity?->start_date)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($latestOpportunity?->end_date)->isoFormat('hh:mm A')}}
+                                    @endforeach
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
+                                    @guest
+                                    <a href="\volunteer-registration">
+                                        <div
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-normal text-base md:text-lg text-white">SIGN UP</p>
+                                        </div>
+                                    </a>
+                                    @endguest
+
+                                    @auth
+                                    <a href="\admin/events">
+                                    {{-- <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}"> --}}
+                                        <div
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <p class="font-normal text-base md:text-lg text-white">VIEW</p>
+                                        </div>
+                                    </a>
+                                    @endauth
+
+                                    @auth
+                                    <a href="">
+                                        <div
+                                            class="h-auto md:h-[53px] w-[229px] bg-[#005096] rounded-xl flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                            <p class="font-normal text-base md:text-lg text-white">FAVORITE</p>
+                                        </div>
+                                    </a>
+                                    @endauth
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Modal Scripts --}}
+            <script>
+                // Function to open the modal
+                function openModal() {
+                    const modal = document.getElementById('featuredImageModal');
+                    const modalContent = modal.querySelector('.modal-content');
+
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modalContent.classList.remove('scale-95', 'opacity-0');
+                    }, 10); // small delay to trigger the transition
+                }
+
+                // Function to close the modal
+                function closeModal(event) {
+                    const modal = document.getElementById('featuredImageModal');
+                    const modalContent = modal.querySelector('.modal-content');
+
+                    // Check if the clicked element is the modal background or the close button
+                    if (event.target === modal || event.target.closest('#closeModal')) {
+                        modalContent.classList.add('scale-95', 'opacity-0');
+                        modal.classList.add('opacity-0');
+
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                        }, 300); // delay for the transition to complete
+                    }
+                }
+
+                // Example: Open modal on page load (or use your own trigger)
+                // window.onload = openModal; // You might want to change this to a specific trigger
+            </script>
+        </div>
+
+
+        {{-- ── CTA Section ──────────────────────────────────────────────────── --}}
+        <div class="w-full py-24 px-8 text-center text-white"
+             style="background: linear-gradient(135deg, #0433ff 0%, #0228cc 100%);">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to make an impact?</h2>
+            <p class="text-lg md:text-xl mb-8 text-white/80">It takes two minutes to join your first opportunity.</p>
+            <a href="{{ route('volunteer.form.view') }}">
+                <div class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#ff7b00] hover:bg-[#e06e00] text-white font-semibold text-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Browse Opportunities
+                </div>
+            </a>
+        </div>
+    </div>
 @endsection
+

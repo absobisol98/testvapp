@@ -463,6 +463,8 @@
                                               enctype="multipart/form-data"
                                               class="min-w-full flex justify-between">
                                             @csrf
+                                            {{-- Volunteers consented to the privacy policy on registration --}}
+                                            <input type="hidden" name="privacy_policy" value="1">
 
                                             @if($requiresAttachment)
                                                 <div class="mb-4">

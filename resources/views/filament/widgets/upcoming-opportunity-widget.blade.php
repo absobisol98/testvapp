@@ -3,7 +3,7 @@
     <div class="w-full px-8">
         <div class="flex items-center justify-between gap-4 font-normal">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-bold">Upcoming Opportunity</p>
+                <p class="text-[28px] md:text-[32px] text-[#0433ff] font-bold">Upcoming Opportunity</p>
             </div>
 
             <div class="flex items-center justify-between gap-4 md:gap-8">
@@ -54,6 +54,14 @@
 
             @php
                 $mediaItems = $opportunity->getMedia('event-banner-attachments')?->first()?->getUrl();
+                $isRegistered = \App\Models\EventRegistration::where('volunteer_id', auth()->id())
+                    ->where('event_id', $opportunity->id)
+                    ->whereIn('status_id', [1, 2])
+                    ->exists();
+                $firstSlot = $opportunity->slots?->first();
+                $regStillOpen = $opportunity->registration_end_date
+                    ? \Carbon\Carbon::now()->isBefore($opportunity->registration_end_date)
+                    : true;
             @endphp
 
                 <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
@@ -62,7 +70,7 @@
                     </div>
 
                     <div class="w-full">
-                        <p class="text-2xl font-[700] text-[#03498D] mr-[12px] mb-[4px] cursor-pointer capitalize leading-none">{{ $opportunity->title }}
+                        <p class="text-2xl font-[700] text-[#0433ff] mr-[12px] mb-[4px] cursor-pointer capitalize leading-none">{{ $opportunity->title }}
                         </p>
                         <p class="text-lg font-[400] mb-[12px]">{{ $opportunity->location }}</p>
 
@@ -97,12 +105,40 @@
                         </div>
                     </div>
 
-                    <div style="width:200px">
+                    <div class="flex flex-col gap-2" style="width:200px">
                         <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
-                            <div class="h-[36px] md:h-[48px] w-full bg-[#FF781E] rounded-full flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                            <div class="h-[36px] md:h-[48px] w-full bg-[#ff7b00] rounded-full flex items-center justify-center p-2 hover:bg-[#e06e00]">
                                 <p class="font-normal text-lg text-white">VIEW</p>
                             </div>
                         </a>
+
+                        @if($isRegistered)
+                            <div class="h-[36px] md:h-[40px] w-full bg-green-100 rounded-full flex items-center justify-center gap-1.5 px-2">
+                                <svg class="w-4 h-4 text-green-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <p class="font-medium text-sm text-green-700">Registered</p>
+                            </div>
+                        @elseif($firstSlot && $regStillOpen)
+                            <form action="{{ route('event.register-slot', ['event' => $opportunity->id, 'slot' => $firstSlot->id]) }}"
+                                  method="POST">
+                                @csrf
+                                <input type="hidden" name="privacy_policy" value="1">
+                                <button type="submit"
+                                        class="h-[36px] md:h-[40px] w-full bg-[#0433ff] rounded-full flex items-center justify-center gap-1.5 px-2 hover:bg-[#0228cc] text-white font-medium text-sm">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    JOIN
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
+                                <div class="h-[36px] md:h-[40px] w-full bg-gray-100 rounded-full flex items-center justify-center px-2">
+                                    <p class="font-medium text-sm text-gray-600">See Details</p>
+                                </div>
+                            </a>
+                        @endif
                     </div>
                 </div>
 

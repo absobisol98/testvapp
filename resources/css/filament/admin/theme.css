@@ -106,7 +106,18 @@ html, body {
 
 
 .fi-sidebar-header, .fi-topbar nav {
-    @apply min-h-[95px] bg-[#F55E1D];
+    @apply min-h-[95px] bg-[#0433ff];
+}
+
+/* Topbar icon visibility */
+.fi-topbar nav svg,
+.fi-topbar-notifications-btn svg,
+.fi-topbar nav .fi-icon-btn svg {
+    color: white !important;
+}
+.fi-topbar nav .fi-user-menu button img,
+.fi-topbar nav .fi-user-menu button span {
+    border-color: rgba(255,255,255,0.5);
 }
 
 .fi-sidebar-header img {
