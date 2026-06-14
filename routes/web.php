@@ -87,6 +87,16 @@ Route::middleware(['auth'])->group(function () {
         ->name('event.post-bulletin');
     Route::delete('/events/{event}/bulletins/{bulletin}', [EventBulletinController::class, 'destroy'])
         ->name('event.delete-bulletin');
+
+    Route::post('/admin/events/{event}/toggle-featured', function (\App\Models\Event $event) {
+        $user = auth()->user();
+        if ($user->hasActiveRole('Facilitator') || $user->hasActiveRole('Volunteer') || !$user->can('set_featured_event')) {
+            abort(403);
+        }
+        $event->is_featured = !$event->is_featured;
+        $event->save();
+        return response()->json(['featured' => $event->is_featured]);
+    })->name('event.toggle-featured');
 });
 
 
