@@ -19,7 +19,7 @@ class Volunteer extends User
 
     public function events(): BelongsToMany
     {
-        return $this->BelongsToMany(Event::class, 'event_attendees', 'attendee_id', 'event_id');
+        return $this->belongsToMany(Event::class, 'event_attendees', 'attendee_id', 'event_id');
     }
 
     public function programs()

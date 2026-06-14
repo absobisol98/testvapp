@@ -20,27 +20,88 @@
   --line:     #e6e8ec;
   --bg-soft:  #f6f7f9;
   --bg-tint:  #f3f6fb;
-  --font-d:   'Bricolage Grotesque', system-ui, sans-serif;
-  --font-b:   'Public Sans', 'NB International Pro', system-ui, sans-serif;
+
+  /* TYPOGRAPHY */
+  --font-b: 'NB International Pro', system-ui, sans-serif;
+  --font-d: 'Bricolage Grotesque', system-ui, sans-serif;
 }
-#landing-root { font-family: var(--font-b); color: var(--ink); }
-#landing-root h1,#landing-root h2,#landing-root h3,#landing-root h4 {
-  font-family: var(--font-d); letter-spacing: -.02em; line-height: 1.08;
+
+/* ── Base typography ──────────────────────────────────────────── */
+#landing-root {
+  font-family: var(--font-b);
+  color: var(--ink);
 }
-#landing-root a { text-decoration: none; color: inherit; }
-/* Card hover */
-.op-card { transition: transform .18s ease, box-shadow .18s ease; }
-.op-card:hover { transform: translateY(-3px); box-shadow: 0 18px 48px rgba(16,32,56,.14), 0 6px 16px rgba(16,32,56,.08); }
-/* Fade-up */
-@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
-.fade-up { animation: fadeUp .55s cubic-bezier(.2,.7,.2,1) both; }
-@keyframes pop { from { opacity:0; transform:scale(.9); } to { opacity:1; transform:none; } }
+
+#landing-root h1,
+#landing-root h2,
+#landing-root h3,
+#landing-root h4 {
+  font-family: var(--font-d);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+#landing-root a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
+.op-card {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.op-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 48px rgba(16,32,56,.14),
+              0 6px 16px rgba(16,32,56,.08);
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to { opacity:1; transform:none; }
+}
+
+.fade-up {
+  animation: fadeUp .55s cubic-bezier(.2,.7,.2,1) both;
+}
+
+@keyframes pop {
+  from { opacity:0; transform:scale(.9); }
+  to { opacity:1; transform:none; }
+}
+
+/* ── FONT LOAD (CRITICAL FIX) ─────────────────────────────────── */
+@font-face {
+  font-family: "NB International Pro";
+  src: url("/fonts/nb-international/NBInternationalPro-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NB International Pro";
+  src: url("/fonts/nb-international/NBInternationalPro-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NB International Pro";
+  src: url("/fonts/nb-international/NBInternationalPro-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 </style>
+
 
 <div id="landing-root" class="w-full flex flex-col">
 
     {{-- ── HERO ────────────────────────────────────────────────────── --}}
-    <section style="background: linear-gradient(180deg,#fff 0%,var(--bg-tint) 100%); overflow:hidden;">
+    <section style="background: linear-gradient(180deg,#fff 0%,var(--bg-tint) 100%); overflow:hidden;padding-top:90px;">
         <div style="max-width:1200px; margin:0 auto; padding:0 28px;">
             <div style="display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center; padding:70px 0 78px;"
                  class="hero-grid fade-up">
@@ -48,13 +109,13 @@
                 <div>
                     <div style="display:inline-flex; align-items:center; gap:7px; background:var(--or-50); color:var(--or-600); font-weight:700; font-size:13px; padding:5px 13px; border-radius:999px; margin-bottom:22px;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z"/></svg>
-                        Brigada 2026 is now open
+                        2026 International Year of Volunteers
                     </div>
-                    <h1 style="font-size:clamp(38px,5vw,60px); line-height:1.02; letter-spacing:-.03em; margin:0 0 22px;">
-                        Your time can<br>change a <span style="color:var(--blue-700);">community.</span>
+                    <h1 style="font-size:clamp(38px,5vw,60px); font-family:'NB International Pro', sans-serif; line-height:1.02; letter-spacing:-.03em; margin:0 0 22px;">
+                      Your involvement<br>is important to <span style="color:var(--blue-700);">us.</span>
                     </h1>
                     <p style="font-size:clamp(17px,1.4vw,19px); line-height:1.6; color:var(--slate); max-width:480px; margin-bottom:30px;">
-                        Find a volunteer opportunity that fits your skills and schedule — and join thousands across our partner network making a real difference.
+                        Find a volunteer opportunity that fits your skills and schedule and join thousands across our partner network making a real difference.
                     </p>
                     <div style="display:flex; gap:13px; flex-wrap:wrap; margin-bottom:30px;">
                         <a href="{{ url('/admin/events') }}"
@@ -138,131 +199,109 @@
     </section>
 
     {{-- ── OPPORTUNITIES ───────────────────────────────────────────── --}}
-    <section style="background:#fff; padding:84px 0;">
-        <div style="max-width:1200px; margin:0 auto; padding:0 28px;">
-            <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:16px;">
-                <div>
-                    <div style="font-family:var(--font-b); font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">Opportunities</div>
-                    <h2 style="font-size:clamp(28px,3.5vw,40px); margin:0 0 10px;">Ways to help this month</h2>
-                    <p style="color:var(--slate); font-size:16px; max-width:520px;">Hand-picked opportunities across the partner network. New ones are added every week.</p>
+<section style="background:#fff; padding:84px 0;">
+    <div style="max-width:1200px; margin:0 auto; padding:0 28px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:16px;">
+            
+            <div>
+                <div style="font-family:var(--font-b); font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">
+                    Opportunities
                 </div>
-                <a href="{{ url('/admin/events') }}"
-                   style="display:inline-flex; align-items:center; gap:5px; color:var(--blue-700); font-weight:700; font-size:14px; border:1.5px solid var(--line); border-radius:999px; padding:10px 18px; transition:.15s; white-space:nowrap; align-self:flex-start; margin-top:8px;"
-                   onmouseover="this.style.borderColor='var(--blue-700)';this.style.background='var(--blue-50)'"
-                   onmouseout="this.style.borderColor='var(--line)';this.style.background='transparent'">
-                    See all opportunities
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </a>
+
+                <h2 style="font-size:clamp(28px,3.5vw,40px); margin:0 0 10px;">
+                    Ways to help this month
+                </h2>
+
+                <p style="color:var(--slate); font-size:16px; max-width:520px;">
+                    Hand-picked opportunities across the partner network. New ones are added every week.
+                </p>
             </div>
 
-            <div class="cards-3" style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
-                @forelse($opportunities->take(3) as $opportunity)
-                    @php
-                        $img = $opportunity->getMedia('event-banner-attachments')->first();
-                        $slot = $opportunity->slots?->first();
-                        $totalSlots = $slot?->total_slots ?? 0;
-                        $takenSlots = $slot ? $opportunity->registrations()->where('slot_type_id',$slot->id)->where('status_id','!=',3)->count() : 0;
-                        $availSlots = max(0, $totalSlots - $takenSlots);
-                        $pct = $totalSlots > 0 ? ($takenSlots / $totalSlots * 100) : 0;
-                        $isRegistered = auth()->check()
-                            ? \App\Models\EventRegistration::where('volunteer_id',auth()->id())->where('event_id',$opportunity->id)->whereIn('status_id',[1,2])->exists()
-                            : false;
-                    @endphp
-                    <article class="op-card card" style="background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,.07);">
-                        {{-- Image Container with Badges --}}
-                        <div style="position:relative; height:200px; overflow:hidden; background:var(--bg-tint);">
-                            @if($img)
-                                <img src="{{ $img->getUrl() }}" alt="{{ $opportunity->title }}" style="width:100%; height:100%; object-fit:cover;">
-                            @else
-                                <div style="width:100%; height:100%; background:repeating-linear-gradient(135deg,rgba(14,79,153,.06) 0 12px,rgba(14,79,153,0) 12px 24px);"></div>
-                            @endif
+            <a href="{{ url('/admin/events') }}"
+               style="display:inline-flex; align-items:center; gap:5px; color:var(--blue-700); font-weight:700; font-size:14px; border:1.5px solid var(--line); border-radius:999px; padding:10px 18px; transition:.15s; white-space:nowrap; align-self:flex-start; margin-top:8px;"
+               onmouseover="this.style.borderColor='var(--blue-700)';this.style.background='var(--blue-50)'"
+               onmouseout="this.style.borderColor='var(--line)';this.style.background='transparent'">
+                See all opportunities
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path d="M5 12h14M13 6l6 6-6 6"/>
+                </svg>
+            </a>
 
-                            {{-- "Starting in X days" Badge (Top-Left) --}}
-                            @php
-                                $daysUntil = \Carbon\Carbon::parse($opportunity->start_date)->diffInDays(now(), false);
-                                $startingText = match(true) {
-                                    $daysUntil < 0 => 'Started',
-                                    $daysUntil == 0 => 'Today',
-                                    $daysUntil == 1 => 'Tomorrow',
-                                    default => "Starting in {$daysUntil} day" . ($daysUntil > 1 ? 's' : '')
-                                };
-                            @endphp
-                            <div style="position:absolute; top:12px; left:12px; background:#fff; color:var(--blue-700); font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1);">
-                                {{ $startingText }}
-                            </div>
-
-                            {{-- "Onsite/Virtual/Hybrid" Badge (Bottom-Left) --}}
-                            <div style="position:absolute; bottom:12px; left:12px; background:var(--green-600); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:6px; display:flex; align-items:center; gap:5px;">
-                                <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
-                                {{ ucfirst($opportunity->event_format ?? 'Onsite') }}
-                            </div>
-                        </div>
-                        {{-- Body --}}
-                        <div style="padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; flex:1;">
-                            <div style="font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--or-600);">
-                                {{ $opportunity->program?->name ?? 'Ayala Foundation' }}
-                            </div>
-                            <h3 style="font-family:var(--font-d); font-size:17px; font-weight:700; line-height:1.25; margin:0;">{{ $opportunity->title }}</h3>
-                            <div style="display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; align-items:center; gap:6px; color:var(--slate); font-size:13px; font-weight:500;">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M d, Y · g:i A') }}
-                                </div>
-                                <div style="display:flex; align-items:center; gap:6px; color:var(--slate); font-size:13px; font-weight:500;">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    {{ $opportunity->location ?? 'TBA' }}
-                                </div>
-                            </div>
-                            @if($slot && $totalSlots > 0)
-                            <div style="margin-top:4px;">
-                                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); font-weight:600; margin-bottom:5px;">
-                                    <span>{{ $availSlots }} spots left</span>
-                                    <span>{{ $totalSlots }} total</span>
-                                </div>
-                                <div style="height:5px; background:var(--line); border-radius:999px; overflow:hidden;">
-                                    <div style="height:100%; width:{{ $pct }}%; background:var(--or-500); border-radius:999px; transition:width .9s;"></div>
-                                </div>
-                            </div>
-                            @endif
-                        </div>
-                        {{-- CTA: Primary "View Details" + Dropdown Menu --}}
-                        <div style="padding:16px 18px 18px; display:flex; gap:8px; align-items:center;">
-                            {{-- Primary Action: View Details --}}
-                            <a href="{{ route('filament.admin.resources.events.view', ['record' => $opportunity->id]) }}" style="flex:1; padding:11px 16px; background:var(--or-500); color:#fff; font-weight:700; font-size:14px; border:none; border-radius:8px; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; transition:.15s; cursor:pointer;"
-                                onmouseover="this.style.background='var(--or-600)'" onmouseout="this.style.background='var(--or-500)'">
-                                View Details
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                            </a>
-
-                            {{-- Dropdown Menu Button --}}
-                            <div x-data="{ menuOpen: false }" style="position:relative;">
-                                <button @click="menuOpen = !menuOpen" style="width:44px; height:44px; border:1.5px solid var(--line); background:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s;"
-                                    onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--line)'">
-                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-                                </button>
-
-                                {{-- Dropdown Menu --}}
-                                <div x-show="menuOpen" @click.away="menuOpen = false" x-transition style="position:absolute; top:50px; right:0; background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.12); min-width:160px; z-index:100;">
-                                    <a href="{{ route('filament.admin.resources.events.edit', ['record' => $opportunity->id]) }}" style="display:flex; align-items:center; gap:10px; padding:12px 16px; color:var(--or-500); text-decoration:none; font-weight:600; font-size:14px; border:none; background:none; cursor:pointer; width:100%; transition:.15s;"
-                                        onmouseover="this.style.background='var(--bg-soft)'" onmouseout="this.style.background='transparent'">
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                                        Edit
-                                    </a>
-                                    <a href="#" onclick="return confirm('Delete this opportunity?') && window.location.href='{{ route('filament.admin.resources.events.view', ['record' => $opportunity->id]) }}?action=delete'" style="display:flex; align-items:center; gap:10px; padding:12px 16px; color:#dc2626; text-decoration:none; font-weight:600; font-size:14px; border:none; background:none; cursor:pointer; width:100%; transition:.15s; border-top:1px solid var(--line);"
-                                        onmouseover="this.style.background='var(--bg-soft)'" onmouseout="this.style.background='transparent'">
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1z"/></svg>
-                                        Delete
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                @empty
-                    <div style="grid-column:span 3; text-align:center; color:var(--muted); padding:48px;">No opportunities available yet.</div>
-                @endforelse
-            </div>
         </div>
-    </section>
+
+        <div class="cards-3" style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+            @forelse($opportunities->take(3) as $opportunity)
+                @php
+                    $img = $opportunity->getMedia('event-banner-attachments')->first();
+                    $slot = $opportunity->slots?->first();
+                    $totalSlots = $slot?->total_slots ?? 0;
+                    $takenSlots = $slot
+                        ? $opportunity->registrations()
+                            ->where('slot_type_id', $slot->id)
+                            ->where('status_id','!=',3)
+                            ->count()
+                        : 0;
+
+                    $availSlots = max(0, $totalSlots - $takenSlots);
+                    $pct = $totalSlots > 0 ? ($takenSlots / $totalSlots * 100) : 0;
+                @endphp
+
+                <article class="op-card card"
+                    style="background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,.07);">
+
+                    {{-- IMAGE --}}
+                    <div style="position:relative; height:200px; overflow:hidden; background:var(--bg-tint);">
+                        @if($img)
+                            <img src="{{ $img->getUrl() }}" alt="{{ $opportunity->title }}"
+                                 style="width:100%; height:100%; object-fit:cover;">
+                        @else
+                            <div style="width:100%; height:100%;
+                                background:repeating-linear-gradient(135deg,rgba(14,79,153,.06) 0 12px,rgba(14,79,153,0) 12px 24px);">
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- BODY --}}
+                    <div style="padding:16px 18px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <div style="font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--or-600);">
+                            {{ $opportunity->program?->name ?? 'Ayala Foundation' }}
+                        </div>
+
+                        <h3 style="font-family:var(--font-d); font-size:17px; font-weight:700; margin:0;">
+                            {{ $opportunity->title }}
+                        </h3>
+
+                        <div style="font-size:13px; color:var(--slate);">
+                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M d, Y · g:i A') }}
+                        </div>
+
+                        <div style="font-size:13px; color:var(--slate);">
+                            {{ $opportunity->location ?? 'TBA' }}
+                        </div>
+                    </div>
+
+                    {{-- CTA --}}
+                    <div style="padding:16px 18px 18px;">
+                        <a href="{{ route('filament.admin.resources.events.view', ['record' => $opportunity->id]) }}"
+                           style="display:flex; align-items:center; justify-content:center; gap:6px;
+                           width:100%; padding:11px 16px;
+                           background:var(--or-500); color:#fff;
+                           font-weight:700; font-size:14px;
+                           border-radius:8px; text-align:center; text-decoration:none;">
+                            View Details
+                        </a>
+                    </div>
+
+                </article>
+
+            @empty
+                <div style="grid-column:span 3; text-align:center; color:var(--muted); padding:48px;">
+                    No opportunities available yet.
+                </div>
+            @endforelse
+        </div>
+    </div>
+</section>
 
     {{-- ── HOW IT WORKS ────────────────────────────────────────────── --}}
     <section style="background:var(--bg-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:84px 0;">
