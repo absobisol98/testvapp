@@ -69,7 +69,7 @@ class EventRegistrationController extends Controller
         }
 
         // Check if registration is still open
-        if (Carbon::now()->isAfter($event->registration_end_date)) {
+        if ($event->registration_end_date && Carbon::now()->isAfter($event->registration_end_date)) {
             Notification::make()
                 ->title('Registration Failed')
                 ->body('Registration period for this event has ended.')

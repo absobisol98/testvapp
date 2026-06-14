@@ -96,7 +96,7 @@
         }
 
     #avatarContainer {
-        background: #005096 !important;
+        background: #0433ff !important;
         }
 
     @media screen and (max-width: 1279px) {
@@ -121,65 +121,52 @@
     </a>
 
     <!-- Desktop Menu -->
-    <div class="desktop-menu flex items-center justify-center gap-4">
+    <div class="desktop-menu flex items-center justify-center gap-6">
         <a href="{{ route('main.homepage.view') }}">
-            <p class="font-medium text-base {{ request()->routeIs('main.homepage.view') ? 'text-[#004b87]' : 'text-black'}}">
-                HOME
+            <p class="font-medium text-sm {{ request()->routeIs('main.homepage.view') ? 'text-[#0433ff]' : 'text-gray-700 hover:text-[#0433ff]'}} transition">
+                Home
             </p>
         </a>
-
+        <a href="{{ url('/admin/events') }}">
+            <p class="font-medium text-sm text-gray-700 hover:text-[#0433ff] transition">
+                Opportunities
+            </p>
+        </a>
         <a href="{{ route('stories.view') }}">
-            <p class="font-medium text-base {{ request()->routeIs('stories.view') ? 'text-[#004b87]' : 'text-black'}}">
-                STORIES
+            <p class="font-medium text-sm {{ request()->routeIs('stories.view') ? 'text-[#0433ff]' : 'text-gray-700 hover:text-[#0433ff]'}} transition">
+                Stories
             </p>
         </a>
-
         <a href="{{ route('ourpartners.view') }}">
-            <p class="font-medium text-base {{ request()->routeIs('ourpartners.view') ? 'text-[#004b87]' : 'text-black'}}">
-                OUR PARTNERS
+            <p class="font-medium text-sm {{ request()->routeIs('ourpartners.view') ? 'text-[#0433ff]' : 'text-gray-700 hover:text-[#0433ff]'}} transition">
+                Partners
             </p>
         </a>
     </div>
 
-    <div class="h-full flex items-center justify-between gap-4">
+    <div class="h-full flex items-center justify-between gap-3">
         @guest
-            <a href="{{ route('volunteer.form.view') }}" class="hidden md:block">
-                <div
-                    class="h-auto md:h-[56px] w-auto md:w-[244px] rounded-full md:rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                    <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="31" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-plus">
-                            <path d="M2 21a8 8 0 0 1 13.292-6"/>
-                            <circle cx="10" cy="8" r="5"/>
-                            <path d="M19 16v6"/>
-                            <path d="M22 19h-6"/>
-                        </svg>
-                    </div>
-                    <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
-                </div>
+            <a href="{{route('filament.admin.auth.login')}}" class="hidden md:inline-flex items-center gap-2 text-gray-700 font-medium text-sm hover:text-[#0433ff] transition px-4 py-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                Log In
             </a>
-
-            <a href="{{route('filament.admin.auth.login')}}" class="hidden md:block">
-                <div
-                    class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-full md:rounded-[20px] bg-[#0433ff] flex items-center justify-center p-2 hover:bg-[#0228cc] gap-2">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                    <p class="font-medium text-base text-white">LOG IN</p>
-                </div>
+            <a href="{{ route('volunteer.form.view') }}" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#ff7b00] text-white font-semibold text-sm hover:bg-[#e06e00] transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Become a Volunteer
             </a>
         @endguest
 
-        {{-- User Dropdown --}}
+        {{-- Logged-in user --}}
         @auth
-        <a href="{{ route('filament.admin.pages.dashboard') }}" class="hidden md:block">
-            <div class="h-auto md:h-[56px] w-auto md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
-                    @include('custom.icons.navbar-icons', [
-                        'icon' => 'avatar',
-                    ])
-                </div>
-                <p class="font-medium text-base text-white">DASHBOARD</p>
-            </div>
+        <a href="{{ route('filament.admin.pages.dashboard') }}" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0433ff] text-white font-semibold text-sm hover:bg-[#0228cc] transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
         </a>
         @endauth
     </div>
@@ -203,60 +190,52 @@
         <div class="w-full h-full flex flex-col items-center justify-evenly space-y-4">
             <div class="w-full flex flex-col items-center space-y-4">
                 <a href="{{ route('main.homepage.view') }}">
-                    <p class="font-medium text-base {{ request()->routeIs('main.homepage.view') ? 'text-[#004b87]' : 'text-black' }}">
-                        HOME
+                    <p class="font-medium text-base {{ request()->routeIs('main.homepage.view') ? 'text-[#0433ff]' : 'text-gray-700' }}">
+                        Home
                     </p>
                 </a>
+                <a href="{{ url('/admin/events') }}">
+                    <p class="font-medium text-base text-gray-700">Opportunities</p>
+                </a>
                 <a href="{{ route('stories.view') }}">
-                    <p class="font-medium text-base {{ request()->routeIs('stories.view') ? 'text-[#004b87]' : 'text-black' }}">
-                        STORIES
+                    <p class="font-medium text-base {{ request()->routeIs('stories.view') ? 'text-[#0433ff]' : 'text-gray-700' }}">
+                        Stories
                     </p>
                 </a>
                 <a href="{{ route('ourpartners.view') }}">
-                    <p class="font-medium text-base {{ request()->routeIs('ourpartners.view') ? 'text-[#004b87]' : 'text-black'}}">
-                        OUR PARTNERS
+                    <p class="font-medium text-base {{ request()->routeIs('ourpartners.view') ? 'text-[#0433ff]' : 'text-gray-700'}}">
+                        Partners
                     </p>
                 </a>
             </div>
 
-            <div class="w-full flex flex-col space-y-4">
+            <div class="w-full flex flex-col space-y-3">
                 @guest
-                <a href="{{ route('volunteer.form.view') }}">
-                    <div
-                        class="h-auto md:h-[56px] w-auto md:w-[244px] rounded-full md:rounded-[20px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                        <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="31" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-plus">
-                                <path d="M2 21a8 8 0 0 1 13.292-6"/>
-                                <circle cx="10" cy="8" r="5"/>
-                                <path d="M19 16v6"/>
-                                <path d="M22 19h-6"/>
-                            </svg>
-                        </div>
-                        <p class="font-medium text-base text-white">BECOME A VOLUNTEER</p>
-                    </div>
-                </a>
-
-                <a href="{{route('filament.admin.auth.login')}}">
-                    <div
-                        class="h-auto md:h-[56px] w-auto md:w-[200px] rounded-full md:rounded-[20px] bg-[#0433ff] flex items-center justify-center gap-2 p-2 hover:bg-[#0228cc]">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{route('filament.admin.auth.login')}}" class="w-full">
+                    <div class="w-full rounded-full border-2 border-gray-300 flex items-center justify-center gap-2 p-3 hover:border-[#0433ff] hover:text-[#0433ff]">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        <p class="font-medium text-base text-white">LOG IN</p>
+                        <p class="font-medium text-base">Log In</p>
+                    </div>
+                </a>
+                <a href="{{ route('volunteer.form.view') }}" class="w-full">
+                    <div class="w-full rounded-full bg-[#ff7b00] flex items-center justify-center gap-2 p-3 hover:bg-[#e06e00]">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <p class="font-medium text-base text-white">Become a Volunteer</p>
                     </div>
                 </a>
                 @endguest
 
-                {{-- User Dropdown --}}
                 @auth
-                <a href="{{ route('filament.admin.pages.dashboard') }}">
-                    <div class="h-auto md:h-[56px] w-auto md:w-[184px] rounded-[20px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                        <div class="w-[30px] h-[30px] inline-flex items-center justify-center">
-                            @include('custom.icons.navbar-icons', [
-                                'icon' => 'avatar',
-                            ])
-                        </div>
-                        <p class="font-medium text-base text-white">DASHBOARD</p>
+                <a href="{{ route('filament.admin.pages.dashboard') }}" class="w-full">
+                    <div class="w-full rounded-full bg-[#0433ff] flex items-center justify-center gap-2 p-3 hover:bg-[#0228cc]">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        <p class="font-medium text-base text-white">Dashboard</p>
                     </div>
                 </a>
                 @endauth
@@ -283,7 +262,7 @@
             }
 
             if (avatarContainer) {
-                avatarContainer.style.background = '#005096';
+                avatarContainer.style.background = '#0433ff';
             }
 
         } else {
