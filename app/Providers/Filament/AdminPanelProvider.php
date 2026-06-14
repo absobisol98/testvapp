@@ -231,29 +231,25 @@ class AdminPanelProvider extends PanelProvider
 
         $url      = url('/admin');
         $isActive = request()->is('admin');
-        $bg       = $isActive ? 'background:rgba(var(--primary-50),1);color:rgb(var(--primary-700));font-weight:600;' : '';
-        $iconClr  = $isActive ? 'color:rgb(var(--primary-600))' : 'color:#9ca3af';
+        $linkClass = 'fi-sidebar-item-button group flex w-full items-center gap-x-3 rounded-lg px-2 py-2 text-sm font-medium outline-none transition duration-75 '
+            . ($isActive
+                ? 'fi-active bg-gray-100 dark:bg-white/5 text-primary-600 dark:text-primary-400'
+                : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5');
+        $iconClass = 'fi-sidebar-item-icon h-5 w-5 shrink-0 '
+            . ($isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400');
 
         return new HtmlString('
-<ul style="list-style:none;padding:4px 8px 0;margin:0;">
-  <li>
-    <a href="' . $url . '"
-       class="fi-sidebar-item-button"
-       style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;
-              font-size:.875rem;font-weight:500;color:#374151;text-decoration:none;
-              transition:background .15s;' . $bg . '"
-       onmouseover="if(!this.dataset.active)this.style.background=\'#f3f4f6\'"
-       onmouseout="if(!this.dataset.active)this.style.background=\'\'"
-       ' . ($isActive ? 'data-active="1"' : '') . '>
-      <svg style="width:20px;height:20px;flex-shrink:0;' . $iconClr . '"
-           fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+<ul class="fi-sidebar-group-items flex flex-col gap-y-1 px-2 pb-1">
+  <li class="fi-sidebar-item">
+    <a href="' . $url . '" class="' . $linkClass . '">
+      <svg class="' . $iconClass . '" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round"
               d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12
                  M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875
                  c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125
                  V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
       </svg>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dashboard</span>
+      <span class="fi-sidebar-item-label flex-1 truncate">Dashboard</span>
     </a>
   </li>
 </ul>
