@@ -4,7 +4,7 @@
         <div class="w-full flex flex-col items-start justify-center gap-[24px] text-[16px] font-semibold">
             <!-- Responsive Logo Container -->
             <div class="flex items-center justify-between w-full">
-                <img class="w-[200px] md:w-[280px]" src="{{ asset('img/logo-colored.png') }}" alt="VAPP Logo">
+                <img class="w-[200px] md:w-[280px]" src="{{ asset('img/logo-vapp.svg') }}" alt="VAPP Logo">
                 <img class="md:hidden" src="{{ asset('img/npc-logo.png') }}" alt="NPC Logo" style="width: 100px">
             </div>
 

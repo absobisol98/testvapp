@@ -1,4 +1,4 @@
-<img onerror="this.src='{{url('img/logo-colored.png')}}'; this.onerror=null;"  class="w-full " src="{{$record->getMedia('event-banner-attachments')->first()?->getURL()}}" >
+<img onerror="this.src='{{url('img/logo-vapp.svg')}}'; this.onerror=null;"  class="w-full " src="{{$record->getMedia('event-banner-attachments')->first()?->getURL()}}" >
 <div class="p-4 flex items-center">
     <div class="h-full pr-4 bg-primary-500 p-2 rounded-lg flex items-center justify-center">
 

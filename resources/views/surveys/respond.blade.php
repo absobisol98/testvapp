@@ -6,7 +6,7 @@
         <div class="max-w-4xl w-full bg-white rounded-lg shadow-lg p-8">
             <!-- Header Section -->
             <div class="text-center mb-8">
-                <img src="{{ asset('img/logo-colored.png') }}" alt="Ayala Logo" class="mx-auto h-16 mb-6">
+                <img src="{{ asset('img/logo-vapp.svg') }}" alt="Ayala Logo" class="mx-auto h-16 mb-6">
                 <h1 class="text-3xl font-bold text-secondary mb-2 capitalize">{{ $survey->title }}</h1>
                 <p class="text-gray-600 mb-4">{{ $survey->description }}</p>
             </div>

@@ -4,7 +4,7 @@
 <div class="min-h-screen md:h-auto flex items-center justify-center bg-gray-50 pb-[5%] pt-[10%]">
     <div class="max-w-7xl flex flex-col items-center justify-evenly w-full bg-white rounded-lg shadow-lg p-8 text-center" style="min-height: 50vh">
         <div class="mb-8">
-            <img src="{{ asset('img/logo-colored.png') }}" alt="Ayala Logo" class="mx-auto h-16">
+            <img src="{{ asset('img/logo-vapp.svg') }}" alt="Ayala Logo" class="mx-auto h-16">
         </div>
 
         <div class="space-y-4">
