@@ -1,8 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" width="120" height="100">
-  <!-- Left arm of V -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
   <polygon points="0,0 20,0 60,75 40,75" fill="#0433ff"/>
-  <!-- Right arm of V -->
   <polygon points="100,0 120,0 80,75 60,75" fill="#0433ff"/>
-  <!-- Orange accent at bottom point -->
   <polygon points="40,75 80,75 60,100" fill="#ff7b00"/>
 </svg>
