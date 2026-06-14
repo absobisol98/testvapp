@@ -24,9 +24,11 @@ class Dashboard extends BasePage
         $totalVolunteers = User::role('Volunteer')->count();
 
         $totalVolunteerHours = number_format(
-            (float) EventAttendee::where('is_approve', true)
-                ->get()
-                ->sum(fn ($a) => $a->get_totalHrs()),
+            cache()->remember('total_volunteer_hours', 3600, function () {
+                return (float) EventAttendee::where('is_approve', true)
+                    ->get()
+                    ->sum(fn ($a) => $a->get_totalHrs());
+            }),
             1
         );
 
