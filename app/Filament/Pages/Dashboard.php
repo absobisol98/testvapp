@@ -23,11 +23,15 @@ class Dashboard extends BasePage
 
         $totalVolunteers = User::role('Volunteer')->count();
 
+        // Calculate total volunteer hours using database (much faster than PHP loop)
+        // TIMESTAMPDIFF(MINUTE, time_in, time_out) gets minutes, divide by 60 for hours
         $totalVolunteerHours = number_format(
             cache()->remember('total_volunteer_hours', 3600, function () {
-                return (float) EventAttendee::where('is_approve', true)
-                    ->get()
-                    ->sum(fn ($a) => $a->get_totalHrs());
+                return EventAttendee::where('is_approve', true)
+                    ->whereNotNull('time_in')
+                    ->whereNotNull('time_out')
+                    ->selectRaw('SUM(ROUND(TIMESTAMPDIFF(MINUTE, time_in, time_out) / 60, 2)) as total_hours')
+                    ->value('total_hours') ?? 0;
             }),
             1
         );
