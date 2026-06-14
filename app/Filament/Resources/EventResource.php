@@ -74,6 +74,51 @@ class EventResource extends Resource implements HasShieldPermissions
         ];
     }
 
+    // Volunteers can never create events.
+    public static function canCreate(): bool
+    {
+        return ! auth()->user()->hasActiveRole('Volunteer');
+    }
+
+    // Volunteers can view event detail pages (read-only).
+    public static function canView(Model $record): bool
+    {
+        return true;
+    }
+
+    // Volunteers can only edit an event if they are its nominated facilitator.
+    // Facilitators (active role) can edit events they facilitated.
+    public static function canEdit(Model $record): bool
+    {
+        $user = auth()->user();
+        if ($user->hasActiveRole('Volunteer')) {
+            return false;
+        }
+        if ($user->hasActiveRole('Facilitator')) {
+            return $record->facilitators()->where('facilitator_id', $user->id)->exists();
+        }
+        return parent::canEdit($record);
+    }
+
+    // Only admins and External Partners can delete events.
+    public static function canDelete(Model $record): bool
+    {
+        $user = auth()->user();
+        if ($user->hasActiveRole('Volunteer') || $user->hasActiveRole('Facilitator')) {
+            return false;
+        }
+        return parent::canDelete($record);
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        $user = auth()->user();
+        if ($user->hasActiveRole('Volunteer') || $user->hasActiveRole('Facilitator')) {
+            return false;
+        }
+        return parent::canDeleteAny();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -586,9 +631,12 @@ class EventResource extends Resource implements HasShieldPermissions
                                 'event-registrants-selected-' . now()->format('Y-m-d') . '.xlsx'
                             )
                         ),
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => static::canDeleteAny()),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->visible(fn () => static::canDeleteAny()),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->visible(fn () => static::canDeleteAny()),
                 ]),
             ])
             ->defaultSort('start_date');
