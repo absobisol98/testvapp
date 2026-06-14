@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Certificate;
 use App\Models\Event;
 use Filament\Widgets\Widget;
 
@@ -12,20 +13,27 @@ class UpcomingOpportunityWidget extends Widget
     protected function getViewData(): array
     {
         $currentDate = now();
+        $user        = auth()->user();
 
         $opportunities = Event::query()
-        ->where('start_date', '>=', $currentDate)
-        ->orderBy('start_date', 'asc')
-        ->take(10)
-        ->get();
+            ->where('start_date', '>=', $currentDate)
+            ->where('is_published', true)
+            ->orderBy('start_date', 'asc')
+            ->take(9)
+            ->get();
 
-        $Recentopportunities = Event::with('slots')->orderBy('created_at','desc')->get();
+        $recentCertificates = Certificate::with('event')
+            ->where('attendee_id', $user->id)
+            ->latest('issued_at')
+            ->take(3)
+            ->get();
 
-        // dd($opportunities);
+        $badgeInfo = $user->getBadges();
 
         return [
-            'opportunities' => $opportunities,
-            'Recentopportunities' => $Recentopportunities
+            'opportunities'      => $opportunities,
+            'recentCertificates' => $recentCertificates,
+            'badgeInfo'          => $badgeInfo,
         ];
     }
 }

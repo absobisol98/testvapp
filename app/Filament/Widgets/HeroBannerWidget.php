@@ -34,7 +34,20 @@ class HeroBannerWidget extends Widget
             EventAttendee::where('attendee_id', $user->id)->where('is_approve', true)
         );
 
+        $myHoursThisMonth = self::sumApprovedHours(
+            EventAttendee::where('attendee_id', $user->id)
+                ->where('is_approve', true)
+                ->whereMonth('time_in', now()->month)
+                ->whereYear('time_in', now()->year)
+        );
+
+        $myEventsAttended = EventAttendee::where('attendee_id', $user->id)
+            ->where('is_approve', true)
+            ->count();
+
         $myCertificates = Certificate::where('attendee_id', $user->id)->count();
+
+        $badgeInfo = ($activeRole === 'Volunteer') ? $user->getBadges() : null;
 
         // Admin-facing stats
         $totalVolunteers = User::role('Volunteer')->count();
@@ -78,12 +91,19 @@ class HeroBannerWidget extends Widget
             default                            => 'img/hero-banner-bg_2.jpg',
         };
 
+        $hour = now()->hour;
+        $greeting = $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good evening');
+
         return [
             'activeRole'                     => $activeRole,
+            'greeting'                       => $greeting,
             'availableOpportunities'         => $availableOpportunities,
             'myUpcomingOpportunities'        => $myUpcomingOpportunities,
             'myHoursRendered'                => number_format($myHoursRendered, 1),
+            'myHoursThisMonth'               => number_format($myHoursThisMonth, 1),
+            'myEventsAttended'               => $myEventsAttended,
             'myCertificates'                 => $myCertificates,
+            'badgeInfo'                      => $badgeInfo,
             'totalVolunteers'                => $totalVolunteers,
             'totalVolunteerHours'            => number_format($totalVolunteerHours, 1),
             'partnerAvailableOpportunities'  => $partnerAvailableOpportunities,
