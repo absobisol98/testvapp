@@ -106,7 +106,7 @@ html, body {
 
 
 .fi-sidebar-header, .fi-topbar nav {
-    @apply min-h-[95px] bg-[#0433ff];
+    @apply min-h-[95px] bg-[#ff7b00];
 }
 
 /* Topbar icon visibility */

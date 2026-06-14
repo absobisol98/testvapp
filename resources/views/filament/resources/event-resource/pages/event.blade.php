@@ -488,7 +488,10 @@
                                             @endif
 
                                             <button type="submit"
-                                                    class="h-10 w-[200px] bg-[#F55E1D] text-white font-medium rounded-full hover:bg-[#FF8252]">
+                                                    class="h-10 w-[200px] bg-[#ff7b00] text-white font-medium rounded-full hover:bg-[#e06e00] flex items-center justify-center gap-2">
+                                                <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M11 20c-3.2 0-5.6-1.5-7-3.8L2 14h3v-2H0v5h2v-1.8C3.7 17.5 6.7 22 11 22v-2zm5 0v2c4.3 0 7.3-4.5 8-6.8V17h2v-5h-5v2h3l-1.4 2.2C21.3 18.5 18.8 20 16 20zm-4.9-7.3c.3.3.6.4.9.4s.6-.1.9-.4c1.6-1.6 3.1-2.9 3.1-4.2C17 6.9 15.9 6 14.8 6c-.6 0-1.2.3-1.8.9-.6-.6-1.2-.9-1.8-.9C10.1 6 9 6.9 9 8.5c0 1.3 1.5 2.6 3.1 4.2z"/>
+                                                </svg>
                                                 Volunteer for this
                                             </button>
                                         </form>
