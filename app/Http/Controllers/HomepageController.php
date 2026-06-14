@@ -55,7 +55,15 @@ class HomepageController extends Controller implements HasMedia
 
         $ban = $upcoming ? $upcoming->getMedia('event-banner-attachments')->first() : null;
 
-        return view('custom.main-landing', compact('opportunities', 'articles', 'featuredOpportunity'));
+        $volunteerCount   = \App\Models\User::role('volunteer')->whereYear('created_at', date('Y'))->count();
+        $opportunityCount = \App\Models\Event::whereYear('start_date', date('Y'))->where('is_published', true)->count();
+        $businessUnitCount = \App\Models\BusinessUnit::count();
+        $programCount      = \App\Models\Program::count();
+
+        return view('custom.main-landing', compact(
+            'opportunities', 'articles', 'featuredOpportunity',
+            'volunteerCount', 'opportunityCount', 'businessUnitCount', 'programCount'
+        ));
     }
 
     public function businessUnitHomepageView($slug)

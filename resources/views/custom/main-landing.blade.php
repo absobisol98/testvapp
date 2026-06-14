@@ -232,25 +232,42 @@
                                         </div>
                                     </div>
 
-                                    <div class="w-[200px]">
+                                    <div class="w-[200px]" x-data="{ joinModal: false }">
                                         @guest
-                                        <a href="\volunteer-registration">
-                                            <div
-                                                class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                        <button @click="joinModal = true" class="w-full">
+                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] rounded-xl flex items-center justify-center p-2 hover:bg-[#e06e00]">
                                                 <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
                                             </div>
-                                        </a>
+                                        </button>
+                                        {{-- Login/Register choice modal --}}
+                                        <div x-show="joinModal" x-cloak
+                                             class="fixed inset-0 z-50 flex items-center justify-center"
+                                             style="background:rgba(0,0,0,0.55);"
+                                             @click.self="joinModal = false">
+                                            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-2">Join this opportunity</h3>
+                                                <p class="text-sm text-gray-500 mb-6">Do you already have a volunteer account?</p>
+                                                <a href="{{ route('filament.admin.auth.login') }}"
+                                                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#0433ff] text-white font-semibold mb-3 hover:bg-blue-700 transition">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                                                    Log in to my account
+                                                </a>
+                                                <a href="{{ route('volunteer.form.view') }}"
+                                                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#ff7b00] text-white font-semibold hover:bg-[#e06e00] transition">
+                                                    New volunteer? Register here
+                                                </a>
+                                                <button @click="joinModal = false" class="mt-4 w-full text-center text-sm text-gray-400 hover:text-gray-600">Cancel</button>
+                                            </div>
+                                        </div>
                                         @endguest
 
                                         @auth
                                         <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
-                                            <div
-                                                class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] rounded-xl flex items-center justify-center p-2 hover:bg-[#e06e00]">
                                                 <p class="font-[400] text-base md:text-[18px] text-white">VIEW</p>
                                             </div>
                                         </a>
                                         @endauth
-
                                     </div>
                                 </div>
 
@@ -443,20 +460,20 @@
                 <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
                     <div class="flex flex-col md:flex-row items-center justify-center gap-12">
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold"> {{ \App\Models\User::role('volunteer')->count() }}</p>
-                            <p class="text-[20px] font-medium">Volunteer</p>
+                            <p class="text-[80px] font-bold">{{ $volunteerCount }}</p>
+                            <p class="text-[20px] font-medium">Volunteers This Year</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ \App\Models\BusinessUnit::count() }}</p>
-                            <p class="text-[20px] font-medium">Business Unit</p>
+                            <p class="text-[80px] font-bold">{{ $businessUnitCount }}</p>
+                            <p class="text-[20px] font-medium">Business Units</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ \App\Models\Program::count() }}</p>
+                            <p class="text-[80px] font-bold">{{ $programCount }}</p>
                             <p class="text-[20px] font-medium">Programs</p>
                         </div>
                         <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ \App\Models\Event::count() }}</p>
-                            <p class="text-[20px] font-medium">Opportunities</p>
+                            <p class="text-[80px] font-bold">{{ $opportunityCount }}</p>
+                            <p class="text-[20px] font-medium">Opportunities This Year</p>
                         </div>
                     </div>
                 </div>
@@ -879,6 +896,20 @@
         </div>
 
 
+        {{-- ── CTA Section ──────────────────────────────────────────────────── --}}
+        <div class="w-full py-24 px-8 text-center text-white"
+             style="background: linear-gradient(135deg, #0433ff 0%, #0228cc 100%);">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to make an impact?</h2>
+            <p class="text-lg md:text-xl mb-8 text-white/80">It takes two minutes to join your first opportunity.</p>
+            <a href="{{ route('volunteer.form.view') }}">
+                <div class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#ff7b00] hover:bg-[#e06e00] text-white font-semibold text-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Browse Opportunities
+                </div>
+            </a>
+        </div>
     </div>
 @endsection
 

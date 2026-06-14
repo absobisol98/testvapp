@@ -7,6 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- NB International Pro font --}}
+    <link href="https://fonts.cdnfonts.com/css/nb" rel="stylesheet">
     {{-- Tailwind --}}
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -14,8 +14,8 @@
 </style>
 
 @php
-    $primaryBlue = '#005096';
-    $accentOrange = '#F55E1D';
+    $primaryBlue = '#0433ff';
+    $accentOrange = '#ff7b00';
 @endphp
 
 {{-- ── Hero Banner ─────────────────────────────────────────────────────── --}}
@@ -58,14 +58,19 @@
 {{-- ── Stat Cards (overlap hero) ───────────────────────────────────────── --}}
 <div class="px-8 -mt-10 mb-6 relative z-10">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        @foreach([
-            ['value' => number_format($totalHours, 1), 'label' => 'Total Hours',       'icon' => '⏱'],
-            ['value' => $totalOpportunities,            'label' => 'Events Attended',   'icon' => '📅'],
-            ['value' => $badges['points'],              'label' => 'Volunteer Points',  'icon' => '🏆'],
-            ['value' => $currentStreak,                 'label' => 'Current Streak',    'icon' => '🔥'],
-        ] as $stat)
+        @php
+        $statItems = [
+            ['value' => number_format($totalHours, 1), 'label' => 'Total Hours',      'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>'],
+            ['value' => $totalOpportunities,            'label' => 'Events Attended', 'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>'],
+            ['value' => $badges['points'],              'label' => 'Volunteer Points', 'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>'],
+            ['value' => $currentStreak,                 'label' => 'Current Streak',  'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>'],
+        ];
+        @endphp
+        @foreach($statItems as $stat)
         <div class="bg-white rounded-xl shadow-md border border-gray-100 p-4 flex items-center gap-3">
-            <span class="text-2xl">{{ $stat['icon'] }}</span>
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:{{ $primaryBlue }}10">
+                <svg class="w-5 h-5" fill="none" stroke="{{ $primaryBlue }}" viewBox="0 0 24 24">{!! $stat['svg'] !!}</svg>
+            </div>
             <div>
                 <p class="text-xl font-bold" style="color:{{ $primaryBlue }}">{{ $stat['value'] }}</p>
                 <p class="text-xs text-gray-400">{{ $stat['label'] }}</p>
@@ -82,15 +87,15 @@
         {{-- Tab navigation --}}
         <div class="border-b border-gray-100 flex overflow-x-auto">
             @foreach([
-                ['id' => 'opportunities', 'label' => 'My Opportunities', 'icon' => '📅'],
-                ['id' => 'personal',      'label' => 'Personal Info',     'icon' => '👤'],
-                ['id' => 'badges',        'label' => 'Badges & Rank',     'icon' => '🏅'],
+                ['id' => 'opportunities', 'label' => 'My Opportunities', 'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>'],
+                ['id' => 'personal',      'label' => 'Personal Info',    'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>'],
+                ['id' => 'badges',        'label' => 'Badges & Rank',    'svg' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>'],
             ] as $tab)
             <button
                 id="tab-{{ $tab['id'] }}"
                 onclick="switchTab('{{ $tab['id'] }}')"
                 class="profile-tab-btn flex-shrink-0 flex items-center gap-2 px-6 py-4 text-sm whitespace-nowrap {{ $tab['id'] === 'opportunities' ? 'active' : '' }}">
-                <span>{{ $tab['icon'] }}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">{!! $tab['svg'] !!}</svg>
                 {{ $tab['label'] }}
             </button>
             @endforeach
@@ -100,7 +105,7 @@
         <div id="panel-opportunities" class="p-6">
             @if($allEvents->isEmpty())
                 <div class="flex flex-col items-center justify-center py-16 text-gray-400">
-                    <span class="text-5xl mb-3">📭</span>
+                    <svg class="w-14 h-14 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
                     <p class="text-base font-medium">No opportunities attended yet</p>
                     <p class="text-sm mt-1">Registered events will appear here once attendance is confirmed.</p>
                 </div>
@@ -238,15 +243,35 @@
                     Company / Affiliation
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 p-5 bg-gray-50 rounded-xl">
-                    @foreach([
-                        ['label' => 'Company / School', 'value' => $user->company_name ?? '—'],
-                        ['label' => 'Address',          'value' => $user->company_address ?? '—'],
-                    ] as $field)
                     <div>
-                        <p class="info-label">{{ $field['label'] }}</p>
-                        <p class="info-value">{{ $field['value'] }}</p>
+                        <p class="info-label">Affiliation Type</p>
+                        <p class="info-value">
+                            {{ $user->affiliate_type_id == 1 ? 'Ayala Employee' : ($user->affiliate_type_id == 2 ? 'External' : '—') }}
+                        </p>
                     </div>
-                    @endforeach
+                    @if($user->affiliate_type_id == 1)
+                    <div>
+                        <p class="info-label">Cluster</p>
+                        <p class="info-value">{{ $user->cluster?->name ?? '—' }}</p>
+                    </div>
+                    <div>
+                        <p class="info-label">Company</p>
+                        <p class="info-value">{{ $user->company?->name ?? '—' }}</p>
+                    </div>
+                    @else
+                    <div>
+                        <p class="info-label">Company Name</p>
+                        <p class="info-value">{{ $user->external_company_name ?? '—' }}</p>
+                    </div>
+                    @endif
+                    <div>
+                        <p class="info-label">Address</p>
+                        <p class="info-value">{{ $user->company_address ?? '—' }}</p>
+                    </div>
+                    <div>
+                        <p class="info-label">Contact Number</p>
+                        <p class="info-value">{{ $user->company_contact_number ?? '—' }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -258,8 +283,9 @@
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 p-5 bg-gray-50 rounded-xl">
                     @foreach([
-                        ['label' => 'Contact Person', 'value' => $user->emergency_contact_name ?? '—'],
-                        ['label' => 'Contact Number', 'value' => $user->emergency_contact_number ?? '—'],
+                        ['label' => 'Contact Person',   'value' => $user->emergency_contact_name ?? '—'],
+                        ['label' => 'Relationship',     'value' => $user->emergency_contact_relationship ?? '—'],
+                        ['label' => 'Contact Number',   'value' => $user->emergency_contact_number ?? '—'],
                     ] as $field)
                     <div>
                         <p class="info-label">{{ $field['label'] }}</p>
@@ -374,7 +400,7 @@
                 {{-- Completed --}}
                 @if($user->created_at)
                 <div class="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-100">
-                    <span class="text-2xl">✅</span>
+                    <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <div class="flex-grow">
                         <p class="text-sm font-semibold text-green-800">Account created</p>
                         <p class="text-xs text-green-600">+50 VP · Completed</p>
@@ -384,7 +410,7 @@
 
                 @if($totalOpportunities >= 1)
                 <div class="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-100">
-                    <span class="text-2xl">✅</span>
+                    <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <div class="flex-grow">
                         <p class="text-sm font-semibold text-green-800">First opportunity attended</p>
                         <p class="text-xs text-green-600">+50 VP · Completed</p>
@@ -396,7 +422,7 @@
                 @foreach([4=>50, 8=>50, 12=>50, 16=>50, 20=>50, 100=>250, 250=>1500, 500=>2500, 1000=>5000] as $hrs => $vp)
                 @if($totalHours < $hrs)
                 <div class="flex items-center gap-3 p-4 rounded-xl bg-blue-50 border border-blue-100">
-                    <span class="text-2xl">⏱</span>
+                    <svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <div class="flex-grow">
                         <p class="text-sm font-semibold text-blue-800">Complete {{ $hrs }} volunteer hours</p>
                         <p class="text-xs text-blue-500">+{{ $vp }} VP</p>
@@ -414,7 +440,7 @@
                 @foreach([10=>50, 25=>250, 50=>1500, 100=>2500] as $opp => $vp)
                 @if($totalOpportunities < $opp)
                 <div class="flex items-center gap-3 p-4 rounded-xl bg-purple-50 border border-purple-100">
-                    <span class="text-2xl">📅</span>
+                    <svg class="w-6 h-6 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     <div class="flex-grow">
                         <p class="text-sm font-semibold text-purple-800">Attend {{ $opp }} opportunities</p>
                         <p class="text-xs text-purple-500">+{{ $vp }} VP</p>
