@@ -362,9 +362,9 @@ if (!window._vappCardHelpersLoaded) {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Accept': 'application/json',
             }
-        }).then(r => {
-            if (r.ok) { if (window.Livewire) Livewire.dispatch('refresh'); }
-            else { alert('Failed — check your permissions.'); }
+        }).then(r => r.json()).then(data => {
+            if (data.redirect) { window.location.href = data.redirect; }
+            else { if (window.Livewire) Livewire.dispatch('refresh'); }
         }).catch(() => alert('Network error. Please try again.'));
     };
 }

@@ -11,11 +11,17 @@ class EventRegistrationObserver
 {
     public function created(EventRegistration $eventRegistration): void
     {
-        $cacheKey = 'reg_email_sent_' . $eventRegistration->id;
+        // Deduplicate per event+user within a 2-minute window so registering
+        // multiple slots in one session only sends one confirmation email.
+        $cacheKey = 'reg_email_sent_'
+            . $eventRegistration->event_id
+            . '_'
+            . $eventRegistration->volunteer_id;
+
         if (Cache::has($cacheKey)) {
             return;
         }
-        Cache::put($cacheKey, true, now()->addMinutes(5));
+        Cache::put($cacheKey, true, now()->addMinutes(2));
 
         try {
             $volunteer = $eventRegistration->volunteer;
