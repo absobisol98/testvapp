@@ -9,12 +9,10 @@
 <style>
     /* For Volunteer Dashboard Container(Start) */
     .fi-main {
-        margin: 0px !important;
-        padding: 0px 0px !important;
-        margin-top: 0px !important;
-        margin-bottom: 0px !important;
         padding-top: 20px !important;
         padding-bottom: 0px !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
         border-radius: 0px !important;
         max-width: 100% !important;
     }
@@ -23,7 +21,7 @@
         padding: 0px 0px 32px 0px !important;
     }
     .fi-header {
-        padding-left: 20px !important;
+        padding-left: 24px !important;
     }
     .fi-header-heading {
         display: none;
@@ -81,7 +79,7 @@
 
 {{-- @dd($record->getAttachment()) --}}
 
-<div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
+<div class="flex flex-col w-full px-6 mx-auto md:px-8 lg:px-10 max-w-full space-y-6">
 
     <div class="w-full flex items-center justify-between">
         <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#ff7b00]] font-extrabold capitalize">{{ $record->title }}</h2>

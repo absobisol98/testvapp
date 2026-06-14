@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Filament\Resources\VolunteerResource;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\EditRecord;
@@ -19,10 +20,19 @@ class EditUser extends EditRecord
 
     protected static string $resource = UserResource::class;
 
+    protected function authorizeAccess(): void
+    {
+        // Skip canViewAny() — volunteers must be able to edit their own profile
+        // even though they cannot list all users.
+        abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
+    }
+
     protected function getHeaderActions(): array
     {
+        $isAdmin = auth()->user()?->isAdminRole();
+
         $actions = [
-            Actions\ActionGroup::make([
+            Actions\ActionGroup::make(array_filter([
                 Actions\EditAction::make()
                     ->label('Change password')
                     ->form([
@@ -48,13 +58,13 @@ class EditUser extends EditRecord
                     ->modalSubmitActionLabel('Submit')
                     ->modalCancelActionLabel('Cancel'),
 
-                Actions\DeleteAction::make()
-                    ->extraAttributes(["class" => "border-b"]),
+                $isAdmin ? Actions\DeleteAction::make()
+                    ->extraAttributes(["class" => "border-b"]) : null,
 
-                Actions\CreateAction::make()
+                $isAdmin ? Actions\CreateAction::make()
                     ->label('Create new user')
-                    ->url(fn(): string => static::$resource::getNavigationUrl() . '/create'),
-            ])
+                    ->url(fn(): string => static::$resource::getNavigationUrl() . '/create') : null,
+            ]))
             ->icon('heroicon-m-ellipsis-horizontal')
             ->hiddenLabel()
             ->button()
@@ -62,12 +72,21 @@ class EditUser extends EditRecord
             ->color('gray')
         ];
 
-        return array_merge($this->getNavigationActions(), $actions);
+        return $isAdmin
+            ? array_merge($this->getNavigationActions(), $actions)
+            : $actions;
     }
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        $user = auth()->user();
+
+        if ($user?->isAdminRole()) {
+            return $this->getResource()::getUrl('index');
+        }
+
+        // Non-admins return to their own volunteer profile
+        return VolunteerResource::getUrl('view', ['record' => $user->id]);
     }
 
     public function getTitle(): string|Htmlable
