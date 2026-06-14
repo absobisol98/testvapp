@@ -97,6 +97,30 @@ Route::middleware(['auth'])->group(function () {
         $event->save();
         return response()->json(['featured' => $event->is_featured]);
     })->name('event.toggle-featured');
+
+    Route::post('/admin/events/{event}/duplicate', function (\App\Models\Event $event) {
+        $user = auth()->user();
+        if (!\App\Filament\Resources\EventResource::canCreate()) {
+            abort(403);
+        }
+        $new = $event->replicate();
+        $new->title       = $event->title . ' (Copy)';
+        $new->is_featured = false;
+        $new->is_published = false;
+        $new->save();
+
+        foreach ($event->slots as $slot) {
+            $new->slots()->create($slot->only([
+                'shift_name', 'slot_type_id', 'start_time', 'end_time',
+                'shift_date', 'shift_end_date', 'slot_format',
+                'meeting_link', 'total_slots', 'responsibilities',
+            ]));
+        }
+
+        return response()->json([
+            'redirect' => route('filament.admin.resources.events.edit', ['record' => $new->id]),
+        ]);
+    })->name('event.duplicate');
 });
 
 
