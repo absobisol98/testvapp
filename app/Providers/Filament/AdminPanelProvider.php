@@ -244,7 +244,7 @@ class AdminPanelProvider extends PanelProvider
             $allowed
         ));
 
-        $dashboardUrl = url('/admin');
+        $adminPath = 'admin';
 
         $css = <<<CSS
 <style>
@@ -252,9 +252,9 @@ class AdminPanelProvider extends PanelProvider
 .fi-sidebar-group { display: none !important; }
 {$showGroups} { display: flex !important; }
 .fi-sidebar-item{$notHas} { display: none !important; }
-/* Always show Dashboard home item for all roles */
-.fi-sidebar-group:has(a[href="{$dashboardUrl}"]) { display: flex !important; }
-.fi-sidebar-item:has(a[href="{$dashboardUrl}"]) { display: flex !important; }
+/* Always show Dashboard home item for all roles (matches /admin regardless of host or trailing slash) */
+.fi-sidebar-group:has(a[href\$="/{$adminPath}"]) { display: flex !important; }
+.fi-sidebar-item:has(a[href\$="/{$adminPath}"]) { display: flex !important; }
 </style>
 CSS;
 
