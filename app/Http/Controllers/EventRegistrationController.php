@@ -10,6 +10,7 @@ use App\Actions\GenerateEventQRCode;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class EventRegistrationController extends Controller
@@ -53,22 +54,17 @@ class EventRegistrationController extends Controller
         // Validate the request
         $request->validate($validationRules, $messages);
 
-        // Add duplicate registration check
-        $existingRegistrations = EventRegistration::where('volunteer_id', auth()->id())
-            ->where('event_id', $event->id)
-            ->whereIn('status_id', [1, 2]) // Pending or Approved
-            ->count();
-
-        if ($existingRegistrations > 0) {
+        // [FIX #5] Block registration if event has already started
+        if (Carbon::now()->isAfter($event->start_date)) {
             Notification::make()
-                ->title('Registration Failed')
-                ->body('You are already registered for this event.')
+                ->title('Registration Closed')
+                ->body('This event has already started. Registration is no longer available.')
                 ->danger()
                 ->send();
             return back();
         }
 
-        // Check if registration is still open
+        // Check if registration deadline has passed
         if ($event->registration_end_date && Carbon::now()->isAfter($event->registration_end_date)) {
             Notification::make()
                 ->title('Registration Failed')
@@ -78,81 +74,84 @@ class EventRegistrationController extends Controller
             return back();
         }
 
-        // Check if slot is available
-        $registrationCount = $event->registrations()
-            ->where('slot_type_id', $slot->id)
-            ->where('status_id', '!=', 3)
-            ->count();
-
-        if ($registrationCount >= $slot->total_slots) {
-            Notification::make()
-                ->title('Registration Failed')
-                ->body('This shift is already full.')
-                ->danger()
-                ->send();
-            return back();
-        }
-
-        // Check for existing registration
-        $existingRegistration = EventRegistration::where([
-            'event_id' => $event->id,
-            'volunteer_id' => auth()->id(),
-            'slot_type_id' => $slot->id,
-        ])->first();
-
-        if ($existingRegistration) {
-            Notification::make()
-                ->title('Registration Failed')
-                ->body('You are already registered for this shift.')
-                ->danger()
-                ->send();
-            return back();
-        }
-
         try {
-            // Create registration
-            $registration = EventRegistration::create([
-                'event_id' => $event->id,
-                'volunteer_id' => auth()->id(),
-                'slot_type_id' => $slot->id,
-                'status_id' => $event->approval_type == "Automatic" ? 2 : 1,
-            ]);
+            // [FIX #1] Wrap in DB transaction with pessimistic lock to prevent race conditions
+            $registration = DB::transaction(function () use ($event, $slot, $request) {
 
-            // Handle file attachments
-            if ($request->hasFile('media')) {
-                foreach ($request->file('media') as $file) {
-                    $registration->addMedia($file)
-                        ->toMediaCollection('event-registration-attachments');
+                // Lock the slot row so concurrent requests queue up here
+                $lockedSlot = EventSlot::lockForUpdate()->find($slot->id);
+
+                // [FIX #3] Single definitive duplicate check inside transaction
+                $existing = EventRegistration::where('event_id', $event->id)
+                    ->where('volunteer_id', auth()->id())
+                    ->where('slot_type_id', $lockedSlot->id)
+                    ->whereIn('status_id', [1, 2])
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($existing) {
+                    throw new \RuntimeException('You are already registered for this shift.');
                 }
-            }
 
-            // Handle automatic approval
-            if ($event->approval_type == "Automatic") {
-                $attendee = EventAttendee::create([
-                    'event_id' => $event->id,
-                    'attendee_id' => auth()->id(),
-                    'facilitator_id' => auth()->id(),
-                    'slot_type_id' => $slot->id,
-                    'is_approve' => 1,
+                // Re-count capacity inside transaction
+                $registrationCount = EventRegistration::where('slot_type_id', $lockedSlot->id)
+                    ->where('status_id', '!=', 3)
+                    ->count();
+
+                if ($registrationCount >= $lockedSlot->total_slots) {
+                    throw new \RuntimeException('This shift is already full.');
+                }
+
+                // Create registration
+                $reg = EventRegistration::create([
+                    'event_id'    => $event->id,
+                    'volunteer_id'=> auth()->id(),
+                    'slot_type_id'=> $lockedSlot->id,
+                    'status_id'   => $event->approval_type === 'Automatic' ? 2 : 1,
                 ]);
 
-                (new GenerateEventQRCode())->execute($attendee);
+                // Handle file attachments
+                if ($request->hasFile('media')) {
+                    foreach ($request->file('media') as $file) {
+                        $reg->addMedia($file)
+                            ->toMediaCollection('event-registration-attachments');
+                    }
+                }
 
-                Notification::make()
-                    ->title('Registration Successful')
-                    ->body('Your registration has been automatically approved.')
-                    ->success()
-                    ->send();
-            } else {
-                Notification::make()
-                    ->title('Registration Successful')
-                    ->body('Your registration is pending approval.')
-                    ->success()
-                    ->send();
-            }
+                // [FIX #2] Automatic approval: set facilitator_id to NULL (volunteer ≠ facilitator)
+                if ($event->approval_type === 'Automatic') {
+                    $attendee = EventAttendee::create([
+                        'event_id'      => $event->id,
+                        'attendee_id'   => auth()->id(),
+                        'facilitator_id'=> null,
+                        'slot_type_id'  => $lockedSlot->id,
+                        'is_approve'    => 1,
+                    ]);
+                    (new GenerateEventQRCode())->execute($attendee);
+                }
+
+                return $reg;
+            });
+
+            $body = $event->approval_type === 'Automatic'
+                ? 'Your registration has been automatically approved.'
+                : 'Your registration is pending approval.';
+
+            Notification::make()
+                ->title('Registration Successful')
+                ->body($body)
+                ->success()
+                ->send();
 
             return back();
 
+        } catch (\RuntimeException $e) {
+            Notification::make()
+                ->title('Registration Failed')
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+            return back();
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Registration Failed')
@@ -175,10 +174,21 @@ class EventRegistrationController extends Controller
             return back();
         }
 
+        // [FIX #7] Correct cancellation guard logic
         if ($registration->status_id == 3) {
             Notification::make()
                 ->title('Cannot Cancel')
-                ->body('Cannot cancel an approved or rejected registration.')
+                ->body('This registration has already been rejected.')
+                ->warning()
+                ->send();
+            return back();
+        }
+
+        // Prevent cancellation after event has started
+        if ($registration->event && Carbon::now()->isAfter($registration->event->start_date)) {
+            Notification::make()
+                ->title('Cannot Cancel')
+                ->body('You cannot cancel a registration after the event has started.')
                 ->warning()
                 ->send();
             return back();

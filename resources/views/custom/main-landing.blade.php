@@ -168,19 +168,33 @@
                             ? \App\Models\EventRegistration::where('volunteer_id',auth()->id())->where('event_id',$opportunity->id)->whereIn('status_id',[1,2])->exists()
                             : false;
                     @endphp
-                    <article class="op-card card" style="background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column;">
-                        {{-- Image --}}
-                        <div style="position:relative;">
-                            <div style="height:172px; background:var(--bg-tint); overflow:hidden;">
-                                @if($img)
-                                    <img src="{{ $img->getUrl() }}" alt="{{ $opportunity->title }}" style="width:100%; height:100%; object-fit:cover;">
-                                @else
-                                    <div style="width:100%; height:100%; background:repeating-linear-gradient(135deg,rgba(14,79,153,.06) 0 12px,rgba(14,79,153,0) 12px 24px);"></div>
-                                @endif
+                    <article class="op-card card" style="background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,.07);">
+                        {{-- Image Container with Badges --}}
+                        <div style="position:relative; height:200px; overflow:hidden; background:var(--bg-tint);">
+                            @if($img)
+                                <img src="{{ $img->getUrl() }}" alt="{{ $opportunity->title }}" style="width:100%; height:100%; object-fit:cover;">
+                            @else
+                                <div style="width:100%; height:100%; background:repeating-linear-gradient(135deg,rgba(14,79,153,.06) 0 12px,rgba(14,79,153,0) 12px 24px);"></div>
+                            @endif
+
+                            {{-- "Starting in X days" Badge (Top-Left) --}}
+                            @php
+                                $daysUntil = \Carbon\Carbon::parse($opportunity->start_date)->diffInDays(now(), false);
+                                $startingText = match(true) {
+                                    $daysUntil < 0 => 'Started',
+                                    $daysUntil == 0 => 'Today',
+                                    $daysUntil == 1 => 'Tomorrow',
+                                    default => "Starting in {$daysUntil} day" . ($daysUntil > 1 ? 's' : '')
+                                };
+                            @endphp
+                            <div style="position:absolute; top:12px; left:12px; background:#fff; color:var(--blue-700); font-size:12px; font-weight:700; padding:6px 12px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1);">
+                                {{ $startingText }}
                             </div>
-                            {{-- Date badge --}}
-                            <div style="position:absolute; bottom:10px; left:12px; display:inline-flex; align-items:center; gap:5px; background:var(--or-500); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;">
-                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M d') }}
+
+                            {{-- "Onsite/Virtual/Hybrid" Badge (Bottom-Left) --}}
+                            <div style="position:absolute; bottom:12px; left:12px; background:var(--green-600); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:6px; display:flex; align-items:center; gap:5px;">
+                                <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                                {{ ucfirst($opportunity->event_format ?? 'Onsite') }}
                             </div>
                         </div>
                         {{-- Body --}}
@@ -211,43 +225,36 @@
                             </div>
                             @endif
                         </div>
-                        {{-- CTA --}}
-                        <div style="padding:0 18px 18px;">
-                            @if($isRegistered)
-                                <div style="width:100%; padding:10px; border-radius:999px; background:var(--green-50); color:var(--green-600); font-weight:700; font-size:13px; text-align:center; display:flex; align-items:center; justify-content:center; gap:6px;">
-                                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                                    You're in
+                        {{-- CTA: Primary "View Details" + Dropdown Menu --}}
+                        <div style="padding:16px 18px 18px; display:flex; gap:8px; align-items:center;">
+                            {{-- Primary Action: View Details --}}
+                            <a href="{{ route('filament.admin.resources.events.view', ['record' => $opportunity->id]) }}" style="flex:1; padding:11px 16px; background:var(--or-500); color:#fff; font-weight:700; font-size:14px; border:none; border-radius:8px; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; transition:.15s; cursor:pointer;"
+                                onmouseover="this.style.background='var(--or-600)'" onmouseout="this.style.background='var(--or-500)'">
+                                View Details
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                            </a>
+
+                            {{-- Dropdown Menu Button --}}
+                            <div x-data="{ menuOpen: false }" style="position:relative;">
+                                <button @click="menuOpen = !menuOpen" style="width:44px; height:44px; border:1.5px solid var(--line); background:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s;"
+                                    onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--line)'">
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                                </button>
+
+                                {{-- Dropdown Menu --}}
+                                <div x-show="menuOpen" @click.away="menuOpen = false" x-transition style="position:absolute; top:50px; right:0; background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.12); min-width:160px; z-index:100;">
+                                    <a href="{{ route('filament.admin.resources.events.edit', ['record' => $opportunity->id]) }}" style="display:flex; align-items:center; gap:10px; padding:12px 16px; color:var(--or-500); text-decoration:none; font-weight:600; font-size:14px; border:none; background:none; cursor:pointer; width:100%; transition:.15s;"
+                                        onmouseover="this.style.background='var(--bg-soft)'" onmouseout="this.style.background='transparent'">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                        Edit
+                                    </a>
+                                    <a href="#" onclick="return confirm('Delete this opportunity?') && window.location.href='{{ route('filament.admin.resources.events.view', ['record' => $opportunity->id]) }}?action=delete'" style="display:flex; align-items:center; gap:10px; padding:12px 16px; color:#dc2626; text-decoration:none; font-weight:600; font-size:14px; border:none; background:none; cursor:pointer; width:100%; transition:.15s; border-top:1px solid var(--line);"
+                                        onmouseover="this.style.background='var(--bg-soft)'" onmouseout="this.style.background='transparent'">
+                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1z"/></svg>
+                                        Delete
+                                    </a>
                                 </div>
-                            @elseif($slot && $availSlots > 0)
-                                @auth
-                                    <form method="POST" action="{{ url('/event/'.$opportunity->id.'/register-slot/'.$slot->id) }}">
-                                        @csrf
-                                        <input type="hidden" name="privacy_policy" value="1">
-                                        <button type="submit" style="width:100%; padding:10px; border-radius:999px; background:var(--or-500); color:#fff; font-weight:700; font-size:13px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:.15s;"
-                                            onmouseover="this.style.background='var(--or-600)'"
-                                            onmouseout="this.style.background='var(--or-500)'">
-                                            Join
-                                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                                        </button>
-                                    </form>
-                                @else
-                                    <div x-data="{ open: false }">
-                                        <button @click="open = true" style="width:100%; padding:10px; border-radius:999px; background:var(--or-500); color:#fff; font-weight:700; font-size:13px; border:none; cursor:pointer; transition:.15s;"
-                                            onmouseover="this.style.background='var(--or-600)'" onmouseout="this.style.background='var(--or-500)'">Join</button>
-                                        <div x-show="open" x-transition style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.5);">
-                                            <div style="background:#fff; border-radius:16px; padding:32px; max-width:360px; width:90%; text-align:center;">
-                                                <h3 style="font-size:20px; font-weight:700; margin:0 0 8px;">Join this opportunity</h3>
-                                                <p style="color:var(--slate); font-size:14px; margin:0 0 20px;">Please log in or register to volunteer.</p>
-                                                <a href="/admin/login" style="display:block; width:100%; padding:11px; border-radius:999px; background:var(--blue-700); color:#fff; font-weight:700; font-size:14px; margin-bottom:10px;">Already have an account? Log In</a>
-                                                <a href="/volunteer-registration" style="display:block; width:100%; padding:11px; border-radius:999px; background:var(--or-500); color:#fff; font-weight:700; font-size:14px;">New volunteer? Register</a>
-                                                <button @click="open = false" style="margin-top:14px; font-size:13px; color:var(--muted); background:none; border:none; cursor:pointer;">Cancel</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endauth
-                            @else
-                                <div style="width:100%; padding:10px; border-radius:999px; border:1.5px solid var(--line); color:var(--muted); font-weight:700; font-size:13px; text-align:center;">Fully booked</div>
-                            @endif
+                            </div>
                         </div>
                     </article>
                 @empty
