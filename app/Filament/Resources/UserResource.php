@@ -24,6 +24,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use App\Actions\UserCreateField;
+use App\Models\Cluster;
+use App\Models\Company;
+use App\Models\Program;
+use Filament\Forms\Get;
+
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
@@ -42,7 +47,82 @@ class UserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema((new UserCreateField())->execute(false))
+            ->schema(array_merge(
+                (new UserCreateField())->execute(false),
+                [
+                    Forms\Components\Section::make('Volunteer Profile')
+                        ->description('Volunteer-specific information')
+                        ->icon('heroicon-o-hand-raised')
+                        ->collapsible()
+                        ->columns(2)
+                        ->columnSpanFull()
+                        ->visible(fn ($record) => $record?->hasRole('Volunteer'))
+                        ->schema([
+                            Select::make('affiliate_type_id')
+                                ->label('Affiliation Type')
+                                ->options([1 => 'Ayala Employee', 2 => 'External Partner'])
+                                ->live()
+                                ->columnSpanFull(),
+
+                            Select::make('cluster_id')
+                                ->label('Cluster')
+                                ->visible(fn (Get $get) => $get('affiliate_type_id') == 1)
+                                ->options(fn () => Cluster::all()->pluck('name', 'id')->toArray())
+                                ->searchable(),
+
+                            Select::make('company_id')
+                                ->label('Company')
+                                ->visible(fn (Get $get) => $get('affiliate_type_id') == 1)
+                                ->options(fn (Get $get) => $get('cluster_id')
+                                    ? Company::where('cluster_id', $get('cluster_id'))->pluck('name', 'id')->toArray()
+                                    : Company::all()->pluck('name', 'id')->toArray()
+                                )
+                                ->searchable(),
+
+                            Forms\Components\TextInput::make('external_company_name')
+                                ->label('External Company Name')
+                                ->visible(fn (Get $get) => $get('affiliate_type_id') == 2)
+                                ->columnSpanFull(),
+
+                            Forms\Components\TextInput::make('company_address')
+                                ->label('Address')
+                                ->columnSpanFull(),
+
+                            Forms\Components\TextInput::make('company_contact_number')
+                                ->label('Contact Number')
+                                ->maxLength(20),
+
+                            Forms\Components\TextInput::make('company_email')
+                                ->label('Company Email')
+                                ->email()
+                                ->maxLength(255),
+
+                            Forms\Components\Section::make('Emergency Contact')
+                                ->columns(2)
+                                ->columnSpanFull()
+                                ->schema([
+                                    Forms\Components\TextInput::make('emergency_contact_name')
+                                        ->label('Contact Name'),
+                                    Forms\Components\TextInput::make('emergency_contact_relationship')
+                                        ->label('Relationship'),
+                                    Forms\Components\TextInput::make('emergency_contact_number')
+                                        ->label('Contact Number')
+                                        ->maxLength(20),
+                                ]),
+
+                            Select::make('program_id')
+                                ->label('Primary Program')
+                                ->options(fn () => Program::all()->pluck('name', 'id')->toArray())
+                                ->searchable()
+                                ->columnSpanFull(),
+
+                            Forms\Components\TagsInput::make('skills')
+                                ->label('Skills')
+                                ->placeholder('Type a skill and press Enter')
+                                ->columnSpanFull(),
+                        ]),
+                ]
+            ))
             ->columns(3);
     }
 
