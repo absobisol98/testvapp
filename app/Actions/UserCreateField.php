@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 
 final class UserCreateField
 {
-    public function execute($not_from_user_resorce)
+    public function execute($not_from_user_resorce, array $extraDetailsFields = [])
     {
         return [
             Group::make()
@@ -96,7 +96,7 @@ final class UserCreateField
                 ->schema([
                     Tab::make('Details')
                         ->icon('heroicon-o-information-circle')
-                        ->schema([
+                        ->schema(array_merge([
                             TextInput::make('username')
                                 ->required(fn() => auth()->user()?->isAdminRole())
                                 ->maxLength(255)
@@ -129,7 +129,7 @@ final class UserCreateField
                             TextInput::make('lastname')
                                 ->required()
                                 ->maxLength(255),
-                        ])
+                        ], $extraDetailsFields))
                         ->columns(2),
 
                     Tab::make('Roles')

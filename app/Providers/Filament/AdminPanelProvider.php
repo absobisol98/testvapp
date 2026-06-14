@@ -240,7 +240,7 @@ class AdminPanelProvider extends PanelProvider
 
         return new HtmlString('
 <ul class="fi-sidebar-group-items flex flex-col gap-y-1 px-2 pb-1">
-  <li class="fi-sidebar-item">
+  <li class="fi-sidebar-item" data-nav-home="1">
     <a href="' . $url . '" class="' . $linkClass . '">
       <svg class="' . $iconClass . '" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round"
@@ -283,17 +283,12 @@ class AdminPanelProvider extends PanelProvider
             $allowed
         ));
 
-        $adminPath = 'admin';
-
         $css = <<<CSS
 <style>
 /* Role-based navigation filter ({$user->activeRole()}) */
 .fi-sidebar-group { display: none !important; }
 {$showGroups} { display: flex !important; }
-.fi-sidebar-item{$notHas} { display: none !important; }
-/* Always show Dashboard home item for all roles (matches /admin regardless of host or trailing slash) */
-.fi-sidebar-group:has(a[href\$="/{$adminPath}"]) { display: flex !important; }
-.fi-sidebar-item:has(a[href\$="/{$adminPath}"]) { display: flex !important; }
+.fi-sidebar-item:not([data-nav-home]){$notHas} { display: none !important; }
 </style>
 CSS;
 
