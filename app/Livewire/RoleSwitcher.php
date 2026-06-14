@@ -17,7 +17,11 @@ class RoleSwitcher extends Component
     {
         auth()->user()->switchRole($role);
 
-        $this->redirect($this->pageUrl ?: url('/admin'));
+        if ($role === 'Volunteer') {
+            $this->redirect(\App\Filament\Resources\VolunteerResource::getUrl('view', ['record' => auth()->id()]));
+        } else {
+            $this->redirect(url('/admin'));
+        }
     }
 
     public function render()
