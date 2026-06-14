@@ -80,7 +80,7 @@
 
                 <div class="flex justify-center mt-8">
                     <button type="submit"
-                            class="inline-flex items-center justify-center px-8 py-3 bg-[#005096]
+                            class="inline-flex items-center justify-center px-8 py-3 bg-[#0433ff]
                                    text-white font-medium rounded-lg hover:bg-opacity-90
                                    transition duration-300 transform hover:scale-105">
                         Submit Response
@@ -101,8 +101,8 @@
         theme: {
             extend: {
                 colors: {
-                    primary: '#FF781E',
-                    secondary: '#005096'
+                    primary: '#ff7b00',
+                    secondary: '#0433ff'
                 }
             }
         }

@@ -19,7 +19,7 @@
 @endphp
 
 {{-- ── Hero Banner ─────────────────────────────────────────────────────── --}}
-<div class="w-full" style="background: linear-gradient(135deg, #003d75 0%, #005096 60%, #1A67B1 100%); min-height: 180px; position: relative;">
+<div class="w-full" style="background: linear-gradient(135deg, #072b54 0%, #0e4f99 60%, #1565c4 100%); min-height: 180px; position: relative;">
     {{-- subtle pattern overlay --}}
     <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 28px 28px;"></div>
     <div class="relative px-8 pt-10 pb-20 flex items-end gap-6">
