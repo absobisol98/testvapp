@@ -43,10 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->homeUrl(fn (): string => auth()->check() && auth()->user()->hasActiveRole('Volunteer')
-                ? \App\Filament\Resources\VolunteerResource::getUrl('view', ['record' => auth()->id()])
-                : url('/admin')
-            )
+            ->homeUrl(fn (): string => url('/admin'))
             ->userMenuItems([
                 'profile' => MenuItem::make()->icon('heroicon-s-pencil-square')->label('Edit profile')->url(fn (): string => route('filament.admin.resources.users.edit',['record' => auth()->user()->id])),
                 MenuItem::make()
