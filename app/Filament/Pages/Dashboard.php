@@ -2,20 +2,46 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\AssignedTasksToday;
-use App\Filament\Widgets\CalendarWidget as CalendarWidget;
-use App\Filament\Widgets\LatestInquiries as LatestInquiries;
-use App\Filament\Widgets\LatestInvoices as LatestInvoices;
-use App\Filament\Widgets\Welcome;
+use App\Models\Event;
+use App\Models\EventAttendee;
+use App\Models\User;
 use Filament\Pages\Dashboard as BasePage;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Dashboard extends BasePage
 {
+    protected static string $view = 'dashboard';
+
     public function getTitle(): string | Htmlable
     {
         return __('');
     }
-    
-    protected static string $view = 'filament.pages.dashboard';
+
+    public function getViewData(): array
+    {
+        $user = auth()->user();
+
+        $totalVolunteers = User::role('Volunteer')->count();
+
+        $totalVolunteerHours = number_format(
+            (float) EventAttendee::where('is_approve', true)
+                ->get()
+                ->sum(fn ($a) => $a->get_totalHrs()),
+            1
+        );
+
+        $opportunities = Event::with(['slots', 'media', 'program', 'tags'])
+            ->where('is_published', true)
+            ->where('start_date', '>=', now())
+            ->orderBy('start_date', 'asc')
+            ->take(6)
+            ->get();
+
+        return [
+            'volunteer_name'        => $user->name,
+            'total_volunteers'      => number_format($totalVolunteers),
+            'total_volunteer_hours' => $totalVolunteerHours,
+            'opportunities'         => $opportunities,
+        ];
+    }
 }

@@ -11,12 +11,11 @@ use App\Models\Program;
 use App\Models\Cluster;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
-use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Facades\Filament;
 use App\Settings\MailSettings;
 use Illuminate\Support\Facades\Mail;
-use App\Notifications\VerifyEmailNotification;
+use App\Mail\Visualbuilder\EmailTemplates\UserVerifyEmail;
 use Illuminate\Support\Facades\Log;
 
 class VolunteerRegistrationController extends Controller
@@ -183,7 +182,12 @@ class VolunteerRegistrationController extends Controller
             return response()->json(['message' => 'Email already verified']);
         }
 
-        $user->notify(new VerifyEmailNotification());
+        $verificationUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->getKey(), 'hash' => hash_hmac('sha256', $user->email, config('app.key'))]
+        );
+        Mail::to($user->email)->send(new UserVerifyEmail($user, $verificationUrl));
 
         return response()->json(['message' => 'Verification email sent']);
     }
