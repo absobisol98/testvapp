@@ -32,6 +32,11 @@ class EventAttendeeObserver
 
     private function issueCertificate(EventAttendee $attendee): void
     {
+        // ✅ FIX: prevent null slot_type_id from breaking DB constraint
+        if ($attendee->slot_type_id === null) {
+            return;
+        }
+
         $hoursServed = $attendee->get_totalHrs();
 
         Certificate::firstOrCreate(

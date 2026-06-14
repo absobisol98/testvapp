@@ -1,103 +1,84 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
-/**
- * Class EventAttendee
- *
- * @property int $id
- * @property int $event_id
- * @property string $attendee_id
- * @property string|null $facilitator_id
- * @property Carbon|null $time_in
- * @property Carbon|null $time_out
- *
- * @property User|null $user
- * @property Event $event
- *
- * @package App\Models
- */
 class EventAttendee extends Model
 {
-	protected $table = 'event_attendees';
-	public $timestamps = false;
+    protected $table = 'event_attendees';
 
-	protected $casts = [
-		'event_id' => 'int',
-		'time_in' => 'datetime',
-		'time_out' => 'datetime',
-		'updated_at' => 'datetime',
-		'is_approve' => 'bool',
-		'is_rejected' => 'bool',
-		'updated_by' => 'string',
-		'encoding_type' => 'int',
-		'no_account_name' => 'string',
-		'volunteer_count' => 'int',
-	];
+    protected $fillable = [
+        'event_id',
+        'attendee_id',
+        'slot_type_id',
+        'status_id',
+        'time_in',
+        'time_out',
+    ];
 
-	protected $fillable = [
-		'event_id',
-		'attendee_id',
-		'facilitator_id',
-		'time_in',
-		'time_out',
-		'updated_at',
-		'updated_by',
-		'encoding_type',
-		'no_account_name',
-		'volunteer_count',
-		'is_approve',
-		'is_rejected',
-        'slot_type_id'
-	];
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
 
-	public function attendee()
-	{
-		return $this->belongsTo(User::class, 'attendee_id');
-	}
-	public function facilitator()
-	{
-		return $this->belongsTo(User::class, 'facilitator_id');
-	}
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id');
+    }
 
-	public function event()
-	{
-		return $this->belongsTo(Event::class);
-	}
-
-	public function updatedBy()
-	{
-		return $this->belongsTo(User::class,'updated_by');
-	}
-
-	public function get_totalHrs()
-	{
-		$hrs = 0;
-		if($this->time_in && $this->time_out){
-
-            $timeIn = \Carbon\Carbon::parse($this->time_in);
-            $timeOut = \Carbon\Carbon::parse($this->time_out);
-            $diff = $timeOut->diff($timeIn);
-            $hrs = $diff->h + ($diff->i / 60) + ($diff->days * 24);
-
-			//for bulk encoding
-			if($this->encoding_type == 3){
-				$hrs*=$this->volunteer_count;
-			}
-		}
-		return $hrs;
-	}
+    public function attendee()
+    {
+        return $this->belongsTo(User::class, 'attendee_id');
+    }
 
     public function slot()
     {
-        return $this->belongsTo(EventSlot::class, 'slot_type_id');
+        return $this->belongsTo(EventSlotType::class, 'slot_type_id');
     }
 
+    public function status()
+    {
+        return $this->belongsTo(EventRegistrationStatus::class, 'status_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Duration Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    public function getDurationInMinutes(): int
+    {
+        if (!$this->time_in || !$this->time_out) {
+            return 0;
+        }
+
+        return Carbon::parse($this->time_in)
+            ->diffInMinutes(Carbon::parse($this->time_out));
+    }
+
+    public function getDurationInHours(): float
+    {
+        return round($this->getDurationInMinutes() / 60, 2);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Legacy Compatibility
+    |--------------------------------------------------------------------------
+    |
+    | Existing code in User.php calls:
+    | $event->get_totalHrs()
+    |
+    | Keep this method so older code continues working.
+    |--------------------------------------------------------------------------
+    */
+
+    public function get_totalHrs(): float
+    {
+        return $this->getDurationInHours();
+    }
 }
