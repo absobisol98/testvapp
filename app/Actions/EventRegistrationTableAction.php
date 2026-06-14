@@ -387,6 +387,7 @@ class EventRegistrationTableAction
 
                 }),
             \Filament\Tables\Actions\EditAction::make()
+                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canEdit($record))
                 ->mountUsing(function (Event $record,ComponentContainer $form){
                     $media = [];
                     foreach ($record->getMedia('event-attachments') as $media_item) {
@@ -398,9 +399,12 @@ class EventRegistrationTableAction
                     $form->fill($data);
 
                 }),
-            \Filament\Tables\Actions\DeleteAction::make(),
-            \Filament\Tables\Actions\ForceDeleteAction::make(),
-            \Filament\Tables\Actions\RestoreAction::make(),
+            \Filament\Tables\Actions\DeleteAction::make()
+                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canDelete($record)),
+            \Filament\Tables\Actions\ForceDeleteAction::make()
+                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canDelete($record)),
+            \Filament\Tables\Actions\RestoreAction::make()
+                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canEdit($record)),
 
         ];
     }
