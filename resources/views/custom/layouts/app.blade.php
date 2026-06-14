@@ -25,6 +25,8 @@
 
     <title>@yield('title') - Ayala Foundation</title>
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/logo-vapp.svg') }}">
+
 </head>
 
 <body>
