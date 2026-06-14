@@ -85,7 +85,7 @@ class EventAttendee extends Model
             $timeIn = \Carbon\Carbon::parse($this->time_in);
             $timeOut = \Carbon\Carbon::parse($this->time_out);
             $diff = $timeOut->diff($timeIn);
-            $hrs = $diff->h + ($diff->days * 24);
+            $hrs = $diff->h + ($diff->i / 60) + ($diff->days * 24);
 
 			//for bulk encoding
 			if($this->encoding_type == 3){

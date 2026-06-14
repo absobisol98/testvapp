@@ -496,9 +496,9 @@
                                             </button>
                                         </form>
                                     @elseif($userRegistered)
-                                        @if(isset($attendeeHours[$slot->id]) && $attendeeHours[$slot->id] > 0)
+                                        @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
                                             <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                {{ number_format($attendeeHours[$slot->id], 1) }} Hours Completed
+                                                {{ number_format($attendeeHours[$slot->id]['hours'], 1) }} Hours Completed
                                             </span>
                                         @else
                                             <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">

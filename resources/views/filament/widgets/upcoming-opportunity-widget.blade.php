@@ -114,41 +114,41 @@
                         {{-- Spacer --}}
                         <div class="flex-1"></div>
 
-                        {{-- Action buttons --}}
-                        <div class="flex gap-2 mt-2">
-                            <a href="{{ url('/admin/events/view/' . $opportunity->id) }}"
-                               class="flex-1 flex items-center justify-center rounded-full text-sm font-semibold px-3 py-2 border transition-colors duration-150"
-                               style="border-color:#e4e8ee;color:#44505e;">
-                                View
-                            </a>
-
+                        {{-- Primary CTA --}}
+                        <div class="mt-3">
                             @if($isRegistered)
-                            <div class="flex-1 flex items-center justify-center gap-1 rounded-full text-sm font-semibold px-3 py-2"
+                            <div class="w-full flex items-center justify-center gap-2 rounded-full py-2.5 text-sm font-semibold"
                                  style="background:#e8f5ee;color:#1d8a52;">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                                Registered
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                Already Registered
                             </div>
                             @elseif($firstSlot && $regStillOpen)
                             <form action="{{ route('event.register-slot', ['event' => $opportunity->id, 'slot' => $firstSlot->id]) }}"
-                                  method="POST" class="flex-1">
+                                  method="POST">
                                 @csrf
                                 <input type="hidden" name="privacy_policy" value="1">
                                 <button type="submit"
-                                        class="w-full flex items-center justify-center gap-1 rounded-full text-sm font-semibold px-3 py-2 transition-colors duration-150"
+                                        class="w-full flex items-center justify-center gap-2 rounded-full py-2.5 text-sm font-bold transition-colors duration-150"
                                         style="background:#f26522;color:#fff;"
                                         onmouseover="this.style.background='#d95a14'"
                                         onmouseout="this.style.background='#f26522'">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16m8-8H4"/></svg>
-                                    Join
+                                    Volunteer for this
                                 </button>
                             </form>
                             @else
-                            <div class="flex-1 flex items-center justify-center rounded-full text-sm font-semibold px-3 py-2"
-                                 style="background:#f5f5f5;color:#9ca3af;">
-                                Closed
+                            <div class="w-full flex items-center justify-center rounded-full py-2.5 text-sm font-semibold"
+                                 style="background:#f0f2f5;color:#9ca3af;">
+                                Registration Closed
                             </div>
                             @endif
                         </div>
+
+                        {{-- Secondary: View link --}}
+                        <a href="{{ url('/admin/events/view/' . $opportunity->id) }}"
+                           class="mt-2 block text-center text-xs font-semibold hover:underline"
+                           style="color:#6e7a8a;">
+                            View Details →
+                        </a>
                     </div>
                 </div>
                 @endforeach

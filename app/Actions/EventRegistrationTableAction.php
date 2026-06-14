@@ -43,14 +43,11 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-
-                    if (auth()->user()->can('set_featured_event') &&  ($record->is_featured == false)) {
-
-                        return true;
+                    $user = auth()->user();
+                    if ($user->hasActiveRole('Facilitator') || $user->hasActiveRole('Volunteer')) {
+                        return false;
                     }
-
-                    return false;
-
+                    return $user->can('set_featured_event') && ($record->is_featured == false);
                 }),
 
             \Filament\Tables\Actions\Action::make('Remove as is featured')
@@ -69,13 +66,11 @@ class EventRegistrationTableAction
                         ->send();
                 })
                 ->visible(function (Event $record){
-                    if (auth()->user()->can('set_featured_event') &&  ($record->is_featured == true)) {
-
-                        return true;
+                    $user = auth()->user();
+                    if ($user->hasActiveRole('Facilitator') || $user->hasActiveRole('Volunteer')) {
+                        return false;
                     }
-
-                    return false;
-
+                    return $user->can('set_featured_event') && ($record->is_featured == true);
                 }),
 
 
@@ -401,10 +396,6 @@ class EventRegistrationTableAction
                 }),
             \Filament\Tables\Actions\DeleteAction::make()
                 ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canDelete($record)),
-            \Filament\Tables\Actions\ForceDeleteAction::make()
-                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canDelete($record)),
-            \Filament\Tables\Actions\RestoreAction::make()
-                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canEdit($record)),
 
         ];
     }
