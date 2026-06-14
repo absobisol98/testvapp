@@ -21,45 +21,47 @@ class EventsGetTableQueryAction
 {
     public function execute($user)
     {
-
-       
-
-        $ayala = Company::where('cluster_id',1)->pluck('id')->toArray();
-        $non_ayala = Company::where('cluster_id','!=',1)->pluck('id')->toArray();
-
-        if ($user->hasActiveRole('Volunteer')) { // For Volunteer
+        if ($user->hasActiveRole('Volunteer')) {
             $events = Event::query()
                 ->where('is_published', true)
-                ->leftJoin('event_companies', 'event_companies.event_id', '=', 'events.id')
-                ->where(function ($query) use ($ayala, $non_ayala, $user) {
-                    $query->where('event_type_id', 4) // Public Events
-                        ->orWhere(function ($query) use ($ayala, $non_ayala, $user) {
-                            // Exclusive for Ayala
-                            if (in_array($user->company_id, $ayala)) {
-                                $query->where('event_type_id', 1);
-                            }
-                            // Exclusive for Business Unit
-                            if (in_array($user->company_id, $non_ayala)) {
-                                $query->where('event_type_id', 2);
-                            }
-                        })
-                        ->orWhere(function ($query) use ($user) {
-                            $query->where('event_type_id', 4)
-                                  ->where('event_companies.company_id', $user->company_id);
-                        });
-                })
-                ->select('events.*');
-        } else {
-            // All Events
-            $events = Event::query();
+                ->where(function ($query) use ($user) {
+                    // Type 4 — Public: visible to everyone
+                    $query->where('event_type_id', 4);
 
+                    // Type 1 — Exclusive to Ayala: affiliate_type_id = 1
+                    if ($user->affiliate_type_id == 1) {
+                        $query->orWhere('event_type_id', 1);
+                    }
+
+                    // Type 2 — Exclusive to Business Unit: visible when user's company
+                    // is in the event's nominated companies list (admin adds their BU companies
+                    // at creation time, same as Hybrid but without Ayala also seeing it)
+                    if ($user->company_id) {
+                        $query->orWhere(function ($q) use ($user) {
+                            $q->where('event_type_id', 2)
+                              ->whereHas('companies', function ($cq) use ($user) {
+                                  $cq->where('companies.id', $user->company_id);
+                              });
+                        });
+
+                        // Type 3 — Hybrid: user's company is in the nominated companies list
+                        $query->orWhere(function ($q) use ($user) {
+                            $q->where('event_type_id', 3)
+                              ->whereHas('companies', function ($cq) use ($user) {
+                                  $cq->where('companies.id', $user->company_id);
+                              });
+                        });
+                    }
+                });
+        } else {
+            // Admins see all events
+            $events = Event::query();
         }
 
         // For recurring series, show only the next upcoming instance (or most recent past one)
         $events->where(function ($q) {
             $q->whereNull('event_recurring_id')
               ->orWhereIn('events.id', function ($sub) {
-                  // Per series: prefer the earliest future event; fall back to latest past
                   $sub->selectRaw('
                       COALESCE(
                           (SELECT e2.id FROM events e2
