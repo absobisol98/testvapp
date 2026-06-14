@@ -10,6 +10,7 @@ use App\Filament\Resources\VolunteerResource\RelationManagers\EventsRelationMana
 use App\Imports\VolunteersImport;
 use App\Models\User;
 use App\Models\Volunteer;
+use App\Filament\Resources\UserResource;
 use App\Settings\MailSettings;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
@@ -115,7 +116,10 @@ class VolunteerResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
+                Tables\Actions\Action::make('edit')
+                    ->label('Edit')
+                    ->icon('heroicon-o-pencil-square')
+                    ->url(fn (Volunteer $record) => UserResource::getUrl('edit', ['record' => $record->id]))
                     ->visible(fn (Volunteer $record) =>
                         auth()->user()->isAdminRole() ||
                         $record->id === auth()->id()
@@ -193,13 +197,17 @@ class VolunteerResource extends Resource
     //     ];
     // }
 
+    public static function canEdit(Model $record): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVolunteers::route('/'),
+            'index'  => Pages\ListVolunteers::route('/'),
             'create' => Pages\CreateVolunteer::route('/create'),
-            'edit' => Pages\EditVolunteer::route('/{record}/edit'),
-            'view' => Pages\ViewVolunteer::route('/{record}'),
+            'view'   => Pages\ViewVolunteer::route('/{record}'),
         ];
     }
 }

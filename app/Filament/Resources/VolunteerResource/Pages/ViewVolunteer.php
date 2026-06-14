@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\VolunteerResource\Pages;
 
 use App\Filament\Resources\VolunteerResource;
+use App\Filament\Resources\UserResource;
 use App\Models\Event;
 use App\Models\EventAttendee;
 use Filament\Actions;
 use Filament\Resources\Pages\Page;
-use Filament\Actions\EditAction;
 use App\Models\User;
 use App\Actions\GenerateEventQRCode;
 use App\Models\BusinessUnit;
@@ -31,11 +31,11 @@ class ViewVolunteer extends Page
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()
+            Actions\Action::make('edit_profile')
             ->label('Edit Profile')
             ->icon('heroicon-o-pencil')
-            ->url(fn () => VolunteerResource::getUrl('edit', ['record' => $this->record]))
-            ->visible(fn () => auth()->id() == $this->record || auth()->user()->hasActiveRole('Ayala Super Admin'))
+            ->url(fn () => UserResource::getUrl('edit', ['record' => $this->record]))
+            ->visible(fn () => auth()->id() == $this->record || auth()->user()->isAdminRole())
             ->color('warning'),
         ];
 
@@ -84,7 +84,7 @@ class ViewVolunteer extends Page
             'nextOppGoal' => $nextOppGoal,
             'participationFrequency' => $user->getParticipationFrequency(),
             'canEdit' => auth()->id() == $this->record || auth()->user()->isAdminRole(),
-            'editUrl' => VolunteerResource::getUrl('edit', ['record' => $this->record]),
+            'editUrl' => UserResource::getUrl('edit', ['record' => $this->record]),
         ];
     }
 
