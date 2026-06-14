@@ -343,183 +343,207 @@
                     ? min(round(($points - $currentRank['required']) / ($nextRank['required'] - $currentRank['required']) * 100), 100)
                     : 100;
 
-                // Build completed + available challenges lists
-                $completedChallenges = [];
-                $availableChallenges = [];
-
-                // Account created
-                $completedChallenges[] = ['label' => 'Account created', 'vp' => 50];
-
-                // First opportunity
-                if ($totalOpportunities >= 1) {
-                    $completedChallenges[] = ['label' => 'First opportunity attended', 'vp' => 50];
-                } else {
-                    $availableChallenges[] = ['label' => 'Attend your first opportunity', 'vp' => 50,
-                        'current' => $totalOpportunities, 'target' => 1, 'unit' => ''];
-                }
-
-                // Hour milestones
-                foreach ([4=>50, 8=>50, 12=>50, 16=>50, 20=>50, 100=>250, 250=>1500, 500=>2500, 1000=>5000] as $hrs => $vp) {
-                    if ($totalHours >= $hrs) {
-                        $completedChallenges[] = ['label' => 'Complete '.$hrs.' volunteer hours', 'vp' => $vp];
-                    } else {
-                        $availableChallenges[] = ['label' => 'Complete '.$hrs.' volunteer hours', 'vp' => $vp,
-                            'current' => round($totalHours, 1), 'target' => $hrs, 'unit' => 'hrs'];
-                        break;
-                    }
-                }
-
-                // Opportunity milestones
-                foreach ([10=>50, 25=>250, 50=>1500, 100=>2500] as $opp => $vp) {
-                    if ($totalOpportunities >= $opp) {
-                        $completedChallenges[] = ['label' => 'Attend '.$opp.' opportunities', 'vp' => $vp];
-                    } else {
-                        $availableChallenges[] = ['label' => 'Attend '.$opp.' opportunities', 'vp' => $vp,
-                            'current' => $totalOpportunities, 'target' => $opp, 'unit' => ''];
-                        break;
-                    }
-                }
-
                 $rankLadder = [
                     ['name' => 'Bronze Volunteer',   'required' => 1250,  'pts' => '1,250'],
                     ['name' => 'Silver Volunteer',   'required' => 2500,  'pts' => '2,500'],
                     ['name' => 'Gold Volunteer',     'required' => 5000,  'pts' => '5,000'],
                     ['name' => 'Platinum Volunteer', 'required' => 10000, 'pts' => '10,000'],
                 ];
+
+                $hourMilestones = [
+                    ['label' => '4 hours',    'target' => 4,    'vp' => 50],
+                    ['label' => '8 hours',    'target' => 8,    'vp' => 50],
+                    ['label' => '12 hours',   'target' => 12,   'vp' => 50],
+                    ['label' => '16 hours',   'target' => 16,   'vp' => 50],
+                    ['label' => '20 hours',   'target' => 20,   'vp' => 50],
+                    ['label' => '100 hours',  'target' => 100,  'vp' => 250],
+                    ['label' => '250 hours',  'target' => 250,  'vp' => 1500],
+                    ['label' => '500 hours',  'target' => 500,  'vp' => 2500],
+                    ['label' => '1,000 hours','target' => 1000, 'vp' => 5000],
+                ];
+
+                $oppMilestones = [
+                    ['label' => '10 opportunities',  'target' => 10,  'vp' => 50],
+                    ['label' => '25 opportunities',  'target' => 25,  'vp' => 250],
+                    ['label' => '50 opportunities',  'target' => 50,  'vp' => 1500],
+                    ['label' => '100 opportunities', 'target' => 100, 'vp' => 2500],
+                ];
             @endphp
 
-            <div class="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-
-                {{-- ── LEFT: Progress column ──────────────────────────────── --}}
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-gray-800">Progress</h3>
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
+            {{-- 1. Current Rank Card --}}
+            <div class="bg-white border border-gray-100 rounded-xl p-5 mb-5 flex flex-col md:flex-row items-center gap-5">
+                <div class="w-20 h-20 rounded-full flex-shrink-0 flex items-center justify-center bg-gray-50 border border-gray-100">
+                    <img src="{{ asset('medals/'.strtolower(str_replace(' ', '-', $currentRank['name'] ?? 'volunteer')).'.png') }}"
+                         alt="{{ $currentRank['name'] ?? 'Volunteer' }}"
+                         class="w-16 h-16 object-contain"
+                         onerror="this.style.display='none'">
+                </div>
+                <div class="flex-grow text-center md:text-left">
+                    <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-0.5">Current Rank</p>
+                    <p class="text-xl font-bold text-gray-800">{{ $currentRank['name'] ?? 'Volunteer' }}</p>
+                    <p class="text-sm font-medium mt-0.5" style="color:{{ $accentOrange }}">{{ number_format($points) }} Volunteer Points</p>
+                    @if($nextRank)
+                    <div class="mt-3 max-w-sm">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>Progress to {{ $nextRank['name'] }}</span>
+                            <span>{{ $pct }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2">
+                            <div class="h-2 rounded-full transition-all" style="width:{{ $pct }}%; background:{{ $accentOrange }};"></div>
+                        </div>
                     </div>
+                    @else
+                    <p class="text-sm font-semibold text-green-500 mt-1">Maximum rank achieved!</p>
+                    @endif
+                </div>
+                <div class="text-center flex-shrink-0 px-4">
+                    <p class="text-3xl font-bold" style="color:{{ $primaryBlue }}">{{ number_format($points) }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">Total VP</p>
+                </div>
+            </div>
 
-                    {{-- Rank tier list --}}
-                    <div class="bg-white rounded-xl border border-gray-100 overflow-hidden divide-y divide-gray-50">
-                        @foreach($rankLadder as $rank)
-                        @php $unlocked = $points >= $rank['required']; @endphp
-                        <div class="flex items-center gap-3 p-3.5 {{ $unlocked ? '' : '' }}">
-                            {{-- Medal icon --}}
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 {{ $unlocked ? 'ring-2 ring-orange-300' : 'bg-gray-50' }}">
-                                <img src="{{ asset('medals/'.strtolower(str_replace(' ', '-', $rank['name'])).'.png') }}"
-                                     alt="{{ $rank['name'] }}"
-                                     class="w-8 h-8 {{ $unlocked ? '' : 'grayscale opacity-40' }}">
+            {{-- 2. Rank Ladder (horizontal scroll) --}}
+            <div class="mb-5">
+                <h3 class="text-sm font-semibold text-gray-600 mb-3">Rank Ladder</h3>
+                <div class="flex gap-3 overflow-x-auto pb-2">
+                    @foreach($rankLadder as $rank)
+                    @php $unlocked = $points >= $rank['required']; @endphp
+                    <div class="flex-shrink-0 w-36 bg-white border rounded-xl p-3 text-center {{ $unlocked ? 'border-orange-200 shadow-sm' : 'border-gray-100' }}">
+                        <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center rounded-full {{ $unlocked ? 'bg-orange-50' : 'bg-gray-50' }}">
+                            <img src="{{ asset('medals/'.strtolower(str_replace(' ', '-', $rank['name'])).'.png') }}"
+                                 alt="{{ $rank['name'] }}"
+                                 class="w-10 h-10 object-contain {{ $unlocked ? '' : 'grayscale opacity-40' }}"
+                                 onerror="this.style.display='none'">
+                        </div>
+                        <p class="text-xs font-semibold leading-tight {{ $unlocked ? 'text-orange-600' : 'text-gray-400' }}">{{ $rank['name'] }}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ $rank['pts'] }} VP</p>
+                        @if($unlocked)
+                        <span class="inline-flex items-center gap-1 mt-1.5 text-xs font-medium text-green-600">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Unlocked
+                        </span>
+                        @else
+                        <span class="inline-flex items-center gap-1 mt-1.5 text-xs text-gray-400">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            {{ number_format($rank['required']) }} VP
+                        </span>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- 3. Milestones Two-Column Grid --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                {{-- Hours Milestones --}}
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="{{ $primaryBlue }}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Hour Milestones
+                    </h3>
+                    <div class="space-y-2">
+                        @foreach($hourMilestones as $m)
+                        @php
+                            $done = $totalHours >= $m['target'];
+                            $prog = $m['target'] > 0 ? min(round($totalHours / $m['target'] * 100), 100) : 0;
+                        @endphp
+                        <div class="flex items-center gap-3 p-3 rounded-xl border {{ $done ? 'border-green-100 bg-green-50/30' : 'border-gray-100 bg-white' }}">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 {{ $done ? 'bg-green-500' : 'bg-gray-100' }}">
+                                @if($done)
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                @else
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                @endif
                             </div>
-                            {{-- Name + VP --}}
                             <div class="flex-grow min-w-0">
-                                <p class="text-sm font-semibold truncate {{ $unlocked ? 'text-orange-600' : 'text-gray-500' }}">
-                                    {{ $rank['name'] }}
-                                </p>
-                                <p class="text-xs text-gray-400">{{ $rank['pts'] }} VP</p>
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-xs font-semibold {{ $done ? 'text-green-700' : 'text-gray-700' }} truncate">{{ $m['label'] }}</p>
+                                    <span class="text-xs font-bold flex-shrink-0 {{ $done ? 'text-green-500' : 'text-gray-400' }}">+{{ number_format($m['vp']) }} VP</span>
+                                </div>
+                                @if(!$done)
+                                <div class="mt-1.5 w-full bg-gray-100 rounded-full h-1">
+                                    <div class="h-1 rounded-full" style="width:{{ $prog }}%; background:{{ $accentOrange }};"></div>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-0.5">{{ round($totalHours, 1) }} / {{ $m['target'] }} hrs</p>
+                                @endif
                             </div>
-                            {{-- Lock or unlock indicator --}}
-                            @if($unlocked)
-                                <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            @else
-                                <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                </svg>
-                            @endif
                         </div>
                         @endforeach
                     </div>
+                </div>
 
-                    {{-- Challenges completed count --}}
-                    <div class="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="{{ $accentOrange }}" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
-                            </svg>
-                            <span class="text-sm font-medium text-gray-700">Challenges completed</span>
+                {{-- Opportunity Milestones --}}
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="{{ $primaryBlue }}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Opportunity Milestones
+                    </h3>
+                    <div class="space-y-2">
+                        {{-- Account created --}}
+                        <div class="flex items-center gap-3 p-3 rounded-xl border border-green-100 bg-green-50/30">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-green-500">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-xs font-semibold text-green-700">Account created</p>
+                                    <span class="text-xs font-bold text-green-500">+50 VP</span>
+                                </div>
+                            </div>
                         </div>
-                        <span class="text-xl font-bold" style="color:{{ $accentOrange }}">{{ count($completedChallenges) }}</span>
+                        {{-- First opportunity --}}
+                        @php $firstDone = $totalOpportunities >= 1; @endphp
+                        <div class="flex items-center gap-3 p-3 rounded-xl border {{ $firstDone ? 'border-green-100 bg-green-50/30' : 'border-gray-100 bg-white' }}">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 {{ $firstDone ? 'bg-green-500' : 'bg-gray-100' }}">
+                                @if($firstDone)
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                @else
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                @endif
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-xs font-semibold {{ $firstDone ? 'text-green-700' : 'text-gray-700' }}">First opportunity</p>
+                                    <span class="text-xs font-bold {{ $firstDone ? 'text-green-500' : 'text-gray-400' }}">+50 VP</span>
+                                </div>
+                                @if(!$firstDone)
+                                <p class="text-xs text-gray-400 mt-0.5">{{ $totalOpportunities }} / 1</p>
+                                @endif
+                            </div>
+                        </div>
+                        {{-- Opportunity count milestones --}}
+                        @foreach($oppMilestones as $m)
+                        @php
+                            $done = $totalOpportunities >= $m['target'];
+                            $prog = $m['target'] > 0 ? min(round($totalOpportunities / $m['target'] * 100), 100) : 0;
+                        @endphp
+                        <div class="flex items-center gap-3 p-3 rounded-xl border {{ $done ? 'border-green-100 bg-green-50/30' : 'border-gray-100 bg-white' }}">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 {{ $done ? 'bg-green-500' : 'bg-gray-100' }}">
+                                @if($done)
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                @else
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                @endif
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-xs font-semibold {{ $done ? 'text-green-700' : 'text-gray-700' }} truncate">{{ $m['label'] }}</p>
+                                    <span class="text-xs font-bold flex-shrink-0 {{ $done ? 'text-green-500' : 'text-gray-400' }}">+{{ number_format($m['vp']) }} VP</span>
+                                </div>
+                                @if(!$done)
+                                <div class="mt-1.5 w-full bg-gray-100 rounded-full h-1">
+                                    <div class="h-1 rounded-full" style="width:{{ $prog }}%; background:{{ $accentOrange }};"></div>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-0.5">{{ $totalOpportunities }} / {{ $m['target'] }}</p>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
 
-                {{-- ── RIGHT: Achievements column ──────────────────────────── --}}
-                <div class="space-y-6">
-
-                    {{-- Next badge + progress bar --}}
-                    <div class="bg-white rounded-xl border border-gray-100 p-5">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Achievements</p>
-                        @if($nextRank)
-                        <p class="text-base font-bold text-gray-800 mb-3">
-                            Next badge: <span style="color:{{ $accentOrange }}">{{ $nextRank['name'] }}</span>
-                        </p>
-                        <div class="flex items-center gap-2 mb-2">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="#FBBF24" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-gray-700">{{ number_format($points) }} / {{ number_format($nextRank['required']) }}</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2.5">
-                            <div class="h-2.5 rounded-full transition-all" style="width:{{ $pct }}%; background:{{ $accentOrange }};"></div>
-                        </div>
-                        @else
-                        <p class="text-base font-bold" style="color:{{ $accentOrange }}">Maximum rank achieved!</p>
-                        @endif
-                    </div>
-
-                    {{-- Available challenges --}}
-                    @if(count($availableChallenges) > 0)
-                    <div>
-                        <h4 class="text-sm font-semibold text-gray-600 mb-3">Available challenges</h4>
-                        <div class="space-y-2">
-                            @foreach($availableChallenges as $ch)
-                            @php $prog = $ch['target'] > 0 ? min(round($ch['current']/$ch['target']*100), 100) : 0; @endphp
-                            <div class="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-orange-100 transition">
-                                <div class="w-14 h-14 flex flex-col items-center justify-center rounded-xl flex-shrink-0 text-white font-bold"
-                                     style="background:{{ $accentOrange }}">
-                                    <span class="text-sm leading-none">+{{ $ch['vp'] }}</span>
-                                    <span class="text-xs leading-none mt-0.5">VP</span>
-                                </div>
-                                <div class="flex-grow min-w-0">
-                                    <p class="text-sm font-semibold text-gray-800 truncate">{{ $ch['label'] }}</p>
-                                    <p class="text-xs text-gray-400 mt-0.5">
-                                        {{ $ch['current'] }}{{ $ch['unit'] ? ' '.$ch['unit'] : '' }} / {{ $ch['target'] }}{{ $ch['unit'] ? ' '.$ch['unit'] : '' }} completed
-                                    </p>
-                                    <div class="mt-2 w-full bg-gray-100 rounded-full h-1.5">
-                                        <div class="h-1.5 rounded-full transition-all" style="width:{{ $prog }}%; background:{{ $accentOrange }};"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif
-
-                    {{-- Completed challenges --}}
-                    @if(count($completedChallenges) > 0)
-                    <div>
-                        <h4 class="text-sm font-semibold text-gray-600 mb-3">Completed challenges</h4>
-                        <div class="space-y-2">
-                            @foreach($completedChallenges as $ch)
-                            <div class="flex items-center gap-4 p-4 bg-white rounded-xl border border-green-100">
-                                <div class="w-14 h-14 flex flex-col items-center justify-center rounded-xl flex-shrink-0 text-white font-bold bg-green-500">
-                                    <span class="text-sm leading-none">+{{ $ch['vp'] }}</span>
-                                    <span class="text-xs leading-none mt-0.5">VP</span>
-                                </div>
-                                <div class="flex-grow">
-                                    <p class="text-sm font-semibold text-gray-800">{{ $ch['label'] }}</p>
-                                </div>
-                                <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif
-
-                </div>{{-- end right column --}}
-            </div>{{-- end grid --}}
+            </div>{{-- end milestones grid --}}
         </div>
 
     </div>{{-- end main card --}}
