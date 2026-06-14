@@ -22,31 +22,26 @@ final class EventRegistrationButtonVisibilityAction
 {
     public function execute($record)
     {
+        $user = auth()->user();
+
         switch ($record->event_type_id) {
-            case 1: // Exclusive for Ayala Employees
+            case 1: // Exclusive to Ayala Employees
+                return $user->affiliate_type_id == 1;
 
-                if(auth()->user()->company?->cluster->name == "Ayala Corporation Group"){
-                    return true;
+            case 2: // Exclusive to Business Unit
+                // Volunteer's company must be in the event's nominated companies list
+                if ($user->company_id) {
+                    return $record->companies->contains('id', $user->company_id);
                 }
-                break;
+                return false;
 
-            case 2: // Exclusive for Business Units/Partner
-
-                if(auth()->user()->company?->cluster->name != "Ayala Corporation Group"){
-                    return true;
+            case 3: // Hybrid — nominated companies list
+                if ($user->company_id) {
+                    return $record->companies->contains('id', $user->company_id);
                 }
-                break;
+                return false;
 
-            case 3: // Hybrid events
-
-                $company_ids = $record->companies->pluck('id')->toArray();
-                if(in_array(auth()->user()->company_id, $company_ids)){
-                    return true;
-                }
-                break;
-
-            case 4: // Public events
-
+            case 4: // Public
                 return true;
 
             default:
