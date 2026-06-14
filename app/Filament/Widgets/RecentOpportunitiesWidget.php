@@ -14,9 +14,11 @@ class RecentOpportunitiesWidget extends Widget
 
         $currentDate = now();
 
+        // [FIX] Show UPCOMING events (start_date in the future), not past ones
         $opportunities = Event::with('slots', 'tags', 'program')
-            ->where('start_date', '<=', $currentDate)
-            ->orderBy('created_at', 'desc')
+            ->where('start_date', '>=', $currentDate)
+            ->where('is_published', true)
+            ->orderBy('start_date', 'asc')
             ->take(3)
             ->get();
 
