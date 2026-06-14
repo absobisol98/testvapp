@@ -27,51 +27,87 @@ class EventRegistrationTableAction
     public function execute()
     {
         return [
-            \Filament\Tables\Actions\Action::make('Make it as featured')
-                ->color('success')
+            // ── PRIMARY ACTION: View Details (Orange Button) ──
+            \Filament\Tables\Actions\ViewAction::make()
+                ->label('View Details')
+                ->color('warning')
                 ->button()
-                ->requiresConfirmation()
-                ->action(function (Event $record){
-
-                    $record->is_featured = true;
-                    $record->update();
-
-
-                    Notification::make()
-                        ->title('Event has been mark as featured.')
-                        ->success()
-                        ->send();
-                })
-                ->visible(function (Event $record){
-                    $user = auth()->user();
-                    if ($user->hasActiveRole('Facilitator') || $user->hasActiveRole('Volunteer')) {
-                        return false;
+                ->mountUsing(function (Event $record, ComponentContainer $form){
+                    $media = [];
+                    foreach ($record->getMedia('event-attachments') as $media_item) {
+                        $index = strlen(storage_path('app/public/'));
+                        $media[] = substr($media_item->getPath(), $index);
                     }
-                    return $user->can('set_featured_event') && ($record->is_featured == false);
+                    $data['media'] = $media;
+                    $form->fill($data);
                 }),
 
-            \Filament\Tables\Actions\Action::make('Remove as is featured')
+            // ── SECONDARY ACTIONS: Three-Dot Dropdown Menu ──
+            \Filament\Tables\Actions\Action::make('edit_event')
+                ->label('Edit')
+                ->icon('heroicon-o-pencil-square')
+                ->color('warning')
+                ->url(fn (Event $record): string => \App\Filament\Resources\EventResource::getUrl('edit', ['record' => $record]))
+                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canEdit($record))
+                ->grouped(),
+
+            \Filament\Tables\Actions\Action::make('delete_event')
+                ->label('Delete')
+                ->icon('heroicon-o-trash')
                 ->color('danger')
-                ->button()
                 ->requiresConfirmation()
-                ->action(function (Event $record){
-
-                    $record->is_featured = false;
-                    $record->update();
-
-
+                ->action(function (Event $record) {
+                    $record->delete();
                     Notification::make()
-                        ->title('Event has been remove to as featured.')
+                        ->title('Event deleted successfully.')
                         ->success()
                         ->send();
                 })
-                ->visible(function (Event $record){
+                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canDelete($record))
+                ->grouped(),
+
+            \Filament\Tables\Actions\Action::make('toggle_featured')
+                ->label(fn (Event $record) => $record->is_featured ? 'Remove as Featured' : 'Make it Featured')
+                ->icon('heroicon-o-star')
+                ->color(fn (Event $record) => $record->is_featured ? 'danger' : 'success')
+                ->requiresConfirmation()
+                ->action(function (Event $record) {
+                    $record->is_featured = !$record->is_featured;
+                    $record->update();
+                    Notification::make()
+                        ->title($record->is_featured ? 'Event marked as featured.' : 'Event removed from featured.')
+                        ->success()
+                        ->send();
+                })
+                ->visible(function (Event $record) {
                     $user = auth()->user();
-                    if ($user->hasActiveRole('Facilitator') || $user->hasActiveRole('Volunteer')) {
-                        return false;
+                    return !($user->hasActiveRole('Facilitator') || $user->hasActiveRole('Volunteer'))
+                        && $user->can('set_featured_event');
+                })
+                ->grouped(),
+
+            \Filament\Tables\Actions\Action::make('duplicate_event')
+                ->label('Duplicate')
+                ->icon('heroicon-o-document-duplicate')
+                ->color('primary')
+                ->action(function (Event $record) {
+                    $newEvent = $record->replicate();
+                    $newEvent->title = $record->title . ' (Copy)';
+                    $newEvent->is_featured = false;
+                    $newEvent->save();
+
+                    // Copy relationships if needed
+                    foreach ($record->slots as $slot) {
+                        $newEvent->slots()->create($slot->toArray());
                     }
-                    return $user->can('set_featured_event') && ($record->is_featured == true);
-                }),
+
+                    Notification::make()
+                        ->title('Event duplicated successfully.')
+                        ->success()
+                        ->send();
+                })
+                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canEdit($record))
+                ->grouped(),
 
 
             \Filament\Tables\Actions\Action::make('downloadIcs')
@@ -368,34 +404,6 @@ class EventRegistrationTableAction
                     $form->fill($data);
 
                 }),
-
-            \Filament\Tables\Actions\ViewAction::make()
-                ->mountUsing(function (Event $record,ComponentContainer $form){
-                    $media = [];
-                    foreach ($record->getMedia('event-attachments') as $media_item) {
-                        $index = strlen(storage_path('app/public/'));
-                        $media[] = substr($media_item->getPath(), $index);
-                    }
-                    $data['media'] = $media;
-
-                    $form->fill($data);
-
-                }),
-            \Filament\Tables\Actions\EditAction::make()
-                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canEdit($record))
-                ->mountUsing(function (Event $record,ComponentContainer $form){
-                    $media = [];
-                    foreach ($record->getMedia('event-attachments') as $media_item) {
-                        $index = strlen(storage_path('app/public/'));
-                        $media[] = substr($media_item->getPath(), $index);
-                    }
-                    $data['media'] = $media;
-
-                    $form->fill($data);
-
-                }),
-            \Filament\Tables\Actions\DeleteAction::make()
-                ->visible(fn (Event $record) => \App\Filament\Resources\EventResource::canDelete($record)),
 
         ];
     }
