@@ -253,6 +253,7 @@ class AdminPanelProvider extends PanelProvider
 {$showGroups} { display: flex !important; }
 .fi-sidebar-item{$notHas} { display: none !important; }
 /* Always show Dashboard home item for all roles */
+.fi-sidebar-group:has(a[href="{$dashboardUrl}"]) { display: flex !important; }
 .fi-sidebar-item:has(a[href="{$dashboardUrl}"]) { display: flex !important; }
 </style>
 CSS;

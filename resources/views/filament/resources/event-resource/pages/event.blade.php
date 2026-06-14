@@ -84,7 +84,7 @@
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
 
     <div class="w-full flex items-center justify-between">
-        <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#FF781E]] font-extrabold capitalize">{{ $record->title }}</h2>
+        <h2 class="text-3xl md:text-3xl lg:text-3xl text-[#ff7b00]] font-extrabold capitalize">{{ $record->title }}</h2>
         <div class="grid grid-cols-3 gap-2">
         @php
             $user = auth()->user();
@@ -92,12 +92,12 @@
             $isAdmin = $user->hasRole('admin');
             $isCreator = $record->created_by == $user->id;
             $isFacilitator = $record->facilitators->contains($user->id);
-            $canManageEvent = $isSuperAdmin || $isAdmin || $isCreator || $isFacilitator;
+            $canManageEvent = !$user->hasActiveRole('Volunteer') && ($isSuperAdmin || $isAdmin || $isCreator || $isFacilitator);
         @endphp
 
         @if($canManageEvent)
             <a href="{{ route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]) }}"
-            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#ff7b00] hover:bg-[#e06e00]">
                 <!-- Desktop Text -->
                 <p class="text-base font-normal text-white hidden md:block">Manage Volunteers</p>
                 <!-- Mobile/Tablet Icon -->
@@ -107,7 +107,7 @@
             </a>
 
             <a href="{{route('filament.admin.resources.events.edit',['record' => $record->id])}}"
-            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#ff7b00] hover:bg-[#e06e00]">
                 <!-- Desktop Text -->
                 <p class="text-base font-normal text-white hidden md:block">Edit</p>
                 <!-- Mobile/Tablet Icon -->
@@ -121,7 +121,7 @@
         @endif
 
         <a href="{{route('filament.admin.resources.events.index')}}"
-        class="py-2 px-2 flex items-center justify-center rounded-md bg-[#F55E1D] hover:bg-[#FF9141]">
+        class="py-2 px-2 flex items-center justify-center rounded-md bg-[#ff7b00] hover:bg-[#e06e00]">
             <!-- Desktop Text -->
             <p class="text-base font-normal text-white hidden md:block">Opportunity List</p>
             <!-- Mobile/Tablet Icon -->
@@ -143,7 +143,7 @@
                     <div class="inline-flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#03498D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tags"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3a1 1 0 0 0-1 1v5.172a2 2 0 0 0 .586 1.414L8.29 18.29a2.426 2.426 0 0 0 3.42 0l3.58-3.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="6.5" cy="9.5" r=".5" fill="currentColor"/></svg>
                     </div>
-                    <p class="text-md md:text-lg lg:text-base font-normal text-[#03498D] capitalize">{{$record->program->name}}</p>
+                    <p class="text-md md:text-lg lg:text-base font-normal text-[#0433ff] capitalize">{{$record->program->name}}</p>
                 </div>
             </div>
 
@@ -164,18 +164,18 @@
                     <div class="w-full flex flex-col md:flex-row space-y-4">
                         <div class="w-full flex flex-col space-y-2">
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-start">
-                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
+                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full mr-4">
                                     <svg class="w-8 h-4 " fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"> <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"></path></svg>
                                 </span>
                                 <strong>Location:</strong>
                                 <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($record->location) }}"
                                    target="_blank"
-                                   class="ml-3 text-[#03498D] hover:text-[#FF781E] hover:underline transition-colors duration-300">
+                                   class="ml-3 text-[#0433ff] hover:text-[#ff7b00] hover:underline transition-colors duration-300">
                                     {{$record->location}}
                                 </a>
                             </p>
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
-                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
+                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full mr-4">
                                     <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                         <path d="M19 3h-1V2a1 1 0 1 0-2 0v1H8V2a1 1 0 1 0-2 0v1H5a3 3 0 0 0-3 3v13a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10h16v9zM4 8V6a1 1 0 0 1 1-1h1v1a1 1 0 1 0 2"></path>
                                     </svg>
@@ -184,14 +184,14 @@
                             </p>
 
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
-                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
+                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full mr-4">
                                     <svg class="w-8 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 10.59l3.29 3.3a1 1 0 0 1-1.42 1.42l-3.3-3.29a1 1 0 0 1-.29-.7V7a1 1 0 0 1 2 0v5.59z"></path></svg>
                                 </span>
                                 <strong>Recurrence Type: &nbsp;</strong>{{$record->event_recurrence_type->name}}
                             </p>
 
                             <p class="text-black md:pl-20 lg:pl-0 text-md inline-flex items-center">
-                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#03498D] rounded-full mr-4">
+                                <span class="w-8 h-8 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full mr-4">
                                     <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
                                         <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path>
                                     </svg>
@@ -201,7 +201,7 @@
                             </p>
 
                             <br>
-                            <button onclick="document.getElementById('volunteer-section').scrollIntoView({ behavior: 'smooth' });" class="py-2 px-2 flex items-center justify-center rounded-full bg-[#F55E1D] hover:bg-[#FF9141]">
+                            <button onclick="document.getElementById('volunteer-section').scrollIntoView({ behavior: 'smooth' });" class="py-2 px-2 flex items-center justify-center rounded-full bg-[#ff7b00] hover:bg-[#e06e00]">
                                 @if(!$isEventFinished)
                                 <p class="text-base font-normal text-white">I want to volunteer</p>
                                 @else
@@ -278,7 +278,7 @@
             <h2 class="text-xl font-bold">Volunteers Bulletin</h2>
             @if($canManageEvent)
                 <button onclick="document.getElementById('bulletin-form').classList.toggle('hidden')"
-                        class="px-4 py-2 bg-[#F55E1D] text-white rounded-lg hover:bg-[#FF8252]">
+                        class="px-4 py-2 bg-[#ff7b00] text-white rounded-lg hover:bg-[#e06e00]">
                     Post Bulletin
                 </button>
             @endif
@@ -292,16 +292,16 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
                     <input type="text" name="title" required
-                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#F55E1D] focus:ring-[#F55E1D]">
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#ff7b00] focus:ring-[#ff7b00]">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Content</label>
                     <textarea name="content" rows="3" required
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#F55E1D] focus:ring-[#F55E1D]"></textarea>
+                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#ff7b00] focus:ring-[#ff7b00]"></textarea>
                 </div>
                 <div class="flex justify-end">
                     <button type="submit"
-                        class="px-4 py-2 bg-[#F55E1D] text-white rounded-lg hover:bg-[#FF8252]">
+                        class="px-4 py-2 bg-[#ff7b00] text-white rounded-lg hover:bg-[#e06e00]">
                         Post
                     </button>
                 </div>
@@ -429,7 +429,7 @@
                             <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
                                 <div class="flex-grow flex flex-col gap-4">
                                     <p class="text-xl font-semibold leading-none">{{$slot->shift_name}}</p>
-                                    <p class="text-[#03498D] text-md">
+                                    <p class="text-[#0433ff] text-md">
                                         <span class="font-medium">Available Slots:</span>
                                         {{ $slot->total_slots - $registrationCount }}/{{ $slot->total_slots }}
                                     </p>
@@ -478,8 +478,8 @@
                                                                   file:mr-4 file:py-2 file:px-4
                                                                   file:rounded-full file:border-0
                                                                   file:text-sm file:font-semibold
-                                                                  file:bg-[#F55E1D] file:text-white
-                                                                  hover:file:bg-[#FF8252]"
+                                                                  file:bg-[#ff7b00] file:text-white
+                                                                  hover:file:bg-[#e06e00]"
                                                            required>
                                                     @error('media')
                                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
