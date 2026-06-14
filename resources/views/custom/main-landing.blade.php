@@ -1,915 +1,374 @@
 @extends('custom.layouts.app')
 
 @section('content')
-    {{-- Consolidated Styles --}}
-    <style>
-        /* Hero Section Clip Path */
-        .clip-path-custom {
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%)
-        }
+<div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
 
-        /* Swiper Styles */
-        .swiper-slide {
-            flex-grow: 1;
-            min-width: 50%;
-        }
-
-        #ourPartnersSection .swiper-slide {
-            flex-grow: 0;
-            min-width: auto;
-        }
-
-        /* Tab Icons */
-        #icon svg path,
-        #icon-calendar svg path {
-            stroke: #000000;
-            transition: stroke 0.3s ease;
-        }
-
-        #icon:hover svg path,
-        #icon-calendar:hover svg path {
-            stroke: #FF781E;
-        }
-
-        #icon.active svg path,
-        #icon-calendar.active svg path {
-            stroke: #FF9141;
-        }
-
-        /* Custom Scrollbar (if needed) */
-        .custom-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: #FF781E #F5F5F5;
-        }
-    </style>
-
-    <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
-
-        {{-- Desktop: Hero Banner Section --}}
-        <section class="hidden lg:block h-[100vh] w-full bg-[#03498D]">
-            <div class="grid grid-cols-5">
-                <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
-                    <div class="container whitespace-pre-line text-white">
-                        <p class="font-[700] text-[70px] leading-none">Your involvement is <br> important to us!</p>
-                        <p class="font-[400] text-[28px]">Ayala Corporate Citizenship and Volunteer Platform</p>
-                    </div>
+    {{-- ── Hero Section ──────────────────────────────────────────────── --}}
+    <section class="w-full bg-white px-6 md:px-16 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {{-- Left copy --}}
+            <div class="flex flex-col gap-6">
+                <div class="inline-flex items-center gap-2 text-[#ff7b00] text-sm font-semibold w-fit">
+                    <span class="w-2 h-2 rounded-full bg-[#ff7b00] animate-pulse"></span>
+                    Brigada 2026 is now open
                 </div>
-
-                <div class="h-[100vh] col-span-3 clip-path-custom"
-                    style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight text-gray-900">
+                    Your time can<br>change a<br><span class="text-[#0433ff]">community.</span>
+                </h1>
+                <p class="text-gray-500 text-lg max-w-md">
+                    Find a volunteer opportunity that fits your skills and schedule — and join thousands across our partner network making a real difference.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{{ url('/admin/events') }}"
+                       class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#ff7b00] text-white font-semibold hover:bg-[#e06e00] transition text-base">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        Browse opportunities
+                    </a>
+                    <a href="{{ route('volunteer.form.view') }}"
+                       class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border-2 border-[#0433ff] text-[#0433ff] font-semibold hover:bg-[#0433ff] hover:text-white transition text-base">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        Become a volunteer
+                    </a>
+                </div>
+                <div class="flex items-center gap-3 text-sm text-gray-500">
+                    <div class="flex -space-x-2">
+                        @foreach(['0433ff','ff7b00','0228cc','e06e00'] as $c)
+                        <div class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold"
+                             style="background:#{{ $c }}">V</div>
+                        @endforeach
+                    </div>
+                    <span><strong>{{ number_format($volunteerCount) }}+ volunteers</strong> have joined this year</span>
                 </div>
             </div>
-        </section>
-        {{-- Tablet & mobile: Hero Banner Section --}}
-        <section
-            class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative"
-            style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
-            <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
-            <div class="flex flex-col items-center justify-center relative text-center z-10">
-                <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>
-                <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Platform</p>
-            </div>
-        </section>
-        {{-- Opportunity Section --}}
-        <div class="w-[98%] bg-[#FFFFFFE5] m-[-20vh] rounded-xl px-8 pt-8 pb-[80px] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] z-10">
-            {{-- Featured Opportunity --}}
-                    @php
-                            $mediaItems = $featuredOpportunity->getMedia('event-banner-attachments')?->first()?->getUrl() ?? asset('img/ayala-foundation-bg.jpg');
-                    @endphp
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
-                <div class="flex items-center justify-between h-[400px] w-[100%] md:w-[40%]  gap-4"
-                    style="background: url('{{ url($mediaItems) }}') no-repeat center center; background-size: cover;">
-                    <div class="h-full w-full flex items-end justify-start p-4"
-                        style="background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));">
-                    </div>
-                </div>
 
-                    @if ($featuredOpportunity)
-                        <div class="w-[100%] md:w-[60%]">
-                            <p class="text-[18px] font-[400]">FEATURED OPPORTUNITY</p>
-                            <p class="text-3xl md:text-[40px] font-[700] text-[#03498D] mt-3 leading-none">{{$featuredOpportunity->title ?? 'No Title'}}</p>
-
-                            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4 max-w-[600px]"></div>
-
-                            <p class="text-[18px] font-[400] mb-3">{{$latestOpporfeaturedOpportunitytunity->location ?? 'No Location'}}</p>
-                            <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">DATE:</span> {{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('M-d-Y') ?? 'No Date Available'}}</p>
-                                    <p><span class="font-[600]"></span>{{ \Carbon\Carbon::parse($featuredOpportunity->start_date)->format('h:i A') }}
-                                        - {{ \Carbon\Carbon::parse($featuredOpportunity->end_date)->format('h:i A') }}</p>
-                                </div>
-                                <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                    <p><span class="font-[600]">NUMBER OF SHIFTS:</span> {{$featuredOpportunity->slots->count()}}
-                                    </p>
-                                    <div class="flex items-center justify-start gap-4">
-                                        @foreach ($featuredOpportunity->slots as $key => $opportunity)
-                                        <p><span class="font-[600]">BATCH {{$key+1}}:</span>  {{ $opportunity->type->name }}
-                                        @endforeach
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-start gap-4 mt-8 max-w-[416px]">
-                                <button onclick="openModal()" class="w-full">
-                                    <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                                        <p class="font-[400] text-base md:text-[18px] text-white">VIEW DETAILS</p>
-                                    </div>
-                                </button>
-
-                                {{-- @guest
-                                    <a href="\volunteer-registration" class="w-full">
-                                        <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
-                                        </div>
-                                    </a>
-                                @endguest --}}
-
-                                @auth
-                                    <a href="{{ url('/admin/events/view/' . $featuredOpportunity->id) }}" class="w-full">
-                                        <div class="h-auto md:h-[48px] rounded-xl w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
-                                        </div>
-                                    </a>
-                                @endauth
-                            </div>
+            {{-- Right: featured card --}}
+            <div class="relative">
+                @php $heroImg = $featuredOpportunity?->getMedia('event-banner-attachments')?->first()?->getUrl(); @endphp
+                <div class="rounded-2xl overflow-hidden shadow-xl bg-gray-100 aspect-video">
+                    @if($heroImg)
+                        <img src="{{ $heroImg }}" alt="{{ $featuredOpportunity->title }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full bg-gradient-to-br from-[#0433ff]/10 to-[#ff7b00]/10 flex items-center justify-center">
+                            <img src="{{ asset('img/logo-vapp.svg') }}" class="w-24 opacity-20" alt="VAPP">
                         </div>
                     @endif
-                    </div>
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                                    {{-- OPPORTUNITIES --}}
-                <div class="w-full">
-                    <div class="flex items-center justify-between gap-4 font-[400]">
-                        <div class="w-fit">
-                            <p class="text-2xl md:text-[32px] md:text-[40px]">OPPORTUNITIES</p>
+                </div>
+                <div class="absolute top-4 right-4 bg-white rounded-xl shadow-lg px-4 py-3 text-sm max-w-[180px]">
+                    <p class="text-xs text-[#ff7b00] font-semibold mb-1">This weekend</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $opportunities->count() }}</p>
+                    <p class="text-xs text-gray-500">ways to help</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Stats Bar ───────────────────────────────────────────────────── --}}
+    <div class="w-full bg-[#0c1f5e] text-white py-8 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div class="flex flex-col items-center gap-1">
+                <svg class="w-5 h-5 mb-1 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
+                </svg>
+                <p class="text-3xl font-bold">{{ number_format($volunteerCount) }}</p>
+                <p class="text-sm opacity-70">Volunteers</p>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+                <svg class="w-5 h-5 mb-1 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-3xl font-bold">{{ number_format(\App\Models\EventAttendee::count() * 4) }}</p>
+                <p class="text-sm opacity-70">Hours rendered</p>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+                <svg class="w-5 h-5 mb-1 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <p class="text-3xl font-bold">{{ $programCount }}</p>
+                <p class="text-sm opacity-70">Active programs</p>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+                <svg class="w-5 h-5 mb-1 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-3xl font-bold">{{ $opportunityCount }}</p>
+                <p class="text-sm opacity-70">Open opportunities</p>
+            </div>
+        </div>
+        <p class="text-center text-xs mt-4 opacity-40">Updated live — numbers grow as volunteers like you sign up.</p>
+    </div>
+
+    {{-- ── Opportunities: Ways to help this month ──────────────────────── --}}
+    <section class="w-full bg-white py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-start justify-between mb-10">
+                <div>
+                    <p class="text-xs font-bold tracking-widest text-[#ff7b00] uppercase mb-2">Opportunities</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Ways to help this month</h2>
+                    <p class="text-gray-500 mt-2 max-w-lg">Hand-picked opportunities across the partner network. New ones are added every week.</p>
+                </div>
+                <a href="{{ url('/admin/events') }}"
+                   class="hidden md:inline-flex items-center gap-1 text-[#0433ff] font-medium hover:underline text-sm mt-2 whitespace-nowrap">
+                    See all opportunities
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @forelse($opportunities->take(3) as $opportunity)
+                    @php
+                        $img   = $opportunity->getMedia('event-banner-attachments')->first();
+                        $slot  = $opportunity->slots?->first();
+                        $totalSlots = $slot?->total_slots ?? 0;
+                        $takenSlots = $slot ? $opportunity->registrations()
+                            ->where('slot_type_id', $slot->id)
+                            ->where('status_id', '!=', 3)->count() : 0;
+                        $availSlots = max(0, $totalSlots - $takenSlots);
+                        $pct = $totalSlots > 0 ? ($takenSlots / $totalSlots * 100) : 0;
+                        $isRegistered = auth()->check()
+                            ? \App\Models\EventRegistration::where('volunteer_id', auth()->id())
+                                ->where('event_id', $opportunity->id)
+                                ->whereIn('status_id', [1, 2])->exists()
+                            : false;
+                        $orgName = $opportunity->program?->name ?? 'Ayala Foundation';
+                    @endphp
+                    <div class="rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition">
+                        {{-- Image --}}
+                        <div class="h-44 bg-gray-100 overflow-hidden relative">
+                            @if($img)
+                                <img src="{{ $img->getUrl() }}" alt="{{ $opportunity->title }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full bg-gradient-to-br from-[#0433ff]/10 to-[#ff7b00]/10 flex items-center justify-center">
+                                    <img src="{{ asset('img/logo-vapp.svg') }}" class="w-12 opacity-20" alt="">
+                                </div>
+                            @endif
                         </div>
-
-                        <div class="flex items-center justify-between gap-4 md:gap-8">
-
-                            <a class="text-lg md:text-[20px] font-[400]" href="">VIEW</a>
-
-                            {{-- Style for the tabs --}}
-                            <style>
-                                /* Default stroke color */
-                                #icon svg path,
-                                #icon-calendar svg path {
-                                    stroke: #000000;
-                                    /* Default stroke color */
-                                    transition: stroke 0.3s ease;
-                                    /* Smooth transition for stroke color change */
-                                }
-
-                                /* Stroke color on hover */
-                                #icon:hover svg path,
-                                #icon-calendar:hover svg path {
-                                    stroke: #FF781E;
-                                    /* Change this to your desired hover color */
-                                }
-
-                                /* Stroke color on click (active state) */
-                                #icon.active svg path,
-                                #icon-calendar.active svg path {
-                                    stroke: #FF9141;
-                                    /* Change this to your desired active color */
-                                }
-                            </style>
-
-                            <button id="icon" class="w-[32px] h-[32px] active" onclick="changeTab('list')">
-                                @include('custom.icons.landing-page-icons', ['icon' => 'list-32'])
-                            </button>
-
-                            <button id="icon-calendar" class="w-[32px] h-[32px]" onclick="changeTab('calendar')">
-                                @include('custom.icons.landing-page-icons', ['icon' => 'calendar-32'])
-                            </button>
+                        {{-- Body --}}
+                        <div class="p-4 flex flex-col gap-2 flex-1">
+                            <p class="text-xs font-semibold text-[#ff7b00] uppercase tracking-wide">{{ $orgName }}</p>
+                            <p class="font-bold text-gray-900 text-base leading-tight">{{ $opportunity->title }}</p>
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M d, Y · g:i A') }}
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                {{ $opportunity->location ?? 'TBA' }}
+                            </div>
+                            @if($slot)
+                                <div class="flex items-center justify-between text-xs text-gray-400 mt-1">
+                                    <span>{{ $availSlots }} slots left</span>
+                                    <span>{{ $totalSlots }} total</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-[#ff7b00] rounded-full transition-all" style="width: {{ $pct }}%"></div>
+                                </div>
+                            @endif
                         </div>
-                    </div>
-
-                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-
-                    {{-- OPPORTUNITIES List --}}
-                    <div id="opportunityList" class="w-full flex flex-col items-center justify-between gap-8 p-4 duration-300 h-full max-h-[1000px] md:max-h-[600px] overflow-y-scroll custom-scrollbar">
-                        @if($opportunities->count() > 0)
-                            {{-- List --}}
-                            @foreach ($opportunities as $index => $opportunity)
-                                <div class="w-full flex flex-col md:flex-row items-center justify-between gap-8">
-                                    <div class="w-fit h-fit md:w-[200px] md:h-[140px] flex items-center justify-center overflow-hidden">
-                                        @php
-                                            $opportunityMedia = $opportunity->getFirstMedia('event-banner-attachments');
-                                        @endphp
-
-                                        @if($opportunityMedia)
-                                            <img class="w-full h-full object-cover"
-                                                src="{{ $opportunityMedia->getUrl() }}"
-                                                alt="{{ $opportunity->title }}">
-                                        @else
-                                            <img class="w-full h-full object-cover"
-                                                src="{{ url('img/ayala-foundation-bg.jpg') }}"
-                                                alt="{{ $opportunity->title }}">
-                                        @endif
-                                    </div>
-
-                                    <div class="w-full">
-                                        <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
-                                        <p class="text-[18px] font-[400] mb-3">{{ $opportunity->location }}</p>
-
-                                        <div class="w-full flex flex-row items-center justify-start text-[14px] font-[400] gap-4">
-                                            <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                                <p><span class="font-[600]">DATE:</span>
-                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M-d-Y') }}</p>
-                                                <p><span class="font-[600]"></span>
-                                                    {{ \Carbon\Carbon::parse($opportunity->start_date)->format('g:i A') }} -
-                                                    {{ \Carbon\Carbon::parse($opportunity->end_date)->format('g:i A') }}</p>
-                                            </div>
-                                            <div class="w-fit flex flex-col items-start justify-between gap-1">
-                                                <p><span class="font-[600]"> NUMBER OF SHIFTS:</span> {{ $opportunity->slots->count() }}</p>
-                                                <div class="flex items-center justify-start gap-4">
-                                                @foreach ($opportunity->slots as $key=> $slot)
-                                                <p><span class="font-[600]">BATCH {{$key+1}}:</span>
-                                                        {{ $slot->type->name }}
-                                                    @endforeach
-                                                </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="w-[200px]" x-data="{ joinModal: false }">
-                                        @guest
-                                        <button @click="joinModal = true" class="w-full">
-                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] rounded-xl flex items-center justify-center p-2 hover:bg-[#e06e00]">
-                                                <p class="font-[400] text-base md:text-[18px] text-white">JOIN</p>
-                                            </div>
+                        {{-- CTA --}}
+                        <div class="px-4 pb-4">
+                            @if($isRegistered)
+                                <div class="w-full py-2 rounded-full bg-green-50 text-green-700 font-semibold text-sm text-center flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    Registered
+                                </div>
+                            @elseif($slot && $availSlots > 0)
+                                @auth
+                                    <form method="POST" action="{{ url('/event/'.$opportunity->id.'/register-slot/'.$slot->id) }}">
+                                        @csrf
+                                        <input type="hidden" name="privacy_policy" value="1">
+                                        <button type="submit"
+                                                class="w-full py-2 rounded-full bg-[#ff7b00] hover:bg-[#e06e00] text-white font-semibold text-sm transition flex items-center justify-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            Join
                                         </button>
-                                        {{-- Login/Register choice modal --}}
-                                        <div x-show="joinModal" x-cloak
-                                             class="fixed inset-0 z-50 flex items-center justify-center"
-                                             style="background:rgba(0,0,0,0.55);"
-                                             @click.self="joinModal = false">
-                                            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4">
-                                                <h3 class="text-xl font-bold text-gray-800 mb-2">Join this opportunity</h3>
-                                                <p class="text-sm text-gray-500 mb-6">Do you already have a volunteer account?</p>
-                                                <a href="{{ route('filament.admin.auth.login') }}"
-                                                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#0433ff] text-white font-semibold mb-3 hover:bg-blue-700 transition">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-                                                    Log in to my account
-                                                </a>
-                                                <a href="{{ route('volunteer.form.view') }}"
-                                                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#ff7b00] text-white font-semibold hover:bg-[#e06e00] transition">
-                                                    New volunteer? Register here
-                                                </a>
-                                                <button @click="joinModal = false" class="mt-4 w-full text-center text-sm text-gray-400 hover:text-gray-600">Cancel</button>
-                                            </div>
-                                        </div>
-                                        @endguest
-
-                                        @auth
-                                        <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
-                                            <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] rounded-xl flex items-center justify-center p-2 hover:bg-[#e06e00]">
-                                                <p class="font-[400] text-base md:text-[18px] text-white">VIEW</p>
-                                            </div>
-                                        </a>
-                                        @endauth
-                                    </div>
-                                </div>
-
-                                @if (!$loop->last)
-                                    <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-                                @endif
-                            @endforeach
-                        @else
-                            <div class="w-full flex items-center justify-center py-8">
-                                <p class="text-[18px] text-gray-500">No opportunities available at the moment.</p>
-                            </div>
-                        @endif
-                    </div>
-
-                    {{-- OPPORTUNITIES Calendar --}}
-                    <div id="opportunityCalendar" class="w-full gap-8 p-4 duration-300">
-                        @livewire(\App\Filament\Widgets\CalendarWidget::class)
-                    </div>
-
-                    {{-- Tab Scripts --}}
-                    <script>
-                        const opportunityList = document.getElementById("opportunityList");
-                        const opportunityCalendar = document.getElementById("opportunityCalendar");
-                        const iconList = document.getElementById("icon");
-                        const iconCalendar = document.getElementById("icon-calendar");
-
-                        function changeTab(type) {
-                            if (type === "list") {
-                                opportunityList.classList.remove("hidden");
-                                opportunityCalendar.classList.add("hidden");
-
-                                // Set the list icon to active
-                                iconList.classList.add("active");
-                                iconCalendar.classList.remove("active");
-                            } else if (type === "calendar") {
-                                opportunityList.classList.add("hidden");
-                                opportunityCalendar.classList.remove("hidden");
-
-                                // Set the calendar icon to active
-                                iconCalendar.classList.add("active");
-                                iconList.classList.remove("active");
-                            }
-                        }
-
-                        setTimeout(() => {
-                            opportunityCalendar.classList.add("hidden");
-                        }, 2000);
-                    </script>
-                </div>
-
-                    </div>
-
-                    </div>
-
-            </div>
-            </div>
-        </div>
-
-        {{-- Our Partners Section --}}
-        <div id="ourPartnersSection" class="w-full h-fit my-4">
-            <div class="flex items-center justify-center">
-                <p class="text-2xl md:text-4xl font-bold text-[#03498D]">Our Partners</p>
-            </div>
-
-            <div class="w-full p-2 lg:p-8 relative flex items-center justify-between gap-4">
-                <div
-                    class="our-partners-button-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
-                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
-                </div>
-
-                <div class="our-partners-swiper-container swiper w-full overflow-hidden">
-                    <div class="swiper-wrapper w-full">
-
-                        {{-- Partner Slide Item 1 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/bronze.png') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-                        {{-- Partner Slide Item 2 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/silver.png') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-                        {{-- Partner Slide Item 3 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/gold.png') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-                        {{-- Partner Slide Item 4 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/plat.png') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-
-                        {{-- Partner Slide Item 5 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/bronze.png') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-                        {{-- Partner Slide Item 6 --}}
-                        <div class="swiper-slide">
-                            <a href="">
-                                <div class="w-[255px] h-[255px] flex items-center justify-center overflow-hidden relative">
-                                    <img class="h-full w-full object-cover"
-                                        src="{{ asset('medals/silver.png') }}"
-                                        alt="Partner 1">
-                                </div>
-                            </a>
-                        </div>
-
-
-                    </div>
-                </div>
-
-                <div
-                    class="our-partners-button-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
-                    @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
-                </div>
-
-                <!-- Swiper Script -->
-                <script>
-                     const ourPartnersSwiper = new Swiper('.our-partners-swiper-container', {
-                        loop: true,
-                        slidesPerView: 'auto',
-                        spaceBetween: 1, // Adjust spacing if needed
-                        // centeredSlides: true,
-                        autoplay: {
-                            delay: 3000,
-                            disableOnInteraction: false
-                        },
-                        grabCursor: true, // Makes it feel draggable
-                        autoHeight: false,
-                        freeMode: true,
-                        navigation: {
-                            nextEl: '.our-partners-button-next',
-                            prevEl: '.our-partners-button-prev',
-                        },
-                        breakpoints: {
-                            1024: { slidesPerView: 5, },
-                            640: { slidesPerView: 3, },
-                            320: { slidesPerView: 1, }
-                        }
-                    });
-                </script>
-            </div>
-        </div>
-
-        {{--  --}}
-        <div class="relative w-full">
-            <div class="absolute w-full z-10 flex items-center justify-between">
-                <div class="h-[33px] w-full max-w-[535px] bg-[#005096]"></div>
-                <div class="h-[33px] w-full max-w-[535px] bg-[#FF781E]"></div>
-            </div>
-            {{-- @php
-                dd($opportunity->created_by_user);
-            @endphp --}}
-
-            <div class="h-[100vh] md:h-[452px] w-full flex flex-col items-center justify-center text-white mt-4 bg-cover bg-center bg-no-repeat"
-                style="background-image: url('{{ asset('img/background-img-2.png') }}')">
-                <div class="h-full w-full px-20 py-12 flex items-center justify-center bg-black/10">
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-12">
-                        <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ $volunteerCount }}</p>
-                            <p class="text-[20px] font-medium">Volunteers This Year</p>
-                        </div>
-                        <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ $businessUnitCount }}</p>
-                            <p class="text-[20px] font-medium">Business Units</p>
-                        </div>
-                        <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ $programCount }}</p>
-                            <p class="text-[20px] font-medium">Programs</p>
-                        </div>
-                        <div class="w-fit flex flex-col items-center justify-center gap-1">
-                            <p class="text-[80px] font-bold">{{ $opportunityCount }}</p>
-                            <p class="text-[20px] font-medium">Opportunities This Year</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        {{-- For Not Logged In Users Only --}}
-        @guest
-            {{-- Our Program Section --}}
-            <div class="w-full grid grid-cols-1 lg:grid-cols-2">
-                <!-- Our Program Section -->
-                <div
-                    class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#03498D]">
-                    <div class="w-full min-h-[450px] flex flex-col items-start">
-                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
-                        <p class="text-4xl md:text-5xl font-bold leading-none">Corporate Citizenship and Volunteerism</p>
-                        <p class="text-4lg md:text-xl font-light">
-                            We believe in contributing to the nation’s development goals by adapting to the evolving needs of
-                            stakeholders to remain relevant and responsive. Through our programs, we affirm our commitment to
-                            aligning, giving focus, and making an impact in the lives of people in our conglomerate,
-                            communities,
-                            and country.
-                        </p>
-                    </div>
-                    <div class="w-full">
-                        <a href="https://ayalafoundation.org" target="_blank" rel="noopener noreferrer">
-                            <div class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#FF781E] rounded-xl flex items-center justify-center hover:bg-[#FF9141]">
-                                <p class="font-medium text-base md:text-lg text-white">SEE ALL PROGRAMS</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Become a Volunteer Section -->
-                <div class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('{{ asset('img/ayala-foundation-bg-1.jpg') }}')">
-                    <!-- Diagonal Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-tr from-[#03498D4D] to-[#03498D4D] z-0"
-                        style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
-
-                    <div class="w-full min-h-[450px] flex flex-col items-start z-10">
-                        <p class="text-[36px] font-semibold">Become a</p>
-                        <p class="text-[48px] font-bold">Volunteer</p>
-                        <p class="text-[24px] w-full max-w-[510px] font-light">Ayala Corporate Citizenship and Volunteer
-                            Program</p>
-                    </div>
-                    <div class="w-full z-10">
-                        <a href="{{ route('volunteer.form.view') }}">
-                            <div class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#FF781E] rounded-xl flex items-center justify-center hover:bg-[#FF9141]">
-                                <p class="font-medium text-lg text-white">BECOME A VOLUNTEER</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @endguest
-
-
-        {{-- For Logged In Users Only --}}
-        @auth
-            {{-- Our Program Section --}}
-            <div class="w-full grid grid-cols-1 lg:grid-cols-2">
-                <!-- Program Section with Swiper -->
-                <div
-                    class="col-span-1 py-[10%] px-[5%] flex flex-col items-center justify-between gap-8 font-medium text-white bg-[#F55E1D]">
-                    <div class="program-swiper-container w-full overflow-hidden">
-                        <div class="swiper-wrapper w-full">
-                            <!-- Slide 1 -->
-                            <div class="swiper-slide">
-                                <div class="flex flex-col items-center gap-8">
-                                    <div class="w-full min-h-[450px] flex flex-col items-start">
-
-                                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
-                                        <p class="text-4xl md:text-5xl font-bold">Community Development</p>
-                                        <p class="text-lg md:text-xl font-light">
-
-                                            We aim to elevate Filipino families from poverty to the middle class. To achieve
-                                            this goal, we
-                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
-                                            education, WASH
-                                            (water, sanitation, and hygiene)
-                                            , electrification, and connectivity within our target communities.
-                                            We boost economic vitality through programs in financial inclusion, sustainable
-                                            livelihood, and by
-                                            supporting local museums and libraries. Working closely with partners, we serve as
-                                            an integrator
-                                            of interventions to find solutions that are suited and relevant to the needs of
-                                            communities.
-                                        </p>
-                                    </div>
-                                    <div class="w-full">
-                                        <a href="\admin/events">
-                                            <div
-                                                class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#03498D] rounded-xl flex items-center justify-center hover:bg-[#1A67B1]">
-                                                <p class="font-medium text-base md:text-lg text-white">SEE ALL OPPORTUNITIES</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Slide 2 -->
-                            <div class="swiper-slide">
-                                <div class="flex flex-col items-center gap-8">
-                                    <div class="w-full min-h-[450px] flex flex-col items-start">
-
-                                        <p class="text-2xl md:text-4xl font-semibold">Our Program</p>
-                                        <p class="text-4xl md:text-5xl font-bold">Corporate Citizenship and Volunteerism</p>
-                                        <p class="text-lg md:text-xl font-light">
-
-                                            We aim to elevate Filipino families from poverty to the middle class. To achieve
-                                            this goal, we
-                                            take systemic approaches to fulfilling basic needs — enhancing nutrition, health,
-                                            education, WASH
-                                            (water, sanitation, and hygiene), electrification, and connectivity within our
-                                            target communities.
-                                            We boost economic vitality through programs in financial inclusion, sustainable
-                                            livelihood, and by
-                                            supporting local museums and libraries. Working closely with partners, we serve as
-                                            an integrator
-                                            of interventions to find solutions that are suited and relevant to the needs of
-                                            communities.
-                                        </p>
-                                    </div>
-                                    <div class="w-full">
-                                        <a href="\admin/events">
-                                            <div
-                                                class="h-[40px] md:h-[48px] w-[280px] md:w-[325px] bg-[#03498D] rounded-xl flex items-center justify-center hover:bg-[#1A67B1]">
-                                                <p class="font-medium text-lg text-white">SEE ALL OPPORTUNITIES</p>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-full flex items-center justify-start gap-4">
-                        <div
-                            class="program-button-36-prev w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
-                        </div>
-                        <div
-                            class="program-button-36-next w-[36px] h-[36px] flex items-center justify-center bg-white hover:bg-gray-100">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
-                        </div>
-                    </div>
-
-                    <!-- Swiper Script -->
-                    <script>
-                        const programSwiper = new Swiper('.program-swiper-container', {
-                            loop: true,
-                            slidesPerView: 1,
-                            navigation: {
-                                nextEl: '.program-button-36-next',
-                                prevEl: '.program-button-36-prev',
-                            },
-                        });
-                    </script>
-                </div>
-
-                <!-- Right Section with Background and Overlay -->
-                <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-between gap-8 font-medium text-white relative bg-cover bg-center bg-no-repeat"
-                    style="background-image: url('{{ asset('img/ayala-foundation-bg-2.png') }}')">
-                    <!-- Diagonal Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-tr from-[#F55E1D4D] to-[#03498D4D] z-0"
-                        style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
-                </div>
-            </div>
-        @endauth
-
-        {{-- Stories Section --}}
-        <div class="w-full h-fit relative flex flex-col md:flex-row items-center justify-center text-[24px] font-medium">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-12 w-full z-10 px-[5%] py-12">
-                <!-- Left Section: Stories -->
-                <div class="col-span-1 h-full">
-                    <p class="mb-2 md:mb-0">STORIES</p>
-
-                    <div class="w-full pr-0 md:pr-20 flex flex-col items-end justify-between gap-4">
-                        <!-- Carousel Navigation Buttons -->
-                        <div class="stories-button-24-prev w-fit flex items-center justify-between gap-4">
-                            <div class="w-[24px] h-[24px] flex items-center justify-center bg-[#f3f2f2] hover:bg-gray-500">
-                                @include('custom.icons.landing-page-icons', ['icon' => 'navigate-prev-36'])
-                            </div>
-                            <div
-                                class="stories-button-24-next w-[24px] h-[24px] flex items-center justify-center bg-[#f3f2f2] hover:bg-gray-200">
-                                @include('custom.icons.landing-page-icons', ['icon' => 'navigate-next-36'])
-                            </div>
-                        </div>
-
-                        <div class="stories-swiper-container w-full overflow-hidden">
-                            <div class="swiper-wrapper w-full">
-                                <!-- Slide 1 -->
-                                @foreach ($articles as $article)
-
-                                @php
-                                    $article_banner = $article->media->first();
-                                @endphp
-
-                                {{-- @php
-                                    dd($article_banner);
-                                @endphp --}}
-
-                                <div class="swiper-slide px-4">
-                                    @if ($article_banner)
-                                    <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4" style="background-image: url({{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
-                                        <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
-                                            {{-- <img class="w-[30%]" src="img/logo-vapp.svg" alt=""> --}}
-                                        </div>
-                                    </div>
-                                    @else
-                                    <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4"  style="background-image: url({{ asset('/img/ayala-foundation-bg-3.jpg') }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
-                                        <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
-                                            <img class="w-[30%]" src="img/logo-white.png" alt="">
-                                        </div>
-                                    </div>
-                                    @endif
-                                    {{-- @endisset --}}
-                                    <div class="w-full md:w-[80%] bg-white md:bg-none p-10 min-h-[200px] flex flex-col md:flex-row items-start justify-between gap-4">
-                                        <div class="w-fit min-w-[104px] p-4 bg-white rounded-xl shadow-md flex flex-col items-center">
-                                            <p class="text-lg text-center font-medium">{{ \Carbon\Carbon::parse($article->published_at)->format('M j, Y') }}</p>
-                                        </div>
-                                        <div class="w-full text-[#03498D] flex flex-col gap-4">
-                                            <p class="text-2xl md:text-[32px] font-semibold leading-none capitalize">{{ $article->title }}
-                                            </p>
-                                            <p class="text-[14px]">{{ $article->content_overview }}</p>
-                                            <a href="{{ url('/article'). '/' . $article->slug }}">
-                                                <div
-                                                    class="h-8 md:h-10 w-[180px] md:w-[219px] rounded-xl bg-[#FF781E] flex items-center justify-center hover:bg-[#FF8252]">
-                                                    <p class="font-medium text-base md:text-lg text-white">READ MORE</p>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Swiper Script -->
-                    <script>
-                        const storiesSwiper = new Swiper('.stories-swiper-container', {
-                            loop: true,
-                            slidesPerView: 1,
-                            navigation: {
-                                nextEl: '.stories-button-24-next',
-                                prevEl: '.stories-button-24-prev',
-                            },
-                        });
-                    </script>
-                </div>
-
-                <!-- Right Section: Testimonials -->
-                <div
-                    class="col-span-1 h-full rounded-xl flex flex-col items-center justify-between gap-4 md:gap-8 text-white p-8 md:p-16 bg-[#03498DB2]">
-                    <p>VOLUNTEER TESTIMONIALS</p>
-
-                    <div class="flex items-center gap-2 md:gap-4 h-fit">
-                        <div class="w-8 md:w-16 h-full flex items-start">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
-                        </div>
-
-                        <p class="px-0 md:px-2 py-0 md:py-4 text-xl md:text-[28px] md:text-[36px]">Volunteering with Ayala Foundation has been one of the most rewarding experiences of my life.
-                            Not only did I get to make a real difference in the lives of others,
-                            but I also gained valuable skills and met incredible people who share my passion for giving back.
-                            It’s a joy to be part of such a supportive and impactful community.</p>
-
-                        <div class="w-8 md:w-16 h-full flex items-end">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'double-quote'])
-                        </div>
-                    </div>
-
-                    <div class="w-full px-8 md:px-16">
-                        <p class="text-xl md:text-2xl fornt-bold">JUAN DELA CRUZ</p>
-                        <p class="text-base md:text-xl text-[#817B7B]">Business Associate, Company Name</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Background with Overlay -->
-            <div class="absolute inset-0 flex items-center justify-between z-0">
-                <div class="w-[40%] h-full"></div>
-                <div class="w-[60%] h-full bg-cover bg-center"
-                    style="background-image: linear-gradient(to top right, black, rgba(0, 0, 0, 0)), url('{{ asset('img/ayala-foundation-bg-2.jpg') }}');">
-                </div>
-            </div>
-        </div>
-
-
-        {{-- Featured Opportunity Modal --}}
-        <div class="w-full h-fit">
-            <div id="featuredImageModal"
-                class="fixed inset-0 flex justify-center items-center z-50 hidden transition-opacity duration-300 bg-black bg-opacity-50"
-                onclick="closeModal(event)">
-                <!-- Modal Content -->
-                <div
-                    class="modal-content bg-white shadow-lg max-w-[80%] w-full p-8 transform transition-all duration-300 scale-95 opacity-0">
-                    <div class="w-full flex justify-end items-end p-4">
-                        <button id="closeModal"
-                            class="text-2xl font-semibold text-black hover:bg-gray-100 focus:outline-none">
-                            @include('custom.icons.landing-page-icons', ['icon' => 'close-25'])
-                        </button>
-                    </div>
-
-                    <div class="h-fit max-h-[80vh] overflow-y-auto mb-4">
-                        <div class="flex flex-col  items-center justify-center">
-                            <div class="flex items-center justify-between h-[580px] w-full gap-4 bg-cover bg-center"
-                                style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
-                                <div
-                                    class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
-                                    <img class="w-[30%]" src="{{ asset('img/logo-vapp.svg') }}" alt="Logo">
-                                </div>
-                            </div>
-                            @php
-                                $latestOpportunity = $opportunities->sortByDesc('created_at')->first();
-                            @endphp
-
-                            {{-- @php
-                                dd($latestOpportunity);
-                            @endphp --}}
-
-                            @if($latestOpportunity)
-                            <div class="w-full p-4">
-                                <div class="w-fit py-2 px-4 rounded-xl flex items-center justify-center bg-[#F55E1D]">
-                                    <p class="text-lg font-normal text-white">{{$latestOpportunity->program->name}}</p>
-                                </div>
-
-                                <p class="text-3xl md:text-4xl font-normal text-[#03498D] capitalize">{{$latestOpportunity->title}}</p>
-
-                                <p class="text-xl md:text-2xl font-normal">{{$latestOpportunity->location}}</p>
-
-                                <p class="text-lg font-normal my-8 md:my-16 text-justify">
-                                    &emsp; &emsp;{!! strip_tags($latestOpportunity->description) !!}
-                                </p>
-
-                                <div
-                                    class="w-full flex flex-col items-start justify-start text-base md:text-xl font-normal gap-2 my-8 md:my-16">
-                                    <p><span class="font-semibold">Date:</span> {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('M-d-Y') }} | {{ \Carbon\Carbon::parse($latestOpportunity->start_date)->format('h:i:s A') }} - {{ \Carbon\Carbon::parse($latestOpportunity->end_date)->format('h:i:s A') }}</p>
-                                    <p><span class="font-semibold"> NUMBER OF SHIFTS:</span>
-                                        {{$latestOpportunity->slots->count()}}
-                                    </p>
-                                    @foreach ($latestOpportunity->slots as $key => $opportunity)
-                                    <p><span class="font-semibold">BATCH {{$key+1}}:</span>  {{ $opportunity->type->name }} - {{\Carbon\Carbon::parse($latestOpportunity?->start_date)->isoFormat('hh:mm A')}} - {{\Carbon\Carbon::parse($latestOpportunity?->end_date)->isoFormat('hh:mm A')}}
-                                    @endforeach
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
-                                    @guest
-                                    <a href="\volunteer-registration">
-                                        <div
-                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-normal text-base md:text-lg text-white">SIGN UP</p>
-                                        </div>
+                                    </form>
+                                @else
+                                    <a href="{{ url('/admin/login') }}"
+                                       class="block w-full py-2 rounded-full bg-[#ff7b00] hover:bg-[#e06e00] text-white font-semibold text-sm transition text-center">
+                                        Join
                                     </a>
-                                    @endguest
-
-                                    @auth
-                                    <a href="\admin/events">
-                                    {{-- <a href="{{ url('/admin/events/view/' . $latestOpportunity->id) }}"> --}}
-                                        <div
-                                            class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] rounded-xl flex items-center justify-center p-2 hover:bg-[#FF9141]">
-                                            <p class="font-normal text-base md:text-lg text-white">VIEW</p>
-                                        </div>
-                                    </a>
-                                    @endauth
-
-                                    @auth
-                                    <a href="">
-                                        <div
-                                            class="h-auto md:h-[53px] w-[229px] bg-[#005096] rounded-xl flex items-center justify-center p-2 hover:bg-[#1A67B1]">
-                                            <p class="font-normal text-base md:text-lg text-white">FAVORITE</p>
-                                        </div>
-                                    </a>
-                                    @endauth
+                                @endauth
+                            @else
+                                <div class="w-full py-2 rounded-full border border-gray-200 text-gray-400 font-semibold text-sm text-center">
+                                    Full
                                 </div>
-                            </div>
                             @endif
                         </div>
                     </div>
-                </div>
+                @empty
+                    <div class="col-span-3 text-center text-gray-400 py-12">No opportunities available yet.</div>
+                @endforelse
             </div>
 
-            {{-- Modal Scripts --}}
-            <script>
-                // Function to open the modal
-                function openModal() {
-                    const modal = document.getElementById('featuredImageModal');
-                    const modalContent = modal.querySelector('.modal-content');
-
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modalContent.classList.remove('scale-95', 'opacity-0');
-                    }, 10); // small delay to trigger the transition
-                }
-
-                // Function to close the modal
-                function closeModal(event) {
-                    const modal = document.getElementById('featuredImageModal');
-                    const modalContent = modal.querySelector('.modal-content');
-
-                    // Check if the clicked element is the modal background or the close button
-                    if (event.target === modal || event.target.closest('#closeModal')) {
-                        modalContent.classList.add('scale-95', 'opacity-0');
-                        modal.classList.add('opacity-0');
-
-                        setTimeout(() => {
-                            modal.classList.add('hidden');
-                        }, 300); // delay for the transition to complete
-                    }
-                }
-
-                // Example: Open modal on page load (or use your own trigger)
-                // window.onload = openModal; // You might want to change this to a specific trigger
-            </script>
-        </div>
-
-
-        {{-- ── CTA Section ──────────────────────────────────────────────────── --}}
-        <div class="w-full py-24 px-8 text-center text-white"
-             style="background: linear-gradient(135deg, #0433ff 0%, #0228cc 100%);">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to make an impact?</h2>
-            <p class="text-lg md:text-xl mb-8 text-white/80">It takes two minutes to join your first opportunity.</p>
-            <a href="{{ route('volunteer.form.view') }}">
-                <div class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#ff7b00] hover:bg-[#e06e00] text-white font-semibold text-lg transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            <div class="mt-6 text-center md:hidden">
+                <a href="{{ url('/admin/events') }}" class="inline-flex items-center gap-1 text-[#0433ff] font-medium text-sm">
+                    See all opportunities
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
-                    Browse Opportunities
+                </a>
+            </div>
+        </div>
+    </section>
+
+    {{-- ── How It Works ─────────────────────────────────────────────────── --}}
+    <section class="w-full bg-gray-50 py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="text-xs font-bold tracking-widest text-[#ff7b00] uppercase mb-2">How It Works</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Volunteering in three simple steps</h2>
+                <p class="text-gray-500 mt-2">We rebuilt the experience so going from "I want to help" to "I'm signed up" takes minutes.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach([
+                    ['icon' => 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', 'title' => 'Find a cause', 'body' => 'Browse and filter opportunities by location, date, and the causes you care about.'],
+                    ['icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Sign up in minutes', 'body' => 'Join with a click, guided forms. No lengthy paperwork – just the essentials.'],
+                    ['icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Show up & make impact', 'body' => 'Get clear details on what to expect. Your hours are logged automatically.'],
+                ] as $step)
+                <div class="flex flex-col items-start gap-4 p-6 bg-white rounded-2xl shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-[#0433ff]/10 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-[#0433ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $step['icon'] }}"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900 text-lg mb-1">{{ $step['title'] }}</p>
+                        <p class="text-gray-500 text-sm">{{ $step['body'] }}</p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#0433ff] mt-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                 </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Program + Volunteer Cards ────────────────────────────────────── --}}
+    <section class="w-full bg-white py-16 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{-- Program Card --}}
+            <div class="rounded-2xl p-8 md:p-12 flex flex-col justify-between gap-8 bg-[#0c1f5e] text-white relative overflow-hidden min-h-[320px]">
+                <div class="relative z-10">
+                    <p class="text-xs font-bold tracking-widest text-[#ff7b00] uppercase mb-4">Our Program</p>
+                    <h3 class="text-2xl md:text-3xl font-bold leading-tight mb-4">Corporate Citizenship &amp; Volunteerism</h3>
+                    <p class="text-white/70 text-sm leading-relaxed">We contribute to the nation's development goals by aligning our giving, focusing our efforts, and making real impact in the lives of people across our conglomerate, communities, and country.</p>
+                </div>
+                <div class="relative z-10">
+                    <a href="https://ayalafoundation.org" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-white/40 text-white font-semibold text-sm hover:bg-white hover:text-[#0c1f5e] transition">
+                        See all programs
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            {{-- Become a Volunteer Card --}}
+            <div class="rounded-2xl flex flex-col justify-between gap-8 text-white relative overflow-hidden min-h-[320px] bg-cover bg-center"
+                 style="background-image: url('{{ asset('img/ayala-foundation-bg-1.jpg') }}')">
+                <div class="absolute inset-0 bg-[#0c1f5e]/60 rounded-2xl"></div>
+                <div class="relative z-10 p-8 md:p-12 flex flex-col justify-between h-full gap-8">
+                    <div>
+                        <p class="text-xs font-bold tracking-widest text-[#ff7b00] uppercase mb-4">Join Us</p>
+                        <h3 class="text-2xl md:text-3xl font-bold leading-tight mb-4">Become a volunteer</h3>
+                        <p class="text-white/70 text-sm">Create your volunteer profile once, then join any opportunity with a single tap.</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('volunteer.form.view') }}"
+                           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#ff7b00] hover:bg-[#e06e00] text-white font-semibold text-sm transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Become a volunteer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Partners ─────────────────────────────────────────────────────── --}}
+    <section class="w-full bg-gray-50 py-12 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-8">Powered by our partners</p>
+            <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+                @foreach(['Ayala', 'BPI', 'Globe', 'ACEN', 'AC Health', 'Ayala Land', 'Manila Water', 'AC Energy', 'BPI Foundation', 'GCash'] as $partner)
+                    <span class="text-gray-400 font-semibold text-base hover:text-gray-600 transition cursor-default">{{ $partner }}</span>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Stories ──────────────────────────────────────────────────────── --}}
+    <section class="w-full bg-white py-16 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-10">
+                <p class="text-xs font-bold tracking-widest text-[#ff7b00] uppercase mb-2">Stories</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">From our volunteers</h2>
+            </div>
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white border border-gray-100 shadow-sm rounded-2xl p-8 md:p-10 text-center">
+                    <svg class="w-8 h-8 text-gray-200 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                    </svg>
+                    <p class="text-gray-700 text-lg leading-relaxed mb-8">
+                        "Working alongside other volunteers under Brigada Ayala was not only fun, it was truly rewarding. I'm grateful I could use my skills to help create a safer learning environment for hundreds of children."
+                    </p>
+                    <div class="flex items-center justify-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#0433ff] flex items-center justify-center text-white font-bold text-sm">JB</div>
+                        <div class="text-left">
+                            <p class="font-semibold text-gray-900 text-sm">Jay Bosi</p>
+                            <p class="text-xs text-gray-500">Volunteer · Globe Telecom</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mt-6">
+                        <span class="w-6 h-1.5 bg-[#ff7b00] rounded-full"></span>
+                        <span class="w-2 h-2 bg-gray-200 rounded-full"></span>
+                        <span class="w-2 h-2 bg-gray-200 rounded-full"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ── CTA Section ──────────────────────────────────────────────────── --}}
+    <div class="w-full py-24 px-8 text-center text-white"
+         style="background: linear-gradient(135deg, #0c1f5e 0%, #0433ff 100%);">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to make this weekend count?</h2>
+        <p class="text-lg md:text-xl mb-10 text-white/70">It takes two minutes to join your first opportunity.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="{{ url('/admin/events') }}"
+               class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#ff7b00] hover:bg-[#e06e00] text-white font-semibold text-lg transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                Browse opportunities
+            </a>
+            <a href="{{ route('volunteer.form.view') }}"
+               class="inline-flex items-center gap-2 px-8 py-3 rounded-full border-2 border-white text-white font-semibold text-lg hover:bg-white hover:text-[#0c1f5e] transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Become a volunteer
             </a>
         </div>
     </div>
-@endsection
 
+</div>
+@endsection
