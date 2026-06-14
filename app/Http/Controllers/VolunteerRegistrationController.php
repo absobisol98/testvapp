@@ -113,6 +113,10 @@ class VolunteerRegistrationController extends Controller
                     'referral_source' => $input['referral_source']
                 ]);
 
+                // Auto-assign Volunteer role
+                $volunteerRole = Role::firstOrCreate(['name' => 'Volunteer', 'guard_name' => 'web']);
+                $user->assignRole($volunteerRole);
+
                 // Attach programs
                 if (!empty($input['program_ids'])) {
                     $programData = [];
