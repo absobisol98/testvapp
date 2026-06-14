@@ -682,7 +682,7 @@
                                     @if ($article_banner)
                                     <div class="flex items-center rounded-xl justify-between h-[400px] w-full  gap-4" style="background-image: url({{ asset('storage/' . $article_banner->id . '/' . $article_banner->file_name) }});no-repeat center center;background-size: cover;background-position: top;background-repeat: no-repeat;">
                                         <div class="rounded-xl h-full w-full flex items-end justify-start p-4 bg-gradient-to-t from-[#03498D] to-transparent">
-                                            {{-- <img class="w-[30%]" src="img/logo-colored.png" alt=""> --}}
+                                            {{-- <img class="w-[30%]" src="img/logo-vapp.svg" alt=""> --}}
                                         </div>
                                     </div>
                                     @else
@@ -787,7 +787,7 @@
                                 style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
                                 <div
                                     class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
-                                    <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
+                                    <img class="w-[30%]" src="{{ asset('img/logo-vapp.svg') }}" alt="Logo">
                                 </div>
                             </div>
                             @php

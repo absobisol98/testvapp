@@ -24,7 +24,7 @@
                         style="height: 350px;  background: url('{{ asset('img/ayala-foundation-bg.jpg') }}') no-repeat center center; background-size: cover;">
                         <div class="h-full w-full flex items-end justify-start p-4"
                             style="background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));">
-                            <img style="width:40%" src="{{ asset('img/logo-colored.png') }}" alt="">
+                            <img style="width:40%" src="{{ asset('img/logo-vapp.svg') }}" alt="">
                         </div>
                     </div>
 
@@ -99,7 +99,7 @@
                                     style="background-image: url('{{ asset('img/ayala-foundation-bg.jpg') }}');">
                                     <div
                                         class="h-full w-full flex items-end justify-start p-8 bg-gradient-to-t from-black to-transparent">
-                                        <img class="w-[30%]" src="{{ asset('img/logo-colored.png') }}" alt="Logo">
+                                        <img class="w-[30%]" src="{{ asset('img/logo-vapp.svg') }}" alt="Logo">
                                     </div>
                                 </div>
 

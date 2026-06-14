@@ -113,11 +113,11 @@
 <div id="navBar" class="w-full flex items-center justify-between z-50">
 
     <a href="{{ route('main.homepage.view') }}" id="logoWhite" class="h-full max-w-[150px] md:max-w-[273px]">
-        <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
+        <img class="w-full" src="{{ asset('img/logo-vapp.svg') }}" alt="">
     </a>
 
     <a href="{{ route('main.homepage.view') }}" id="logoColored" class="none h-full max-w-[150px] md:max-w-[273px]">
-        <img class="w-full" src="{{ asset('img/logo-colored.png') }}" alt="">
+        <img class="w-full" src="{{ asset('img/logo-vapp.svg') }}" alt="">
     </a>
 
     <!-- Desktop Menu -->

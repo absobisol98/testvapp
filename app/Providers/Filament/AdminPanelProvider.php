@@ -207,9 +207,9 @@ class AdminPanelProvider extends PanelProvider
     public function getLogo(): ?string
     {
         if(request()->routeIs('filament.admin.auth.login')) {
-            return asset('img/logo-colored.png');
+            return asset('img/logo-vapp.svg');
         }else{
-             return Storage::url(app(GeneralSettings::class)->brand_logo) ?? null;;
+             return Storage::url(app(GeneralSettings::class)->brand_logo) ?? asset('img/logo-vapp.svg');
         }
 
     }
