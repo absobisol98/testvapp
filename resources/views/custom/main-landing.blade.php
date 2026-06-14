@@ -72,17 +72,8 @@
                             Become a volunteer
                         </a>
                     </div>
-                    <div style="display:flex; align-items:center; gap:14px;">
-                        <div style="display:flex;">
-                            @foreach(['#0e4f99','#1565c4','#f07a1e','#1d8a52'] as $i => $c)
-                            <div style="width:36px; height:36px; border-radius:50%; background:{{ $c }}; border:2.5px solid #fff; {{ $i > 0 ? 'margin-left:-11px;' : '' }} display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:13px; font-family:var(--font-d);">
-                                {{ ['MR','JB','CT','AL'][$i] }}
-                            </div>
-                            @endforeach
-                        </div>
-                        <div style="font-size:14.5px; color:var(--slate); font-weight:500;">
-                            <strong style="color:var(--ink);">{{ number_format($volunteerCount) }}+ volunteers</strong> have joined this year
-                        </div>
+                    <div style="font-size:14.5px; color:var(--slate); font-weight:500;">
+                        <strong style="color:var(--ink);">{{ number_format($volunteerCount) }}+ volunteers</strong> have joined this year
                     </div>
                 </div>
 
@@ -108,9 +99,9 @@
                             <div style="font-size:12.5px; color:var(--muted); font-weight:600;">hours given back</div>
                         </div>
                     </div>
-                    {{-- Floating: this weekend card --}}
+                    {{-- Floating: available now card --}}
                     <div style="position:absolute; right:-16px; top:30px; background:var(--blue-700); color:#fff; border-radius:12px; box-shadow:0 16px 40px rgba(14,79,153,.28); padding:12px 16px; animation:pop .6s .45s both;">
-                        <div style="font-size:12px; opacity:.8; font-weight:600;">This weekend</div>
+                        <div style="font-size:12px; opacity:.8; font-weight:600;">Available now</div>
                         <div style="font-weight:700; font-size:15px;">{{ $opportunities->count() }} ways to help</div>
                     </div>
                 </div>
@@ -142,10 +133,6 @@
                     </div>
                 </div>
                 @endforeach
-            </div>
-            <div style="margin-top:26px; font-size:12.5px; color:rgba(255,255,255,.55); display:flex; align-items:center; gap:8px;">
-                <span style="width:7px; height:7px; border-radius:50%; background:var(--green-600); box-shadow:0 0 0 3px rgba(29,138,82,.3); display:inline-block;"></span>
-                Updated live — numbers grow as volunteers like you sign up
             </div>
         </div>
     </section>
@@ -244,8 +231,19 @@
                                         </button>
                                     </form>
                                 @else
-                                    <a href="{{ url('/admin/login') }}" style="display:block; width:100%; padding:10px; border-radius:999px; background:var(--or-500); color:#fff; font-weight:700; font-size:13px; text-align:center; transition:.15s;"
-                                       onmouseover="this.style.background='var(--or-600)'" onmouseout="this.style.background='var(--or-500)'">Join</a>
+                                    <div x-data="{ open: false }">
+                                        <button @click="open = true" style="width:100%; padding:10px; border-radius:999px; background:var(--or-500); color:#fff; font-weight:700; font-size:13px; border:none; cursor:pointer; transition:.15s;"
+                                            onmouseover="this.style.background='var(--or-600)'" onmouseout="this.style.background='var(--or-500)'">Join</button>
+                                        <div x-show="open" x-transition style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.5);">
+                                            <div style="background:#fff; border-radius:16px; padding:32px; max-width:360px; width:90%; text-align:center;">
+                                                <h3 style="font-size:20px; font-weight:700; margin:0 0 8px;">Join this opportunity</h3>
+                                                <p style="color:var(--slate); font-size:14px; margin:0 0 20px;">Please log in or register to volunteer.</p>
+                                                <a href="/admin/login" style="display:block; width:100%; padding:11px; border-radius:999px; background:var(--blue-700); color:#fff; font-weight:700; font-size:14px; margin-bottom:10px;">Already have an account? Log In</a>
+                                                <a href="/volunteer-registration" style="display:block; width:100%; padding:11px; border-radius:999px; background:var(--or-500); color:#fff; font-weight:700; font-size:14px;">New volunteer? Register</a>
+                                                <button @click="open = false" style="margin-top:14px; font-size:13px; color:var(--muted); background:none; border:none; cursor:pointer;">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endauth
                             @else
                                 <div style="width:100%; padding:10px; border-radius:999px; border:1.5px solid var(--line); color:var(--muted); font-weight:700; font-size:13px; text-align:center;">Fully booked</div>
@@ -367,7 +365,7 @@
 
     {{-- ── CTA BAND ─────────────────────────────────────────────────── --}}
     <section style="background:linear-gradient(120deg, var(--blue-800), var(--blue-700)); position:relative; overflow:hidden; padding:64px 28px; text-align:center;">
-        <h2 style="font-size:clamp(28px,3.4vw,42px); color:#fff; max-width:680px; margin:0 auto 16px;">Ready to make this weekend count?</h2>
+        <h2 style="font-size:clamp(28px,3.4vw,42px); color:#fff; max-width:680px; margin:0 auto 16px;">Ready to make an impact?</h2>
         <p style="color:rgba(255,255,255,.85); font-size:18px; max-width:520px; margin:0 auto 30px;">It takes two minutes to join your first opportunity.</p>
         <div style="display:flex; gap:13px; justify-content:center; flex-wrap:wrap;">
             <a href="{{ url('/admin/events') }}"

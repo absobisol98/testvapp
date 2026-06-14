@@ -3,7 +3,7 @@
     <div class="w-full px-8">
         <div class="w-full flex items-center justify-between gap-4">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Facilitator</p>
+                <p class="text-[28px] md:text-[32px] text-[#0433ff] font-[700]">Facilitator</p>
             </div>
 
             {{-- <a href="">

@@ -124,10 +124,6 @@ html, body {
     height: 4rem !important;
 }
 
-.fi-topbar .ms-auto .fi-user-menu,
-{
-    @apply !important;
-}
 
 .fi-topbar .ms-auto .fi-global-search
 {

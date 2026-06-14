@@ -3,13 +3,13 @@
     <div class="w-full px-8">
         <div class="w-full flex items-center justify-between gap-4">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">On-going Opportunities</p>
+                <p class="text-[28px] md:text-[32px] text-[#0433ff] font-[700]">On-going Opportunities</p>
             </div>
 
             <a href="/admin/events/create">
                 <button class="w-fit">
                     <div
-                        class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center justify-center rounded-full rounded-none py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
+                        class="h-auto md:h-[48px] w-full bg-[#0433ff] flex items-center justify-center rounded-full rounded-none py-0 md:py-2 px-2 md:px-6 hover:bg-[#1A67B1]">
                         <p class="font-normal text-lg text-white hidden md:block">CREATE NEW OPPORTUNITY</p>
 
                         <!-- Tablet and Mobile text -->
@@ -42,10 +42,10 @@
 
                             <div class="flex items-center justify-start gap-2">
                                     @include('custom.icons.admin-icons', ['icon' => 'for-review'])
-                                    <p class="font-[700] text-[#F55E1D]">{{$opportunity->status?->name}}</p>
+                                    <p class="font-[700] text-[#ff7b00]">{{$opportunity->status?->name}}</p>
                             </div>
                         </div>
-                        <p class="text-[28px] font-bold font-bold capitalize text-[#03498D]">{{ $opportunity->title }}</p>
+                        <p class="text-[28px] font-bold font-bold capitalize text-[#0433ff]">{{ $opportunity->title }}</p>
 
                         <p class="text-xl font-normal mb-3">{{ $opportunity->location }}
                         </p>

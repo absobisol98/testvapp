@@ -31,7 +31,7 @@
     <div id="mainLandingPage" class="w-full flex flex-col items-center justify-center">
 
         {{-- Desktop: Hero Banner Section --}}
-        <section class="hidden lg:block h-[100vh] w-full bg-[#03498D]">
+        <section class="hidden lg:block h-[100vh] w-full bg-[#0433ff]">
             <div class="grid grid-cols-5">
                 <div class="flex justify-center items-center col-span-2 pl-5 pr-0 lg:pl-[10%] pr-10 md:pl-14 pr-5">
                     <div class="container whitespace-pre-line text-white">
@@ -46,7 +46,7 @@
         </section>
         {{-- Tablet & mobile: Hero Banner Section --}}
         <section class="block lg:hidden h-[100vh] w-full flex flex-col items-center justify-center p-[5%] text-white relative" style="background: url('{{ asset('img/ayala.png') }}') no-repeat center center; background-size: cover;">
-            <div class="absolute inset-0 bg-[#03498D] opacity-50"></div>
+            <div class="absolute inset-0 bg-[#0433ff] opacity-50"></div>
             <div class="flex flex-col items-center justify-center relative text-center z-10">
                 <p class="font-[700] text-4xl leading-none">Your involvement is important to us!</p>
                 <p class="font-[400] text-2xl">Ayala Corporate Citizenship and Volunteer Platform</p>
@@ -54,7 +54,7 @@
         </section>
 
         {{-- style="background: url('{{ asset('img/registration-bg.png') }}') no-repeat right center; background-size: cover;" --}}
-        <div class="rounded-lg m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] z-10 bg-[#F55E1D]">
+        <div class="rounded-lg m-[-20vh] mb-8 xl:w-[80%] lg:w-[85%] md:w-[90%] sm:w-[95%] w-[98%] z-10 bg-[#ff7b00]">
                 <div class="items-start justify-center min-h-[756px]">
                     <!-- Left Side -->
                      <form  action="{{ route('volunteer.form.store') }}" method="POST">

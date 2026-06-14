@@ -3,7 +3,7 @@
         {{--  --}}
         <div class="flex flex-col md:flex-row items-start md:items-center justify-start gap-4 mb-4">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-bold whitespace-nowrap">Recent Opportunities</p>
+                <p class="text-[28px] md:text-[32px] text-[#0433ff] font-bold whitespace-nowrap">Recent Opportunities</p>
             </div>
 
             <div
@@ -30,7 +30,7 @@
 
                     <div class="w-full text-[14px] p-4">
                         <div class="w-full flex items-center justify-between gap-4 text-[14px] font-normal">
-                            <div class="w-fit py-1 px-2 flex items-center justify-center bg-[#F55E1D]">
+                            <div class="w-fit py-1 px-2 flex items-center justify-center bg-[#ff7b00]">
                                 <p class="font-normal text-white">
                                     {{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                             </div>
@@ -41,7 +41,7 @@
                             </div>
                         </div>
 
-                        <p class="text-2xl font-bold text-[#03498D] mt-3 mb-1 leading-none capitalize">
+                        <p class="text-2xl font-bold text-[#0433ff] mt-3 mb-1 leading-none capitalize">
                             {{ \Illuminate\Support\Str::limit($opportunity->title, 22) }}</p>
 
                         <p class="font-normal mb-3">Zoom Webinar Online, {{ $opportunity->location }}</p>
@@ -61,14 +61,14 @@
                         <div class="flex items-center justify-start gap-4 mt-4 max-w-[416px] text-sm md:text-base font-normal">
                             <button id="recent-opportunity-btn-{{ $opportunity->id }}" class="w-full">
                                 <div
-                                    class="h-[40px] w-full flex items-center justify-center p-2 hover:bg-[#1A67B1]" style="background:#005096; ">
+                                    class="h-[40px] w-full flex items-center justify-center p-2 hover:bg-[#1A67B1]" style="background:#0433ff; ">
                                     <p class="text-white">VIEW DETAILS</p>
                                 </div>
                             </button>
 
                             <a href="" class="w-full">
                                 <div
-                                    class="h-[40px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                    class="h-[40px] w-full bg-[#ff7b00] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                     <p class="text-white">SIGN UP</p>
                                 </div>
                             </a>
@@ -104,11 +104,11 @@
                                 </div>
 
                                 <div class="w-full p-4 flex flex-col gap-4">
-                                    <div class="w-fit py-1 md:py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
+                                    <div class="w-fit py-1 md:py-2 px-4 flex items-center justify-center bg-[#ff7b00]">
                                         <p class="text-lg font-normal text-white">{{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                                     </div>
 
-                                    <p class="text-2xl md:text-4xl font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
+                                    <p class="text-2xl md:text-4xl font-bold text-[#0433ff] capitalize">{{ $opportunity->title }}</p>
 
                                     <p class="text-xl md:text-2xl font-normal">Zoom Webinar Online, {{ $opportunity->location }}
                                     </p>
@@ -140,14 +140,14 @@
                                                 class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                                 <a href="">
                                                     <div
-                                                        class="h-auto md:h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                        class="h-auto md:h-[53px] w-[229px] bg-[#ff7b00] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                                         <p class="font-normal text-base md:text-lg text-white">SIGN UP</p>
                                                     </div>
                                                 </a>
 
                                                 <a href="">
                                                     <div
-                                                        class="h-auto md:h-[53px] w-[229px] bg-[#005096] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
+                                                        class="h-auto md:h-[53px] w-[229px] bg-[#0433ff] flex items-center justify-center p-2 hover:bg-[#1A67B1]">
                                                         <p class="font-normal text-base md:text-lg text-white">FAVORITE</p>
                                                     </div>
                                                 </a>

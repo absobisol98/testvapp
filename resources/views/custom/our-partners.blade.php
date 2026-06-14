@@ -7,7 +7,7 @@
         <div class="w-full grid grid-cols-1 lg:grid-cols-2 mt-[128px]">
             <!-- Our Program Section -->
             <div
-                class="col-span-1 flex flex-col items-center justify-between gap-8 font-medium bg-[#03498D]">
+                class="col-span-1 flex flex-col items-center justify-between gap-8 font-medium bg-[#0433ff]">
 
             </div>
 
@@ -79,13 +79,13 @@
                                 </div>
 
                                 <div class="w-full flex flex-col items-start justify-center gap-2">
-                                    <p class="text-[28px] font-bold text-[#03498D]">{{ $partner->name }}</p>
+                                    <p class="text-[28px] font-bold text-[#0433ff]">{{ $partner->name }}</p>
                                     <p class="font-normal text-black">{{ strtoupper($partner->category) }}</p>
                                     <p class="font-normal text-[#7A7A7A]">{{ $partner->description }}</p>
                                 </div>
 
                                 <a href="{{ route('businessunit.homepage.view', $partner->slug) }}" class="cursor-pointer">
-                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#FF781E] flex items-center justify-center p-2 rounded-3xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] flex items-center justify-center p-2 rounded-3xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
                                         <p class="font-medium text-base md:text-[18px] text-white">EXPLORE</p>
                                     </div>
                                 </a>

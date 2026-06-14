@@ -16,10 +16,10 @@ return new class extends Migration
                 "gray": "#485173",
                 "info": "#6E6DD7",
                 "danger": "#ff5467",
-                "primary": "#FF781E",
+                "primary": "#ff7b00",
                 "success": "#1DCB8A",
                 "warning": "#f5de8d",
-                "secondary": "#005096"
+                "secondary": "#0433ff"
             }']);
     }
 

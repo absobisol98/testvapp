@@ -11,7 +11,7 @@
         .header {
             text-align: center;
             padding: 20px;
-            background-color: #FF781E;
+            background-color: #ff7b00;
         }
         .logo {
             max-width: 200px;
@@ -24,7 +24,7 @@
         .button {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #FF781E;
+            background-color: #ff7b00;
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -37,13 +37,13 @@
             color: #666666;
         }
         .highlight {
-            color: #FF781E;
+            color: #ff7b00;
             font-weight: bold;
         }
         .event-details {
             background-color: #f8f8f8;
             padding: 15px;
-            border-left: 4px solid #005096;
+            border-left: 4px solid #0433ff;
             margin: 20px 0;
         }
     </style>
@@ -62,7 +62,7 @@
         <p>This is a gentle reminder that your registered event will begin in 15 minutes.</p>
 
         <div class="event-details">
-            <h3 style="color: #005096;">Opportunity Details:</h3>
+            <h3 style="color: #0433ff;">Opportunity Details:</h3>
             <p><strong>Opportunity:</strong> {{ $event->title }}</p>
             <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->start_date)->format('F d, Y') }}</p>
             <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }}</p>

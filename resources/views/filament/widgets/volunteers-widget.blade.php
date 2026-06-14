@@ -3,14 +3,14 @@
     <div class="w-full px-8">
         <div class="w-full flex flex-row items-start md:items-center justify-between gap-4">
             <div class="w-fit">
-                <p class="text-[28px] md:text-[32px] text-[#03498D] font-[700]">Volunteers</p>
+                <p class="text-[28px] md:text-[32px] text-[#0433ff] font-[700]">Volunteers</p>
             </div>
 
             <div class="w-fit flex items-center justify-between gap-4">
                 <a href="/admin/volunteers/create">
                     <button class="w-fit">
                         <div
-                            class="h-auto md:h-[48px] w-full bg-[#005096] flex items-center rounded-full justify-center py-0 md:py-2 px-2 md:px-6  hover:bg-[#1A67B1]">
+                            class="h-auto md:h-[48px] w-full bg-[#0433ff] flex items-center rounded-full justify-center py-0 md:py-2 px-2 md:px-6  hover:bg-[#1A67B1]">
                             <p class="font-normal text-lg text-white hidden md:block">CREATE NEW VOLUNTEER</p>
 
                             <!-- Tablet and Mobile text -->
@@ -35,27 +35,27 @@
         {{-- <div class="w-full grid grid-cols-2 gap-4 mb-8 mx-auto sm:grid-cols-3 lg:grid-cols-5">
             <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                 <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat1 }}</p>
-                <p class="text-sm font-bold text-[#03498D]">PARTNERS</p>
+                <p class="text-sm font-bold text-[#0433ff]">PARTNERS</p>
             </div>
 
             <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                 <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat2 }}</p>
-                <p class="text-sm font-bold text-[#03498D]">FACILITATORS</p>
+                <p class="text-sm font-bold text-[#0433ff]">FACILITATORS</p>
             </div>
 
             <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                 <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat3 }}</p>
-                <p class="text-sm font-bold text-[#03498D]">ACTIVE</p>
+                <p class="text-sm font-bold text-[#0433ff]">ACTIVE</p>
             </div>
 
             <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                 <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat4 }}</p>
-                <p class="text-sm font-bold text-[#03498D]">INACTIVE</p>
+                <p class="text-sm font-bold text-[#0433ff]">INACTIVE</p>
             </div>
 
             <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#F9F9F9] shadow-md p-8">
                 <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalStat5 }}</p>
-                <p class="text-sm font-bold text-[#03498D]">PENDING ACTIVATION</p>
+                <p class="text-sm font-bold text-[#0433ff]">PENDING ACTIVATION</p>
             </div>
         </div> --}}
 

@@ -6,7 +6,7 @@
 @section('content')
     <div id="bpiHomePage" class="w-full flex flex-col items-center justify-center">
         {{-- Desktop: Hero Banner Section --}}
-        <section class="hidden lg:block h-fit w-full bg-[#03498D] mt-[128px]">
+        <section class="hidden lg:block h-fit w-full bg-[#0433ff] mt-[128px]">
             <div class="h-[90vh] w-full p-8 flex flex-col justify-center items-center gap-4 text-white"
                 style="background: url('{{$eventCover }}') no-repeat center center; background-size: cover;">
                 <img class="w-[280px]" src="{{ $logo }}" alt="bpi-logo">
@@ -250,7 +250,7 @@
                                 </div>
 
                                 <div class="w-full">
-                                    <p class="text-[28px] font-bold text-[#03498D] capitalize">{{ $opportunity->title }}</p>
+                                    <p class="text-[28px] font-bold text-[#0433ff] capitalize">{{ $opportunity->title }}</p>
 
                                     <p class="text-[18px] font-[400] mb-3 capitalize">
                                         {{ $opportunity->location }}</p>
@@ -351,7 +351,7 @@
                 @foreach ($featuredEvents as $featured)
                     <div class="swiper-slide relative">
                         <div class="grid grid-cols-2 lg:grid-cols-2 ">
-                            <div class="col-span-1 h-full min-h-[500px] gap-8 font-medium text-white bg-[#F55E1D]">
+                            <div class="col-span-1 h-full min-h-[500px] gap-8 font-medium text-white bg-[#ff7b00]">
                                 <img src="{{  $featured->getBanner() }}" alt="" class="object-fit w-full h-full">
                             </div>
                             <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8 z-1">
@@ -422,11 +422,11 @@
 
 
                                 <div class="w-full p-4">
-                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#F55E1D]">
+                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#ff7b00]">
                                         <p class="text-lg font-normal text-white">{{$upcoming->event_type->name}}</p>
                                     </div>
 
-                                    <p class="text-4xl font-normal text-[#03498D]">{{$upcoming->title}}</p>
+                                    <p class="text-4xl font-normal text-[#0433ff]">{{$upcoming->title}}</p>
 
                                     <p class="text-2xl font-normal">{{$upcoming?->location}}</p>
 
@@ -449,7 +449,7 @@
                                     <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                         <a href="{{route('filament.admin.resources.events.view',['record' => $opportunity->id])}}">
                                             <div
-                                                class="h-[53px] w-[229px] bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                class="h-[53px] w-[229px] bg-[#ff7b00] flex items-center justify-center p-2 hover:bg-[#FF9141]">
                                                 <p class="font-normal text-lg text-white">SIGN UP</p>
                                             </div>
                                         </a>
