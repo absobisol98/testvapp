@@ -44,6 +44,7 @@ class Thumbnail extends ListRecords
             ->columns([
                 View::make('filament.tables.columns.event-thumbnail'),
             ])
+            ->headerActions([])
             ->filters([
                 Filter::make('status')
                     ->label('Show')

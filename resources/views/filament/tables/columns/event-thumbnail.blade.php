@@ -210,11 +210,23 @@
                         <button type="button"
                                 onclick="vappDelete('{{ $record->id }}')"
                                 class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#dc2626] w-full hover:bg-red-50 transition-colors bg-none border-none cursor-pointer"
-                                style="display:flex;">
+                                style="display:flex; border-bottom:1px solid #f3f4f6;">
                             <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12a2 2 0 002 2h8a2 2 0 002-2V7z"/>
                             </svg>
                             Delete
+                        </button>
+                    @endif
+
+                    @if(\Illuminate\Support\Facades\Auth::user()->can('export', $record))
+                        <button type="button"
+                                onclick="vappExport('{{ $record->id }}')"
+                                class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#3b82f6] w-full hover:bg-blue-50 transition-colors bg-none border-none cursor-pointer"
+                                style="display:flex;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Export
                         </button>
                     @endif
 
@@ -268,6 +280,10 @@ if (!window._vappCardHelpersLoaded) {
             }
         })
         .catch(() => alert('Network error. Please try again.'));
+    };
+
+    window.vappExport = function(id) {
+        window.location.href = '/admin/events/' + id + '/export-registrants';
     };
 }
 </script>
