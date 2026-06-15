@@ -192,12 +192,16 @@ class EventResource extends Resource implements HasShieldPermissions
                                 ->schema([
                                     Forms\Components\DateTimePicker::make('start_date')
                                         ->label('Event Start')
-                                        ->helperText('The first day of the opportunity.')
+                                        ->helperText('Must be today or a future date.')
                                         ->required()
                                         ->live()
                                         ->seconds(false)
                                         ->default(now()->setTime(8, 0))
-                                        ->minDate(now()->startOfDay()),
+                                        ->minDate(now()->startOfDay())
+                                        ->validationMessages([
+                                            'after_or_equal' => 'The event start date cannot be in the past. Please select today or a future date.',
+                                            'min_date'       => 'The event start date cannot be in the past. Please select today or a future date.',
+                                        ]),
                                     Forms\Components\DateTimePicker::make('end_date')
                                         ->label('Event End')
                                         ->helperText('The last day of the opportunity. All shift dates must fall within this range.')
@@ -286,7 +290,13 @@ class EventResource extends Resource implements HasShieldPermissions
                                                 ->required()
                                                 ->minDate(fn ($get) => $get('../../start_date') ? \Carbon\Carbon::parse($get('../../start_date'))->startOfDay() : null)
                                                 ->maxDate(fn ($get) => $get('../../end_date') ? \Carbon\Carbon::parse($get('../../end_date'))->endOfDay() : null)
-                                                ->helperText('Must be within the event date range.'),
+                                                ->helperText('Must fall within the event start and end date range.')
+                                                ->validationMessages([
+                                                    'after_or_equal' => 'Shift date must be on or after the event start date.',
+                                                    'before_or_equal' => 'Shift date must be on or before the event end date.',
+                                                    'min_date'        => 'Shift date must be on or after the event start date.',
+                                                    'max_date'        => 'Shift date must be on or before the event end date.',
+                                                ]),
                                             Forms\Components\TimePicker::make('start_time')
                                                 ->label('Start Time')
                                                 ->required()
