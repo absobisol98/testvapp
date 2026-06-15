@@ -2,130 +2,213 @@
 @section('title', 'Volunteer Registration')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 flex flex-col" x-data="volunteerForm()">
+<div class="min-h-screen flex flex-col" x-data="volunteerForm()" style="background-color: #f6f7f9;">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600;700&display=swap');
+
+        :root {
+            --blue-900: #072b54;
+            --blue-800: #0a3a6e;
+            --blue-700: #0e4f99;
+            --blue-600: #1565c4;
+            --blue-500: #2a7de0;
+            --blue-100: #d6e6f8;
+            --blue-50: #eef4fc;
+            --orange-600: #d9650c;
+            --orange-500: #f07a1e;
+            --orange-400: #f79544;
+            --green-600: #1d8a52;
+            --green-50: #e8f5ee;
+            --ink: #15181d;
+            --slate: #454c58;
+            --muted: #737a87;
+            --line: #e6e8ec;
+            --line-soft: #eef0f3;
+            --bg: #ffffff;
+            --bg-soft: #f6f7f9;
+        }
+
         [x-cloak] { display: none !important; }
 
+        body {
+            font-family: 'Public Sans', system-ui, sans-serif;
+            color: var(--ink);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+        }
+
         .step-indicator {
-            @apply w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-all;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         .step-indicator.active {
-            @apply bg-blue-600 text-white;
+            background: var(--blue-700);
+            color: #fff;
         }
 
         .step-indicator.completed {
-            @apply bg-blue-600 text-white;
+            background: var(--green-600);
+            color: #fff;
         }
 
         .step-indicator.inactive {
-            @apply bg-gray-200 text-gray-600;
+            background: var(--line);
+            color: var(--muted);
         }
 
         .step-line {
-            @apply h-0.5 flex-1 transition-all;
+            flex: 1;
+            height: 2px;
+            margin: 0 10px;
+            transition: all 0.2s ease;
         }
 
         .step-line.active {
-            @apply bg-gray-300;
+            background: var(--green-600);
         }
 
         .step-line.inactive {
-            @apply bg-gray-200;
+            background: var(--line);
         }
 
-        .form-input {
-            @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900;
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--line);
+            border-radius: 12px;
+            font: inherit;
+            font-size: 15px;
+            color: var(--ink);
+            background: #fff;
+            transition: all 0.14s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 3px var(--blue-50);
         }
 
         .form-input::placeholder {
-            @apply text-gray-400;
+            color: var(--muted);
         }
 
         .form-label {
-            @apply block text-sm font-medium text-gray-800 mb-2;
+            display: block;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--slate);
+            margin-bottom: 7px;
         }
 
         .form-label.required::after {
             content: ' *';
-            @apply text-red-500;
+            color: var(--orange-600);
+        }
+
+        .form-hint {
+            font-size: 12.5px;
+            color: var(--muted);
+            margin-top: 5px;
         }
 
         .error-message {
-            @apply text-red-500 text-sm mt-1;
+            font-size: 12.5px;
+            color: var(--orange-600);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .info-banner {
+            padding: 14px 16px;
+            background: var(--blue-50);
+            border-radius: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            font-size: 13.5px;
+            color: var(--blue-800);
+            line-height: 1.5;
+        }
+
+        .info-icon {
+            width: 17px;
+            height: 17px;
+            color: var(--blue-700);
+            flex-shrink: 0;
+            margin-top: 2px;
         }
     </style>
 
     <!-- Header -->
-    <div class="bg-white border-b border-gray-200">
-        <div class="max-w-3xl mx-auto px-6 py-6">
-            <button @click="goBack()" class="flex items-center text-gray-600 hover:text-gray-900 mb-6 transition">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div style="background: #fff; border-bottom: 1px solid var(--line);">
+        <div style="max-width: 640px; margin: 0 auto; padding: 36px 20px;">
+            <button @click="goBack()" style="display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 14px; font-weight: 600; margin-bottom: 20px; background: none; border: none; cursor: pointer;">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
                 Cancel
             </button>
 
-            <p class="text-orange-500 font-semibold text-sm tracking-wide mb-2">VAPP</p>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Become a volunteer</h1>
-            <p class="text-gray-600">Create your profile. Takes about two minutes.</p>
+            <div style="margin-bottom: 22px;">
+                <p style="font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange-600); margin-bottom: 8px;">VApp</p>
+                <h1 style="font-size: 28px; margin-bottom: 7px;">Become a volunteer</h1>
+                <p style="color: var(--slate); margin-top: 7px; font-size: 15.5px;">Create your profile. Takes about two minutes.</p>
+            </div>
         </div>
     </div>
 
     <!-- Step Indicators -->
-    <div class="bg-white border-b border-gray-200">
-        <div class="max-w-3xl mx-auto px-6 py-8">
-            <div class="flex items-center gap-4">
-                <div class="step-indicator" :class="currentStep >= 1 ? 'active' : 'inactive'">
-                    <template x-if="currentStep > 1">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+    <div style="background: #fff; border-bottom: 1px solid var(--line);">
+        <div style="max-width: 640px; margin: 0 auto; padding: 28px 20px;">
+            <!-- Stepper -->
+            <div style="display: flex; align-items: center; margin-bottom: 26px;">
+                <template x-for="(step, i) in ['About you', 'Programs', 'Account']" :key="i">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="step-indicator" :class="i < currentStep ? 'completed' : i === currentStep ? 'active' : 'inactive'">
+                            <template x-if="i < currentStep">
+                                <svg style="width: 15px; height: 15px;" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </template>
+                            <template x-if="!(i < currentStep)">
+                                <span x-text="i + 1"></span>
+                            </template>
+                        </div>
+                        <span style="font-size: 13px; font-weight: 700; transition: all 0.2s ease;" :style="i === currentStep ? 'color: var(--ink)' : i < currentStep ? 'color: var(--slate)' : 'color: var(--muted)';" x-text="step"></span>
+                    </div>
+                    <template x-if="i < 2">
+                        <div class="step-line" :class="i < currentStep ? 'active' : 'inactive'"></div>
                     </template>
-                    <template x-if="currentStep <= 1">
-                        <span>1</span>
-                    </template>
-                </div>
-
-                <div class="step-line" :class="currentStep > 1 ? 'active' : 'inactive'"></div>
-
-                <div class="step-indicator" :class="currentStep >= 2 ? 'active' : 'inactive'">
-                    <template x-if="currentStep > 2">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
-                    </template>
-                    <template x-if="currentStep <= 2">
-                        <span>2</span>
-                    </template>
-                </div>
-
-                <div class="step-line" :class="currentStep > 2 ? 'active' : 'inactive'"></div>
-
-                <div class="step-indicator" :class="currentStep >= 3 ? 'active' : 'inactive'">
-                    <span>3</span>
-                </div>
-            </div>
-
-            <div class="flex justify-between mt-4 text-sm">
-                <span class="text-gray-600 font-medium">About you</span>
-                <span class="text-gray-400">Programs</span>
-                <span class="text-gray-400">Account</span>
+                </template>
             </div>
         </div>
     </div>
 
     <!-- Form Content -->
-    <div class="flex-1 py-12 px-6">
-        <div class="max-w-3xl mx-auto">
-            <form @submit.prevent="submitForm()" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+    <div style="flex: 1; padding: 36px 20px 80px; display: flex; flex-direction: column;">
+        <div style="max-width: 640px; margin: 0 auto; width: 100%;">
+            <form @submit.prevent="submitForm()" style="background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 28px 30px; box-shadow: 0 1px 2px rgba(16,32,56,.06), 0 1px 3px rgba(16,32,56,.05);">
                 @csrf
 
                 <!-- Step 1: About You -->
-                <div x-show="currentStep === 1" x-transition>
-                    <h2 class="text-xl font-semibold text-gray-900 mb-8">Personal information</h2>
+                <div x-show="currentStep === 1" x-transition style="display: flex; flex-direction: column; gap: 18px;">
+                    <h2 style="font-size: 20px; margin-bottom: 2px;">Personal information</h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                         <div>
                             <label class="form-label required">Given name</label>
                             <input
@@ -146,11 +229,11 @@
                                 x-model="form.nickname"
                                 placeholder="How should we call you?"
                                 class="form-input">
-                            <p class="text-gray-500 text-xs mt-1">Optional</p>
+                            <p class="form-hint">Optional</p>
                         </div>
                     </div>
 
-                    <div class="mb-6">
+                    <div>
                         <label class="form-label required">Last name</label>
                         <input
                             type="text"
@@ -163,7 +246,7 @@
                         </template>
                     </div>
 
-                    <div class="mb-6">
+                    <div>
                         <label class="form-label required">Email</label>
                         <input
                             type="email"
@@ -176,9 +259,9 @@
                         </template>
                     </div>
 
-                    <div class="mb-8">
+                    <div>
                         <label class="form-label required">Age range</label>
-                        <select x-model="form.age_range" class="form-input" required>
+                        <select x-model="form.age_range" class="form-select" required>
                             <option value="">Select your age range</option>
                             <option value="10-17">10-17 years old</option>
                             <option value="18-24">18-24 years old</option>
@@ -195,32 +278,34 @@
                 </div>
 
                 <!-- Step 2: Programs -->
-                <div x-show="currentStep === 2" x-transition>
-                    <h2 class="text-xl font-semibold text-gray-900 mb-8">Select programs</h2>
-                    <p class="text-gray-600 mb-6">Choose the programs you're interested in volunteering for.</p>
+                <div x-show="currentStep === 2" x-transition style="display: flex; flex-direction: column; gap: 22px;">
+                    <h2 style="font-size: 20px; margin-bottom: 2px;">Select programs</h2>
+                    <p style="color: var(--slate); margin-top: 0;">Choose the programs you're interested in volunteering for.</p>
 
-                    <div class="space-y-3">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
                         @foreach($programs ?? [] as $program)
-                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                        <label style="display: flex; align-items: center; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14.5px; transition: all 0.14s ease; background: #fff;"
+                               onmouseover="this.style.borderColor='var(--blue-400)'; this.style.background='var(--blue-50)'"
+                               onmouseout="this.style.borderColor='var(--line)'; this.style.background='#fff'">
                             <input
                                 type="checkbox"
                                 name="programs[]"
                                 value="{{ $program->id }}"
                                 @change="updatePrograms()"
-                                class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <span class="ml-3 font-medium text-gray-700">{{ $program->name }}</span>
+                                style="width: 17px; height: 17px; accent-color: var(--blue-700); flex-shrink: 0;">
+                            <span style="margin-left: 11px;">{{ $program->name }}</span>
                         </label>
                         @endforeach
                     </div>
                 </div>
 
                 <!-- Step 3: Account -->
-                <div x-show="currentStep === 3" x-transition>
-                    <h2 class="text-xl font-semibold text-gray-900 mb-8">Account setup</h2>
+                <div x-show="currentStep === 3" x-transition style="display: flex; flex-direction: column; gap: 18px;">
+                    <h2 style="font-size: 20px; margin-bottom: 2px;">Account setup</h2>
 
-                    <div class="mb-6">
+                    <div>
                         <label class="form-label required">Business Unit / Company</label>
-                        <select x-model="form.company_id" class="form-input" required>
+                        <select x-model="form.company_id" class="form-select" required>
                             <option value="">Select your business unit</option>
                             @foreach($companies ?? [] as $company)
                             <option value="{{ $company->id }}">{{ $company->name }}</option>
@@ -231,31 +316,34 @@
                         </template>
                     </div>
 
-                    <div class="mb-8">
-                        <label class="flex items-start">
-                            <input type="checkbox" x-model="form.agree_terms" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-1">
-                            <span class="ml-3 text-sm text-gray-700">I agree to the terms and conditions and privacy policy</span>
+                    <div>
+                        <label style="display: flex; align-items: flex-start; gap: 11px; cursor: pointer; font-size: 15px;">
+                            <input type="checkbox" x-model="form.agree_terms" style="width: 17px; height: 17px; accent-color: var(--blue-700); flex-shrink: 0; margin-top: 2px;">
+                            <span>I agree to the terms and conditions and privacy policy</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex items-center justify-between pt-8 border-t border-gray-200">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 28px; border-top: 1px solid var(--line); margin-top: 28px;">
                     <button
                         type="button"
                         @click="previousStep()"
                         x-show="currentStep > 1"
-                        class="px-6 py-3 text-gray-700 font-semibold hover:text-gray-900 transition">
-                        Cancel
+                        style="padding: 13px 24px; text-decoration: none; color: var(--slate); font-weight: 700; font-size: 15px; border: none; background: none; cursor: pointer; transition: all 0.16s ease;">
+                        Back
                     </button>
+                    <div x-show="currentStep === 1"></div>
 
                     <button
                         type="button"
                         @click="nextStep()"
                         x-show="currentStep < 3"
-                        class="flex items-center gap-2 px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition">
+                        style="display: inline-flex; align-items: center; justify-content: center; gap: 9px; background: var(--orange-500); color: #fff; font-weight: 700; font-size: 15px; padding: 13px 24px; border-radius: 999px; border: none; cursor: pointer; transition: all 0.16s ease; box-shadow: 0 6px 16px rgba(240,122,30,.28);"
+                        onmouseover="this.style.background='var(--orange-600)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 10px 22px rgba(240,122,30,.34)'"
+                        onmouseout="this.style.background='var(--orange-500)'; this.style.transform='none'; this.style.boxShadow='0 6px 16px rgba(240,122,30,.28)'">
                         Continue
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </button>
@@ -264,7 +352,9 @@
                         type="submit"
                         x-show="currentStep === 3"
                         :disabled="isSubmitting"
-                        class="px-8 py-3 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white font-semibold rounded-xl transition">
+                        style="display: inline-flex; align-items: center; justify-content: center; gap: 9px; background: var(--orange-500); color: #fff; font-weight: 700; font-size: 15px; padding: 13px 24px; border-radius: 999px; border: none; cursor: pointer; transition: all 0.16s ease;"
+                        onmouseover="!this.disabled && (this.style.background='var(--orange-600)', this.style.transform='translateY(-1px)')"
+                        onmouseout="this.style.background='var(--orange-500)'; this.style.transform='none'">
                         <span x-show="!isSubmitting">Submit</span>
                         <span x-show="isSubmitting">Submitting...</span>
                     </button>
@@ -272,11 +362,11 @@
             </form>
 
             <!-- Footer Note -->
-            <div class="flex items-start justify-center gap-2 mt-8 text-gray-600">
-                <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 32px; color: var(--muted); font-size: 13.5px;">
+                <svg style="width: 16px; height: 16px; color: var(--muted); flex-shrink: 0;" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zm-11-1a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd"/>
                 </svg>
-                <p class="text-sm">Your information is kept private and secure.</p>
+                <p>Your information is kept private and secure.</p>
             </div>
         </div>
     </div>
