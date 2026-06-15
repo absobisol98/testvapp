@@ -97,7 +97,7 @@
     </div>
 
     <div class="px-4 pb-4 flex items-center gap-2">
-        <a href="{{ $detailsUrl }}" class="flex-1 min-w-0 inline-flex items-center justify-center gap-1.5 bg-[#f26522] hover:bg-[#d4541a] text-white text-[13px] font-semibold py-3 px-4 rounded-xl transition-colors whitespace-nowrap">
+        <a href="{{ $detailsUrl }}" class="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#f26522] hover:bg-[#d4541a] text-white text-[13px] font-semibold py-3 px-4 rounded-xl transition-colors whitespace-nowrap">
             View Details
             <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </a>
