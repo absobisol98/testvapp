@@ -258,40 +258,6 @@
                     </span>
                 </div>
 
-                {{-- Registered shifts banner --}}
-                @if($userRegistrations->count() > 0)
-                    <div class="px-6 py-4 border-b border-gray-100 bg-[#f7fafc]">
-                        <p class="text-[13px] font-bold text-[#072b54] mb-3">Your Registered Shifts</p>
-                        <div class="flex flex-col gap-2">
-                            @foreach($userRegistrations as $registration)
-                                <div class="flex items-center justify-between bg-white border border-[#e2e8f0] rounded-xl px-4 py-3">
-                                    <div>
-                                        <p class="text-[13px] font-semibold text-[#1a2332]">{{ $registration->event_slot->shift_name }}</p>
-                                        <p class="text-[12px] text-[#718096]">
-                                            {{ Carbon\Carbon::parse($registration->event_slot->start_time)->format('g:i A') }} –
-                                            {{ Carbon\Carbon::parse($registration->event_slot->end_time)->format('g:i A') }}
-                                        </p>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold
-                                            {{ $registration->status_id == 1 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
-                                            {{ $registration->status_id == 1 ? 'Pending Approval' : 'Approved' }}
-                                        </span>
-                                        @if(!$isEventFinished && ($registration->status_id == 2 || $registration->status_id == 1))
-                                            <form action="{{ route('event.cancel-registration', $registration->id) }}" method="POST"
-                                                  onsubmit="return confirm('Are you sure you want to cancel this registration?');">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="text-[12px] text-red-500 hover:text-red-700 font-semibold">
-                                                    Cancel
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
 
                 @if($totalPositions === 0)
                     <div class="py-10 text-center text-[#718096] text-[13px]">No volunteer positions added yet.</div>
@@ -389,10 +355,11 @@
                                                           ? round(($registrationCount / $slot->total_slots) * 100)
                                                           : 100;
                                         $isFull         = $registrationCount >= $slot->total_slots;
-                                        $userRegistered = $userRegistrations
+                                        $userRegistration = $userRegistrations
                                             ->where('slot_type_id', $slot->id)
                                             ->where('status_id', '!=', 3)
-                                            ->count() > 0;
+                                            ->first();
+                                        $userRegistered = $userRegistration !== null;
                                         $barColor   = $pct >= 100 ? '#dc2626' : ($pct >= 80 ? '#d97706' : '#f55e1d');
                                         $pctColor   = $pct >= 100 ? 'color:#dc2626' : ($pct >= 80 ? 'color:#d97706' : 'color:#f55e1d');
                                         $badgeClass = $isFull
@@ -425,6 +392,14 @@
                                                         <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5 text-[10px] font-bold">
                                                             <svg width="9" height="9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
                                                             Onsite
+                                                        </span>
+                                                    @endif
+                                                    {{-- Registration status badge --}}
+                                                    @if($userRegistered)
+                                                        <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold border
+                                                            {{ $userRegistration->status_id == 1 ? 'bg-yellow-50 text-yellow-700 border-yellow-200' : 'bg-green-50 text-green-700 border-green-200' }}">
+                                                            <svg width="8" height="8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                                            {{ $userRegistration->status_id == 1 ? 'Pending' : 'Approved' }}
                                                         </span>
                                                     @endif
                                                 </div>
@@ -508,8 +483,20 @@
                                                 @else
                                                     <div class="w-full flex items-center justify-center gap-1.5
                                                                 bg-green-50 text-green-700 rounded-full px-4 py-2.5 text-[12.5px] font-bold">
+                                                        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                                                         Already Registered
                                                     </div>
+                                                    @if(!$isFinished)
+                                                        <form action="{{ route('event.cancel-registration', $userRegistration->id) }}"
+                                                              method="POST" class="mt-1.5 w-full"
+                                                              onsubmit="return confirm('Cancel your registration for this shift?');">
+                                                            @csrf @method('DELETE')
+                                                            <button type="submit"
+                                                                    class="w-full text-center text-[11.5px] text-red-500 hover:text-red-700 font-semibold py-1 transition-colors">
+                                                                Cancel registration
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 @endif
 
                                             @elseif($isFull)
