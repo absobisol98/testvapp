@@ -157,10 +157,11 @@
         <div class="absolute inset-x-0 bottom-0 z-10 flex flex-wrap items-end justify-between gap-4 px-6 sm:px-8 pb-6 pt-14">
 
             <div class="min-w-0">
-                <p class="text-[11px] font-bold tracking-[.12em] uppercase text-[#f26522] mb-2 flex items-center gap-2">
-                    <span class="inline-block w-5 h-0.5 bg-[#f26522] rounded"></span>
-                    {{ $category }}
-                </p>
+                <span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/25
+                             rounded-full px-3 py-1 mb-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#f26522] flex-shrink-0"></span>
+                    <span class="text-[11px] font-bold tracking-[.1em] uppercase text-white">{{ $category }}</span>
+                </span>
                 <h1 class="text-[22px] sm:text-[28px] font-extrabold text-white leading-tight tracking-tight drop-shadow-md">
                     {{ $record->title }}
                 </h1>
