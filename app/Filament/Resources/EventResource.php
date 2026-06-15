@@ -158,25 +158,6 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->live(),
                                 ]),
 
-                            Forms\Components\Grid::make(2)
-                                ->schema([
-                                    Forms\Components\Select::make('event_format')
-                                        ->label('Event Format')
-                                        ->options([
-                                            'onsite'  => 'Onsite',
-                                            'virtual' => 'Virtual',
-                                            'hybrid'  => 'Hybrid (Onsite + Virtual)',
-                                        ])
-                                        ->default('onsite')
-                                        ->required()
-                                        ->live(),
-                                    Forms\Components\TextInput::make('meeting_link')
-                                        ->label('Meeting Link / URL')
-                                        ->url()
-                                        ->placeholder('https://meet.google.com/...')
-                                        ->helperText('Shown to volunteers once registered or approved.')
-                                        ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid'])),
-                                ]),
 
                             Forms\Components\Select::make('companies')
                                 ->label('Companies')
@@ -196,6 +177,26 @@ class EventResource extends Resource implements HasShieldPermissions
 
                             Forms\Components\TagsInput::make('tags')
                                 ->suggestions(fn () => TagsEvent::orderBy('id')->pluck('name')->toArray()),
+
+                            Forms\Components\Grid::make(2)
+                                ->schema([
+                                    Forms\Components\Select::make('event_format')
+                                        ->label('Event Format')
+                                        ->options([
+                                            'onsite'  => 'Onsite',
+                                            'virtual' => 'Virtual',
+                                            'hybrid'  => 'Hybrid (Onsite + Virtual)',
+                                        ])
+                                        ->default('onsite')
+                                        ->required()
+                                        ->live(),
+                                    Forms\Components\TextInput::make('meeting_link')
+                                        ->label('Meeting Link / URL')
+                                        ->url()
+                                        ->placeholder('https://meet.google.com/...')
+                                        ->helperText('Shown to volunteers once registered or approved.')
+                                        ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid'])),
+                                ]),
 
                             Forms\Components\Toggle::make('is_public')
                                 ->label('Open to All Business Units')
@@ -323,6 +324,9 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray()),
                                     Forms\Components\Grid::make(3)
                                         ->schema([
+                                            Forms\Components\DatePicker::make('shift_date')
+                                                ->label('Shift Date')
+                                                ->required(),
                                             Forms\Components\TimePicker::make('start_time')
                                                 ->required()
                                                 ->label('Start Time')
@@ -333,6 +337,12 @@ class EventResource extends Resource implements HasShieldPermissions
                                                 ->label('End Time')
                                                 ->default('11:00')
                                                 ->seconds(false),
+                                        ]),
+                                    Forms\Components\Grid::make(2)
+                                        ->schema([
+                                            Forms\Components\DatePicker::make('end_date')
+                                                ->label('End Date')
+                                                ->helperText('Leave blank if same day. Set for overnight or multi-day shifts.'),
                                             Forms\Components\Toggle::make('ends_next_day')
                                                 ->label('Ends Next Day')
                                                 ->helperText('Enable for overnight shifts (e.g. 10 PM – 2 AM).')
