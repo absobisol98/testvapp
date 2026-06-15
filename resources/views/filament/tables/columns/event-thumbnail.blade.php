@@ -57,10 +57,8 @@
                    && $user->can('set_featured_event');
 @endphp
 
-<div
-    class="bg-white rounded-2xl overflow-hidden flex flex-col hover:shadow-[0_8px_28px_rgba(0,20,50,.14)] transition-shadow duration-200"
-    style="width:288px; box-shadow:0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);"
->
+<div style="width:288px; max-width:288px; box-shadow:0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);"
+     class="bg-white rounded-2xl overflow-hidden flex flex-col hover:shadow-[0_8px_28px_rgba(0,20,50,.14)] transition-shadow duration-200">
 
     {{-- ── Image ── --}}
     <div class="relative h-44 overflow-hidden bg-gray-200 flex-shrink-0">
@@ -144,15 +142,13 @@
     </div>
 
     {{-- ── Footer ── --}}
-    <div class="px-4 pb-4 flex items-center gap-2">
+    <div class="px-4 pb-4" style="display:flex; align-items:center; gap:8px;">
 
         <a href="{{ $detailsUrl }}"
-           class="flex-1 inline-flex items-center justify-center gap-1.5
-                  bg-[#f26522] hover:bg-[#d4541a] active:bg-[#c04a16]
-                  text-white text-[13px] font-semibold
-                  py-3 px-4 rounded-xl transition-colors whitespace-nowrap">
+           class="bg-[#f26522] hover:bg-[#d4541a] active:bg-[#c04a16] text-white text-[13px] font-semibold rounded-xl transition-colors"
+           style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 16px; white-space:nowrap; text-decoration:none;">
             View Details
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <svg style="width:16px;height:16px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
         </a>
