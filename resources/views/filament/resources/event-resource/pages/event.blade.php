@@ -584,8 +584,8 @@
 
                     {{-- Location --}}
                     <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
-                        <div class="w-8 h-8 rounded-[9px] bg-[#e8eef8] flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#0e4f99]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#f1f5f9] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>
                             </svg>
                         </div>
@@ -607,8 +607,8 @@
 
                     {{-- Schedule --}}
                     <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
-                        <div class="w-8 h-8 rounded-[9px] bg-[#fff3eb] flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#f55e1d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#f1f5f9] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>
                             </svg>
                         </div>
@@ -621,8 +621,8 @@
                     {{-- Time (from first slot) --}}
                     @if($timeStr)
                         <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
-                            <div class="w-8 h-8 rounded-[9px] bg-[#e6f4ec] flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 text-[#16a34a]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <div class="w-8 h-8 rounded-[9px] bg-[#f1f5f9] flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/>
                                 </svg>
                             </div>
@@ -635,8 +635,8 @@
 
                     {{-- Recurrence Type --}}
                     <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
-                        <div class="w-8 h-8 rounded-[9px] bg-[#f0ebfa] flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#7c3aed]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#f1f5f9] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                             </svg>
                         </div>
@@ -648,8 +648,8 @@
 
                     {{-- Volunteer Slots --}}
                     <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
-                        <div class="w-8 h-8 rounded-[9px] bg-[#e8eef8] flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#0e4f99]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#f1f5f9] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
                             </svg>
