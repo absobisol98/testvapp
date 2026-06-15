@@ -351,12 +351,23 @@ class EventResource extends Resource implements HasShieldPermissions
                                     Forms\Components\Select::make('slot_format')
                                         ->label('Slot Type (override)')
                                         ->options([
+                                            '' => 'Inherit from event',
                                             'onsite' => 'Onsite',
                                             'virtual' => 'Virtual',
                                         ])
-                                        ->placeholder('Inherit from event')
+                                        ->default('')
+                                        ->live()
                                         ->helperText('Leave blank to use the event\'s type. Set only to override for this specific shift.')
                                         ->columnSpanFull(),
+
+                                    Forms\Components\TextInput::make('meeting_link')
+                                        ->label('Shift Meeting Link')
+                                        ->url()
+                                        ->placeholder('https://meet.google.com/...')
+                                        ->helperText('Optional. Overrides the event-level meeting link for this shift.')
+                                        ->visible(fn ($get) => $get('slot_format') === 'virtual')
+                                        ->columnSpanFull(),
+
                                     Forms\Components\Textarea::make('responsibilities')
                                         ->required()
                                         ->columnSpanFull(),
