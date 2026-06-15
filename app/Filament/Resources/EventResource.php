@@ -290,7 +290,7 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid']))
                                         ->columnSpanFull(),
 
-                                    \Tapp\FilamentGoogleAutocomplete\Forms\Components\GoogleAutocomplete::make('location')
+                                    Forms\Components\TextInput::make('location')
                                         ->label('Location (Address)')
                                         ->placeholder('Start typing an address...')
                                         ->columnSpanFull(),
