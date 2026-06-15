@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\Login as BasePage;
 use Illuminate\Contracts\Support\Htmlable;
@@ -16,8 +17,8 @@ class Login extends BasePage
 
     public function mount(): void
     {
-        if (auth()->check()) {
-            $this->redirect(url('/admin'));
+        if (Filament::auth()->check()) {
+            redirect()->to(url('/admin'));
             return;
         }
 

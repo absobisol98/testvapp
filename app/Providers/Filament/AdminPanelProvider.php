@@ -124,6 +124,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
+                fn (): \Illuminate\Support\HtmlString => new \Illuminate\Support\HtmlString(
+                    '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
+                    . '<style>*,body,.fi-body,.fi-sidebar-nav,.fi-topbar,.fi-main{font-family:\'Inter\',system-ui,sans-serif!important;}</style>'
+                ),
+            )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
                 fn (): \Illuminate\Support\HtmlString => $this->roleNavFilterCss(),
             )
             ->renderHook(
