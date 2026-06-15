@@ -350,7 +350,7 @@ function volunteerForm() {
                 });
 
                 if (response.ok) {
-                    window.location.href = '{{ route("volunteer.success") }}';
+                    window.location.href = '/';
                 } else {
                     const data = await response.json();
                     this.errors = data.errors || {};
