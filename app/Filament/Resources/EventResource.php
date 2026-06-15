@@ -327,6 +327,8 @@ class EventResource extends Resource implements HasShieldPermissions
                                             Forms\Components\DatePicker::make('shift_date')
                                                 ->label('Shift Date')
                                                 ->required()
+                                                ->minDate(fn ($get) => $get('../../start_date'))
+                                                ->maxDate(fn ($get) => $get('../../end_date'))
                                                 ->helperText('Must be within the event date range.'),
                                             Forms\Components\TimePicker::make('start_time')
                                                 ->required()
@@ -343,6 +345,8 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->schema([
                                             Forms\Components\DatePicker::make('end_date')
                                                 ->label('End Date')
+                                                ->minDate(fn ($get) => $get('shift_date'))
+                                                ->maxDate(fn ($get) => $get('../../end_date'))
                                                 ->helperText('Leave blank if same day. Set for overnight or multi-day shifts.'),
                                             Forms\Components\Toggle::make('ends_next_day')
                                                 ->label('Ends Next Day')
