@@ -334,12 +334,15 @@ class EventResource extends Resource implements HasShieldPermissions
                                                 ->required()
                                                 ->label('Start Time')
                                                 ->default('08:00')
-                                                ->seconds(false),
+                                                ->seconds(false)
+                                                ->live(),
                                             Forms\Components\TimePicker::make('end_time')
                                                 ->required()
                                                 ->label('End Time')
                                                 ->default('11:00')
-                                                ->seconds(false),
+                                                ->seconds(false)
+                                                ->after('start_time')
+                                                ->helperText('Must be after start time'),
                                         ]),
                                     Forms\Components\Grid::make(2)
                                         ->schema([
