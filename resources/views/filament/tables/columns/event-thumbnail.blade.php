@@ -148,20 +148,11 @@
     {{-- ── BODY ────────────────────────────────────────────────── --}}
     <div class="flex flex-col flex-1 px-4 pt-4 pb-2" style="min-width:0; gap:8px; overflow:hidden;">
 
-        {{-- Category + More actions --}}
-        <div class="flex items-start justify-between gap-2">
-            <p style="font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-                      color:#d97706; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;">
-                {{ $program }}
-            </p>
-            @if($showMenu)
-                <button x-data="{ open: false }" @click.stop="open = !open" type="button"
-                        style="font-size:12px; color:#9ca3af; background:none; border:none; cursor:pointer;
-                               white-space:nowrap; flex-shrink:0;">
-                    More actions
-                </button>
-            @endif
-        </div>
+        {{-- Category label --}}
+        <p style="font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+                  color:#d97706; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;">
+            {{ $program }}
+        </p>
 
         {{-- Title --}}
         <h3 style="font-size:15px; font-weight:700; line-height:1.3; margin:0;
