@@ -1,87 +1,72 @@
-@props([
-    'event',
-    'image' => null,
-    'timeBadge' => null,
-    'locationType' => 'Onsite',
-    'category' => '',
-    'title' => '',
-    'dateStr' => '',
-    'timeStr' => '',
-    'location' => '',
-    'detailsUrl' => '#',
-])
-
 @php
-    // If event model is passed, calculate all properties
-    if ($event) {
-        $image = $event->getMedia('event-banner-attachments')?->first()?->getUrl();
-        $user = auth()->user();
+    $record = $getRecord();
+    $user   = auth()->user();
 
-        $start = \Carbon\Carbon::parse($event->start_date);
-        $end = $event->end_date ? \Carbon\Carbon::parse($event->end_date) : null;
-        $isFinished = $end && now()->isAfter($end);
-        $isOngoing = !$isFinished && now()->isAfter($start);
+    $image = $record->getMedia('event-banner-attachments')?->first()?->getUrl();
 
-        $daysAway = (int) now()->startOfDay()->diffInDays($start->startOfDay());
+    $start      = \Carbon\Carbon::parse($record->start_date);
+    $end        = $record->end_date ? \Carbon\Carbon::parse($record->end_date) : null;
+    $isFinished = $end && now()->isAfter($end);
+    $isOngoing  = !$isFinished && now()->isAfter($start);
 
-        $timeBadge = match(true) {
-            $isFinished          => null,
-            $isOngoing           => null,
-            $start->isToday()    => 'Today',
-            $start->isTomorrow() => 'Tomorrow',
-            default              => 'Starting in ' . $daysAway . ' day' . ($daysAway > 1 ? 's' : ''),
-        };
+    // Compute diff once, reuse in match
+    $daysAway = (int) now()->startOfDay()->diffInDays($start->startOfDay());
 
-        $eventFormat = $event->event_format ?? 'onsite';
-        $hasVirtualSlot = $event->slots->contains(fn($s) => $s->slot_format === 'virtual');
-        $hasOnsiteSlot = $event->slots->contains(fn($s) => $s->slot_format === 'onsite');
-        $isHybrid = ($hasVirtualSlot && $hasOnsiteSlot)
-                 || ($hasVirtualSlot && $eventFormat === 'onsite')
-                 || ($hasOnsiteSlot  && $eventFormat === 'virtual');
+    $timeBadge = match(true) {
+        $isFinished          => null,
+        $isOngoing           => null,
+        $start->isToday()    => 'Today',
+        $start->isTomorrow() => 'Tomorrow',
+        default              => 'Starting in ' . $daysAway . ' day' . ($daysAway > 1 ? 's' : ''),
+    };
 
-        $locationType = match(true) {
-            $isHybrid                  => 'Hybrid',
-            $eventFormat === 'virtual' => 'Online',
-            default                    => 'Onsite',
-        };
+    $eventFormat    = $record->event_format ?? 'onsite';
+    $hasVirtualSlot = $record->slots->contains(fn($s) => $s->slot_format === 'virtual');
+    $hasOnsiteSlot  = $record->slots->contains(fn($s) => $s->slot_format === 'onsite');
+    $isHybrid       = ($hasVirtualSlot && $hasOnsiteSlot)
+                   || ($hasVirtualSlot && $eventFormat === 'onsite')
+                   || ($hasOnsiteSlot  && $eventFormat === 'virtual');
 
-        $sameDay = $end && $start->format('Y-m-d') === $end->format('Y-m-d');
-        $dateStr = $start->format('M d, Y');
-        if ($end && !$sameDay) {
-            $dateStr .= ' – ' . $end->format('M d, Y');
-        }
+    $locationType = match(true) {
+        $isHybrid                  => 'Hybrid',
+        $eventFormat === 'virtual' => 'Online',
+        default                    => 'Onsite',
+    };
 
-        $firstSlot = $event->slots->first();
-        $timeStr = ($firstSlot && $firstSlot->start_time && $firstSlot->end_time)
-            ? \Carbon\Carbon::parse($firstSlot->start_time)->format('g:i A')
-              . ' – '
-              . \Carbon\Carbon::parse($firstSlot->end_time)->format('g:i A')
-            : null;
-
-        $category = $event->program?->name ?? 'Ayala Foundation';
-        $location = $event->location ?? 'Location TBA';
-        $detailsUrl = route('filament.admin.resources.events.view', ['record' => $event->id]);
-
-        $canEdit = \App\Filament\Resources\EventResource::canEdit($event);
-        $canDelete = \App\Filament\Resources\EventResource::canDelete($event);
-        $canSetFeatured = !$user->hasActiveRole('Facilitator')
-                       && !$user->hasActiveRole('Volunteer')
-                       && $user->can('set_featured_event');
-    } else {
-        $canEdit = false;
-        $canDelete = false;
-        $canSetFeatured = false;
+    $sameDay = $end && $start->format('Y-m-d') === $end->format('Y-m-d');
+    $dateStr = $start->format('M d, Y');
+    if ($end && !$sameDay) {
+        $dateStr .= ' – ' . $end->format('M d, Y');
     }
+
+    $firstSlot = $record->slots->first();
+    $timeStr   = ($firstSlot && $firstSlot->start_time && $firstSlot->end_time)
+        ? \Carbon\Carbon::parse($firstSlot->start_time)->format('g:i A')
+          . ' – '
+          . \Carbon\Carbon::parse($firstSlot->end_time)->format('g:i A')
+        : null;
+
+    $category   = $record->program?->name ?? 'Ayala Foundation';
+    $location   = $record->location ?? 'Location TBA';
+    $detailsUrl = route('filament.admin.resources.events.view', ['record' => $record->id]);
+
+    $canEdit        = \App\Filament\Resources\EventResource::canEdit($record);
+    $canDelete      = \App\Filament\Resources\EventResource::canDelete($record);
+    $canSetFeatured = !$user->hasActiveRole('Facilitator')
+                   && !$user->hasActiveRole('Volunteer')
+                   && $user->can('set_featured_event');
 @endphp
 
-<div style="width:100%; max-width:100%; box-shadow:0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);"
-     class="bg-white rounded-2xl overflow-hidden flex flex-col hover:shadow-[0_8px_28px_rgba(0,20,50,.14)] transition-shadow duration-200">
+<div
+    class="bg-white rounded-2xl overflow-hidden flex flex-col hover:shadow-[0_8px_28px_rgba(0,20,50,.14)] transition-shadow duration-200"
+    style="width:288px; box-shadow:0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);"
+>
 
     {{-- ── Image ── --}}
     <div class="relative h-44 overflow-hidden bg-gray-200 flex-shrink-0">
 
         @if($image)
-            <img src="{{ $image }}" alt="{{ $title }}" class="w-full h-full object-cover">
+            <img src="{{ $image }}" alt="{{ $record->title }}" class="w-full h-full object-cover">
         @else
             <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                 <svg class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,11 +114,12 @@
         </p>
 
         <h3 class="text-[14px] font-bold leading-snug text-gray-900 line-clamp-3">
-            {{ $title }}
+            {{ $record->title }}
         </h3>
 
         <div class="flex flex-col gap-1.5 mt-0.5">
 
+            {{-- FIX: {!! !!} so &nbsp; renders as HTML, not literal text --}}
             <div class="flex items-center gap-2 text-gray-500 text-[12px] leading-none">
                 <svg class="w-3.5 h-3.5 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -144,6 +130,7 @@
                 <span>{!! $dateStr . ($timeStr ? ' &nbsp;·&nbsp; ' . $timeStr : '') !!}</span>
             </div>
 
+            {{-- FIX: min-w-0 on parent + child for proper truncation in flex --}}
             <div class="flex items-start gap-2 min-w-0 text-gray-500 text-[12px] leading-snug">
                 <svg class="w-3.5 h-3.5 flex-shrink-0 mt-px text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -157,13 +144,15 @@
     </div>
 
     {{-- ── Footer ── --}}
-    <div class="px-4 pb-4" style="display:flex; align-items:center; gap:8px;">
+    <div class="px-4 pb-4 flex items-center gap-2">
 
         <a href="{{ $detailsUrl }}"
-           class="bg-[#f26522] hover:bg-[#d4541a] active:bg-[#c04a16] text-white text-[13px] font-semibold rounded-xl transition-colors"
-           style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 16px; white-space:nowrap; text-decoration:none;">
+           class="flex-1 inline-flex items-center justify-center gap-1.5
+                  bg-[#f26522] hover:bg-[#d4541a] active:bg-[#c04a16]
+                  text-white text-[13px] font-semibold
+                  py-3 px-4 rounded-xl transition-colors whitespace-nowrap">
             View Details
-            <svg style="width:16px;height:16px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
         </a>
@@ -195,7 +184,7 @@
                     @click.stop
                 >
                     @if($canEdit)
-                        <a href="{{ route('filament.admin.resources.events.edit', ['record' => $event->id]) }}"
+                        <a href="{{ route('filament.admin.resources.events.edit', ['record' => $record->id]) }}"
                            class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#f26522] hover:bg-gray-50 transition-colors w-full"
                            style="display:flex; text-decoration:none; border-bottom:1px solid #f3f4f6;">
                             <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
@@ -207,37 +196,25 @@
 
                     @if($canSetFeatured)
                         <button type="button"
-                                onclick="vappToggleFeatured('{{ $event->id }}', {{ $event->is_featured ? 'true' : 'false' }})"
+                                onclick="vappToggleFeatured('{{ $record->id }}', {{ $record->is_featured ? 'true' : 'false' }})"
                                 class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#d97706] w-full hover:bg-gray-50 transition-colors bg-none border-none cursor-pointer"
                                 style="display:flex; border-bottom:1px solid #f3f4f6;">
-                            <svg width="16" height="16" fill="{{ $event->is_featured ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <svg width="16" height="16" fill="{{ $record->is_featured ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                             </svg>
-                            {{ $event->is_featured ? 'Remove Featured' : 'Make it Featured' }}
+                            {{ $record->is_featured ? 'Remove Featured' : 'Make it Featured' }}
                         </button>
                     @endif
 
                     @if($canDelete)
                         <button type="button"
-                                onclick="vappDelete('{{ $event->id }}')"
+                                onclick="vappDelete('{{ $record->id }}')"
                                 class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#dc2626] w-full hover:bg-red-50 transition-colors bg-none border-none cursor-pointer"
                                 style="display:flex;">
                             <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12a2 2 0 002 2h8a2 2 0 002-2V7z"/>
                             </svg>
                             Delete
-                        </button>
-                    @endif
-
-                    @if(\Illuminate\Support\Facades\Auth::user()->can('export', $event))
-                        <button type="button"
-                                onclick="vappExport('{{ $event->id }}')"
-                                class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#3b82f6] w-full hover:bg-blue-50 transition-colors bg-none border-none cursor-pointer"
-                                style="display:flex;">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
-                            Export
                         </button>
                     @endif
 
@@ -291,10 +268,6 @@ if (!window._vappCardHelpersLoaded) {
             }
         })
         .catch(() => alert('Network error. Please try again.'));
-    };
-
-    window.vappExport = function(id) {
-        window.location.href = '/admin/events/' + id + '/export-registrants';
     };
 }
 </script>
