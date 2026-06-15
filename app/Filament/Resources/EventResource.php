@@ -348,6 +348,15 @@ class EventResource extends Resource implements HasShieldPermissions
                                                 ->helperText('Enable for overnight shifts (e.g. 10 PM – 2 AM).')
                                                 ->default(false),
                                         ]),
+                                    Forms\Components\Select::make('slot_format')
+                                        ->label('Slot Type (override)')
+                                        ->options([
+                                            'onsite' => 'Onsite',
+                                            'virtual' => 'Virtual',
+                                        ])
+                                        ->placeholder('Inherit from event')
+                                        ->helperText('Leave blank to use the event\'s type. Set only to override for this specific shift.')
+                                        ->columnSpanFull(),
                                     Forms\Components\Textarea::make('responsibilities')
                                         ->required()
                                         ->columnSpanFull(),
