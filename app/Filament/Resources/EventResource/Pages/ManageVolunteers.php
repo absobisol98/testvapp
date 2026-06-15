@@ -14,15 +14,41 @@ class ManageVolunteers extends Page
 
     public Event $record;
 
-    public function mount(Event $record): void
+    public static function canAccess(array $parameters = []): bool
     {
-        $this->record = $record;
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        // Volunteers cannot manage volunteers
+        if ($user->hasActiveRole('Volunteer')) {
+            return false;
+        }
+
+        // Facilitators can only manage their own events
+        if ($user->hasActiveRole('Facilitator')) {
+            $record = $parameters['record'] ?? null;
+            if (! $record instanceof Event) {
+                return true;
+            }
+            return $record->facilitators()->where('facilitator_id', $user->id)->exists();
+        }
+
+        return true;
+    }
+
+    public function mount(int|string $record): void
+    {
+        // Bypass global scopes so drafts and filtered events are accessible
+        $this->record = Event::withoutGlobalScopes()->findOrFail($record);
+
+        static::authorizeAccess();
     }
 
     protected function getHeaderActions(): array
     {
-        return [
-            // Add any header actions you want
-        ];
+        return [];
     }
 }
