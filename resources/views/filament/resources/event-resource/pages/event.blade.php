@@ -1,51 +1,27 @@
 <x-filament-panels::page>
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
     <meta property="og:title" content="{{$record->title}}" />
-    <meta property="og:description" content="Get from SEO newbie to SEO pro in 8 simple steps." />
+    <meta property="og:description" content="Volunteer opportunity at Ayala Foundation." />
     <meta property="og:image" content="{{$record->getBanner()}}" />
-    <meta property="og:image" content="{{$record->getAttachment()}}" />
 </head>
 <style>
-    /* For Volunteer Dashboard Container(Start) */
-    .fi-main {
-        margin: 0px !important;
-        padding: 0px 0px !important;
-        margin-top: 0px !important;
-        margin-bottom: 0px !important;
-        padding-top: 20px !important;
-        padding-bottom: 0px !important;
-        border-radius: 0px !important;
-        max-width: 100% !important;
-    }
-
-    .fi-page section {
-        padding: 0px 0px 32px 0px !important;
-    }
-    .fi-header {
-        padding-left: 20px !important;
-    }
-    .fi-header-heading {
-        display: none;
-    }
-
-    /* For Volunteer Dashboard Container(End) */
-</style>
-<style>
-    [x-cloak] {
-        display: none !important;
-    }
+    .fi-main { margin: 0 !important; padding: 0 !important; padding-top: 20px !important; max-width: 100% !important; }
+    .fi-page section { padding: 0 0 32px 0 !important; }
+    .fi-header { padding-left: 20px !important; }
+    .fi-header-heading { display: none; }
+    [x-cloak] { display: none !important; }
 </style>
 
 @php
-    // Add this at the top of your file with other PHP calculations
     $user = auth()->user();
     $isMinor = $user->birthday && Carbon\Carbon::parse($user->birthday)->age < 18;
     $requiresAttachment = $isMinor || ($record->attachment_required ?? false);
     $attachmentDescription = $isMinor
         ? 'Please upload parental consent document (required for minors)'
         : ($record->attachment_required ? 'Please upload required documents for this event' : '');
+
     $isEventFinished = now()->isAfter($record->end_date);
+
     $attendeeHours = $record->attendees()
         ->where('attendee_id', auth()->id())
         ->whereNotNull('time_in')
@@ -55,497 +31,682 @@
         ->mapWithKeys(function($attendances) {
             $slotId = $attendances->first()->slot_type_id;
             $totalMinutes = $attendances->sum(function($attendance) {
-                $timeIn = Carbon\Carbon::parse($attendance->time_in);
+                $timeIn  = Carbon\Carbon::parse($attendance->time_in);
                 $timeOut = Carbon\Carbon::parse($attendance->time_out);
-
-                // Get time difference using diff()
-                $diff = $timeOut->diff($timeIn);
-                $hours = $diff->h + ($diff->days * 24);
-                $minutes = $diff->i;
-
-                return ($hours * 60) + $minutes;
+                $diff    = $timeOut->diff($timeIn);
+                return ($diff->h + ($diff->days * 24)) * 60 + $diff->i;
             });
-
-            // Convert minutes to hours and minutes for display
-            $hours = ($totalMinutes / 60);
-            $minutes = $totalMinutes % 60;
-
-            return [$slotId => [
-                'hours' => $hours,
-                'minutes' => $minutes
-            ]];
+            return [$slotId => ['hours' => $totalMinutes / 60, 'minutes' => $totalMinutes % 60]];
         });
 
+    $isSuperAdmin  = $user->hasRole('super_admin');
+    $isAdmin       = $user->hasRole('admin');
+    $isCreator     = $record->created_by == $user->id;
+    $isFacilitator = $record->facilitators->contains($user->id);
+    $canManageEvent = !$user->hasActiveRole('Volunteer') && ($isSuperAdmin || $isAdmin || $isCreator || $isFacilitator);
 
-@endphp
-
-{{-- @dd($record->getAttachment()) --}}
-
-<div class="flex flex-col w-full px-3 sm:px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-4 sm:space-y-6 overflow-x-hidden">
-
-    <div class="w-full flex flex-wrap items-center justify-between gap-2">
-        <h2 class="text-xl sm:text-2xl md:text-3xl text-[#ff7b00] font-extrabold capitalize min-w-0 flex-1 mr-2">{{ $record->title }}</h2>
-        <div class="grid grid-cols-3 gap-2 flex-shrink-0">
-        @php
-            $user = auth()->user();
-            $isSuperAdmin = $user->hasRole('super_admin');
-            $isAdmin = $user->hasRole('admin');
-            $isCreator = $record->created_by == $user->id;
-            $isFacilitator = $record->facilitators->contains($user->id);
-            $canManageEvent = !$user->hasActiveRole('Volunteer') && ($isSuperAdmin || $isAdmin || $isCreator || $isFacilitator);
-        @endphp
-
-        @if($canManageEvent)
-            <a href="{{ route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]) }}"
-            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#ff7b00] hover:bg-[#e06e00]">
-                <!-- Desktop Text -->
-                <p class="text-base font-normal text-white hidden md:block">Manage Volunteers</p>
-                <!-- Mobile/Tablet Icon -->
-                <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-            </a>
-
-            <a href="{{route('filament.admin.resources.events.edit',['record' => $record->id])}}"
-            class="py-2 px-2 flex items-center justify-center rounded-md bg-[#ff7b00] hover:bg-[#e06e00]">
-                <!-- Desktop Text -->
-                <p class="text-base font-normal text-white hidden md:block">Edit</p>
-                <!-- Mobile/Tablet Icon -->
-                <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-            </a>
-        @else
-            <a></a>
-            <a></a>
-        @endif
-
-        <a href="{{route('filament.admin.resources.events.index')}}"
-        class="py-2 px-2 flex items-center justify-center rounded-md bg-[#ff7b00] hover:bg-[#e06e00]">
-            <!-- Desktop Text -->
-            <p class="text-base font-normal text-white hidden md:block">Opportunity List</p>
-            <!-- Mobile/Tablet Icon -->
-            <svg class="w-6 h-6 text-white md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-        </a>
-    </div>
-</div>
-
-    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="w-full col-span-2 space-y-4 order-2 md:order-1">
-            <div class="w-full rounded-md overflow-hidden">
-                <img src="{{ $record->getBanner()}}" alt="" class="w-full h-auto object-cover rounded-md">
-            </div>
-            <div>
-                <p class="text-black text-lg text-start font-extrabold">Supported Program</p>
-                <div class="flex items-start justify-start gap-2">
-                    <div class="inline-flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#03498D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tags"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3a1 1 0 0 0-1 1v5.172a2 2 0 0 0 .586 1.414L8.29 18.29a2.426 2.426 0 0 0 3.42 0l3.58-3.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="6.5" cy="9.5" r=".5" fill="currentColor"/></svg>
-                    </div>
-                    <p class="text-base font-normal text-[#0433ff] capitalize">{{$record->program->name}}</p>
-                </div>
-            </div>
-
-            <div>
-                <p class="text-xl font-bold">About the Opportunity</p>
-                <p class="text-base font-normal text-justify whitespace-pre-wrap">{!! strip_tags($record->description) !!}</p>
-            </div>
-            <div class="w-full h-[1px] border-t border-[#DFDFDF] my-4"></div>
-        </div>
-
-        <div class="col-span-1 space-y-4 order-1 md:order-2">
-            <div class="w-full flex flex-col bg-white rounded-xl shadow-lg">
-                <div class="px-4 py-4 space-y-4">
-                    <h2 class="text-black text-lg text-start font-extrabold">
-                        Volunteer Opportunity Details
-                    </h2>
-
-                    <div class="w-full flex flex-col space-y-3">
-                        <div class="w-full flex flex-col space-y-2">
-                            <div class="text-black text-sm flex items-start gap-3">
-                                <span class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full">
-                                    <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"></path></svg>
-                                </span>
-                                <div class="min-w-0">
-                                    <strong>Location:</strong>
-                                    <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($record->location) }}"
-                                       target="_blank"
-                                       class="ml-1 text-[#0433ff] hover:text-[#ff7b00] hover:underline transition-colors duration-300 break-words">
-                                        {{$record->location}}
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="text-black text-sm flex items-center gap-3">
-                                <span class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full">
-                                    <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                        <path d="M19 3h-1V2a1 1 0 1 0-2 0v1H8V2a1 1 0 1 0-2 0v1H5a3 3 0 0 0-3 3v13a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3zm1 16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V10h16v9zM4 8V6a1 1 0 0 1 1-1h1v1a1 1 0 1 0 2"></path>
-                                    </svg>
-                                </span>
-                                <div class="min-w-0"><strong>Schedule:</strong> {{ \Carbon\Carbon::parse($record->start_date)->format('F d, Y') }}</div>
-                            </div>
-
-                            <div class="text-black text-sm flex items-center gap-3">
-                                <span class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full">
-                                    <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 10.59l3.29 3.3a1 1 0 0 1-1.42 1.42l-3.3-3.29a1 1 0 0 1-.29-.7V7a1 1 0 0 1 2 0v5.59z"></path></svg>
-                                </span>
-                                <div class="min-w-0"><strong>Recurrence Type:</strong> {{$record->event_recurrence_type->name}}</div>
-                            </div>
-
-                            <div class="text-black text-sm flex items-center gap-3">
-                                <span class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-blue-200 text-[#0433ff] rounded-full">
-                                    <svg class="w-4 h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                                        <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V256.9L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6h29.7c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V352H152z"></path>
-                                    </svg>
-                                </span>
-                                <div class="min-w-0"><strong>Volunteer Slot:</strong> {{ $record->slots->sum('total_slots') }}</div>
-                            </div>
-
-                            <br>
-                            <button onclick="document.getElementById('volunteer-section').scrollIntoView({ behavior: 'smooth' });" class="py-2 px-2 flex items-center justify-center rounded-full bg-[#ff7b00] hover:bg-[#e06e00]">
-                                @if(!$isEventFinished)
-                                <p class="text-base font-normal text-white">I want to volunteer</p>
-                                @else
-                                    <p class="text-base font-normal text-white">Opportunity Finished</p>
-                                @endif
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-full flex flex-col bg-white rounded-xl shadow-lg">
-                <div class="px-4 py-4 space-y-4">
-                    <h2 class="text-black text-lg text-start font-extrabold">
-                        Contact Information
-                    </h2>
-                    <div class="w-full flex flex-col space-y-2">
-                        <div>
-                            <p class="text-sm text-start font-bold">HR Representative:</p>
-                            <p class="text-sm">{{$record->point_of_contact?->firstname}} {{$record->point_of_contact?->lastname}}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-start font-bold">Facilitator/s:</p>
-                            <ul class="list-disc pl-5">
-                                @foreach ($record->facilitators as $facilitator)
-                                    <li class="text-sm">{{$facilitator->name}}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        @if($record->getMedia('event-attachments')->count() > 0)
-                            <div>
-                                <p class="text-sm text-start font-bold">File Attachment:</p>
-                                <div class="flex flex-col items-start justify-start gap-2 mt-1">
-                                    @foreach($record->getMedia('event-attachments') as $media)
-                                        <a href="{{ $media->getUrl() }}"
-                                        class="flex items-center gap-2 text-black text-sm font-normal hover:text-blue-600"
-                                        download>
-                                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-                                            </svg>
-                                            <span class="underline break-all">{{ $media->file_name }}</span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="{{ $record->tags->isEmpty() ? 'hidden' : '' }}">
-                            <p class="text-sm text-start font-bold">Tags:</p>
-                            <div class="flex flex-wrap items-center justify-start gap-2 mt-1">
-                                @foreach ($record->tags as $tag)
-                                    <div class="px-2 py-1" style="background:#03498D; border-radius: 10px;">
-                                        <p class="text-white text-xs">{{ \Illuminate\Support\Str::upper($tag->name) }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @if ($record->event_type_id == 4)
-            <div class="w-full flex flex-col bg-white rounded-xl shadow-lg">
-                <div class="px-4 py-4 space-y-4">
-                    <h2 class="text-black text-lg text-start font-extrabold">
-                        Share this opportunity
-                    </h2>
-                    <div class="sharethis-inline-share-buttons"></div>
-                </div>
-            </div>
-        @endif
-        {{-- Add this after the event details section --}}
-<div class="w-full col-span-1 md:col-span-3 space-y-4 order-3">
-    <div class="bg-white p-6 rounded-xl shadow-lg">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold">Volunteers Bulletin</h2>
-            @if($canManageEvent)
-                <button onclick="document.getElementById('bulletin-form').classList.toggle('hidden')"
-                        class="px-4 py-2 bg-[#ff7b00] text-white rounded-lg hover:bg-[#e06e00]">
-                    Post Bulletin
-                </button>
-            @endif
-        </div>
-
-        {{-- Bulletin Form --}}
-        @if($canManageEvent)
-            <form id="bulletin-form" action="{{ route('event.post-bulletin', $record->id) }}"
-                  method="POST" class="hidden space-y-4 mb-6 p-4 bg-gray-50 rounded-lg">
-                @csrf
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                    <input type="text" name="title" required
-                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#ff7b00] focus:ring-[#ff7b00]">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Content</label>
-                    <textarea name="content" rows="3" required
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-[#ff7b00] focus:ring-[#ff7b00]"></textarea>
-                </div>
-                <div class="flex justify-end">
-                    <button type="submit"
-                        class="px-4 py-2 bg-[#ff7b00] text-white rounded-lg hover:bg-[#e06e00]">
-                        Post
-                    </button>
-                </div>
-            </form>
-        @endif
-
-        {{-- Bulletins List --}}
-        <div class="space-y-4">
-            @forelse($record->bulletins()->orderBy('created_at', 'desc')->limit(2)->get() as $bulletin)
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="font-semibold text-lg">{{ $bulletin->title }}</h3>
-                            <div class="flex items-center space-x-2 text-sm text-gray-500">
-                                <span>{{ $bulletin->author->name }}</span>
-                                <span>•</span>
-                                <span>{{ $bulletin->created_at->diffForHumans() }}</span>
-                            </div>
-                        </div>
-                        @if($canManageEvent)
-                            <form action="{{ route('event.delete-bulletin', [$record->id, $bulletin->id]) }}"
-                                method="POST"
-                                onsubmit="return confirm('Are you sure you want to delete this bulletin?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </form>
-                        @endif
-                    </div>
-                    <p class="mt-2 text-gray-700 whitespace-pre-wrap">{{ $bulletin->content }}</p>
-                </div>
-            @empty
-                <p class="text-gray-500 text-center py-4">No bulletins posted yet.</p>
-            @endforelse
-        </div>
-    </div>
-</div>
-
-    </div>
-
-
-
-</div>
-
-@php
     $userRegistrations = $record->registrations()
         ->where('volunteer_id', auth()->id())
         ->with(['event_slot', 'status'])
         ->get();
+
+    // Status badge logic
+    $start    = Carbon\Carbon::parse($record->start_date);
+    $end      = $record->end_date ? Carbon\Carbon::parse($record->end_date) : null;
+    $isFinished = $isEventFinished;
+    $isOngoing  = !$isFinished && now()->isAfter($start);
+    $daysAway   = (int) now()->startOfDay()->diffInDays($start->copy()->startOfDay());
+
+    $statusLabel = match(true) {
+        $isFinished          => 'Opportunity Finished',
+        $isOngoing           => 'Ongoing',
+        $start->isToday()    => 'Starts Today',
+        $start->isTomorrow() => 'Tomorrow',
+        default              => 'Starting in ' . $daysAway . ' day' . ($daysAway !== 1 ? 's' : ''),
+    };
+
+    $statusDotClass = match(true) {
+        $isFinished => 'bg-red-500',
+        $isOngoing  => 'bg-green-500 animate-pulse',
+        default     => 'bg-amber-500',
+    };
+
+    // Date / time strings
+    $sameDay = $end && $start->format('Y-m-d') === $end->format('Y-m-d');
+    $dateStr = $start->format('M d, Y');
+    if ($end && !$sameDay) {
+        $dateStr .= ' – ' . $end->format('M d, Y');
+    }
+
+    $firstSlot = $record->slots->first();
+    $timeStr = ($firstSlot && $firstSlot->start_time && $firstSlot->end_time)
+        ? Carbon\Carbon::parse($firstSlot->start_time)->format('g:i A')
+          . ' – '
+          . Carbon\Carbon::parse($firstSlot->end_time)->format('g:i A')
+        : null;
+
+    $category       = $record->program?->name ?? 'Ayala Foundation';
+    $location       = $record->location ?? 'Location TBA';
+    $totalPositions = $record->slots->count();
+
+    $manageUrl = route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]);
+    $editUrl   = route('filament.admin.resources.events.edit', ['record' => $record->id]);
+    $listUrl   = route('filament.admin.resources.events.index');
+    $image     = $record->getBanner();
 @endphp
 
-<div class="w-full p-4 sm:p-5 gap-4 bg-gray-100 rounded" id="volunteer-section">
-    <div class="w-full space-y-6">
-        <!-- Current Registrations Section -->
-        @if($userRegistrations->count() > 0)
-        <div class="bg-white p-5 rounded-lg shadow">
-            <p class="text-xl font-bold mb-4">Your Registered Shifts</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @foreach($userRegistrations as $registration)
-                    <div class="border rounded-lg p-4 {{ $registration->status_id == 1 ? 'bg-yellow-50' : 'bg-green-50' }}">
-                        <div class="flex flex-col">
-                            <h4 class="font-semibold">{{ $registration->event_slot->shift_name }}</h4>
-                            <p class="text-sm text-gray-600">
-                                {{ Carbon\Carbon::parse($registration->event_slot->start_time)->format('g:i A') }} -
-                                {{ Carbon\Carbon::parse($registration->event_slot->end_time)->format('g:i A') }}
-                            </p>
-                            <span class="inline-flex mt-2 items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit
-                                {{ $registration->status_id == 1 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
-                                {{ $registration->status_id == 1 ? 'Pending Approval' : 'Approved' }}
-                            </span>
+<div class="flex flex-col gap-5 pb-12 px-3 sm:px-4 md:px-6 overflow-x-hidden">
 
+    {{-- ── HERO ─────────────────────────────────────────────────────── --}}
+    <div class="relative rounded-2xl overflow-hidden shadow-[0_2px_6px_rgba(0,20,50,.07),0_6px_20px_rgba(0,20,50,.07)]"
+         style="min-height:280px;">
 
-
-                            @if(!$isEventFinished)
-                                    @if($registration->status_id == 2 || $registration->status_id == 1 )
-
-                                        <form action="{{ route('event.cancel-registration', $registration->id) }}"
-                                            method="POST"
-                                            class="mt-2"
-                                            onsubmit="return confirm('Are you sure you want to cancel this registration?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                    class="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded">
-                                                Cancel Registration
-                                            </button>
-                                        </form>
-                                    @endif
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
+        @if($image)
+            <img src="{{ $image }}" alt="{{ $record->title }}"
+                 class="absolute inset-0 w-full h-full object-cover">
+        @else
+            <div class="absolute inset-0 bg-gradient-to-br from-[#afc9de] to-[#c4d9e9]"></div>
         @endif
 
-        <!-- Available Positions Section -->
-        <div class="w-full">
-            <p class="text-xl font-bold">Available Volunteer Positions</p>
+        {{-- Dark gradient overlay --}}
+        <div class="absolute inset-0 bg-gradient-to-t from-[#072b54]/85 via-[#072b54]/30 to-transparent"></div>
+
+        {{-- Status badge – top right --}}
+        <div class="absolute top-4 right-4 z-10">
+            <span class="inline-flex items-center gap-1.5 bg-black/50 backdrop-blur-sm
+                         border border-white/15 rounded-full px-3.5 py-1.5
+                         text-[12px] font-semibold text-white/90">
+                <span class="w-2 h-2 rounded-full flex-shrink-0 {{ $statusDotClass }}"></span>
+                {{ $statusLabel }}
+            </span>
         </div>
 
-        <div class="w-full p-2 space-y-4">
-            <!-- ... existing carousel navigation buttons ... -->
+        {{-- Bottom: title + action buttons --}}
+        <div class="absolute inset-x-0 bottom-0 z-10 flex flex-wrap items-end justify-between gap-4 px-6 sm:px-8 pb-6 pt-14">
 
-            <div class="stories-swiper-container w-full overflow-hidden">
-                <div class="swiper-wrapper flex w-full">
-                    @foreach ($record->slots as $slot)
-                        @php
-                            $registrationCount = $record->registrations
-                                ->where('slot_type_id', $slot->id)
-                                ->where('status_id', '!=', 3)
-                                ->count();
-                            $isAvailable = $slot->total_slots > $registrationCount;
-                            $userRegistered = $userRegistrations
-                                ->where('slot_type_id', $slot->id)
-                                ->where('status_id', '!=', 3)
-                                ->count() > 0;
-                        @endphp
+            <div class="min-w-0">
+                <p class="text-[11px] font-bold tracking-[.12em] uppercase text-[#f26522] mb-2 flex items-center gap-2">
+                    <span class="inline-block w-5 h-0.5 bg-[#f26522] rounded"></span>
+                    {{ $category }}
+                </p>
+                <h1 class="text-[22px] sm:text-[28px] font-extrabold text-white leading-tight tracking-tight drop-shadow-md">
+                    {{ $record->title }}
+                </h1>
+            </div>
 
-                        <div class="swiper-slide bg-white p-5 rounded-md shadow-md transition-shadow duration-300 hover:shadow-xl">
-                            <div class="w-full h-full min-h-[200px] flex flex-col gap-4">
-                                <div class="flex-grow flex flex-col gap-4">
-                                    <p class="text-xl font-semibold leading-none">{{$slot->shift_name}}</p>
-                                    <p class="text-[#0433ff] text-md">
-                                        <span class="font-medium">Available Slots:</span>
-                                        {{ $slot->total_slots - $registrationCount }}/{{ $slot->total_slots }}
-                                    </p>
-                                    <p class="text-lg font-semibold leading-none">Key Responsibility</p>
-                                    <p class="text-md overflow-y-scroll custom-scrollbar max-h-[200px] md:text-lg lg:text-base pr-4 font-normal">
-                                        {{ $slot->responsibilities }}
-                                    </p>
-                                </div>
+            <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+                @if($canManageEvent)
+                    <a href="{{ $manageUrl }}"
+                       class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg
+                              bg-white/12 hover:bg-white/22 backdrop-blur-sm border border-white/25
+                              text-white text-[12.5px] font-semibold transition-colors duration-150">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <span class="hidden sm:inline">Manage Volunteers</span>
+                    </a>
+                    <a href="{{ $editUrl }}"
+                       class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg
+                              bg-white/12 hover:bg-white/22 backdrop-blur-sm border border-white/25
+                              text-white text-[12.5px] font-semibold transition-colors duration-150">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        <span class="hidden sm:inline">Edit</span>
+                    </a>
+                @endif
 
-                                <div class="w-full flex items-center justify-center mt-auto">
+                <a href="{{ $listUrl }}"
+                   class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg
+                          bg-[#f26522] hover:bg-[#d4541a] text-white text-[12.5px] font-semibold
+                          shadow-[0_3px_10px_rgba(242,101,34,.35)] transition-colors duration-150">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                    </svg>
+                    <span class="hidden sm:inline">Opportunity List</span>
+                </a>
+            </div>
+        </div>
+    </div>{{-- /hero --}}
 
-                                    @if($isEventFinished)
 
-                                        @if(isset($attendeeHours[$slot->id]) && $attendeeHours[$slot->id]['hours'] >= 0)
-                                            <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                {{ number_format($attendeeHours[$slot->id]['hours']) }}
-                                                @if ($attendeeHours[$slot->id]['hours'] > 1)
-                                                    Hours
-                                                @else
-                                                    Hour
-                                                @endif Completed
-                                            </span>
-                                        @else
-                                            <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
-                                                Opportunity Finished
-                                            </span>
+    {{-- ── TWO-COLUMN LAYOUT ───────────────────────────────────────── --}}
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5 items-start">
+
+        {{-- ── LEFT COLUMN ──────────────────────────────────────────── --}}
+        <div class="flex flex-col gap-5">
+
+            {{-- About the Opportunity --}}
+            <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,20,50,.07),0_6px_20px_rgba(0,20,50,.07)] overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-[14px] font-bold text-[#072b54] tracking-tight">About the Opportunity</h2>
+                </div>
+                <div class="px-6 py-5">
+                    <span class="inline-flex items-center gap-1.5 bg-[#fff3eb] border border-[#f26522]/20
+                                 rounded-full px-3 py-1 text-[12px] font-bold text-[#f26522] mb-4">
+                        <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/>
+                        </svg>
+                        {{ $category }}
+                    </span>
+                    <p class="text-[13.5px] text-[#4a5568] leading-relaxed whitespace-pre-wrap">
+                        {!! strip_tags($record->description) !!}
+                    </p>
+                </div>
+            </div>
+
+            {{-- Available Volunteer Positions --}}
+            <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,20,50,.07),0_6px_20px_rgba(0,20,50,.07)] overflow-hidden"
+                 id="volunteer-section">
+
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-[14px] font-bold text-[#072b54] tracking-tight">Available Volunteer Positions</h2>
+                    <span class="text-[12px] font-semibold text-[#718096] bg-[#edf2f7] px-3 py-1 rounded-full">
+                        {{ $totalPositions }} {{ Str::plural('position', $totalPositions) }}
+                    </span>
+                </div>
+
+                {{-- Registered shifts banner --}}
+                @if($userRegistrations->count() > 0)
+                    <div class="px-6 py-4 border-b border-gray-100 bg-[#f7fafc]">
+                        <p class="text-[13px] font-bold text-[#072b54] mb-3">Your Registered Shifts</p>
+                        <div class="flex flex-col gap-2">
+                            @foreach($userRegistrations as $registration)
+                                <div class="flex items-center justify-between bg-white border border-[#e2e8f0] rounded-xl px-4 py-3">
+                                    <div>
+                                        <p class="text-[13px] font-semibold text-[#1a2332]">{{ $registration->event_slot->shift_name }}</p>
+                                        <p class="text-[12px] text-[#718096]">
+                                            {{ Carbon\Carbon::parse($registration->event_slot->start_time)->format('g:i A') }} –
+                                            {{ Carbon\Carbon::parse($registration->event_slot->end_time)->format('g:i A') }}
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold
+                                            {{ $registration->status_id == 1 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
+                                            {{ $registration->status_id == 1 ? 'Pending Approval' : 'Approved' }}
+                                        </span>
+                                        @if(!$isEventFinished && ($registration->status_id == 2 || $registration->status_id == 1))
+                                            <form action="{{ route('event.cancel-registration', $registration->id) }}" method="POST"
+                                                  onsubmit="return confirm('Are you sure you want to cancel this registration?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-[12px] text-red-500 hover:text-red-700 font-semibold">
+                                                    Cancel
+                                                </button>
+                                            </form>
                                         @endif
-                                    @elseif($isAvailable && !$userRegistered)
-                                        <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
-                                              method="POST"
-                                              enctype="multipart/form-data"
-                                              class="min-w-full flex justify-between">
-                                            @csrf
-                                            {{-- Volunteers consented to the privacy policy on registration --}}
-                                            <input type="hidden" name="privacy_policy" value="1">
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
-                                            @if($requiresAttachment)
-                                                <div class="mb-4">
-                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                        {{ $attachmentDescription }}
-                                                    </label>
-                                                    <input type="file"
-                                                           name="media[]"
-                                                           multiple
-                                                           class="block w-full text-sm text-gray-500
-                                                                  file:mr-4 file:py-2 file:px-4
-                                                                  file:rounded-full file:border-0
-                                                                  file:text-sm file:font-semibold
-                                                                  file:bg-[#ff7b00] file:text-white
-                                                                  hover:file:bg-[#e06e00]"
-                                                           required>
-                                                    @error('media')
-                                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                                    @enderror
+                @if($totalPositions === 0)
+                    <div class="py-10 text-center text-[#718096] text-[13px]">No volunteer positions added yet.</div>
+                @else
+                    <div class="p-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            @foreach($record->slots as $slot)
+                                @php
+                                    $registrationCount = $record->registrations
+                                        ->where('slot_type_id', $slot->id)
+                                        ->where('status_id', '!=', 3)
+                                        ->count();
+                                    $available     = max(0, $slot->total_slots - $registrationCount);
+                                    $pct           = $slot->total_slots > 0
+                                                     ? round(($registrationCount / $slot->total_slots) * 100)
+                                                     : 100;
+                                    $isFull        = $registrationCount >= $slot->total_slots;
+                                    $userRegistered = $userRegistrations
+                                        ->where('slot_type_id', $slot->id)
+                                        ->where('status_id', '!=', 3)
+                                        ->count() > 0;
+                                    $barColor  = $pct >= 100 ? '#dc2626' : ($pct >= 80 ? '#d97706' : '#f26522');
+                                    $pctColor  = $pct >= 100 ? 'color:#dc2626' : ($pct >= 80 ? 'color:#d97706' : 'color:#f26522');
+                                    $badgeClass = $isFull
+                                        ? 'border-red-400 text-red-500'
+                                        : ($pct >= 80 ? 'border-amber-400 text-amber-600' : 'border-[#f26522] text-[#f26522]');
+                                @endphp
+
+                                <div class="bg-[#f7fafc] border border-[#e2e8f0] rounded-xl overflow-hidden
+                                            hover:border-[#c4cdd8] hover:shadow-[0_4px_16px_rgba(0,20,50,.08)]
+                                            transition-all duration-150 flex flex-col">
+
+                                    {{-- Head --}}
+                                    <div class="flex items-start justify-between gap-2 px-4 pt-4 pb-3 border-b border-[#e2e8f0]">
+                                        <div class="min-w-0">
+                                            <p class="text-[14px] font-extrabold text-[#072b54]">{{ $slot->shift_name }}</p>
+                                            <div class="flex items-center gap-1.5 mt-1 text-[11.5px] text-[#718096]">
+                                                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/>
+                                                </svg>
+                                                {{ Carbon\Carbon::parse($slot->start_time)->format('g:i A') }}
+                                                – {{ Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
+                                            </div>
+                                        </div>
+                                        <span class="inline-flex items-center gap-1 bg-white rounded-full px-2.5 py-0.5
+                                                     text-[11.5px] font-bold flex-shrink-0 border-[1.5px] {{ $badgeClass }}">
+                                            <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                                            </svg>
+                                            {{ $isFull ? 'Full' : $available . ' left' }} / {{ $slot->total_slots }}
+                                        </span>
+                                    </div>
+
+                                    {{-- Body --}}
+                                    <div class="px-4 py-3 flex-1">
+                                        <p class="text-[10.5px] font-bold text-[#718096] uppercase tracking-[.08em] mb-1.5">
+                                            Key Responsibility
+                                        </p>
+                                        <p class="text-[12.5px] text-[#4a5568] leading-relaxed max-h-[100px] overflow-y-auto">
+                                            {{ $slot->responsibilities }}
+                                        </p>
+
+                                        {{-- Fill bar --}}
+                                        <div class="mt-3">
+                                            <div class="flex justify-between mb-1.5">
+                                                <span class="text-[11px] font-semibold text-[#718096]">Slots filled</span>
+                                                <span class="text-[11px] font-bold" style="{{ $pctColor }}">{{ $pct }}%</span>
+                                            </div>
+                                            <div class="h-1.5 bg-[#e2e8f0] rounded-full overflow-hidden">
+                                                <div class="h-full rounded-full transition-all duration-500"
+                                                     style="width:{{ $pct }}%;background:{{ $barColor }}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Footer / CTA --}}
+                                    <div class="px-4 pb-4 pt-1">
+                                        @if($isEventFinished)
+                                            @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
+                                                <div class="w-full flex items-center justify-center gap-1.5
+                                                            bg-blue-50 text-blue-700 rounded-full px-4 py-2.5
+                                                            text-[12.5px] font-bold">
+                                                    {{ number_format($attendeeHours[$slot->id]['hours'], 1) }}
+                                                    {{ $attendeeHours[$slot->id]['hours'] > 1 ? 'Hours' : 'Hour' }} Completed
+                                                </div>
+                                            @else
+                                                <div class="w-full flex items-center justify-center gap-1.5
+                                                            bg-red-50 text-red-600 rounded-full px-4 py-2.5
+                                                            text-[12.5px] font-bold">
+                                                    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
+                                                    </svg>
+                                                    Opportunity Finished
                                                 </div>
                                             @endif
 
-                                            <button type="submit"
-                                                    class="h-10 w-[200px] bg-[#ff7b00] text-white font-medium rounded-full hover:bg-[#e06e00] flex items-center justify-center gap-2">
-                                                <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M11 20c-3.2 0-5.6-1.5-7-3.8L2 14h3v-2H0v5h2v-1.8C3.7 17.5 6.7 22 11 22v-2zm5 0v2c4.3 0 7.3-4.5 8-6.8V17h2v-5h-5v2h3l-1.4 2.2C21.3 18.5 18.8 20 16 20zm-4.9-7.3c.3.3.6.4.9.4s.6-.1.9-.4c1.6-1.6 3.1-2.9 3.1-4.2C17 6.9 15.9 6 14.8 6c-.6 0-1.2.3-1.8.9-.6-.6-1.2-.9-1.8-.9C10.1 6 9 6.9 9 8.5c0 1.3 1.5 2.6 3.1 4.2z"/>
-                                                </svg>
-                                                Volunteer for this
-                                            </button>
-                                        </form>
-                                    @elseif($userRegistered)
-                                        @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
-                                            <span class="h-10 w-[200px] bg-blue-100 text-blue-800 flex items-center justify-center rounded-full">
-                                                {{ number_format($attendeeHours[$slot->id]['hours'], 1) }} Hours Completed
-                                            </span>
-                                        @else
-                                            <span class="h-10 w-[200px] bg-green-100 text-green-800 flex items-center justify-center rounded-full">
-                                                Already Registered
-                                            </span>
-                                        @endif
-                                    @else
-                                        <span class="h-10 w-[200px] bg-gray-100 text-gray-800 flex items-center justify-center rounded-full">
-                                            Slot Full
-                                        </span>
-                                    @endif
+                                        @elseif($userRegistered)
+                                            @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
+                                                <div class="w-full flex items-center justify-center gap-1.5
+                                                            bg-blue-50 text-blue-700 rounded-full px-4 py-2.5
+                                                            text-[12.5px] font-bold">
+                                                    {{ number_format($attendeeHours[$slot->id]['hours'], 1) }} Hours Completed
+                                                </div>
+                                            @else
+                                                <div class="w-full flex items-center justify-center gap-1.5
+                                                            bg-green-50 text-green-700 rounded-full px-4 py-2.5
+                                                            text-[12.5px] font-bold">
+                                                    Already Registered
+                                                </div>
+                                            @endif
 
+                                        @elseif($isFull)
+                                            <div class="w-full flex items-center justify-center gap-1.5
+                                                        bg-amber-50 text-amber-600 rounded-full px-4 py-2.5
+                                                        text-[12.5px] font-bold">
+                                                <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+                                                </svg>
+                                                Slots Full
+                                            </div>
+
+                                        @else
+                                            <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
+                                                  method="POST" enctype="multipart/form-data" class="w-full">
+                                                @csrf
+                                                <input type="hidden" name="privacy_policy" value="1">
+
+                                                @if($requiresAttachment)
+                                                    <div class="mb-3">
+                                                        <label class="block text-[12px] font-medium text-[#4a5568] mb-1.5">
+                                                            {{ $attachmentDescription }}
+                                                        </label>
+                                                        <input type="file" name="media[]" multiple required
+                                                               class="block w-full text-[12px] text-[#718096]
+                                                                      file:mr-3 file:py-1.5 file:px-3
+                                                                      file:rounded-full file:border-0
+                                                                      file:text-[12px] file:font-semibold
+                                                                      file:bg-[#f26522] file:text-white
+                                                                      hover:file:bg-[#d4541a]">
+                                                        @error('media')
+                                                            <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                @endif
+
+                                                <button type="submit"
+                                                        class="w-full flex items-center justify-center gap-1.5
+                                                               bg-[#f26522] hover:bg-[#d4541a] text-white
+                                                               rounded-full px-4 py-2.5 text-[12.5px] font-bold
+                                                               shadow-[0_3px_10px_rgba(242,101,34,.28)]
+                                                               transition-colors duration-150">
+                                                    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+                                                    </svg>
+                                                    Volunteer for this
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>{{-- /positions --}}
+
+        </div>{{-- /left column --}}
+
+
+        {{-- ── RIGHT SIDEBAR ────────────────────────────────────────── --}}
+        <div class="flex flex-col gap-4">
+
+            {{-- Opportunity Details --}}
+            <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,20,50,.07),0_6px_20px_rgba(0,20,50,.07)] overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-[14px] font-bold text-[#072b54]">Opportunity Details</h2>
+                </div>
+
+                <div class="divide-y divide-[#f7fafc]">
+
+                    {{-- Location --}}
+                    <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#e8eef8] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#0e4f99]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em]">Location</p>
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($location) }}"
+                               target="_blank"
+                               class="text-[13.5px] font-semibold text-[#0e4f99] mt-0.5 hover:underline block break-words">
+                                {{ $location }}
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Schedule --}}
+                    <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#fff3eb] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#f26522]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em]">Schedule</p>
+                            <p class="text-[13.5px] font-semibold text-[#1a2332] mt-0.5">{{ $dateStr }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Time (from first slot) --}}
+                    @if($timeStr)
+                        <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
+                            <div class="w-8 h-8 rounded-[9px] bg-[#e6f4ec] flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-[#16a34a]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em]">Time</p>
+                                <p class="text-[13.5px] font-semibold text-[#1a2332] mt-0.5">{{ $timeStr }}</p>
                             </div>
                         </div>
-                    @endforeach
+                    @endif
+
+                    {{-- Recurrence Type --}}
+                    <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#f0ebfa] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#7c3aed]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em]">Recurrence Type</p>
+                            <p class="text-[13.5px] font-semibold text-[#1a2332] mt-0.5">{{ $record->event_recurrence_type->name }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Volunteer Slots --}}
+                    <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
+                        <div class="w-8 h-8 rounded-[9px] bg-[#e8eef8] flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#0e4f99]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em]">Volunteer Slots</p>
+                            <p class="text-[13.5px] font-semibold text-[#1a2332] mt-0.5">
+                                {{ $record->slots->sum('total_slots') }} total
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+                {{-- Status CTA --}}
+                <div class="px-5 py-4">
+                    @if($isFinished)
+                        <div class="w-full flex items-center justify-center gap-2
+                                    bg-red-50 text-red-600 border border-red-100
+                                    rounded-xl px-4 py-3 text-[13px] font-bold">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
+                            </svg>
+                            Opportunity Finished
+                        </div>
+                    @elseif($isOngoing)
+                        <div class="w-full flex items-center justify-center gap-2
+                                    bg-green-50 text-green-700 border border-green-100
+                                    rounded-xl px-4 py-3 text-[13px] font-bold">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+                            </svg>
+                            Currently Ongoing
+                        </div>
+                    @else
+                        <button onclick="document.getElementById('volunteer-section').scrollIntoView({ behavior: 'smooth' });"
+                                class="w-full flex items-center justify-center gap-2
+                                       bg-[#f26522] hover:bg-[#d4541a] text-white
+                                       rounded-xl px-4 py-3 text-[13px] font-bold
+                                       shadow-[0_3px_10px_rgba(242,101,34,.3)]
+                                       transition-colors duration-150">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                            I want to volunteer
+                        </button>
+                    @endif
+                </div>
+            </div>{{-- /details --}}
 
 
+            {{-- Contact Information --}}
+            <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,20,50,.07),0_6px_20px_rgba(0,20,50,.07)] overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-[14px] font-bold text-[#072b54]">Contact Information</h2>
+                </div>
+                <div class="px-6 py-4 flex flex-col gap-4">
+
+                    {{-- HR Representative --}}
+                    <div>
+                        <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em] mb-2">HR Representative</p>
+                        @if($record->point_of_contact)
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-full bg-[#1a2c3e] text-white text-[10px] font-extrabold flex items-center justify-center flex-shrink-0">
+                                    {{ strtoupper(substr($record->point_of_contact->firstname ?? 'HR', 0, 2)) }}
+                                </div>
+                                <span class="text-[13px] font-semibold text-[#1a2332]">
+                                    {{ $record->point_of_contact->firstname }} {{ $record->point_of_contact->lastname }}
+                                </span>
+                            </div>
+                        @else
+                            <p class="text-[13px] text-[#718096]">—</p>
+                        @endif
+                    </div>
+
+                    <div class="h-px bg-[#e2e8f0] -mx-6"></div>
+
+                    {{-- Facilitators --}}
+                    <div>
+                        <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em] mb-2">Facilitator/s</p>
+                        @forelse($record->facilitators as $fac)
+                            <div class="flex items-center gap-2.5 mb-2 last:mb-0">
+                                <div class="w-7 h-7 rounded-full bg-[#1e40af] text-white text-[10px] font-extrabold flex items-center justify-center flex-shrink-0">
+                                    {{ strtoupper(substr($fac->name, 0, 2)) }}
+                                </div>
+                                <span class="text-[13px] font-semibold text-[#1a2332]">{{ $fac->name }}</span>
+                            </div>
+                        @empty
+                            <p class="text-[13px] text-[#718096]">No facilitators assigned.</p>
+                        @endforelse
+                    </div>
+
+                    @if($record->getMedia('event-attachments')->count() > 0)
+                        <div class="h-px bg-[#e2e8f0] -mx-6"></div>
+                        <div>
+                            <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em] mb-2">File Attachments</p>
+                            @foreach($record->getMedia('event-attachments') as $media)
+                                <a href="{{ $media->getUrl() }}" download
+                                   class="flex items-center gap-2 text-[#0e4f99] hover:text-[#f26522] text-[13px] font-semibold mb-1.5 last:mb-0 transition-colors">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                                    </svg>
+                                    <span class="underline break-all">{{ $media->file_name }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if(!$record->tags->isEmpty())
+                        <div class="h-px bg-[#e2e8f0] -mx-6"></div>
+                        <div>
+                            <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em] mb-2">Tags</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                @foreach($record->tags as $tag)
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold text-white"
+                                          style="background:#03498D;">
+                                        {{ Str::upper($tag->name) }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                </div>
+            </div>{{-- /contact --}}
 
 
-    <!-- Swiper Script -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+            {{-- Volunteers Bulletin --}}
+            <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,20,50,.07),0_6px_20px_rgba(0,20,50,.07)] overflow-hidden">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                    <h2 class="text-[14px] font-bold text-[#072b54]">Volunteers Bulletin</h2>
+                    @if($canManageEvent)
+                        <button type="button"
+                                onclick="document.getElementById('bulletin-form').classList.toggle('hidden')"
+                                class="inline-flex items-center gap-1.5 bg-[#f26522] hover:bg-[#d4541a]
+                                       text-white text-[12px] font-bold rounded-lg px-3 py-1.5
+                                       transition-colors duration-150">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            Post Bulletin
+                        </button>
+                    @endif
+                </div>
 
-    <script>
-        const storiesSwiper = new Swiper('.stories-swiper-container', {
-        loop: true,
-        slidesPerView: 1,
-        spaceBetween: 20,
-        navigation: {
-            nextEl: '.stories-button-24-next',
-            prevEl: '.stories-button-24-prev',
-            },
-            breakpoints: {
-            640: { slidesPerView: 1 },
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-            },
-        });
-    </script>
+                {{-- Post form --}}
+                @if($canManageEvent)
+                    <div id="bulletin-form" class="hidden border-b border-gray-100 px-5 py-4 bg-[#f7fafc]">
+                        <form method="POST" action="{{ route('event.post-bulletin', $record->id) }}">
+                            @csrf
+                            <input type="text" name="title" placeholder="Bulletin title…"
+                                   class="w-full border border-[#e2e8f0] rounded-lg px-3 py-2 text-[13px]
+                                          placeholder-[#a0aec0] mb-2
+                                          focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 focus:border-[#f26522]
+                                          transition-all">
+                            <textarea name="content" rows="2" placeholder="Write your message…"
+                                      class="w-full border border-[#e2e8f0] rounded-lg px-3 py-2 text-[13px]
+                                             placeholder-[#a0aec0] resize-none mb-3
+                                             focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 focus:border-[#f26522]
+                                             transition-all"></textarea>
+                            <div class="flex justify-end gap-2">
+                                <button type="button"
+                                        onclick="document.getElementById('bulletin-form').classList.add('hidden')"
+                                        class="px-3 py-1.5 text-[12px] font-semibold text-[#718096] hover:text-[#1a2332] transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit"
+                                        class="px-4 py-1.5 bg-[#f26522] hover:bg-[#d4541a] text-white text-[12px] font-bold rounded-lg transition-colors">
+                                    Post
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                @endif
 
+                {{-- Bulletin list --}}
+                <div class="flex flex-col divide-y divide-[#f7fafc]">
+                    @forelse($record->bulletins()->orderBy('created_at', 'desc')->limit(5)->get() as $bulletin)
+                        <div class="px-5 py-4 hover:bg-[#fafbfc] transition-colors">
+                            <div class="flex items-start justify-between mb-1.5">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="w-6 h-6 rounded-full bg-[#1a2c3e] text-white text-[9px] font-extrabold flex items-center justify-center flex-shrink-0">
+                                        {{ strtoupper(substr($bulletin->author->name ?? 'U', 0, 2)) }}
+                                    </div>
+                                    <span class="text-[12.5px] font-bold text-[#1a2332]">
+                                        {{ $bulletin->author->name ?? 'Unknown' }}
+                                    </span>
+                                    <span class="text-[11px] text-[#718096]">· {{ $bulletin->created_at->diffForHumans() }}</span>
+                                </div>
+                                @if($canManageEvent)
+                                    <form action="{{ route('event.delete-bulletin', [$record->id, $bulletin->id]) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Delete this bulletin?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit"
+                                                class="w-6 h-6 flex items-center justify-center rounded-md
+                                                       text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"/>
+                                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                                <path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                            @if($bulletin->title)
+                                <p class="text-[13px] font-bold text-[#072b54] mb-1">{{ $bulletin->title }}</p>
+                            @endif
+                            <p class="text-[12.5px] text-[#4a5568] leading-snug whitespace-pre-wrap">
+                                {{ $bulletin->content }}
+                            </p>
+                        </div>
+                    @empty
+                        <div class="py-8 text-center">
+                            <p class="text-[13px] text-[#718096]">No bulletins posted yet.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>{{-- /bulletin --}}
+
+        </div>{{-- /right sidebar --}}
+
+    </div>{{-- /two-col --}}
+
+</div>{{-- /page --}}
 </x-filament-panels::page>
