@@ -51,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-question-mark-circle')
                     ->url('?replay_tour=1'),
             ])
-            ->font('NB International Pro', url: 'https://fonts.cdnfonts.com/css/nb', provider: \Filament\FontProviders\LocalFontProvider::class)
+            ->font('Inter', provider: \Filament\FontProviders\GoogleFontProvider::class)
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->emailVerification(EmailVerification::class)

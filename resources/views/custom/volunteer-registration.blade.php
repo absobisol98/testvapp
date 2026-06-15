@@ -3,7 +3,7 @@
 
 @section('content')
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Public+Sans:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
         --blue-900: #072b54;
@@ -29,8 +29,8 @@
 
     [x-cloak] { display: none !important; }
 
-    body { font-family: 'Public Sans', system-ui, sans-serif; color: var(--ink); }
-    h1, h2, h3 { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; letter-spacing: -.015em; }
+    body { font-family: 'Inter', system-ui, sans-serif; color: var(--ink); }
+    h1, h2, h3 { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; letter-spacing: -.015em; }
 
     .vol-input, .vol-select {
         width: 100%; padding: 12px 14px;

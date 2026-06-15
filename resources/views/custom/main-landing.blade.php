@@ -22,8 +22,8 @@
   --bg-tint:  #f3f6fb;
 
   /* TYPOGRAPHY */
-  --font-b: 'NB International Pro', system-ui, sans-serif;
-  --font-d: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-b: 'Inter', system-ui, sans-serif;
+  --font-d: 'Inter', system-ui, sans-serif;
 }
 
 /* ── Base typography ──────────────────────────────────────────── */
@@ -73,7 +73,7 @@
 
 /* ── FONT LOAD (CRITICAL FIX) ─────────────────────────────────── */
 @font-face {
-  font-family: "NB International Pro";
+  font-family: "Inter";
   src: url("/fonts/nb-international/NBInternationalPro-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
@@ -81,7 +81,7 @@
 }
 
 @font-face {
-  font-family: "NB International Pro";
+  font-family: "Inter";
   src: url("/fonts/nb-international/NBInternationalPro-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
@@ -89,7 +89,7 @@
 }
 
 @font-face {
-  font-family: "NB International Pro";
+  font-family: "Inter";
   src: url("/fonts/nb-international/NBInternationalPro-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
@@ -111,7 +111,7 @@
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z"/></svg>
                         2026 International Year of Volunteers
                     </div>
-                    <h1 style="font-size:clamp(38px,5vw,60px); font-family:'NB International Pro', sans-serif; line-height:1.02; letter-spacing:-.03em; margin:0 0 22px;">
+                    <h1 style="font-size:clamp(38px,5vw,60px); font-family:'Inter', sans-serif; line-height:1.02; letter-spacing:-.03em; margin:0 0 22px;">
                       Your involvement<br>is important to <span style="color:var(--blue-700);">us.</span>
                     </h1>
                     <p style="font-size:clamp(17px,1.4vw,19px); line-height:1.6; color:var(--slate); max-width:480px; margin-bottom:30px;">
@@ -156,7 +156,7 @@
                             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 14.5l-4.5-4.5V6h1.5v5.25l4 4-1 1.25z"/></svg>
                         </div>
                         <div>
-                            <div style="font-family:var(--font-d); font-weight:800; font-size:22px; color:var(--ink); line-height:1;">{{ number_format(\App\Models\EventAttendee::count() * 4) }}</div>
+                            <div style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:22px; color:var(--ink); line-height:1;">{{ number_format(\App\Models\EventAttendee::count() * 4) }}</div>
                             <div style="font-size:12.5px; color:var(--muted); font-weight:600;">hours given back</div>
                         </div>
                     </div>
@@ -189,7 +189,7 @@
                         </svg>
                     </div>
                     <div>
-                        <div style="font-family:var(--font-d); font-weight:800; font-size:clamp(28px,3vw,38px); color:#fff; line-height:1;">{{ $s['val'] }}</div>
+                        <div style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:clamp(28px,3vw,38px); color:#fff; line-height:1;">{{ $s['val'] }}</div>
                         <div style="font-size:13.5px; color:rgba(255,255,255,.72); font-weight:600; margin-top:5px;">{{ $s['label'] }}</div>
                     </div>
                 </div>
@@ -204,7 +204,7 @@
         <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:16px;">
             
             <div>
-                <div style="font-family:var(--font-b); font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">
+                <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">
                     Opportunities
                 </div>
 
@@ -403,7 +403,7 @@
     <section style="background:var(--bg-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:84px 0;">
         <div style="max-width:1200px; margin:0 auto; padding:0 28px;">
             <div style="text-align:center; margin-bottom:48px;">
-                <div style="font-family:var(--font-b); font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">How it works</div>
+                <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">How it works</div>
                 <h2 style="font-size:clamp(28px,3.5vw,40px); margin:0 0 12px;">Volunteering in three simple steps</h2>
                 <p style="color:var(--slate); font-size:16px; max-width:560px; margin:0 auto;">We rebuilt the experience so getting from "I want to help" to "I'm signed up" takes minutes.</p>
             </div>
@@ -414,7 +414,7 @@
                     ['icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', 'title'=>'Show up & make impact', 'body'=>'Get clear details on what to expect. Your hours are logged automatically.', 'n'=>'3'],
                 ] as $step)
                 <div style="background:#fff; border:1px solid var(--line); border-radius:16px; padding:30px 26px; position:relative;">
-                    <div style="position:absolute; top:24px; right:26px; font-family:var(--font-d); font-weight:800; font-size:48px; color:var(--blue-50); line-height:1; pointer-events:none;">{{ $step['n'] }}</div>
+                    <div style="position:absolute; top:24px; right:26px; font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:48px; color:var(--blue-50); line-height:1; pointer-events:none;">{{ $step['n'] }}</div>
                     <div style="width:54px; height:54px; border-radius:14px; background:var(--blue-700); color:#fff; display:flex; align-items:center; justify-content:center; margin-bottom:20px;">
                         <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="{{ $step['icon'] }}"/>
@@ -434,7 +434,7 @@
             <div class="two-up" style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
                 {{-- Program card --}}
                 <div style="background:var(--blue-700); border-radius:22px; padding:44px 40px; color:#fff; position:relative; overflow:hidden; min-height:320px;">
-                    <div style="font-family:var(--font-b); font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f07a1e; margin-bottom:12px; position:relative; z-index:1;">Our program</div>
+                    <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f07a1e; margin-bottom:12px; position:relative; z-index:1;">Our program</div>
                     <h3 style="font-size:clamp(24px,2.6vw,32px); color:#fff; line-height:1.1; margin:0 0 16px; position:relative; z-index:1;">Corporate Citizenship &amp; Volunteerism</h3>
                     <p style="font-size:16px; line-height:1.65; color:rgba(255,255,255,.85); max-width:460px; margin:0 0 28px; position:relative; z-index:1;">We contribute to the nation's development goals by aligning our giving, focusing our efforts, and making real impact in the lives of people across our conglomerate, communities, and country.</p>
                     <a href="https://ayalafoundation.org" target="_blank" rel="noopener noreferrer"
@@ -451,7 +451,7 @@
                 <div style="position:relative; border-radius:22px; overflow:hidden; min-height:320px; background-image:url('{{ asset('img/ayala-foundation-bg-1.jpg') }}'); background-size:cover; background-position:center;">
                     <div style="position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,43,84,.15),rgba(7,43,84,.82));"></div>
                     <div style="position:relative; padding:40px; height:100%; display:flex; flex-direction:column; justify-content:flex-end; color:#fff;">
-                        <div style="font-family:var(--font-b); font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f07a1e; margin-bottom:10px;">Join us</div>
+                        <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f07a1e; margin-bottom:10px;">Join us</div>
                         <h3 style="font-size:clamp(24px,2.6vw,32px); color:#fff; margin:0 0 12px;">Become a volunteer</h3>
                         <p style="font-size:15.5px; color:rgba(255,255,255,.9); max-width:380px; margin:0 0 24px; line-height:1.55;">Create your volunteer profile once, then join any opportunity with a single tap.</p>
                         <a href="{{ route('volunteer.form.view') }}"
@@ -469,10 +469,10 @@
     {{-- ── PARTNERS ─────────────────────────────────────────────────── --}}
     <section style="background:var(--bg-soft); border-top:1px solid var(--line); padding:46px 0 56px;">
         <div style="max-width:1200px; margin:0 auto; padding:0 28px; text-align:center;">
-            <p style="font-family:var(--font-b); font-size:13px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:30px;">Powered by our partners</p>
+            <p style="font-family:'Inter',system-ui,sans-serif; font-size:13px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:30px;">Powered by our partners</p>
             <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:24px 52px;">
                 @foreach(['Ayala','BPI','Globe','ACEN','AC Health','Ayala Land','Manila Water','AC Energy','BPI Foundation','GCash'] as $p)
-                <span style="font-family:var(--font-d); font-weight:800; font-size:24px; color:#c8cdd6; letter-spacing:-.02em; transition:.15s; cursor:default;"
+                <span style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:24px; color:#c8cdd6; letter-spacing:-.02em; transition:.15s; cursor:default;"
                       onmouseover="this.style.color='var(--blue-700)'" onmouseout="this.style.color='#c8cdd6'">{{ $p }}</span>
                 @endforeach
             </div>
@@ -482,14 +482,14 @@
     {{-- ── STORIES / TESTIMONIALS ──────────────────────────────────── --}}
     <section style="background:#fff; padding:84px 0;" id="sec-stories">
         <div style="max-width:1200px; margin:0 auto; padding:0 28px; text-align:center;">
-            <div style="font-family:var(--font-b); font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">Stories</div>
+            <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--or-600); margin-bottom:10px;">Stories</div>
             <h2 style="font-size:clamp(28px,3.5vw,40px); margin:0 0 40px;">From our volunteers</h2>
             <div style="max-width:820px; margin:0 auto;">
                 <div style="background:#fff; border:1px solid var(--line); border-radius:22px; padding:44px 48px; box-shadow:0 4px 14px rgba(16,32,56,.08);">
-                    <div style="font-family:var(--font-d); font-size:72px; line-height:.6; color:var(--blue-50); height:34px; text-align:center;">"</div>
+                    <div style="font-family:'Inter',system-ui,sans-serif; font-size:72px; line-height:.6; color:var(--blue-50); height:34px; text-align:center;">"</div>
                     <p style="font-size:clamp(18px,2vw,22px); line-height:1.55; color:var(--ink); font-weight:500; margin:8px 0 28px;">Working alongside other volunteers under Brigada Ayala was not only fun, it was truly rewarding. I'm grateful I could use my skills to help create a safer learning environment for hundreds of children.</p>
                     <div style="display:flex; align-items:center; justify-content:center; gap:13px;">
-                        <div style="width:48px; height:48px; border-radius:50%; background:var(--blue-700); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-weight:700; font-size:16px;">JB</div>
+                        <div style="width:48px; height:48px; border-radius:50%; background:var(--blue-700); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:16px;">JB</div>
                         <div style="text-align:left;">
                             <div style="font-weight:700; font-size:15.5px; color:var(--ink);">Jay Bosi</div>
                             <div style="font-size:13.5px; color:var(--muted);">Volunteer · Globe Telecom</div>

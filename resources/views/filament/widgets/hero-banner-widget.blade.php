@@ -18,7 +18,7 @@
                     <p style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:4px;">
                         {{ $greeting }}, Volunteer
                     </p>
-                    <p style="font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:8px;font-family:'Bricolage Grotesque',system-ui,sans-serif;">
+                    <p style="font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:8px;font-family:'Inter',system-ui,sans-serif;">
                         {{ auth()->user()->name }}
                     </p>
                     <div class="flex gap-4 flex-wrap">
@@ -39,7 +39,7 @@
                 @if($badgeInfo)
                 <div class="text-center flex-shrink-0"
                      style="background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 18px;backdrop-filter:blur(6px);">
-                    <div style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:28px;font-weight:800;line-height:1;">
+                    <div style="font-family:'Inter',system-ui,sans-serif;font-size:28px;font-weight:800;line-height:1;">
                         {{ number_format($badgeInfo['points']) }}
                     </div>
                     <div style="font-size:10px;opacity:.55;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;">VP Points</div>
@@ -84,7 +84,7 @@
                         <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
                     </svg>
                 </div>
-                <div style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#f26522;">{{ $myHoursRendered }}</div>
+                <div style="font-family:'Inter',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#f26522;">{{ $myHoursRendered }}</div>
                 <div style="font-size:12px;font-weight:700;color:#6e7a8a;margin-top:5px;">Total Hours</div>
                 <div style="font-size:11.5px;color:#6e7a8a;margin-top:3px;">Lifetime</div>
             </a>
@@ -97,7 +97,7 @@
                         <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>
                     </svg>
                 </div>
-                <div style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#1565c4;">{{ $myHoursThisMonth }}</div>
+                <div style="font-family:'Inter',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#1565c4;">{{ $myHoursThisMonth }}</div>
                 <div style="font-size:12px;font-weight:700;color:#6e7a8a;margin-top:5px;">Hours This Month</div>
                 <div style="font-size:11.5px;color:#6e7a8a;margin-top:3px;">{{ now()->format('F Y') }}</div>
             </div>
@@ -110,7 +110,7 @@
                         <path d="M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/>
                     </svg>
                 </div>
-                <div style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#1d8a52;">{{ $myEventsAttended }}</div>
+                <div style="font-family:'Inter',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#1d8a52;">{{ $myEventsAttended }}</div>
                 <div style="font-size:12px;font-weight:700;color:#6e7a8a;margin-top:5px;">Events Attended</div>
                 <div style="font-size:11.5px;color:#6e7a8a;margin-top:3px;">All time</div>
             </div>
@@ -123,7 +123,7 @@
                         <path d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM8.2 13.9 7 22l5-3 5 3-1.2-8.1"/>
                     </svg>
                 </div>
-                <div style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#7c3aed;">{{ $myCertificates }}</div>
+                <div style="font-family:'Inter',system-ui,sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#7c3aed;">{{ $myCertificates }}</div>
                 <div style="font-size:12px;font-weight:700;color:#6e7a8a;margin-top:5px;">Certificates</div>
                 <div style="font-size:11.5px;color:#6e7a8a;margin-top:3px;">Earned</div>
             </div>

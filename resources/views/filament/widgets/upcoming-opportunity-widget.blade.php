@@ -3,7 +3,7 @@
 
         {{-- ── Section header ── --}}
         <div class="flex items-center justify-between gap-4 mb-1 px-1">
-            <p style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;color:#072b54;">
+            <p style="font-family:'Inter',system-ui,sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;color:#072b54;">
                 Upcoming Opportunities
             </p>
             <div class="flex items-center gap-4">
@@ -82,7 +82,7 @@
                         <p class="text-xs font-bold uppercase tracking-wider" style="color:#f26522;">
                             Ayala Foundation
                         </p>
-                        <h3 style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:13.5px;font-weight:700;line-height:1.3;color:#141820;">
+                        <h3 style="font-family:'Inter',system-ui,sans-serif;font-size:13.5px;font-weight:700;line-height:1.3;color:#141820;">
                             {{ Str::limit($opportunity->title, 60) }}
                         </h3>
                         @if($opportunity->location)

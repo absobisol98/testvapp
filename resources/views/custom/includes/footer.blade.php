@@ -10,7 +10,7 @@
                         <path d="M35 7 L29 7 L18 32 L24 32 Z" fill="#ffffff"/>
                         <path d="M16 32 L24 32 L20 38 Z" fill="var(--or-500,#f07a1e)"/>
                     </svg>
-                    <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif; font-weight:800; font-size:18px; letter-spacing:-.03em; color:#fff;">VApp</span>
+                    <span style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:18px; letter-spacing:-.03em; color:#fff;">VApp</span>
                 </a>
                 <p style="margin-top:16px; font-size:14px; line-height:1.65; max-width:300px;">
                     VApp — connecting people who care with causes that need them.
@@ -38,7 +38,7 @@
 
             {{-- Get involved column --}}
             <div>
-                <h4 style="font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:16px; font-family:'Public Sans',system-ui,sans-serif; font-weight:700;">Get involved</h4>
+                <h4 style="font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:16px; font-family:'Inter',system-ui,sans-serif; font-weight:700;">Get involved</h4>
                 <ul style="display:flex; flex-direction:column; gap:11px; list-style:none; margin:0; padding:0;">
                     @foreach([
                         ['Browse opportunities', url('/admin/events')],
@@ -56,7 +56,7 @@
 
             {{-- Programs column --}}
             <div>
-                <h4 style="font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:16px; font-family:'Public Sans',system-ui,sans-serif; font-weight:700;">Programs</h4>
+                <h4 style="font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:16px; font-family:'Inter',system-ui,sans-serif; font-weight:700;">Programs</h4>
                 <ul style="display:flex; flex-direction:column; gap:11px; list-style:none; margin:0; padding:0;">
                     @foreach(['Brigada Ayala','GreenBrigade','Health Caravan','Youth Lead'] as $prog)
                     <li>
@@ -69,7 +69,7 @@
 
             {{-- About column --}}
             <div>
-                <h4 style="font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:16px; font-family:'Public Sans',system-ui,sans-serif; font-weight:700;">About</h4>
+                <h4 style="font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin-bottom:16px; font-family:'Inter',system-ui,sans-serif; font-weight:700;">About</h4>
                 <ul style="display:flex; flex-direction:column; gap:11px; list-style:none; margin:0; padding:0;">
                     @foreach([
                         ['About VApp', '#'],
