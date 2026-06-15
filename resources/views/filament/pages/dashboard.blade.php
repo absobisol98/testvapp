@@ -18,7 +18,7 @@
 
     @php $activeRole = auth()->user()->activeRole(); @endphp
 
-    <div class="w-full flex flex-col gap-8">
+    <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full gap-8">
         @livewire(\App\Filament\Widgets\HeroBannerWidget::class)
 
         @if($activeRole === 'Volunteer')
