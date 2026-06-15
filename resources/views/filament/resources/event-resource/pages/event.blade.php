@@ -330,9 +330,6 @@
                                           :class="activeIdx === {{ $gIdx }} ? 'border-[#072b54]' : 'border-white'">
                                         {{ $dateGroup['slotCount'] }}
                                     </span>
-                                    @if($dateGroup['isPast'])
-                                        <span class="absolute inset-0 rounded-xl bg-white/50 pointer-events-none"></span>
-                                    @endif
                                 </button>
                             @endforeach
                         </div>
