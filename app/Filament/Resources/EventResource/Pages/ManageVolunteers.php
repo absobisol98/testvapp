@@ -12,7 +12,7 @@ class ManageVolunteers extends Page
 
     protected static string $view = 'filament.resources.event-resource.pages.manage-volunteers';
 
-    public Event $record;
+    public $record = null;
 
     public static function canAccess(array $parameters = []): bool
     {
