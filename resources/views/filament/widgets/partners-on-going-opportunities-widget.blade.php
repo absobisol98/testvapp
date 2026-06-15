@@ -42,7 +42,7 @@
 
                             <div class="flex items-center justify-start gap-2">
                                     @include('custom.icons.admin-icons', ['icon' => 'for-review'])
-                                    <p class="font-[700] text-[#ff7b00]">{{$opportunity->status?->name}}</p>
+                                    <p class="font-[700] text-[#f55e1d]">{{$opportunity->status?->name}}</p>
                             </div>
                         </div>
                         <p class="text-[28px] font-bold font-bold capitalize text-[#0433ff]">{{ $opportunity->title }}</p>

@@ -8,7 +8,7 @@
                     <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true" style="flex:none;">
                         <path d="M5 7 L11 7 L22 32 L16 32 Z" fill="#ffffff"/>
                         <path d="M35 7 L29 7 L18 32 L24 32 Z" fill="#ffffff"/>
-                        <path d="M16 32 L24 32 L20 38 Z" fill="var(--or-500,#f07a1e)"/>
+                        <path d="M16 32 L24 32 L20 38 Z" fill="var(--or-500,#f55e1d)"/>
                     </svg>
                     <span style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:18px; letter-spacing:-.03em; color:#fff;">VApp</span>
                 </a>
@@ -25,7 +25,7 @@
                     ] as $soc)
                     <a href="#" onclick="event.preventDefault()" aria-label="{{ $soc['icon'] }}"
                        style="width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; color:#fff; transition:.15s; flex:none;"
-                       onmouseover="this.style.background='var(--or-500,#f07a1e)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">
+                       onmouseover="this.style.background='var(--or-500,#f55e1d)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                             @foreach(explode('|', $soc['path']) as $p)
                                 <path d="{{ $p }}"/>

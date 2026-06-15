@@ -9,8 +9,8 @@
   --blue-700: #0e4f99;
   --blue-600: #1565c4;
   --blue-50:  #eef4fc;
-  --or-600:   #d9650c;
-  --or-500:   #f07a1e;
+  --or-600:   #d44e14;
+  --or-500:   #f55e1d;
   --or-50:    #fef2e7;
   --green-600:#1d8a52;
   --green-50: #e8f5ee;
@@ -119,7 +119,7 @@
                     </p>
                     <div style="display:flex; gap:13px; flex-wrap:wrap; margin-bottom:30px;">
                         <a href="{{ url('/admin/events') }}"
-                           style="display:inline-flex; align-items:center; gap:9px; background:var(--or-500); color:#fff; font-weight:700; font-size:15px; padding:14px 26px; border-radius:999px; box-shadow:0 6px 16px rgba(240,122,30,.28); transition:.16s;"
+                           style="display:inline-flex; align-items:center; gap:9px; background:var(--or-500); color:#fff; font-weight:700; font-size:15px; padding:14px 26px; border-radius:999px; box-shadow:0 6px 16px rgba(245,94,29,.28); transition:.16s;"
                            onmouseover="this.style.background='var(--or-600)';this.style.transform='translateY(-1px)'"
                            onmouseout="this.style.background='var(--or-500)';this.style.transform=''">
                             <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -181,7 +181,7 @@
                     ['icon'=>'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'val'=>$opportunityCount, 'label'=>'Open opportunities'],
                 ] as $s)
                 <div style="display:flex; align-items:center; gap:16px;">
-                    <div style="width:54px; height:54px; border-radius:14px; background:rgba(255,255,255,.1); color:#f07a1e; display:flex; align-items:center; justify-content:center; flex:none;">
+                    <div style="width:54px; height:54px; border-radius:14px; background:rgba(255,255,255,.1); color:#f55e1d; display:flex; align-items:center; justify-content:center; flex:none;">
                         <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             @foreach(explode('|', $s['icon']) as $p)
                                 <path d="{{ $p }}"/>
@@ -434,7 +434,7 @@
             <div class="two-up" style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
                 {{-- Program card --}}
                 <div style="background:var(--blue-700); border-radius:22px; padding:44px 40px; color:#fff; position:relative; overflow:hidden; min-height:320px;">
-                    <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f07a1e; margin-bottom:12px; position:relative; z-index:1;">Our program</div>
+                    <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f55e1d; margin-bottom:12px; position:relative; z-index:1;">Our program</div>
                     <h3 style="font-size:clamp(24px,2.6vw,32px); color:#fff; line-height:1.1; margin:0 0 16px; position:relative; z-index:1;">Corporate Citizenship &amp; Volunteerism</h3>
                     <p style="font-size:16px; line-height:1.65; color:rgba(255,255,255,.85); max-width:460px; margin:0 0 28px; position:relative; z-index:1;">We contribute to the nation's development goals by aligning our giving, focusing our efforts, and making real impact in the lives of people across our conglomerate, communities, and country.</p>
                     <a href="https://ayalafoundation.org" target="_blank" rel="noopener noreferrer"
@@ -451,11 +451,11 @@
                 <div style="position:relative; border-radius:22px; overflow:hidden; min-height:320px; background-image:url('{{ asset('img/ayala-foundation-bg-1.jpg') }}'); background-size:cover; background-position:center;">
                     <div style="position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,43,84,.15),rgba(7,43,84,.82));"></div>
                     <div style="position:relative; padding:40px; height:100%; display:flex; flex-direction:column; justify-content:flex-end; color:#fff;">
-                        <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f07a1e; margin-bottom:10px;">Join us</div>
+                        <div style="font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#f55e1d; margin-bottom:10px;">Join us</div>
                         <h3 style="font-size:clamp(24px,2.6vw,32px); color:#fff; margin:0 0 12px;">Become a volunteer</h3>
                         <p style="font-size:15.5px; color:rgba(255,255,255,.9); max-width:380px; margin:0 0 24px; line-height:1.55;">Create your volunteer profile once, then join any opportunity with a single tap.</p>
                         <a href="{{ route('volunteer.form.view') }}"
-                           style="display:inline-flex; align-items:center; gap:8px; background:var(--or-500); color:#fff; font-weight:700; font-size:14px; padding:12px 22px; border-radius:999px; box-shadow:0 6px 16px rgba(240,122,30,.28); transition:.15s; width:fit-content;"
+                           style="display:inline-flex; align-items:center; gap:8px; background:var(--or-500); color:#fff; font-weight:700; font-size:14px; padding:12px 22px; border-radius:999px; box-shadow:0 6px 16px rgba(245,94,29,.28); transition:.15s; width:fit-content;"
                            onmouseover="this.style.background='var(--or-600)'" onmouseout="this.style.background='var(--or-500)'">
                             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             Become a volunteer
@@ -511,7 +511,7 @@
         <p style="color:rgba(255,255,255,.85); font-size:18px; max-width:520px; margin:0 auto 30px;">It takes two minutes to join your first opportunity.</p>
         <div style="display:flex; gap:13px; justify-content:center; flex-wrap:wrap;">
             <a href="{{ url('/admin/events') }}"
-               style="display:inline-flex; align-items:center; gap:9px; background:var(--or-500); color:#fff; font-weight:700; font-size:16px; padding:16px 30px; border-radius:999px; box-shadow:0 6px 16px rgba(240,122,30,.28); transition:.16s;"
+               style="display:inline-flex; align-items:center; gap:9px; background:var(--or-500); color:#fff; font-weight:700; font-size:16px; padding:16px 30px; border-radius:999px; box-shadow:0 6px 16px rgba(245,94,29,.28); transition:.16s;"
                onmouseover="this.style.background='var(--or-600)';this.style.transform='translateY(-1px)'"
                onmouseout="this.style.background='var(--or-500)';this.style.transform=''">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>

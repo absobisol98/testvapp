@@ -1,6 +1,6 @@
 @if ($icon == 'list-32')
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10.6667 8H28M10.6667 16H28M10.6667 24H28M4 8H4.01333M4 16H4.01333M4 24H4.01333" stroke="#ff7b00"
+        <path d="M10.6667 8H28M10.6667 16H28M10.6667 24H28M4 8H4.01333M4 16H4.01333M4 24H4.01333" stroke="#f55e1d"
             stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
 @elseif ($icon == 'calendar-32')

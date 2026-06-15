@@ -85,7 +85,7 @@
                                 </div>
 
                                 <a href="{{ route('businessunit.homepage.view', $partner->slug) }}" class="cursor-pointer">
-                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] flex items-center justify-center p-2 rounded-3xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                    <div class="h-auto md:h-[48px] w-[200px] bg-[#f55e1d] flex items-center justify-center p-2 rounded-3xl hover:bg-[#f7723a] transition duration-300 ease-in-out">
                                         <p class="font-medium text-base md:text-[18px] text-white">EXPLORE</p>
                                     </div>
                                 </a>

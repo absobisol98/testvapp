@@ -101,7 +101,7 @@
         theme: {
             extend: {
                 colors: {
-                    primary: '#ff7b00',
+                    primary: '#f55e1d',
                     secondary: '#0433ff'
                 }
             }

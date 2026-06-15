@@ -351,7 +351,7 @@
                 @foreach ($featuredEvents as $featured)
                     <div class="swiper-slide relative">
                         <div class="grid grid-cols-2 lg:grid-cols-2 ">
-                            <div class="col-span-1 h-full min-h-[500px] gap-8 font-medium text-white bg-[#ff7b00]">
+                            <div class="col-span-1 h-full min-h-[500px] gap-8 font-medium text-white bg-[#f55e1d]">
                                 <img src="{{  $featured->getBanner() }}" alt="" class="object-fit w-full h-full">
                             </div>
                             <div class="col-span-1 py-24 px-20 flex flex-col items-center justify-center gap-8 z-1">
@@ -422,7 +422,7 @@
 
 
                                 <div class="w-full p-4">
-                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#ff7b00]">
+                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#f55e1d]">
                                         <p class="text-lg font-normal text-white">{{$upcoming->event_type->name}}</p>
                                     </div>
 
@@ -449,7 +449,7 @@
                                     <div class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                         <a href="{{route('filament.admin.resources.events.view',['record' => $opportunity->id])}}">
                                             <div
-                                                class="h-[53px] w-[229px] bg-[#ff7b00] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                class="h-[53px] w-[229px] bg-[#f55e1d] flex items-center justify-center p-2 hover:bg-[#f7723a]">
                                                 <p class="font-normal text-lg text-white">SIGN UP</p>
                                             </div>
                                         </a>

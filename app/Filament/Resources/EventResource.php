@@ -202,6 +202,7 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->label('Event End')
                                         ->helperText('The last day of the opportunity. All shift dates must fall within this range.')
                                         ->required()
+                                        ->live()
                                         ->seconds(false)
                                         ->default(now()->setTime(17, 0))
                                         ->afterOrEqual('start_date'),
@@ -283,8 +284,8 @@ class EventResource extends Resource implements HasShieldPermissions
                                             Forms\Components\DatePicker::make('shift_date')
                                                 ->label('Shift Date')
                                                 ->required()
-                                                ->minDate(fn ($get) => $get('../../start_date'))
-                                                ->maxDate(fn ($get) => $get('../../end_date'))
+                                                ->minDate(fn ($get) => $get('../../start_date') ? \Carbon\Carbon::parse($get('../../start_date'))->startOfDay() : null)
+                                                ->maxDate(fn ($get) => $get('../../end_date') ? \Carbon\Carbon::parse($get('../../end_date'))->endOfDay() : null)
                                                 ->helperText('Must be within the event date range.'),
                                             Forms\Components\TimePicker::make('start_time')
                                                 ->label('Start Time')
@@ -293,8 +294,8 @@ class EventResource extends Resource implements HasShieldPermissions
                                                 ->seconds(false),
                                             Forms\Components\DatePicker::make('shift_end_date')
                                                 ->label('End Date')
-                                                ->minDate(fn ($get) => $get('shift_date'))
-                                                ->maxDate(fn ($get) => $get('../../end_date'))
+                                                ->minDate(fn ($get) => $get('shift_date') ? \Carbon\Carbon::parse($get('shift_date'))->startOfDay() : null)
+                                                ->maxDate(fn ($get) => $get('../../end_date') ? \Carbon\Carbon::parse($get('../../end_date'))->endOfDay() : null)
                                                 ->helperText('Leave blank if same day. Set for overnight or multi-day shifts.'),
                                             Forms\Components\TimePicker::make('end_time')
                                                 ->label('End Time')

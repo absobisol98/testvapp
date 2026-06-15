@@ -7,7 +7,7 @@
     .fi-page section { padding:0 0 48px 0!important; }
     .fi-header { display:none; }
     .profile-tab-btn { transition: all .2s; }
-    .profile-tab-btn.active { color:#ff7b00; border-bottom:3px solid #ff7b00; font-weight:600; }
+    .profile-tab-btn.active { color:#f55e1d; border-bottom:3px solid #f55e1d; font-weight:600; }
     .profile-tab-btn:not(.active) { color:#6B7280; border-bottom:3px solid transparent; }
     .info-label { font-size:.75rem; font-weight:500; color:#9CA3AF; text-transform:uppercase; letter-spacing:.05em; }
     .info-value { font-size:1rem; color:#111827; margin-top:.2rem; }
@@ -15,7 +15,7 @@
 
 @php
     $primaryBlue = '#0433ff';
-    $accentOrange = '#ff7b00';
+    $accentOrange = '#f55e1d';
 @endphp
 
 {{-- ── Hero Banner ─────────────────────────────────────────────────────── --}}

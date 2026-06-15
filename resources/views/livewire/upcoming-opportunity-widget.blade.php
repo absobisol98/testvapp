@@ -30,7 +30,7 @@
                     /* Stroke color on click (active state) */
                     #icon.active svg path,
                     #icon-calendar.active svg path {
-                        stroke: #FF9141;
+                        stroke: #f7723a;
                         /* Change this to your desired active color */
                     }
                 </style>
@@ -85,7 +85,7 @@
                     <div style="width:200px">
                         <a href="">
                             <div
-                                class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                class="h-[48px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#f7723a]">
                                 <p class="font-400 text-lg text-white">CHECK-IN</p>
                             </div>
                         </a>

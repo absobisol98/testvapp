@@ -8,7 +8,7 @@
         </div>
 
         <div class="space-y-4">
-            <h1 class="text-3xl font-bold text-[#ff7b00]">Thank You!</h1>
+            <h1 class="text-3xl font-bold text-[#f55e1d]">Thank You!</h1>
             <p class="text-gray-600">Your response has been recorded. We appreciate your feedback.</p>
         </div>
         <div class="mt-8">

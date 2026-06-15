@@ -45,7 +45,7 @@
                             <div class="flex items-center justify-between gap-4">
                                 <a class="w-full" href="">
                                     <div
-                                        class="h-[40px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                        class="h-[40px] w-full bg-[#FF781E] flex items-center justify-center p-2 hover:bg-[#f7723a]">
                                         <p class="font-[400] text-[18px] text-white">CHECK-IN</p>
                                     </div>
                                 </a>

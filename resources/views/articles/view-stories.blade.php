@@ -31,7 +31,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF781E] focus:border-transparent outline-none"
                         >
                     </div>
-                    <button type="submit" class="px-6 py-2 bg-[#FF781E] text-white rounded-lg hover:bg-[#FF9141] transition duration-300">
+                    <button type="submit" class="px-6 py-2 bg-[#FF781E] text-white rounded-lg hover:bg-[#f7723a] transition duration-300">
                         Search
                     </button>
                     @if(request('search'))
@@ -81,7 +81,7 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="h-[40px] w-full lg:max-w-[300px] bg-[#FF781E] rounded-xl hover:bg-[#FF9141] transition duration-300 ease-in-out">
+                                            <div class="h-[40px] w-full lg:max-w-[300px] bg-[#FF781E] rounded-xl hover:bg-[#f7723a] transition duration-300 ease-in-out">
                                                 <a href="{{ url('/article'). '/' . $article->slug }}"
                                                    class="h-full w-full flex items-center justify-center p-2">
                                                     <p class="font-medium text-sm md:text-base text-white">READ MORE</p>
@@ -116,7 +116,7 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="h-[36px] w-full bg-[#FF781E] rounded-xl hover:bg-[#FF9141] transition duration-300 ease-in-out mt-auto">
+                                        <div class="h-[36px] w-full bg-[#FF781E] rounded-xl hover:bg-[#f7723a] transition duration-300 ease-in-out mt-auto">
                                             <a href="{{ url('/article'). '/' . $article->slug }}"
                                                class="h-full w-full flex items-center justify-center p-2">
                                                 <p class="font-medium text-sm text-white">READ MORE</p>

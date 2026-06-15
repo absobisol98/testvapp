@@ -13,8 +13,8 @@
         --blue-500: #2a7de0;
         --blue-100: #d6e6f8;
         --blue-50:  #eef4fc;
-        --orange-600: #d9650c;
-        --orange-500: #f07a1e;
+        --orange-600: #d44e14;
+        --orange-500: #f55e1d;
         --green-600: #1d8a52;
         --green-50:  #e8f5ee;
         --ink:   #15181d;
@@ -360,7 +360,7 @@
                     </button>
 
                     <button type="button" x-show="currentStep < 2" @click="nextStep()"
-                        style="flex:1; background:var(--orange-500); color:#fff; font-weight:700; font-size:15px; padding:13px 24px; border-radius:999px; border:none; cursor:pointer; box-shadow:0 6px 16px rgba(240,122,30,.28); transition:.16s;"
+                        style="flex:1; background:var(--orange-500); color:#fff; font-weight:700; font-size:15px; padding:13px 24px; border-radius:999px; border:none; cursor:pointer; box-shadow:0 6px 16px rgba(245,94,29,.28); transition:.16s;"
                         onmouseover="this.style.background='var(--orange-600)'; this.style.transform='translateY(-1px)'"
                         onmouseout="this.style.background='var(--orange-500)'; this.style.transform='none'">
                         <span style="display:inline-flex; align-items:center; justify-content:center; gap:9px;">
@@ -371,7 +371,7 @@
 
                     <button type="submit" x-show="currentStep === 2"
                         :disabled="!form.agree_terms || isSubmitting"
-                        style="flex:1; background:var(--orange-500); color:#fff; font-weight:700; font-size:15px; padding:13px 24px; border-radius:999px; border:none; cursor:pointer; box-shadow:0 6px 16px rgba(240,122,30,.28); transition:.16s;"
+                        style="flex:1; background:var(--orange-500); color:#fff; font-weight:700; font-size:15px; padding:13px 24px; border-radius:999px; border:none; cursor:pointer; box-shadow:0 6px 16px rgba(245,94,29,.28); transition:.16s;"
                         :style="(!form.agree_terms || isSubmitting) ? 'opacity:.5; cursor:not-allowed; transform:none' : ''"
                         onmouseover="if (!this.disabled) { this.style.background='var(--orange-600)'; this.style.transform='translateY(-1px)'; }"
                         onmouseout="this.style.background='var(--orange-500)'; this.style.transform='none'">

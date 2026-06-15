@@ -30,7 +30,7 @@
 
 <div class="flex flex-col w-full px-4 mx-auto md:px-6 lg:px-8 max-w-full space-y-6">
     <div class="w-full flex items-center justify-end mb-8">
-        <button onclick="history.back()" class="py-2 px-4 flex items-center justify-center bg-[#ff7b00] hover:bg-[#FF9141]">
+        <button onclick="history.back()" class="py-2 px-4 flex items-center justify-center bg-[#f55e1d] hover:bg-[#f7723a]">
             <p class="text-lg font-normal text-white">Back To Event List</p>
         </button>
     </div>
@@ -64,7 +64,7 @@
             </div>
             <div class="flex flex-col justify-start items-start gap-2">
                 <p class="text-md md:text-lg lg:text-base font-normal capitalize">{!! strip_tags($record->description) !!}</p>
-                <div class="py-2 px-4 flex items-center justify-center bg-[#ff7b00] rounded-md">
+                <div class="py-2 px-4 flex items-center justify-center bg-[#f55e1d] rounded-md">
                     <p class="text-md md:text-lg lg:text-base font-normal text-white capitalize">Sign In</p>
                 </div>
             </div>

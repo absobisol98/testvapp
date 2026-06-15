@@ -2,8 +2,8 @@
     :root {
         --nav-blue: #0e4f99;
         --nav-blue-hover: #0a3a6e;
-        --nav-orange: #f07a1e;
-        --nav-orange-hover: #d9650c;
+        --nav-orange: #f55e1d;
+        --nav-orange-hover: #d44e14;
     }
 
     #navBar {
@@ -66,7 +66,7 @@
         font-size: 14px;
         padding: 10px 18px;
         border-radius: 999px;
-        box-shadow: 0 4px 12px rgba(240,122,30,.28);
+        box-shadow: 0 4px 12px rgba(245,94,29,.28);
         transition: .15s;
         text-decoration: none;
         border: none;

@@ -93,7 +93,7 @@
                     <div class="w-fit flex items-center justify-between gap-8 p-4">
                         <a href="{{ url('/admin/events/view/' . $opportunity->id) }}">
                             <div
-                                class="h-auto md:h-[48px] w-[200px] bg-[#ff7b00] flex items-center rounded-full justify-center p-2 hover:bg-[#FF9141]">
+                                class="h-auto md:h-[48px] w-[200px] bg-[#f55e1d] flex items-center rounded-full justify-center p-2 hover:bg-[#f7723a]">
                                 <p class="font-normal text-base md:text-lg text-white">VIEW</p>
                             </div>
                         </a>

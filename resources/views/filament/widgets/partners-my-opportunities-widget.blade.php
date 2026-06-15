@@ -10,7 +10,7 @@
                 <div class="w-fit flex items-center justify-between gap-4">
                     <button class="w-fit">
                         <div
-                            class="h-auto md:h-[48px] w-full bg-[#F55E1D] flex items-center justify-center py-2 px-6 hover:bg-[#FF9141]">
+                            class="h-auto md:h-[48px] w-full bg-[#F55E1D] flex items-center justify-center py-2 px-6 hover:bg-[#f7723a]">
                             <p class="font-normal text-base text-white">IMPORT</p>
                         </div>
                     </button>

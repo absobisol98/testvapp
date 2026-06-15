@@ -142,7 +142,7 @@
                 <div class="w-full grid grid-cols-2 gap-4 mx-auto text-center">
                     <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                         <a href="{{ route('filament.admin.resources.volunteers.index') }}"
-                           class="hover:text-[#FF9141] transition-colors duration-200">
+                           class="hover:text-[#f7723a] transition-colors duration-200">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $totalVolunteers }}</p>
                             <p class="text-sm font-bold text-[#03498D]">TOTAL VOLUNTEERS</p>
                         </a>
@@ -175,14 +175,14 @@
                 <div class="w-full grid grid-cols-2 gap-4 mx-auto text-center md:grid-cols-3">
                     <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                         <a href="{{ route('filament.admin.resources.events.index') }}"
-                           class="hover:text-[#FF9141] transition-colors duration-200">
+                           class="hover:text-[#f7723a] transition-colors duration-200">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $partnerAvailableOpportunities }}</p>
                             <p class="text-sm font-bold text-[#03498D]">AVAILABLE OPPORTUNITIES</p>
                         </a>
                     </div>
                     <div class="col-span-1 flex flex-col items-center justify-center gap-2 bg-[#FFFFFFCC] p-8">
                         <a href="{{ route('filament.admin.resources.events.index') }}"
-                           class="hover:text-[#FF9141] transition-colors duration-200">
+                           class="hover:text-[#f7723a] transition-colors duration-200">
                             <p class="text-3xl md:text-[40px] font-bold text-[#F55E1D]">{{ $partnerUpcomingOpportunities }}</p>
                             <p class="text-sm font-bold text-[#03498D]">UPCOMING OPPORTUNITIES</p>
                         </a>

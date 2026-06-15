@@ -30,7 +30,7 @@
 
                     <div class="w-full text-[14px] p-4">
                         <div class="w-full flex items-center justify-between gap-4 text-[14px] font-[400]">
-                            <div class="w-fit py-1 px-2 flex items-center justify-center bg-[#ff7b00]">
+                            <div class="w-fit py-1 px-2 flex items-center justify-center bg-[#f55e1d]">
                                 <p class="font-normal text-white">
                                     {{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                             </div>
@@ -68,7 +68,7 @@
 
                             <a href="" class="w-full">
                                 <div
-                                    class="h-[40px] w-full bg-[#ff7b00] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                    class="h-[40px] w-full bg-[#f55e1d] flex items-center justify-center p-2 hover:bg-[#f7723a]">
                                     <p class="text-white">SIGN UP</p>
                                 </div>
                             </a>
@@ -104,7 +104,7 @@
                                 </div>
 
                                 <div class="w-full p-4 flex flex-col gap-4">
-                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#ff7b00]">
+                                    <div class="w-fit py-2 px-4 flex items-center justify-center bg-[#f55e1d]">
                                         <p class="text-lg font-normal text-white">{{ \Illuminate\Support\Str::upper($opportunity->program->name) }}</p>
                                     </div>
 
@@ -140,7 +140,7 @@
                                                 class="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
                                                 <a href="">
                                                     <div
-                                                        class="h-[53px] w-[229px] bg-[#ff7b00] flex items-center justify-center p-2 hover:bg-[#FF9141]">
+                                                        class="h-[53px] w-[229px] bg-[#f55e1d] flex items-center justify-center p-2 hover:bg-[#f7723a]">
                                                         <p class="font-normal text-lg text-white">SIGN UP</p>
                                                     </div>
                                                 </a>

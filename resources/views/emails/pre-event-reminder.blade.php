@@ -11,7 +11,7 @@
         .header {
             text-align: center;
             padding: 20px;
-            background-color: #ff7b00;
+            background-color: #f55e1d;
         }
         .logo {
             max-width: 200px;
@@ -24,7 +24,7 @@
         .button {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #ff7b00;
+            background-color: #f55e1d;
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -37,7 +37,7 @@
             color: #666666;
         }
         .highlight {
-            color: #ff7b00;
+            color: #f55e1d;
             font-weight: bold;
         }
         .event-details {
