@@ -178,26 +178,6 @@ class EventResource extends Resource implements HasShieldPermissions
                             Forms\Components\TagsInput::make('tags')
                                 ->suggestions(fn () => TagsEvent::orderBy('id')->pluck('name')->toArray()),
 
-                            Forms\Components\Grid::make(2)
-                                ->schema([
-                                    Forms\Components\Select::make('event_format')
-                                        ->label('Event Format')
-                                        ->options([
-                                            'onsite'  => 'Onsite',
-                                            'virtual' => 'Virtual',
-                                            'hybrid'  => 'Hybrid (Onsite + Virtual)',
-                                        ])
-                                        ->default('onsite')
-                                        ->required()
-                                        ->live(),
-                                    Forms\Components\TextInput::make('meeting_link')
-                                        ->label('Meeting Link / URL')
-                                        ->url()
-                                        ->placeholder('https://meet.google.com/...')
-                                        ->helperText('Shown to volunteers once registered or approved.')
-                                        ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid'])),
-                                ]),
-
                             Forms\Components\Toggle::make('is_public')
                                 ->label('Open to All Business Units')
                                 ->helperText('Allows volunteers from other Business Units to see and join this opportunity.')
@@ -211,14 +191,16 @@ class EventResource extends Resource implements HasShieldPermissions
                             Forms\Components\Grid::make(2)
                                 ->schema([
                                     Forms\Components\DateTimePicker::make('start_date')
-                                        ->label('Start Date & Time')
+                                        ->label('Event Start')
+                                        ->helperText('The first day of the opportunity.')
                                         ->required()
                                         ->live()
                                         ->seconds(false)
                                         ->default(now()->setTime(8, 0))
                                         ->minDate(now()->startOfDay()),
                                     Forms\Components\DateTimePicker::make('end_date')
-                                        ->label('End Date & Time')
+                                        ->label('Event End')
+                                        ->helperText('The last day of the opportunity. All shift dates must fall within this range.')
                                         ->required()
                                         ->seconds(false)
                                         ->default(now()->setTime(17, 0))
@@ -286,16 +268,38 @@ class EventResource extends Resource implements HasShieldPermissions
                     Forms\Components\Tabs\Tab::make('Location')
                         ->icon('heroicon-o-map-pin')
                         ->schema([
-                            Forms\Components\TextInput::make('location')
-                                ->label('Location / Address')
-                                ->placeholder('Enter the full address')
-                                ->columnSpanFull(),
+                            Forms\Components\Section::make('Location & Type')
+                                ->schema([
+                                    Forms\Components\Radio::make('event_format')
+                                        ->label('Opportunity Type')
+                                        ->options([
+                                            'onsite'  => 'Onsite',
+                                            'virtual' => 'Virtual',
+                                            'hybrid'  => 'Hybrid',
+                                        ])
+                                        ->default('onsite')
+                                        ->required()
+                                        ->inline()
+                                        ->live(),
 
-                            Forms\Components\Textarea::make('location_details')
-                                ->label('What to Bring / Dress Code')
-                                ->placeholder('Room number, building name, landmark, or dress code')
-                                ->columnSpanFull()
-                                ->helperText('Displayed to volunteers with formatting preserved'),
+                                    Forms\Components\TextInput::make('meeting_link')
+                                        ->label('Meeting Link / URL')
+                                        ->url()
+                                        ->placeholder('https://meet.google.com/...')
+                                        ->helperText('Shown to volunteers once registered or approved.')
+                                        ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid']))
+                                        ->columnSpanFull(),
+
+                                    \Tapp\FilamentGoogleAutocomplete\Forms\Components\GoogleAutocomplete::make('location')
+                                        ->label('Location (Address)')
+                                        ->placeholder('Start typing an address...')
+                                        ->columnSpanFull(),
+
+                                    Forms\Components\TextInput::make('location_details')
+                                        ->label('Building / Room / Landmark')
+                                        ->placeholder('e.g. 3rd Floor, Room 301, near main lobby')
+                                        ->columnSpanFull(),
+                                ]),
                         ]),
 
                     // ── Tab 4: Shifts ────────────────────────────────────────
