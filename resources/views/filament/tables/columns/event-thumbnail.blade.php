@@ -4,37 +4,6 @@
 
     $banner = $record->getMedia('event-banner-attachments')?->first()?->getUrl();
 
-    // ── Slot availability ────────────────────────────────────────
-    $totalSlots     = $record->slots->sum('total_slots');
-    $filledSlots    = $record->registrations->whereNotIn('status_id', [3])->count();
-    $availableSlots = max(0, $totalSlots - $filledSlots);
-    $isFull         = $availableSlots === 0 && $totalSlots > 0;
-
-    // ── Current user's registration ──────────────────────────────
-    $myRegistration = $record->registrations
-        ->where('volunteer_id', $user->id)
-        ->whereNotIn('status_id', [3])
-        ->first();
-
-    // ── Format / type badge ──────────────────────────────────────
-    $eventFormat    = $record->event_format ?? 'onsite';
-    $hasVirtualSlot = $record->slots->contains(fn($s) => $s->slot_format === 'virtual');
-    $hasOnsiteSlot  = $record->slots->contains(fn($s) => $s->slot_format === 'onsite');
-    $isHybrid       = ($hasVirtualSlot && $hasOnsiteSlot)
-                   || ($hasVirtualSlot && $eventFormat === 'onsite')
-                   || ($hasOnsiteSlot  && $eventFormat === 'virtual');
-
-    $formatLabel = match(true) {
-        $isHybrid                  => 'Hybrid',
-        $eventFormat === 'virtual' => 'Virtual',
-        default                    => 'Onsite',
-    };
-    $formatBg = match($formatLabel) {
-        'Virtual' => '#6366f1',
-        'Hybrid'  => '#a855f7',
-        default   => '#16a34a',
-    };
-
     // ── Status badge (top-left) ──────────────────────────────────
     $start      = \Carbon\Carbon::parse($record->start_date);
     $end        = $record->end_date ? \Carbon\Carbon::parse($record->end_date) : null;
@@ -43,11 +12,25 @@
 
     $timeBadge = match(true) {
         $isFinished                         => null,
-        $isOngoing                          => 'Ongoing',
-        $start->isToday()                   => 'Starting today',
-        $start->isTomorrow()                => 'Starting tomorrow',
+        $isOngoing                          => null,
+        $start->isToday()                   => 'Today',
+        $start->isTomorrow()                => 'Tomorrow',
         default => 'Starting in ' . (int)now()->startOfDay()->diffInDays($start->startOfDay()) . ' day' .
                    ((int)now()->startOfDay()->diffInDays($start->startOfDay()) > 1 ? 's' : ''),
+    };
+
+    // ── Location type badge ──────────────────────────────────────
+    $eventFormat    = $record->event_format ?? 'onsite';
+    $hasVirtualSlot = $record->slots->contains(fn($s) => $s->slot_format === 'virtual');
+    $hasOnsiteSlot  = $record->slots->contains(fn($s) => $s->slot_format === 'onsite');
+    $isHybrid       = ($hasVirtualSlot && $hasOnsiteSlot)
+                   || ($hasVirtualSlot && $eventFormat === 'onsite')
+                   || ($hasOnsiteSlot  && $eventFormat === 'virtual');
+
+    $locationTypeLabel = match(true) {
+        $isHybrid                  => 'Hybrid',
+        $eventFormat === 'virtual' => 'Online',
+        default                    => 'Onsite',
     };
 
     // ── Date / time display ──────────────────────────────────────
@@ -78,143 +61,99 @@
     $cardId    = 'card-' . $record->id;
 @endphp
 
-{{--
-    LAYOUT STRUCTURE
-    ┌─────────────────────────────────────────────┐  ← card (overflow:hidden, fixed width)
-    │ ┌─────────────────────────────────────────┐ │  ← image (h-[200px])
-    │ │ [Status badge]         [Reg badge]      │ │
-    │ │              banner image               │ │
-    │ │ [Format badge]                          │ │
-    │ └─────────────────────────────────────────┘ │
-    │  CATEGORY LABEL                             │
-    │  Title (2-line clamp)                       │
-    │  📅 Date · Time                             │
-    │  📍 Location                                │
-    │  ● N open          Program name             │
-    │ ─────────────────────────────────────────── │
-    │  [  View Details →  ]  [ ⋮ ]               │  ← flex row, view-btn flex-1, menu fixed 44px
-    └─────────────────────────────────────────────┘
---}}
-
 <div id="{{ $cardId }}"
-     class="flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm"
-     style="overflow:hidden; min-height:400px; width:100%;">
+     class="bg-white rounded-2xl overflow-hidden flex flex-col w-72 hover:shadow-lg transition-shadow duration-200"
+     style="box-shadow: 0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);">
 
     {{-- ── IMAGE + BADGES ─────────────────────────────────────── --}}
-    <div class="relative flex-shrink-0" style="height:200px; overflow:hidden;">
+    <div class="relative h-44 overflow-hidden bg-gray-200 flex-shrink-0">
 
-        <img src="{{ $banner ?? url('img/ayala-foundation-bg.jpg') }}"
-             alt="{{ $record->title }}"
-             class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+        @if($banner)
+            <img src="{{ $banner }}"
+                 alt="{{ $record->title }}"
+                 class="w-full h-full object-cover">
+        @else
+            <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <svg class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+        @endif
 
-        {{-- Top-left: time/status badge --}}
+        {{-- Time badge (top-left) --}}
         @if($timeBadge)
-            <span class="absolute"
-                  style="top:10px; left:10px; background:#fff; color:#1e293b; font-size:12px; font-weight:700;
-                         padding:5px 11px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.18);
-                         white-space:nowrap; max-width:calc(100% - 100px); overflow:hidden; text-overflow:ellipsis;">
-                {{ $timeBadge }}
-            </span>
+            <div class="absolute top-2.5 left-2.5">
+                <span class="inline-flex items-center bg-white/90 backdrop-blur-sm text-gray-800 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-sm leading-none">
+                    {{ $timeBadge }}
+                </span>
+            </div>
         @endif
 
-        {{-- Top-right: registration status --}}
-        @if($myRegistration)
-            <span class="absolute"
-                  style="top:10px; right:10px; font-size:12px; font-weight:700;
-                         padding:5px 11px; border-radius:8px; white-space:nowrap;
-                         {{ $myRegistration->status_id == 2
-                            ? 'background:#16a34a; color:#fff;'
-                            : 'background:#facc15; color:#713f12;' }}">
-                {{ $myRegistration->status_id == 2 ? '✓ Registered' : 'Pending' }}
-            </span>
-        @endif
-
-        {{-- Bottom-left: format badge --}}
-        <span class="absolute inline-flex items-center gap-1"
-              style="bottom:10px; left:10px; background:{{ $formatBg }}; color:#fff;
-                     font-size:11px; font-weight:700; padding:4px 10px;
-                     border-radius:6px; white-space:nowrap;">
-            <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
-                @if($formatLabel === 'Virtual')
-                    <path d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+        {{-- Location type badge (bottom-left) --}}
+        <div class="absolute bottom-2.5 left-2.5">
+            <span class="inline-flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-full leading-none">
+                @if($locationTypeLabel === 'Online')
+                    <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+                    </svg>
+                @elseif($locationTypeLabel === 'Hybrid')
+                    <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
+                    </svg>
                 @else
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
                 @endif
-            </svg>
-            {{ $formatLabel }}
-        </span>
+                {{ $locationTypeLabel }}
+            </span>
+        </div>
     </div>
 
     {{-- ── BODY ────────────────────────────────────────────────── --}}
-    <div class="flex flex-col flex-1 px-4 pt-4 pb-2" style="min-width:0; gap:8px; overflow:hidden;">
-
+    <div class="flex flex-col flex-1 px-4 pt-4 pb-3 gap-2">
         {{-- Category label --}}
-        <p style="font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-                  color:#d97706; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:0;">
+        <p class="text-[11px] font-bold tracking-widest uppercase text-[#f26522] leading-none">
             {{ $program }}
         </p>
 
         {{-- Title --}}
-        <h3 style="font-size:15px; font-weight:700; line-height:1.3; margin:0;
-                   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-                   overflow:hidden; color:#111827;">
+        <h3 class="text-[14px] font-bold leading-snug text-gray-900 line-clamp-3">
             {{ $record->title }}
         </h3>
 
-        {{-- Date + time --}}
-        <div class="flex items-start gap-2" style="min-width:0; overflow:hidden;">
-            <svg width="14" height="14" fill="none" stroke="#6b7280" viewBox="0 0 24 24" stroke-width="2" style="flex-shrink:0; margin-top:2px;">
-                <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-            </svg>
-            <span style="font-size:13px; color:#6b7280; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;">
-                {{ $dateLabel }}{{ $timeLabel ? ' · ' . $timeLabel : '' }}
-            </span>
-        </div>
+        {{-- Metadata rows --}}
+        <div class="flex flex-col gap-1.5 mt-0.5">
+            {{-- Date + time --}}
+            <div class="flex items-center gap-2 text-gray-500 text-[12px] leading-none">
+                <svg class="w-3.5 h-3.5 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>{{ $dateLabel }}{{ $timeLabel ? ' &nbsp;·&nbsp; ' . $timeLabel : '' }}</span>
+            </div>
 
-        {{-- Location --}}
-        <div class="flex items-start gap-2" style="min-width:0; overflow:hidden;">
-            <svg width="14" height="14" fill="none" stroke="#6b7280" viewBox="0 0 24 24" stroke-width="2" style="flex-shrink:0; margin-top:2px;">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
-            </svg>
-            <span style="font-size:13px; color:#6b7280; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;">
-                {{ $record->location ?? 'Location TBA' }}
-            </span>
+            {{-- Location --}}
+            <div class="flex items-start gap-2 text-gray-500 text-[12px] leading-snug">
+                <svg class="w-3.5 h-3.5 flex-shrink-0 mt-px text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span class="truncate">{{ $record->location ?? 'Location TBA' }}</span>
+            </div>
         </div>
-
-        {{-- Slots + program footer --}}
-        <div class="flex items-center justify-between" style="min-width:0; overflow:hidden; gap:8px;">
-            @if($totalSlots > 0)
-                <span class="flex items-center gap-1.5" style="font-size:12px; font-weight:600; flex-shrink:0;">
-                    <span class="inline-block w-2 h-2 rounded-full" style="background:{{ $isFull ? '#f87171' : '#4ade80' }};"></span>
-                    <span style="color:{{ $isFull ? '#ef4444' : '#16a34a' }};">{{ $isFull ? 'Slot full' : "{$availableSlots} open" }}</span>
-                </span>
-            @else
-                <span></span>
-            @endif
-            <span style="font-size:12px; color:#9ca3af; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:right; min-width:0;">
-                {{ $program }}
-            </span>
-        </div>
-
-        <div style="flex:1;"></div>
     </div>
 
     {{-- ── CTA ROW ─────────────────────────────────────────────── --}}
-    <div class="flex items-center gap-2 px-4 pb-4" style="overflow:visible;">
-
+    <div class="px-4 pb-4 flex items-center gap-2">
         {{-- Primary: View Details --}}
         <a href="{{ $viewUrl }}"
-           class="flex items-center justify-center gap-2"
-           style="flex:1 0 auto; padding:11px 14px; background:#f07a1e; color:#fff;
-                  font-weight:700; font-size:14px; border-radius:8px; text-decoration:none;
-                  white-space:nowrap;
-                  transition:background .15s;"
-           onmouseover="this.style.background='#d9650c'"
-           onmouseout="this.style.background='#f07a1e'">
+           class="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#f26522] hover:bg-[#d4541a] text-white text-[13px] font-semibold py-3 px-4 rounded-xl transition-colors">
             View Details
-            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                 stroke-width="2.5" style="flex-shrink:0;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
             </svg>
         </a>
 
@@ -225,13 +164,9 @@
                 {{-- Trigger --}}
                 <button @click.stop="open = !open"
                         type="button"
-                        style="width:44px; height:44px; border:1.5px solid #e5e7eb; background:#fff;
-                               border-radius:8px; display:flex; align-items:center; justify-content:center;
-                               cursor:pointer; transition:border-color .15s; flex-shrink:0;"
-                        onmouseover="this.style.borderColor='#9ca3af'"
-                        onmouseout="this.style.borderColor='#e5e7eb'">
-                    <svg width="18" height="18" fill="#374151" viewBox="0 0 24 24">
-                        <circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
+                        class="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
                     </svg>
                 </button>
 
@@ -251,12 +186,9 @@
 
                     @if($canEdit)
                         <a href="{{ $editUrl }}"
-                           style="display:flex; align-items:center; gap:10px; padding:11px 16px;
-                                  color:#f07a1e; text-decoration:none; font-size:14px; font-weight:600;
-                                  border-radius:10px 10px 0 0; transition:background .12s;"
-                           onmouseover="this.style.background='#f9fafb'"
-                           onmouseout="this.style.background='transparent'">
-                            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
+                           class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#f26522] hover:bg-gray-50 transition-colors"
+                           style="display:flex; text-decoration:none; border-bottom:1px solid #f3f4f6;">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.25a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                             </svg>
                             Edit
@@ -266,13 +198,10 @@
                     @if($canSetFeatured)
                         <button type="button"
                                 onclick="vappToggleFeatured('{{ $record->id }}', {{ $record->is_featured ? 'true' : 'false' }})"
-                                style="display:flex; align-items:center; gap:10px; padding:11px 16px; width:100%;
-                                       color:#d97706; font-size:14px; font-weight:600; background:none;
-                                       border:none; border-top:1px solid #f3f4f6; cursor:pointer; transition:background .12s;"
-                                onmouseover="this.style.background='#f9fafb'"
-                                onmouseout="this.style.background='transparent'">
-                            <svg width="15" height="15" fill="{{ $record->is_featured ? 'currentColor' : 'none' }}" stroke="currentColor"
-                                 viewBox="0 0 24 24" stroke-width="2" style="flex-shrink:0;">
+                                class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#d97706] w-full hover:bg-gray-50 transition-colors bg-none border-none cursor-pointer"
+                                style="display:flex; border-bottom:1px solid #f3f4f6;">
+                            <svg width="16" height="16" fill="{{ $record->is_featured ? 'currentColor' : 'none' }}" stroke="currentColor"
+                                 viewBox="0 0 24 24" stroke-width="2">
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                             </svg>
                             {{ $record->is_featured ? 'Remove Featured' : 'Make it Featured' }}
@@ -282,12 +211,9 @@
                     @if($canDuplicate)
                         <button type="button"
                                 onclick="vappDuplicate('{{ $record->id }}')"
-                                style="display:flex; align-items:center; gap:10px; padding:11px 16px; width:100%;
-                                       color:#6366f1; font-size:14px; font-weight:600; background:none;
-                                       border:none; border-top:1px solid #f3f4f6; cursor:pointer; transition:background .12s;"
-                                onmouseover="this.style.background='#f9fafb'"
-                                onmouseout="this.style.background='transparent'">
-                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="flex-shrink:0;">
+                                class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#6366f1] w-full hover:bg-gray-50 transition-colors bg-none border-none cursor-pointer"
+                                style="display:flex; border-bottom:1px solid #f3f4f6;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
                             </svg>
                             Duplicate
@@ -297,13 +223,9 @@
                     @if($canDelete)
                         <button type="button"
                                 onclick="vappDelete('{{ $record->id }}')"
-                                style="display:flex; align-items:center; gap:10px; padding:11px 16px; width:100%;
-                                       color:#dc2626; font-size:14px; font-weight:600; background:none;
-                                       border:none; border-top:1px solid #f3f4f6;
-                                       border-radius:0 0 10px 10px; cursor:pointer; transition:background .12s;"
-                                onmouseover="this.style.background='#fff5f5'"
-                                onmouseout="this.style.background='transparent'">
-                            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
+                                class="flex items-center gap-2.5 px-4 py-3 text-[13px] font-semibold text-[#dc2626] w-full hover:bg-red-50 transition-colors bg-none border-none cursor-pointer"
+                                style="display:flex;">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12a2 2 0 002 2h8a2 2 0 002-2V7z"/>
                             </svg>
                             Delete
