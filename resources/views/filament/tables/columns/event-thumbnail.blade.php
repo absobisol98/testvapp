@@ -205,10 +205,10 @@
         {{-- Primary: View Details --}}
         <a href="{{ $viewUrl }}"
            class="flex items-center justify-center gap-2"
-           style="flex:1; min-width:0; padding:11px 14px; background:#f07a1e; color:#fff;
+           style="flex:1; padding:11px 14px; background:#f07a1e; color:#fff;
                   font-weight:700; font-size:14px; border-radius:8px; text-decoration:none;
-                  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-                  transition:background .15s; flex-shrink:1;"
+                  white-space:nowrap;
+                  transition:background .15s;"
            onmouseover="this.style.background='#d9650c'"
            onmouseout="this.style.background='#f07a1e'">
             View Details
