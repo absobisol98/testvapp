@@ -49,7 +49,7 @@ class ManageVolunteers extends Page
         // Bypass global scopes so drafts and filtered events are accessible
         $this->record = Event::withoutGlobalScopes()->findOrFail($record);
 
-        static::authorizeAccess();
+        abort_unless(static::canAccess(['record' => $this->record]), 403);
     }
 
     protected function getHeaderActions(): array

@@ -578,10 +578,7 @@ class EventResource extends Resource implements HasShieldPermissions
 
     public static function getRelations(): array
     {
-        return [
-            RelationManagers\RegistrationsRelationManager::class,
-            AttendeesRelationManager::class,
-        ];
+        return [];
     }
 
     public static function getPages(): array
