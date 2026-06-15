@@ -275,7 +275,6 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->options([
                                             'onsite'  => 'Onsite',
                                             'virtual' => 'Virtual',
-                                            'hybrid'  => 'Hybrid',
                                         ])
                                         ->default('onsite')
                                         ->required()
@@ -287,17 +286,19 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->url()
                                         ->placeholder('https://meet.google.com/...')
                                         ->helperText('Shown to volunteers once registered or approved.')
-                                        ->visible(fn ($get) => in_array($get('event_format'), ['virtual', 'hybrid']))
+                                        ->visible(fn ($get) => $get('event_format') === 'virtual')
                                         ->columnSpanFull(),
 
                                     Forms\Components\TextInput::make('location')
                                         ->label('Location (Address)')
                                         ->placeholder('Start typing an address...')
+                                        ->visible(fn ($get) => $get('event_format') !== 'virtual')
                                         ->columnSpanFull(),
 
                                     Forms\Components\TextInput::make('location_details')
                                         ->label('Building / Room / Landmark')
                                         ->placeholder('e.g. 3rd Floor, Room 301, near main lobby')
+                                        ->visible(fn ($get) => $get('event_format') !== 'virtual')
                                         ->columnSpanFull(),
                                 ]),
                         ]),
