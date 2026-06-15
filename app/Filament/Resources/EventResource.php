@@ -303,6 +303,7 @@ class EventResource extends Resource implements HasShieldPermissions
                         ->schema([
                             Forms\Components\Repeater::make('slots')
                                 ->required()
+                                ->cloneable()
                                 ->schema([
                                     Forms\Components\Grid::make(2)
                                         ->schema([
