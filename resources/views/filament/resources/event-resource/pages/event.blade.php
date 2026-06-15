@@ -89,10 +89,16 @@
     $location       = $record->location ?? 'Location TBA';
     $totalPositions = $record->slots->count();
 
-    // Format / location-type badge (uses actual slot_format + event_format)
-    $eventFormat    = $record->event_format ?? 'onsite';
-    $hasVirtualSlot = $record->slots->contains(fn($s) => $s->slot_format === 'virtual');
-    $hasOnsiteSlot  = $record->slots->contains(fn($s) => in_array($s->slot_format, ['onsite', '', null], true));
+    // Resolve each slot's effective format (slot override beats event-level)
+    $eventFormat      = $record->event_format ?? 'onsite';
+    $resolvedFormats  = $record->slots->map(fn($s) =>
+        ($s->slot_format && $s->slot_format !== '' && $s->slot_format !== 'inherit')
+            ? $s->slot_format
+            : $eventFormat
+    );
+    // Hybrid when: ≥1 virtual slot AND ≥1 onsite slot (after resolving overrides)
+    $hasVirtualSlot = $resolvedFormats->contains('virtual');
+    $hasOnsiteSlot  = $resolvedFormats->contains('onsite');
     $isHybrid       = $hasVirtualSlot && $hasOnsiteSlot;
     $locationType   = match(true) {
         $isHybrid                  => 'Hybrid',
