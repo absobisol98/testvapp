@@ -89,6 +89,38 @@
     $location       = $record->location ?? 'Location TBA';
     $totalPositions = $record->slots->count();
 
+    // Format / location-type badge (uses actual slot_format + event_format)
+    $eventFormat    = $record->event_format ?? 'onsite';
+    $hasVirtualSlot = $record->slots->contains(fn($s) => $s->slot_format === 'virtual');
+    $hasOnsiteSlot  = $record->slots->contains(fn($s) => in_array($s->slot_format, ['onsite', '', null], true));
+    $isHybrid       = $hasVirtualSlot && $hasOnsiteSlot;
+    $locationType   = match(true) {
+        $isHybrid                  => 'Hybrid',
+        $eventFormat === 'virtual' => 'Online',
+        default                    => 'Onsite',
+    };
+
+    // Group slots by shift_date for the date-tab rail
+    $groupedSlots = $record->slots
+        ->groupBy(fn($s) => Carbon\Carbon::parse($s->shift_date ?? $record->start_date)->format('Y-m-d'))
+        ->sortKeys()
+        ->map(function ($slots, $dateKey) use ($isFinished) {
+            $date = Carbon\Carbon::parse($dateKey);
+            return [
+                'key'       => $dateKey,
+                'dayName'   => $date->format('D'),
+                'dayNum'    => (int) $date->format('j'),
+                'monthName' => $date->format('M'),
+                'fullLabel' => $date->format('D, M j, Y'),
+                'isPast'    => $date->isPast() && !$date->isToday(),
+                'isToday'   => $date->isToday(),
+                'slotCount' => $slots->count(),
+            ];
+        })
+        ->values()
+        ->toArray();
+    $totalDates = count($groupedSlots);
+
     $manageUrl = route('filament.admin.resources.events.manage-volunteers', ['record' => $record->id]);
     $editUrl   = route('filament.admin.resources.events.edit', ['record' => $record->id]);
     $listUrl   = route('filament.admin.resources.events.index');
@@ -197,12 +229,25 @@
 
             {{-- Available Volunteer Positions --}}
             <div class="bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,20,50,.07),0_6px_20px_rgba(0,20,50,.07)] overflow-hidden"
-                 id="volunteer-section">
+                 id="volunteer-section"
+                 x-data="{
+                     activeIdx: 0,
+                     select(i) {
+                         this.activeIdx = i;
+                         this.$nextTick(() => {
+                             const chip = this.$refs.rail?.children[i];
+                             if (chip) chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                         });
+                     },
+                     scrollRail(dir) {
+                         if (this.$refs.rail) this.$refs.rail.scrollLeft += dir * 200;
+                     }
+                 }">
 
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 class="text-[14px] font-bold text-[#072b54] tracking-tight">Available Volunteer Positions</h2>
                     <span class="text-[12px] font-semibold text-[#718096] bg-[#edf2f7] px-3 py-1 rounded-full">
-                        {{ $totalPositions }} {{ Str::plural('position', $totalPositions) }}
+                        {{ $totalDates }} {{ Str::plural('date', $totalDates) }} · {{ $totalPositions }} {{ Str::plural('position', $totalPositions) }}
                     </span>
                 </div>
 
@@ -244,166 +289,278 @@
                 @if($totalPositions === 0)
                     <div class="py-10 text-center text-[#718096] text-[13px]">No volunteer positions added yet.</div>
                 @else
-                    <div class="p-5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                            @foreach($record->slots as $slot)
-                                @php
-                                    $registrationCount = $record->registrations
-                                        ->where('slot_type_id', $slot->id)
-                                        ->where('status_id', '!=', 3)
-                                        ->count();
-                                    $available     = max(0, $slot->total_slots - $registrationCount);
-                                    $pct           = $slot->total_slots > 0
-                                                     ? round(($registrationCount / $slot->total_slots) * 100)
-                                                     : 100;
-                                    $isFull        = $registrationCount >= $slot->total_slots;
-                                    $userRegistered = $userRegistrations
-                                        ->where('slot_type_id', $slot->id)
-                                        ->where('status_id', '!=', 3)
-                                        ->count() > 0;
-                                    $barColor  = $pct >= 100 ? '#dc2626' : ($pct >= 80 ? '#d97706' : '#f26522');
-                                    $pctColor  = $pct >= 100 ? 'color:#dc2626' : ($pct >= 80 ? 'color:#d97706' : 'color:#f26522');
-                                    $badgeClass = $isFull
-                                        ? 'border-red-400 text-red-500'
-                                        : ($pct >= 80 ? 'border-amber-400 text-amber-600' : 'border-[#f26522] text-[#f26522]');
-                                @endphp
 
-                                <div class="bg-[#f7fafc] border border-[#e2e8f0] rounded-xl overflow-hidden
-                                            hover:border-[#c4cdd8] hover:shadow-[0_4px_16px_rgba(0,20,50,.08)]
-                                            transition-all duration-150 flex flex-col">
+                    {{-- Date Rail --}}
+                    <div class="relative border-b border-[#e2e8f0]">
+                        <button type="button" @click="scrollRail(-1)"
+                                class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full
+                                       bg-white border border-[#e2e8f0] flex items-center justify-center
+                                       text-[#4a5568] shadow-sm hover:bg-[#072b54] hover:border-[#072b54]
+                                       hover:text-white transition-all duration-150">
+                            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                        </button>
 
-                                    {{-- Head --}}
-                                    <div class="flex items-start justify-between gap-2 px-4 pt-4 pb-3 border-b border-[#e2e8f0]">
-                                        <div class="min-w-0">
-                                            <p class="text-[14px] font-extrabold text-[#072b54]">{{ $slot->shift_name }}</p>
-                                            <div class="flex items-center gap-1.5 mt-1 text-[11.5px] text-[#718096]">
-                                                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/>
-                                                </svg>
-                                                {{ Carbon\Carbon::parse($slot->start_time)->format('g:i A') }}
-                                                – {{ Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
-                                            </div>
-                                        </div>
-                                        <span class="inline-flex items-center gap-1 bg-white rounded-full px-2.5 py-0.5
-                                                     text-[11.5px] font-bold flex-shrink-0 border-[1.5px] {{ $badgeClass }}">
-                                            <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-                                            </svg>
-                                            {{ $isFull ? 'Full' : $available . ' left' }} / {{ $slot->total_slots }}
-                                        </span>
-                                    </div>
+                        <div x-ref="rail" class="flex gap-2 overflow-x-auto px-10 py-3"
+                             style="scrollbar-width:none;-ms-overflow-style:none;">
+                            @foreach($groupedSlots as $gIdx => $dateGroup)
+                                <button type="button"
+                                        @click="select({{ $gIdx }})"
+                                        :class="activeIdx === {{ $gIdx }}
+                                            ? 'bg-[#072b54] border-[#072b54] shadow-[0_4px_14px_rgba(7,43,84,.25)]'
+                                            : 'bg-white border-[#e2e8f0] hover:border-[#c4cdd8] hover:bg-[#f8fafc]'"
+                                        class="relative flex flex-col items-center gap-0.5 flex-shrink-0
+                                               border rounded-xl px-3.5 py-2.5 min-w-[72px]
+                                               transition-all duration-150 cursor-pointer">
+                                    <span :class="activeIdx === {{ $gIdx }} ? 'text-white/70' : '{{ $dateGroup['isToday'] ? 'text-[#f26522]' : 'text-[#718096]' }}'"
+                                          class="text-[10px] font-bold tracking-[.06em] uppercase leading-none">
+                                        {{ $dateGroup['dayName'] }}
+                                    </span>
+                                    <span :class="activeIdx === {{ $gIdx }} ? 'text-white' : '{{ $dateGroup['isToday'] ? 'text-[#f26522]' : 'text-[#072b54]' }}'"
+                                          class="text-[18px] font-extrabold leading-none">
+                                        {{ $dateGroup['dayNum'] }}
+                                    </span>
+                                    <span :class="activeIdx === {{ $gIdx }} ? 'text-white/70' : 'text-[#4a5568]'"
+                                          class="text-[10px] font-semibold leading-none">
+                                        {{ $dateGroup['monthName'] }}
+                                    </span>
+                                    <span class="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full
+                                                 bg-[#f26522] text-white text-[9px] font-extrabold
+                                                 flex items-center justify-center border-2"
+                                          :class="activeIdx === {{ $gIdx }} ? 'border-[#072b54]' : 'border-white'">
+                                        {{ $dateGroup['slotCount'] }}
+                                    </span>
+                                    @if($dateGroup['isPast'])
+                                        <span class="absolute inset-0 rounded-xl bg-white/50 pointer-events-none"></span>
+                                    @endif
+                                </button>
+                            @endforeach
+                        </div>
 
-                                    {{-- Body --}}
-                                    <div class="px-4 py-3 flex-1">
-                                        <p class="text-[10.5px] font-bold text-[#718096] uppercase tracking-[.08em] mb-1.5">
-                                            Key Responsibility
-                                        </p>
-                                        <p class="text-[12.5px] text-[#4a5568] leading-relaxed max-h-[100px] overflow-y-auto">
-                                            {{ $slot->responsibilities }}
-                                        </p>
+                        <button type="button" @click="scrollRail(1)"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full
+                                       bg-white border border-[#e2e8f0] flex items-center justify-center
+                                       text-[#4a5568] shadow-sm hover:bg-[#072b54] hover:border-[#072b54]
+                                       hover:text-white transition-all duration-150">
+                            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
+                    </div>{{-- /date rail --}}
 
-                                        {{-- Fill bar --}}
-                                        <div class="mt-3">
-                                            <div class="flex justify-between mb-1.5">
-                                                <span class="text-[11px] font-semibold text-[#718096]">Slots filled</span>
-                                                <span class="text-[11px] font-bold" style="{{ $pctColor }}">{{ $pct }}%</span>
-                                            </div>
-                                            <div class="h-1.5 bg-[#e2e8f0] rounded-full overflow-hidden">
-                                                <div class="h-full rounded-full transition-all duration-500"
-                                                     style="width:{{ $pct }}%;background:{{ $barColor }}"></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                    {{-- Slot panels per date (server-side rendered, Alpine shows/hides) --}}
+                    @foreach($groupedSlots as $gIdx => $dateGroup)
+                        @php
+                            $dateFinished = $isFinished || ($dateGroup['isPast']);
+                            $slotsForDate = $record->slots->filter(
+                                fn($s) => Carbon\Carbon::parse($s->shift_date ?? $record->start_date)->format('Y-m-d') === $dateGroup['key']
+                            );
+                        @endphp
+                        <div x-show="activeIdx === {{ $gIdx }}" x-cloak class="p-5">
 
-                                    {{-- Footer / CTA --}}
-                                    <div class="px-4 pb-4 pt-1">
-                                        @if($isEventFinished)
-                                            @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
-                                                <div class="w-full flex items-center justify-center gap-1.5
-                                                            bg-blue-50 text-blue-700 rounded-full px-4 py-2.5
-                                                            text-[12.5px] font-bold">
-                                                    {{ number_format($attendeeHours[$slot->id]['hours'], 1) }}
-                                                    {{ $attendeeHours[$slot->id]['hours'] > 1 ? 'Hours' : 'Hour' }} Completed
+                            {{-- Date header --}}
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-8 h-8 rounded-[9px] bg-[#e8eef8] flex items-center justify-center flex-shrink-0">
+                                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#0e4f99" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[13.5px] font-bold text-[#072b54]">{{ $dateGroup['fullLabel'] }}</p>
+                                    <p class="text-[12px] text-[#718096]">
+                                        {{ $dateGroup['slotCount'] }} {{ Str::plural('position', $dateGroup['slotCount']) }} available
+                                        @if($dateFinished)
+                                            <span class="text-red-500 font-semibold"> · Finished</span>
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                @foreach($slotsForDate as $slot)
+                                    @php
+                                        $registrationCount = $record->registrations
+                                            ->where('slot_type_id', $slot->id)
+                                            ->where('status_id', '!=', 3)
+                                            ->count();
+                                        $available      = max(0, $slot->total_slots - $registrationCount);
+                                        $pct            = $slot->total_slots > 0
+                                                          ? round(($registrationCount / $slot->total_slots) * 100)
+                                                          : 100;
+                                        $isFull         = $registrationCount >= $slot->total_slots;
+                                        $userRegistered = $userRegistrations
+                                            ->where('slot_type_id', $slot->id)
+                                            ->where('status_id', '!=', 3)
+                                            ->count() > 0;
+                                        $barColor   = $pct >= 100 ? '#dc2626' : ($pct >= 80 ? '#d97706' : '#f26522');
+                                        $pctColor   = $pct >= 100 ? 'color:#dc2626' : ($pct >= 80 ? 'color:#d97706' : 'color:#f26522');
+                                        $badgeClass = $isFull
+                                            ? 'border-red-400 text-red-500'
+                                            : ($pct >= 80 ? 'border-amber-400 text-amber-600' : 'border-[#f26522] text-[#f26522]');
+
+                                        // Resolve effective format: slot-level overrides event-level
+                                        $resolvedFormat = ($slot->slot_format && $slot->slot_format !== '' && $slot->slot_format !== 'inherit')
+                                            ? $slot->slot_format
+                                            : $eventFormat;
+                                        $isVirtual = $resolvedFormat === 'virtual';
+                                    @endphp
+
+                                    <div class="bg-[#f7fafc] border border-[#e2e8f0] rounded-xl overflow-hidden
+                                                hover:border-[#c4cdd8] hover:shadow-[0_4px_16px_rgba(0,20,50,.08)]
+                                                transition-all duration-150 flex flex-col">
+
+                                        {{-- Head --}}
+                                        <div class="flex items-start justify-between gap-2 px-4 pt-4 pb-3 border-b border-[#e2e8f0]">
+                                            <div class="min-w-0">
+                                                <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+                                                    <p class="text-[14px] font-extrabold text-[#072b54]">{{ $slot->shift_name }}</p>
+                                                    {{-- Format pill --}}
+                                                    @if($isVirtual)
+                                                        <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-full px-2 py-0.5 text-[10px] font-bold">
+                                                            <svg width="9" height="9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.889L15 14M3 8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
+                                                            Online
+                                                        </span>
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 rounded-full px-2 py-0.5 text-[10px] font-bold">
+                                                            <svg width="9" height="9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                                            Onsite
+                                                        </span>
+                                                    @endif
                                                 </div>
-                                            @else
-                                                <div class="w-full flex items-center justify-center gap-1.5
-                                                            bg-red-50 text-red-600 rounded-full px-4 py-2.5
-                                                            text-[12.5px] font-bold">
-                                                    <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                                                        <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
+                                                <div class="flex items-center gap-1.5 text-[11.5px] text-[#718096]">
+                                                    <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/>
                                                     </svg>
-                                                    Opportunity Finished
+                                                    {{ Carbon\Carbon::parse($slot->start_time)->format('g:i A') }}
+                                                    – {{ Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                                 </div>
-                                            @endif
-
-                                        @elseif($userRegistered)
-                                            @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
-                                                <div class="w-full flex items-center justify-center gap-1.5
-                                                            bg-blue-50 text-blue-700 rounded-full px-4 py-2.5
-                                                            text-[12.5px] font-bold">
-                                                    {{ number_format($attendeeHours[$slot->id]['hours'], 1) }} Hours Completed
-                                                </div>
-                                            @else
-                                                <div class="w-full flex items-center justify-center gap-1.5
-                                                            bg-green-50 text-green-700 rounded-full px-4 py-2.5
-                                                            text-[12.5px] font-bold">
-                                                    Already Registered
-                                                </div>
-                                            @endif
-
-                                        @elseif($isFull)
-                                            <div class="w-full flex items-center justify-center gap-1.5
-                                                        bg-amber-50 text-amber-600 rounded-full px-4 py-2.5
-                                                        text-[12.5px] font-bold">
-                                                <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                                                    <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
-                                                </svg>
-                                                Slots Full
                                             </div>
+                                            <span class="inline-flex items-center gap-1 bg-white rounded-full px-2.5 py-0.5
+                                                         text-[11.5px] font-bold flex-shrink-0 border-[1.5px] {{ $badgeClass }}">
+                                                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                                                </svg>
+                                                {{ $isFull ? 'Full' : $available . ' left' }} / {{ $slot->total_slots }}
+                                            </span>
+                                        </div>
 
-                                        @else
-                                            <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
-                                                  method="POST" enctype="multipart/form-data" class="w-full">
-                                                @csrf
-                                                <input type="hidden" name="privacy_policy" value="1">
+                                        {{-- Body --}}
+                                        <div class="px-4 py-3 flex-1">
+                                            <p class="text-[10.5px] font-bold text-[#718096] uppercase tracking-[.08em] mb-1.5">
+                                                Key Responsibility
+                                            </p>
+                                            <p class="text-[12.5px] text-[#4a5568] leading-relaxed max-h-[100px] overflow-y-auto">
+                                                {{ $slot->responsibilities }}
+                                            </p>
 
-                                                @if($requiresAttachment)
-                                                    <div class="mb-3">
-                                                        <label class="block text-[12px] font-medium text-[#4a5568] mb-1.5">
-                                                            {{ $attachmentDescription }}
-                                                        </label>
-                                                        <input type="file" name="media[]" multiple required
-                                                               class="block w-full text-[12px] text-[#718096]
-                                                                      file:mr-3 file:py-1.5 file:px-3
-                                                                      file:rounded-full file:border-0
-                                                                      file:text-[12px] file:font-semibold
-                                                                      file:bg-[#f26522] file:text-white
-                                                                      hover:file:bg-[#d4541a]">
-                                                        @error('media')
-                                                            <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
-                                                        @enderror
+                                            {{-- Meeting link for virtual slots --}}
+                                            @if($isVirtual && $slot->meeting_link)
+                                                <a href="{{ $slot->meeting_link }}" target="_blank"
+                                                   class="mt-2 inline-flex items-center gap-1.5 text-[12px] text-blue-600 font-semibold hover:underline">
+                                                    <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                                    </svg>
+                                                    Join meeting link
+                                                </a>
+                                            @endif
+
+                                            {{-- Fill bar --}}
+                                            <div class="mt-3">
+                                                <div class="flex justify-between mb-1.5">
+                                                    <span class="text-[11px] font-semibold text-[#718096]">Slots filled</span>
+                                                    <span class="text-[11px] font-bold" style="{{ $pctColor }}">{{ $pct }}%</span>
+                                                </div>
+                                                <div class="h-1.5 bg-[#e2e8f0] rounded-full overflow-hidden">
+                                                    <div class="h-full rounded-full transition-all duration-500"
+                                                         style="width:{{ $pct }}%;background:{{ $barColor }}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Footer / CTA --}}
+                                        <div class="px-4 pb-4 pt-1">
+                                            @if($dateFinished)
+                                                @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
+                                                    <div class="w-full flex items-center justify-center gap-1.5
+                                                                bg-blue-50 text-blue-700 rounded-full px-4 py-2.5 text-[12.5px] font-bold">
+                                                        {{ number_format($attendeeHours[$slot->id]['hours'], 1) }}
+                                                        {{ $attendeeHours[$slot->id]['hours'] > 1 ? 'Hours' : 'Hour' }} Completed
+                                                    </div>
+                                                @else
+                                                    <div class="w-full flex items-center justify-center gap-1.5
+                                                                bg-red-50 text-red-600 rounded-full px-4 py-2.5 text-[12.5px] font-bold">
+                                                        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                                            <circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/>
+                                                        </svg>
+                                                        Opportunity Finished
                                                     </div>
                                                 @endif
 
-                                                <button type="submit"
-                                                        class="w-full flex items-center justify-center gap-1.5
-                                                               bg-[#f26522] hover:bg-[#d4541a] text-white
-                                                               rounded-full px-4 py-2.5 text-[12.5px] font-bold
-                                                               shadow-[0_3px_10px_rgba(242,101,34,.28)]
-                                                               transition-colors duration-150">
+                                            @elseif($userRegistered)
+                                                @if(isset($attendeeHours[$slot->id]) && ($attendeeHours[$slot->id]['hours'] ?? 0) > 0)
+                                                    <div class="w-full flex items-center justify-center gap-1.5
+                                                                bg-blue-50 text-blue-700 rounded-full px-4 py-2.5 text-[12.5px] font-bold">
+                                                        {{ number_format($attendeeHours[$slot->id]['hours'], 1) }} Hours Completed
+                                                    </div>
+                                                @else
+                                                    <div class="w-full flex items-center justify-center gap-1.5
+                                                                bg-green-50 text-green-700 rounded-full px-4 py-2.5 text-[12.5px] font-bold">
+                                                        Already Registered
+                                                    </div>
+                                                @endif
+
+                                            @elseif($isFull)
+                                                <div class="w-full flex items-center justify-center gap-1.5
+                                                            bg-amber-50 text-amber-600 rounded-full px-4 py-2.5 text-[12.5px] font-bold">
                                                     <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+                                                        <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
                                                     </svg>
-                                                    Volunteer for this
-                                                </button>
-                                            </form>
-                                        @endif
+                                                    Slots Full
+                                                </div>
+
+                                            @else
+                                                <form action="{{ route('event.register-slot', ['event' => $record->id, 'slot' => $slot->id]) }}"
+                                                      method="POST" enctype="multipart/form-data" class="w-full">
+                                                    @csrf
+                                                    <input type="hidden" name="privacy_policy" value="1">
+
+                                                    @if($requiresAttachment)
+                                                        <div class="mb-3">
+                                                            <label class="block text-[12px] font-medium text-[#4a5568] mb-1.5">
+                                                                {{ $attachmentDescription }}
+                                                            </label>
+                                                            <input type="file" name="media[]" multiple required
+                                                                   class="block w-full text-[12px] text-[#718096]
+                                                                          file:mr-3 file:py-1.5 file:px-3
+                                                                          file:rounded-full file:border-0
+                                                                          file:text-[12px] file:font-semibold
+                                                                          file:bg-[#f26522] file:text-white
+                                                                          hover:file:bg-[#d4541a]">
+                                                            @error('media')
+                                                                <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    @endif
+
+                                                    <button type="submit"
+                                                            class="w-full flex items-center justify-center gap-1.5
+                                                                   bg-[#f26522] hover:bg-[#d4541a] text-white
+                                                                   rounded-full px-4 py-2.5 text-[12.5px] font-bold
+                                                                   shadow-[0_3px_10px_rgba(242,101,34,.28)]
+                                                                   transition-colors duration-150">
+                                                        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+                                                        </svg>
+                                                        Volunteer for this
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endforeach
+
                 @endif
             </div>{{-- /positions --}}
 
@@ -429,7 +586,13 @@
                             </svg>
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em]">Location</p>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em]">Location</p>
+                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full
+                                    {{ $locationType === 'Hybrid' ? 'bg-purple-50 text-purple-600' : ($locationType === 'Online' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-700') }}">
+                                    {{ $locationType }}
+                                </span>
+                            </div>
                             <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($location) }}"
                                target="_blank"
                                class="text-[13.5px] font-semibold text-[#0e4f99] mt-0.5 hover:underline block break-words">
