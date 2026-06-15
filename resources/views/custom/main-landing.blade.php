@@ -232,64 +232,160 @@
         <div class="cards-3" style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
             @forelse($opportunities->take(3) as $opportunity)
                 @php
-                    $img = $opportunity->getMedia('event-banner-attachments')->first();
-                    $slot = $opportunity->slots?->first();
-                    $totalSlots = $slot?->total_slots ?? 0;
-                    $takenSlots = $slot
-                        ? $opportunity->registrations()
-                            ->where('slot_type_id', $slot->id)
-                            ->where('status_id','!=',3)
-                            ->count()
-                        : 0;
+                    $ocImage  = $opportunity->getMedia('event-banner-attachments')->first();
+                    $ocStart  = \Carbon\Carbon::parse($opportunity->start_date);
+                    $ocEnd    = $opportunity->end_date ? \Carbon\Carbon::parse($opportunity->end_date) : null;
 
-                    $availSlots = max(0, $totalSlots - $takenSlots);
-                    $pct = $totalSlots > 0 ? ($takenSlots / $totalSlots * 100) : 0;
+                    $ocIsFinished = $ocEnd && now()->isAfter($ocEnd);
+                    $ocIsOngoing  = !$ocIsFinished && now()->isAfter($ocStart);
+                    $ocDaysAway   = (int) now()->startOfDay()->diffInDays($ocStart->copy()->startOfDay());
+
+                    $ocTimeBadge = match(true) {
+                        $ocIsFinished            => null,
+                        $ocIsOngoing             => null,
+                        $ocStart->isToday()      => 'Today',
+                        $ocStart->isTomorrow()   => 'Tomorrow',
+                        default                  => 'Starting in ' . $ocDaysAway . ' day' . ($ocDaysAway > 1 ? 's' : ''),
+                    };
+
+                    $ocFormat         = $opportunity->event_format ?? 'onsite';
+                    $ocHasVirtual     = $opportunity->slots->contains(fn($s) => $s->slot_format === 'virtual');
+                    $ocHasOnsite      = $opportunity->slots->contains(fn($s) => $s->slot_format === 'onsite');
+                    $ocIsHybrid       = ($ocHasVirtual && $ocHasOnsite)
+                                     || ($ocHasVirtual && $ocFormat === 'onsite')
+                                     || ($ocHasOnsite  && $ocFormat === 'virtual');
+
+                    $ocLocationType = match(true) {
+                        $ocIsHybrid               => 'Hybrid',
+                        $ocFormat === 'virtual'   => 'Online',
+                        default                   => 'Onsite',
+                    };
+
+                    $ocSameDay = $ocEnd && $ocStart->format('Y-m-d') === $ocEnd->format('Y-m-d');
+                    $ocDateStr = $ocStart->format('M d, Y');
+                    if ($ocEnd && !$ocSameDay) {
+                        $ocDateStr .= ' – ' . $ocEnd->format('M d, Y');
+                    }
+
+                    $ocFirstSlot = $opportunity->slots->first();
+                    $ocTimeStr   = ($ocFirstSlot && $ocFirstSlot->start_time && $ocFirstSlot->end_time)
+                        ? \Carbon\Carbon::parse($ocFirstSlot->start_time)->format('g:i A')
+                          . ' – '
+                          . \Carbon\Carbon::parse($ocFirstSlot->end_time)->format('g:i A')
+                        : null;
+
+                    $ocCategory   = $opportunity->program?->name ?? 'Ayala Foundation';
+                    $ocLocation   = $opportunity->location ?? 'Location TBA';
+                    $ocDetailsUrl = route('filament.admin.resources.events.view', ['record' => $opportunity->id]);
                 @endphp
 
-                <article class="op-card card"
-                    style="background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,.07);">
+                <article style="background:#fff; border-radius:16px; overflow:hidden; display:flex; flex-direction:column;
+                                box-shadow:0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);
+                                transition:box-shadow .2s;"
+                         onmouseover="this.style.boxShadow='0 8px 28px rgba(0,20,50,.14)'"
+                         onmouseout="this.style.boxShadow='0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07)'">
 
-                    {{-- IMAGE --}}
-                    <div style="position:relative; height:200px; overflow:hidden; background:var(--bg-tint);">
-                        @if($img)
-                            <img src="{{ $img->getUrl() }}" alt="{{ $opportunity->title }}"
+                    {{-- ── Image ── --}}
+                    <div style="position:relative; height:176px; overflow:hidden; background:#e5e7eb; flex-shrink:0;">
+                        @if($ocImage)
+                            <img src="{{ $ocImage->getUrl() }}" alt="{{ $opportunity->title }}"
                                  style="width:100%; height:100%; object-fit:cover;">
                         @else
-                            <div style="width:100%; height:100%;
-                                background:repeating-linear-gradient(135deg,rgba(14,79,153,.06) 0 12px,rgba(14,79,153,0) 12px 24px);">
+                            <div style="width:100%; height:100%; background:linear-gradient(135deg,#f1f5f9,#e2e8f0); display:flex; align-items:center; justify-content:center;">
+                                <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
                             </div>
                         @endif
+
+                        @if($ocTimeBadge)
+                            <div style="position:absolute; top:10px; left:10px;">
+                                <span style="display:inline-flex; align-items:center; background:rgba(255,255,255,.9); backdrop-filter:blur(8px); color:#1f2937; font-size:11px; font-weight:600; padding:4px 10px; border-radius:999px; box-shadow:0 1px 3px rgba(0,0,0,.12); line-height:1;">
+                                    {{ $ocTimeBadge }}
+                                </span>
+                            </div>
+                        @endif
+
+                        <div style="position:absolute; bottom:10px; left:10px;">
+                            <span style="display:inline-flex; align-items:center; gap:4px; background:rgba(0,0,0,.5); backdrop-filter:blur(8px); color:#fff; font-size:11px; font-weight:500; padding:4px 10px; border-radius:999px; line-height:1;">
+                                @if($ocLocationType === 'Online')
+                                    <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+                                        <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+                                    </svg>
+                                @elseif($ocLocationType === 'Hybrid')
+                                    <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+                                        <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
+                                    </svg>
+                                @else
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                @endif
+                                {{ $ocLocationType }}
+                            </span>
+                        </div>
                     </div>
 
-                    {{-- BODY --}}
-                    <div style="padding:16px 18px; display:flex; flex-direction:column; gap:10px; flex:1;">
-                        <div style="font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--or-600);">
-                            {{ $opportunity->program?->name ?? 'Ayala Foundation' }}
-                        </div>
-
-                        <h3 style="font-family:var(--font-d); font-size:17px; font-weight:700; margin:0;">
+                    {{-- ── Body ── --}}
+                    <div style="display:flex; flex-direction:column; flex:1; padding:16px 16px 12px; gap:8px;">
+                        <p style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#f26522; line-height:1; margin:0;">
+                            {{ $ocCategory }}
+                        </p>
+                        <h3 style="font-size:14px; font-weight:700; line-height:1.35; color:#111827; margin:0; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
                             {{ $opportunity->title }}
                         </h3>
-
-                        <div style="font-size:13px; color:var(--slate);">
-                            {{ \Carbon\Carbon::parse($opportunity->start_date)->format('M d, Y · g:i A') }}
-                        </div>
-
-                        <div style="font-size:13px; color:var(--slate);">
-                            {{ $opportunity->location ?? 'TBA' }}
+                        <div style="display:flex; flex-direction:column; gap:6px; margin-top:2px;">
+                            <div style="display:flex; align-items:center; gap:8px; color:#6b7280; font-size:12px; line-height:1;">
+                                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2" style="flex-shrink:0;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                <span>{!! $ocDateStr . ($ocTimeStr ? ' &nbsp;·&nbsp; ' . $ocTimeStr : '') !!}</span>
+                            </div>
+                            <div style="display:flex; align-items:flex-start; gap:8px; color:#6b7280; font-size:12px; line-height:1.4; min-width:0;">
+                                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2" style="flex-shrink:0; margin-top:1px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1;">{{ $ocLocation }}</span>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- CTA --}}
-                    <div style="padding:16px 18px 18px;">
-                        <a href="{{ route('filament.admin.resources.events.view', ['record' => $opportunity->id]) }}"
-                           style="display:flex; align-items:center; justify-content:center; gap:6px;
-                           width:100%; padding:11px 16px;
-                           background:var(--or-500); color:#fff;
-                           font-weight:700; font-size:14px;
-                           border-radius:8px; text-align:center; text-decoration:none;">
-                            View Details
-                        </a>
+                    {{-- ── Footer ── --}}
+                    <div style="padding:0 16px 16px;">
+                        @auth
+                            <a href="{{ $ocDetailsUrl }}"
+                               style="display:flex; align-items:center; justify-content:center; gap:6px;
+                                      width:100%; padding:12px 16px;
+                                      background:#f26522; color:#fff;
+                                      font-weight:600; font-size:13px;
+                                      border-radius:12px; text-decoration:none;
+                                      transition:background .15s;"
+                               onmouseover="this.style.background='#d4541a'"
+                               onmouseout="this.style.background='#f26522'">
+                                View Details
+                                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        @else
+                            <a href="{{ route('filament.admin.auth.login') }}"
+                               style="display:flex; align-items:center; justify-content:center; gap:6px;
+                                      width:100%; padding:12px 16px;
+                                      background:#072b54; color:#fff;
+                                      font-weight:600; font-size:13px;
+                                      border-radius:12px; text-decoration:none;
+                                      transition:background .15s;"
+                               onmouseover="this.style.background='#0e4f99'"
+                               onmouseout="this.style.background='#072b54'">
+                                <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                </svg>
+                                Sign in to Register
+                            </a>
+                        @endauth
                     </div>
 
                 </article>

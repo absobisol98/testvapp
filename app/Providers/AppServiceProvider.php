@@ -25,10 +25,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
         $this->app->singleton(IcsGeneratorService::class, function ($app) {
             return new IcsGeneratorService();
         });
+
+        // Always redirect to /admin after login — bypass redirect()->intended()
+        // which can send users to stale "intended" URLs (volunteer-registration, etc.)
+        $this->app->bind(
+            \Filament\Http\Responses\Auth\Contracts\LoginResponse::class,
+            \App\Http\Responses\Auth\LoginResponse::class
+        );
     }
 
     /**

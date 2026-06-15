@@ -16,12 +16,22 @@ class Login extends BasePage
 
     public function mount(): void
     {
+        if (auth()->check()) {
+            $this->redirect(url('/admin'));
+            return;
+        }
+
         parent::mount();
 
         $this->form->fill([
             'email' => '',
             'password' => '',
         ]);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return url('/admin');
     }
 
     public function form(Form $form): Form

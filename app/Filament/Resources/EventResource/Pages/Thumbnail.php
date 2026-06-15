@@ -142,7 +142,12 @@ class Thumbnail extends ListRecords
                     ),
 
             ], layout: FiltersLayout::AboveContent)
-            ->actions((new EventRegistrationTableAction())->execute())
+            ->actions(
+                collect((new EventRegistrationTableAction())->execute())
+                    ->reject(fn ($a) => $a->getName() === 'export')
+                    ->values()
+                    ->all()
+            )
             ->bulkActions([])
             ->contentGrid([
                 'md' => 2,

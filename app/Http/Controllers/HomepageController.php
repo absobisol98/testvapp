@@ -18,6 +18,10 @@ class HomepageController extends Controller implements HasMedia
 
     public function mainHomepageView()
     {
+        if (auth()->check()) {
+            return redirect('/admin');
+        }
+
         $opportunities = Event::with(['slots', 'media'])
             ->where('is_published', true)
             ->whereDate('end_date', '>=', now())

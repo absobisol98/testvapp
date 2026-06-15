@@ -1,297 +1,219 @@
 <style>
-    #logoWhite {
-        display: block;
-    }
-
-    #logoColored {
-        display: none;
+    :root {
+        --nav-blue: #0e4f99;
+        --nav-blue-hover: #0a3a6e;
+        --nav-orange: #f07a1e;
+        --nav-orange-hover: #d9650c;
     }
 
     #navBar {
-        padding: 80px 80px;
-        background: transparent;
-        position: absolute;
-        transition: background-color 0.3s ease-in-out, position 0.3s ease-in-out, padding 0.3s ease-in-out;
+        padding: 0 28px;
+        height: 68px;
+        background: rgba(255,255,255,.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid transparent;
+        box-shadow: none;
+        transition: border-color .2s, box-shadow .2s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
     }
 
     #navBar.scrolled {
-        padding: 30px 80px;
-        background-color: white;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+        border-color: #e6e8ec;
+        box-shadow: 0 1px 2px rgba(16,32,56,.06), 0 1px 3px rgba(16,32,56,.05);
     }
 
-    #userDropdownBtn {
-        color: white;
-    }
-
-    #avatarContainer {
+    .nav-link {
+        padding: 9px 14px;
+        font-size: 14.5px;
+        font-weight: 600;
+        border-radius: 8px;
+        color: #454c58;
+        transition: .15s;
+        text-decoration: none;
         background: transparent;
     }
 
-    @media screen and (max-width: 1279px) {
-        #navBar {
-            padding: 30px 16px;
-        }
+    .nav-link:hover { color: var(--nav-blue); background: #eef4fc; }
+    .nav-link.active { color: var(--nav-blue); background: #eef4fc; }
 
-        #navBar.scrolled {
-            padding: 30px 16px;
-        }
+    .btn-nav-login {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: var(--nav-blue);
+        padding: 9px 12px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: .15s;
     }
+    .btn-nav-login:hover { color: var(--nav-blue-hover); }
+
+    .btn-nav-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--nav-orange);
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        box-shadow: 0 4px 12px rgba(240,122,30,.28);
+        transition: .15s;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-nav-primary:hover { background: var(--nav-orange-hover); transform: translateY(-1px); }
+
+    .btn-nav-dashboard {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--nav-blue);
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        transition: .15s;
+        text-decoration: none;
+    }
+    .btn-nav-dashboard:hover { background: var(--nav-blue-hover); transform: translateY(-1px); }
+
+    /* Mobile */
+    .hdr-burger { display: none; padding: 8px; color: #15181d; cursor: pointer; background: none; border: none; }
+    .hdr-nav { display: flex; align-items: center; gap: 4px; }
+    .hdr-actions { display: flex; align-items: center; gap: 10px; }
 
     .mobile-menu {
         display: none;
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 90vh;
-        background-color: white;
-        z-index: 40;
-        padding: 2rem;
-        transition: all 0.3s ease-in-out;
-        overflow-y: auto;
+        top: 0; left: 0; right: 0;
+        min-height: 60vh;
+        background: #fff;
+        z-index: 90;
+        padding: 20px;
+        border-bottom: 1px solid #e6e8ec;
+        box-shadow: 0 18px 48px rgba(16,32,56,.14);
+        animation: slideDown .25s ease;
     }
-
-    .mobile-menu.active {
-        display: block;
-        animation: slideDown 0.3s ease-in-out;
-    }
+    .mobile-menu.active { display: block; }
 
     @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity:0; transform:translateY(-10px); }
+        to   { opacity:1; transform:none; }
     }
 
-    .hamburger {
-        display: none;
-    }
-
-    @media screen and (max-width: 768px) {
-        .hamburger {
-            display: block;
-        }
-
-        .desktop-menu {
-            display: none;
-        }
-    }
-    #navBar {
-        padding: 30px 80px;
-        background: white;
-        position: absolute;
-        transition: background-color 0.3s ease-in-out, position 0.3s ease-in-out, padding 0.3s ease-in-out;
-        }
-
-    #userDropdownBtn {
-        color: black !important;
-        }
-
-    #avatarContainer {
-        background: #0433ff !important;
-        }
-
-    @media screen and (max-width: 1279px) {
-        #navBar {
-            padding: 30px 16px;
-        }
+    @media(max-width:900px) {
+        .hdr-nav { display: none !important; }
+        .hdr-actions { display: none !important; }
+        .hdr-burger { display: flex !important; }
     }
 </style>
 
-    @php
-        $isBusinessUnit = (false) ? true : false;
-    @endphp
-
-<div id="navBar" class="w-full flex items-center justify-between z-50">
-
-    <a href="{{ route('main.homepage.view') }}" id="logoWhite" class="flex items-center">
-        <img class="h-8 md:h-10 w-auto" src="{{ asset('img/logo-vapp.svg') }}" alt="VApp">
+<div id="navBar">
+    {{-- Logo --}}
+    <a href="{{ route('main.homepage.view') }}" style="display:flex; align-items:center; gap:10px; text-decoration:none;" aria-label="VApp home">
+        <img src="{{ asset('img/logo-vapp.svg') }}" alt="VApp" style="height:32px; width:auto;">
     </a>
 
-    <a href="{{ route('main.homepage.view') }}" id="logoColored" class="none flex items-center">
-        <img class="h-8 md:h-10 w-auto" src="{{ asset('img/logo-vapp.svg') }}" alt="VApp">
-    </a>
+    {{-- Desktop nav --}}
+    <nav class="hdr-nav">
+        <a href="{{ route('main.homepage.view') }}" class="nav-link {{ request()->routeIs('main.homepage.view') ? 'active' : '' }}">Home</a>
+        <a href="{{ url('/admin/events') }}" class="nav-link">Opportunities</a>
+        <a href="{{ route('stories.view') }}" class="nav-link {{ request()->routeIs('stories.view') ? 'active' : '' }}">Stories</a>
+        <a href="{{ route('ourpartners.view') }}" class="nav-link {{ request()->routeIs('ourpartners.view') ? 'active' : '' }}">Partners</a>
+    </nav>
 
-    <!-- Desktop Menu -->
-    <div class="desktop-menu flex items-center justify-center gap-6">
-        <a href="{{ route('main.homepage.view') }}">
-            <p class="font-medium text-sm {{ request()->routeIs('main.homepage.view') ? 'text-[#0433ff]' : 'text-gray-700 hover:text-[#0433ff]'}} transition">
-                Home
-            </p>
-        </a>
-        <a href="{{ url('/admin/events') }}">
-            <p class="font-medium text-sm text-gray-700 hover:text-[#0433ff] transition">
-                Opportunities
-            </p>
-        </a>
-        <a href="{{ route('stories.view') }}">
-            <p class="font-medium text-sm {{ request()->routeIs('stories.view') ? 'text-[#0433ff]' : 'text-gray-700 hover:text-[#0433ff]'}} transition">
-                Stories
-            </p>
-        </a>
-        <a href="{{ route('ourpartners.view') }}">
-            <p class="font-medium text-sm {{ request()->routeIs('ourpartners.view') ? 'text-[#0433ff]' : 'text-gray-700 hover:text-[#0433ff]'}} transition">
-                Partners
-            </p>
-        </a>
-    </div>
-
-    <div class="h-full flex items-center justify-between gap-3">
+    {{-- Desktop actions --}}
+    <div class="hdr-actions">
         @guest
-            <a href="{{route('filament.admin.auth.login')}}" class="hidden md:inline-flex items-center gap-2 text-gray-700 font-medium text-sm hover:text-[#0433ff] transition px-4 py-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-                Log In
-            </a>
-            <a href="{{ route('volunteer.form.view') }}" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#ff7b00] text-white font-semibold text-sm hover:bg-[#e06e00] transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
+            <a href="{{ route('filament.admin.auth.login') }}" class="btn-nav-login">Log in</a>
+            <a href="{{ route('volunteer.form.view') }}" class="btn-nav-primary">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0"/></svg>
                 Become a Volunteer
             </a>
         @endguest
-
-        {{-- Logged-in user --}}
         @auth
-        <a href="{{ route('filament.admin.pages.dashboard') }}" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0433ff] text-white font-semibold text-sm hover:bg-[#0228cc] transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-            Dashboard
-        </a>
+            <a href="{{ route('filament.admin.pages.dashboard') }}" class="btn-nav-dashboard">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Dashboard
+            </a>
         @endauth
     </div>
 
-    <!-- Hamburger Button -->
-    <button class="hamburger p-2" id="hamburgerBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+    {{-- Hamburger --}}
+    <button class="hdr-burger" id="hamburgerBtn" aria-label="Open menu">
+        <svg id="iconMenu" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg id="iconClose" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="display:none;"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
+</div>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="flex justify-end mb-8">
-            <button class="p-2" id="closeMenuBtn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-        <div class="w-full h-full flex flex-col items-center justify-evenly space-y-4">
-            <div class="w-full flex flex-col items-center space-y-4">
-                <a href="{{ route('main.homepage.view') }}">
-                    <p class="font-medium text-base {{ request()->routeIs('main.homepage.view') ? 'text-[#0433ff]' : 'text-gray-700' }}">
-                        Home
-                    </p>
-                </a>
-                <a href="{{ url('/admin/events') }}">
-                    <p class="font-medium text-base text-gray-700">Opportunities</p>
-                </a>
-                <a href="{{ route('stories.view') }}">
-                    <p class="font-medium text-base {{ request()->routeIs('stories.view') ? 'text-[#0433ff]' : 'text-gray-700' }}">
-                        Stories
-                    </p>
-                </a>
-                <a href="{{ route('ourpartners.view') }}">
-                    <p class="font-medium text-base {{ request()->routeIs('ourpartners.view') ? 'text-[#0433ff]' : 'text-gray-700'}}">
-                        Partners
-                    </p>
-                </a>
-            </div>
-
-            <div class="w-full flex flex-col space-y-3">
-                @guest
-                <a href="{{route('filament.admin.auth.login')}}" class="w-full">
-                    <div class="w-full rounded-full border-2 border-gray-300 flex items-center justify-center gap-2 p-3 hover:border-[#0433ff] hover:text-[#0433ff]">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                        </svg>
-                        <p class="font-medium text-base">Log In</p>
-                    </div>
-                </a>
-                <a href="{{ route('volunteer.form.view') }}" class="w-full">
-                    <div class="w-full rounded-full bg-[#ff7b00] flex items-center justify-center gap-2 p-3 hover:bg-[#e06e00]">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        <p class="font-medium text-base text-white">Become a Volunteer</p>
-                    </div>
-                </a>
-                @endguest
-
-                @auth
-                <a href="{{ route('filament.admin.pages.dashboard') }}" class="w-full">
-                    <div class="w-full rounded-full bg-[#0433ff] flex items-center justify-center gap-2 p-3 hover:bg-[#0228cc]">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        <p class="font-medium text-base text-white">Dashboard</p>
-                    </div>
-                </a>
-                @endauth
-            </div>
-        </div>
+{{-- Mobile menu --}}
+<div class="mobile-menu" id="mobileMenu">
+    <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+        <button id="closeMenuBtn" style="padding:8px; background:none; border:none; cursor:pointer; color:#454c58;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:20px;">
+        <a href="{{ route('main.homepage.view') }}" style="display:block; width:100%; text-align:left; padding:13px 8px; font-size:16px; font-weight:600; color:#15181d; border-bottom:1px solid #eef0f3; text-decoration:none;">Home</a>
+        <a href="{{ url('/admin/events') }}" style="display:block; width:100%; text-align:left; padding:13px 8px; font-size:16px; font-weight:600; color:#15181d; border-bottom:1px solid #eef0f3; text-decoration:none;">Opportunities</a>
+        <a href="{{ route('stories.view') }}" style="display:block; width:100%; text-align:left; padding:13px 8px; font-size:16px; font-weight:600; color:#15181d; border-bottom:1px solid #eef0f3; text-decoration:none;">Stories</a>
+        <a href="{{ route('ourpartners.view') }}" style="display:block; width:100%; text-align:left; padding:13px 8px; font-size:16px; font-weight:600; color:#15181d; text-decoration:none;">Partners</a>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+        @guest
+            <a href="{{ route('filament.admin.auth.login') }}" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:13px 20px; border-radius:999px; border:1.5px solid #e6e8ec; font-weight:700; font-size:15px; color:#454c58; text-decoration:none;">Log in</a>
+            <a href="{{ route('volunteer.form.view') }}" class="btn-nav-primary" style="justify-content:center; padding:13px 20px; font-size:15px;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 8 8h0a8 8 0 0 0 8-8v-3a2 2 0 0 0-4 0"/></svg>
+                Become a Volunteer
+            </a>
+        @endguest
+        @auth
+            <a href="{{ route('filament.admin.pages.dashboard') }}" class="btn-nav-dashboard" style="justify-content:center; padding:13px 20px; font-size:15px;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Dashboard
+            </a>
+        @endauth
     </div>
 </div>
 
 <script>
-    document.addEventListener("scroll", function() {
-        const navBar = document.getElementById("navBar");
-        const logoWhite = document.getElementById("logoWhite");
-        const logoColored = document.getElementById("logoColored");
-        const userDropdownBtn = document.getElementById("userDropdownBtn");
-        const avatarContainer = document.getElementById("avatarContainer");
+document.addEventListener('DOMContentLoaded', function () {
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const mobileMenu   = document.getElementById('mobileMenu');
+    const iconMenu     = document.getElementById('iconMenu');
+    const iconClose    = document.getElementById('iconClose');
+    const navBar       = document.getElementById('navBar');
 
-        if (window.scrollY > 50) {
-            navBar.classList.add("scrolled");
-            logoWhite.style.display = "none";
-            logoColored.style.display = "block";
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        iconMenu.style.display  = 'none';
+        iconClose.style.display = 'block';
+    }
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        iconMenu.style.display  = 'block';
+        iconClose.style.display = 'none';
+    }
 
-            if (userDropdownBtn) {
-                userDropdownBtn.style.color = 'black';
-            }
+    hamburgerBtn.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
 
-            if (avatarContainer) {
-                avatarContainer.style.background = '#0433ff';
-            }
-
-        } else {
-            navBar.classList.remove("scrolled");
-            logoWhite.style.display = "block";
-            logoColored.style.display = "none";
-
-            if (userDropdownBtn) {
-                userDropdownBtn.style.color = 'white';
-            }
-
-            if (avatarContainer) {
-                avatarContainer.style.background = 'transparent';
-            }
-        }
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 8) navBar.classList.add('scrolled');
+        else navBar.classList.remove('scrolled');
     });
-
-    // Hamburger Menu functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-
-        hamburgerBtn.addEventListener('click', function() {
-            mobileMenu.classList.add('active');
-        });
-
-        closeMenuBtn.addEventListener('click', function() {
-            mobileMenu.classList.remove('active');
-        });
-    });
+});
 </script>

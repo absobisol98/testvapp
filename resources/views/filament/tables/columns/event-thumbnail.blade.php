@@ -58,7 +58,7 @@
 @endphp
 
 <div class="bg-white rounded-2xl overflow-hidden flex flex-col hover:shadow-[0_8px_28px_rgba(0,20,50,.14)] transition-shadow duration-200"
-     style="width:288px; max-width:288px; box-shadow:0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);">
+     style="width:100%; box-shadow:0 2px 8px rgba(0,20,50,.08), 0 6px 24px rgba(0,20,50,.07);">
 
     {{-- ── Image ── --}}
     <div class="relative h-44 overflow-hidden bg-gray-200 flex-shrink-0">
