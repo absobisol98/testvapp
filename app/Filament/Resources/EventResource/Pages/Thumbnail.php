@@ -149,7 +149,8 @@ class Thumbnail extends ListRecords
                 'xl' => 3,
             ])
             ->paginated([12, 24, 48, 'all'])
-            ->defaultSort('start_date');
+            ->defaultSort('start_date')
+            ->striped(false);
     }
 
     protected function getHeaderActions(): array
