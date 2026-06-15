@@ -13,6 +13,13 @@ class PublishedEventScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->where('is_published',true);
+        $user = auth()->user();
+
+        // Admins and facilitators can see all events (published or draft)
+        if ($user && ($user->isAdminRole() || $user->hasActiveRole('Facilitator') || $user->hasActiveRole('External Partner'))) {
+            return;
+        }
+
+        $builder->where('is_published', true);
     }
 }
