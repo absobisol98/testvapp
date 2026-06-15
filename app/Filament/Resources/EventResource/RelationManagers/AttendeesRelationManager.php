@@ -57,7 +57,7 @@ class AttendeesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('slot_type_id')
                     ->label('Slot')
                     ->formatStateUsing(function ($record) {
-                        return $record->slot->shift_name;
+                        return $record->slot?->shift_name ?? '—';
                     }),
                 Tables\Columns\TextColumn::make('id')
                     ->label('Volunteer Name')

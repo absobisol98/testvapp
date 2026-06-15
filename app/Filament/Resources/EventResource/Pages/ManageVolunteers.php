@@ -27,7 +27,12 @@ class ManageVolunteers extends Page
             return false;
         }
 
-        // Facilitators can only manage their own events
+        // Admins (including Ayala Super Admin) have global access
+        if ($user->isAdminRole() || $user->isSuperAdmin()) {
+            return true;
+        }
+
+        // Facilitators can only manage events they are assigned to
         if ($user->hasActiveRole('Facilitator')) {
             $record = $parameters['record'] ?? null;
             if (! $record instanceof Event) {
