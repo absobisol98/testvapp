@@ -28,6 +28,9 @@ final class EventCreateAction
         // start_date and end_date come directly from DateTimePicker fields
         unset($data['date'], $data['start_time'], $data['end_time']);
 
+        // Recurrence fields removed from form — always treat as one-time
+        $data['recurrence_type_id'] = $data['recurrence_type_id'] ?? 1;
+
         if($data['recurrence_type_id'] == 2){ // Recurring
 
             // Recurring Function

@@ -207,61 +207,6 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->afterOrEqual('start_date'),
                                 ]),
 
-                            Forms\Components\DateTimePicker::make('registration_end_date')
-                                ->label('Registration Deadline')
-                                ->seconds(false)
-                                ->helperText('Leave empty for no registration deadline.')
-                                ->beforeOrEqual('start_date'),
-
-                            Forms\Components\Grid::make(3)
-                                ->schema([
-                                    Forms\Components\Select::make('recurrence_type_id')
-                                        ->label('Recurrence Type')
-                                        ->options([
-                                            1 => 'One Time',
-                                            2 => 'Recurring',
-                                        ])
-                                        ->required()
-                                        ->live()
-                                        ->default(1),
-                                    Forms\Components\Select::make('frequency')
-                                        ->label('Frequency')
-                                        ->options([
-                                            'daily'   => 'Daily',
-                                            'weekly'  => 'Weekly',
-                                            'monthly' => 'Monthly',
-                                            'yearly'  => 'Yearly',
-                                        ])
-                                        ->required()
-                                        ->live()
-                                        ->visible(fn ($get) => $get('recurrence_type_id') == 2),
-                                    Forms\Components\DatePicker::make('repeat_until')
-                                        ->label('Repeat Until')
-                                        ->minDate(fn ($get) => $get('start_date'))
-                                        ->maxDate(now()->addYears(5))
-                                        ->default(now())
-                                        ->required()
-                                        ->visible(fn ($get) => $get('recurrence_type_id') == 2),
-                                ]),
-
-                            Forms\Components\CheckboxList::make('selected_days')
-                                ->label('Repeat on These Days')
-                                ->default([\Carbon\Carbon::now()->dayOfWeek])
-                                ->options([
-                                    0 => 'Sunday',
-                                    1 => 'Monday',
-                                    2 => 'Tuesday',
-                                    3 => 'Wednesday',
-                                    4 => 'Thursday',
-                                    5 => 'Friday',
-                                    6 => 'Saturday',
-                                ])
-                                ->columnSpanFull()
-                                ->columns(7)
-                                ->visible(fn ($get) =>
-                                    $get('recurrence_type_id') == 2 &&
-                                    $get('frequency') == 'weekly'
-                                ),
                         ]),
 
                     // ── Tab 3: Location ──────────────────────────────────────
@@ -311,23 +256,29 @@ class EventResource extends Resource implements HasShieldPermissions
                                 ->required()
                                 ->cloneable()
                                 ->schema([
+                                    // Row 1: Shift Name + Number of Volunteers
                                     Forms\Components\Grid::make(2)
                                         ->schema([
                                             Forms\Components\TextInput::make('shift_name')
-                                                ->required()
-                                                ->label('Shift Name'),
+                                                ->label('Shift Name')
+                                                ->required(),
                                             Forms\Components\TextInput::make('total_slots')
-                                                ->required()
                                                 ->label('Number of Volunteers')
-                                                ->minValue(0)
-                                                ->numeric(),
+                                                ->required()
+                                                ->numeric()
+                                                ->minValue(0),
                                         ]),
+
+                                    // Row 2: Type (full width)
                                     Forms\Components\Select::make('slot_type_id')
                                         ->label('Type')
-                                        ->default(1)
                                         ->required()
-                                        ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray()),
-                                    Forms\Components\Grid::make(3)
+                                        ->default(1)
+                                        ->options(EventSlotType::orderBy('id')->pluck('name', 'id')->toArray())
+                                        ->columnSpanFull(),
+
+                                    // Row 3: Shift Date | Start Time | End Date | End Time
+                                    Forms\Components\Grid::make(4)
                                         ->schema([
                                             Forms\Components\DatePicker::make('shift_date')
                                                 ->label('Shift Date')
@@ -336,31 +287,25 @@ class EventResource extends Resource implements HasShieldPermissions
                                                 ->maxDate(fn ($get) => $get('../../end_date'))
                                                 ->helperText('Must be within the event date range.'),
                                             Forms\Components\TimePicker::make('start_time')
-                                                ->required()
                                                 ->label('Start Time')
-                                                ->default('08:00')
-                                                ->seconds(false)
-                                                ->live(),
-                                            Forms\Components\TimePicker::make('end_time')
                                                 ->required()
-                                                ->label('End Time')
-                                                ->default('11:00')
-                                                ->seconds(false)
-                                                ->after('start_time')
-                                                ->helperText('Must be after start time'),
-                                        ]),
-                                    Forms\Components\Grid::make(2)
-                                        ->schema([
-                                            Forms\Components\DatePicker::make('end_date')
+                                                ->default('08:00')
+                                                ->seconds(false),
+                                            Forms\Components\DatePicker::make('shift_end_date')
                                                 ->label('End Date')
                                                 ->minDate(fn ($get) => $get('shift_date'))
                                                 ->maxDate(fn ($get) => $get('../../end_date'))
                                                 ->helperText('Leave blank if same day. Set for overnight or multi-day shifts.'),
-                                            Forms\Components\Toggle::make('ends_next_day')
-                                                ->label('Ends Next Day')
-                                                ->helperText('Enable for overnight shifts (e.g. 10 PM – 2 AM).')
-                                                ->default(false),
+                                            Forms\Components\TimePicker::make('end_time')
+                                                ->label('End Time')
+                                                ->required()
+                                                ->default('17:00')
+                                                ->seconds(false)
+                                                ->after('start_time')
+                                                ->helperText('Must be after start time.'),
                                         ]),
+
+                                    // Row 4: Slot Type override (full width)
                                     Forms\Components\Select::make('slot_format')
                                         ->label('Slot Type (override)')
                                         ->options([
@@ -373,6 +318,7 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->helperText('Leave blank to use the event\'s type. Set only to override for this specific shift.')
                                         ->columnSpanFull(),
 
+                                    // Shift-level meeting link — only when slot overrides to virtual
                                     Forms\Components\TextInput::make('meeting_link')
                                         ->label('Shift Meeting Link')
                                         ->url()
@@ -381,12 +327,13 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->visible(fn ($get) => $get('slot_format') === 'virtual')
                                         ->columnSpanFull(),
 
+                                    // Row 5: Key Responsibilities (full width)
                                     Forms\Components\Textarea::make('responsibilities')
+                                        ->label('Key Responsibilities')
                                         ->required()
                                         ->columnSpanFull(),
                                 ])
-                                ->columnSpanFull()
-                                ->columns(3),
+                                ->columnSpanFull(),
                         ]),
 
                     // ── Tab 5: Settings ──────────────────────────────────────
