@@ -1,75 +1,56 @@
-@props([
-    'getRecord'    => null,
-    'record'       => null,
-    'image'        => null,
-    'imageAlt'     => 'Event photo',
-    'timeBadge'    => null,
-    'locationType' => 'Onsite',
-    'category'     => '',
-    'title'        => '',
-    'dateStr'      => '',
-    'timeStr'      => '',
-    'location'     => '',
-    'detailsUrl'   => '#',
-    'canEdit'      => false,
-    'canDelete'    => false,
-    'canSetFeatured' => false,
-])
-
 @php
-    if (!$record && $getRecord) {
+    // Handle Filament's getRecord closure
+    if (is_callable($record ?? null)) {
+        $record = $record();
+    } elseif (is_callable($getRecord ?? null)) {
         $record = $getRecord();
     }
 
-    if ($record && !$title) {
-        $user   = auth()->user();
-        $image  = $record->getMedia('event-banner-attachments')?->first()?->getUrl();
+    $user   = auth()->user();
+    $image  = $record->getMedia('event-banner-attachments')?->first()?->getUrl();
 
-        $start = \Carbon\Carbon::parse($record->start_date);
-        $end = $record->end_date ? \Carbon\Carbon::parse($record->end_date) : null;
-        $isFinished = $end && now()->isAfter($end);
-        $isOngoing = !$isFinished && now()->isAfter($start);
+    $start = \Carbon\Carbon::parse($record->start_date);
+    $end = $record->end_date ? \Carbon\Carbon::parse($record->end_date) : null;
+    $isFinished = $end && now()->isAfter($end);
+    $isOngoing = !$isFinished && now()->isAfter($start);
 
-        $timeBadge = match(true) {
-            $isFinished => null,
-            $isOngoing => null,
-            $start->isToday() => 'Today',
-            $start->isTomorrow() => 'Tomorrow',
-            default => 'Starting in ' . (int)now()->startOfDay()->diffInDays($start->startOfDay()) . ' day' . ((int)now()->startOfDay()->diffInDays($start->startOfDay()) > 1 ? 's' : ''),
-        };
+    $timeBadge = match(true) {
+        $isFinished => null,
+        $isOngoing => null,
+        $start->isToday() => 'Today',
+        $start->isTomorrow() => 'Tomorrow',
+        default => 'Starting in ' . (int)now()->startOfDay()->diffInDays($start->startOfDay()) . ' day' . ((int)now()->startOfDay()->diffInDays($start->startOfDay()) > 1 ? 's' : ''),
+    };
 
-        $eventFormat = $record->event_format ?? 'onsite';
-        $hasVirtualSlot = $record->slots->contains(fn($s) => $s->slot_format === 'virtual');
-        $hasOnsiteSlot = $record->slots->contains(fn($s) => $s->slot_format === 'onsite');
-        $isHybrid = ($hasVirtualSlot && $hasOnsiteSlot) || ($hasVirtualSlot && $eventFormat === 'onsite') || ($hasOnsiteSlot && $eventFormat === 'virtual');
+    $eventFormat = $record->event_format ?? 'onsite';
+    $hasVirtualSlot = $record->slots->contains(fn($s) => $s->slot_format === 'virtual');
+    $hasOnsiteSlot = $record->slots->contains(fn($s) => $s->slot_format === 'onsite');
+    $isHybrid = ($hasVirtualSlot && $hasOnsiteSlot) || ($hasVirtualSlot && $eventFormat === 'onsite') || ($hasOnsiteSlot && $eventFormat === 'virtual');
 
-        $locationType = match(true) {
-            $isHybrid => 'Hybrid',
-            $eventFormat === 'virtual' => 'Online',
-            default => 'Onsite',
-        };
+    $locationType = match(true) {
+        $isHybrid => 'Hybrid',
+        $eventFormat === 'virtual' => 'Online',
+        default => 'Onsite',
+    };
 
-        $sameDay = $end && $start->format('Y-m-d') === $end->format('Y-m-d');
-        $dateStr = $start->format('M d, Y');
-        if ($end && !$sameDay) {
-            $dateStr .= ' – ' . $end->format('M d, Y');
-        }
-
-        $firstSlot = $record->slots->first();
-        $timeStr = ($firstSlot && $firstSlot->start_time && $firstSlot->end_time)
-            ? \Carbon\Carbon::parse($firstSlot->start_time)->format('g:i A') . ' – ' . \Carbon\Carbon::parse($firstSlot->end_time)->format('g:i A')
-            : null;
-
-        $category = $record->program?->name ?? 'Ayala Foundation';
-        $location = $record->location ?? 'Location TBA';
-        $detailsUrl = route('filament.admin.resources.events.view', ['record' => $record->id]);
-
-        $canEdit = \App\Filament\Resources\EventResource::canEdit($record);
-        $canDelete = \App\Filament\Resources\EventResource::canDelete($record);
-        $canSetFeatured = !$user->hasActiveRole('Facilitator') && !$user->hasActiveRole('Volunteer') && $user->can('set_featured_event');
-
-        $title = $record->title;
+    $sameDay = $end && $start->format('Y-m-d') === $end->format('Y-m-d');
+    $dateStr = $start->format('M d, Y');
+    if ($end && !$sameDay) {
+        $dateStr .= ' – ' . $end->format('M d, Y');
     }
+
+    $firstSlot = $record->slots->first();
+    $timeStr = ($firstSlot && $firstSlot->start_time && $firstSlot->end_time)
+        ? \Carbon\Carbon::parse($firstSlot->start_time)->format('g:i A') . ' – ' . \Carbon\Carbon::parse($firstSlot->end_time)->format('g:i A')
+        : null;
+
+    $category = $record->program?->name ?? 'Ayala Foundation';
+    $location = $record->location ?? 'Location TBA';
+    $detailsUrl = route('filament.admin.resources.events.view', ['record' => $record->id]);
+
+    $canEdit = \App\Filament\Resources\EventResource::canEdit($record);
+    $canDelete = \App\Filament\Resources\EventResource::canDelete($record);
+    $canSetFeatured = !$user->hasActiveRole('Facilitator') && !$user->hasActiveRole('Volunteer') && $user->can('set_featured_event');
 @endphp
 
 <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,20,50,.08),0_6px_24px_rgba(0,20,50,.07)] overflow-hidden flex flex-col w-72 hover:shadow-[0_8px_28px_rgba(0,20,50,.14)] transition-shadow duration-200">
@@ -77,7 +58,7 @@
     <!-- image + badges -->
     <div class="relative h-44 overflow-hidden bg-gray-200 flex-shrink-0">
         @if($image)
-            <img src="{{ $image }}" alt="{{ $imageAlt }}" class="w-full h-full object-cover">
+            <img src="{{ $image }}" alt="{{ $record->title }}" class="w-full h-full object-cover">
         @else
             <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                 <svg class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
