@@ -326,7 +326,8 @@ class EventResource extends Resource implements HasShieldPermissions
                                         ->schema([
                                             Forms\Components\DatePicker::make('shift_date')
                                                 ->label('Shift Date')
-                                                ->required(),
+                                                ->required()
+                                                ->helperText('Must be within the event date range.'),
                                             Forms\Components\TimePicker::make('start_time')
                                                 ->required()
                                                 ->label('Start Time')
