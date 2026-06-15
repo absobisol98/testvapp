@@ -1,4 +1,5 @@
 @props([
+    'getRecord'    => null,
     'record'       => null,
     'image'        => null,
     'imageAlt'     => 'Event photo',
@@ -16,6 +17,10 @@
 ])
 
 @php
+    if (!$record && $getRecord) {
+        $record = $getRecord();
+    }
+
     if ($record && !$title) {
         $user   = auth()->user();
         $image  = $record->getMedia('event-banner-attachments')?->first()?->getUrl();
