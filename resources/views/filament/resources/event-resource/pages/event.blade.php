@@ -165,7 +165,7 @@
             <div class="min-w-0">
                 <span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/25
                              rounded-full px-3 py-1 mb-3">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#f26522] flex-shrink-0"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#f55e1d] flex-shrink-0"></span>
                     <span class="text-[11px] font-bold tracking-[.1em] uppercase text-white">{{ $category }}</span>
                 </span>
                 <h1 class="text-[22px] sm:text-[28px] font-extrabold text-white leading-tight tracking-tight drop-shadow-md">
@@ -197,7 +197,7 @@
 
                 <a href="{{ $listUrl }}"
                    class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg
-                          bg-[#f26522] hover:bg-[#d4541a] text-white text-[12.5px] font-semibold
+                          bg-[#f55e1d] hover:bg-[#d44e14] text-white text-[12.5px] font-semibold
                           shadow-[0_3px_10px_rgba(242,101,34,.35)] transition-colors duration-150">
                     <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
@@ -221,8 +221,8 @@
                     <h2 class="text-[14px] font-bold text-[#072b54] tracking-tight">About the Opportunity</h2>
                 </div>
                 <div class="px-6 py-5">
-                    <span class="inline-flex items-center gap-1.5 bg-[#fff3eb] border border-[#f26522]/20
-                                 rounded-full px-3 py-1 text-[12px] font-bold text-[#f26522] mb-4">
+                    <span class="inline-flex items-center gap-1.5 bg-[#fff3eb] border border-[#f55e1d]/20
+                                 rounded-full px-3 py-1 text-[12px] font-bold text-[#f55e1d] mb-4">
                         <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/>
                         </svg>
@@ -318,11 +318,11 @@
                                         class="relative flex flex-col items-center gap-0.5 flex-shrink-0
                                                border rounded-xl px-3.5 py-2.5 min-w-[72px]
                                                transition-all duration-150 cursor-pointer">
-                                    <span :class="activeIdx === {{ $gIdx }} ? 'text-white/70' : '{{ $dateGroup['isToday'] ? 'text-[#f26522]' : 'text-[#718096]' }}'"
+                                    <span :class="activeIdx === {{ $gIdx }} ? 'text-white/70' : '{{ $dateGroup['isToday'] ? 'text-[#f55e1d]' : 'text-[#718096]' }}'"
                                           class="text-[10px] font-bold tracking-[.06em] uppercase leading-none">
                                         {{ $dateGroup['dayName'] }}
                                     </span>
-                                    <span :class="activeIdx === {{ $gIdx }} ? 'text-white' : '{{ $dateGroup['isToday'] ? 'text-[#f26522]' : 'text-[#072b54]' }}'"
+                                    <span :class="activeIdx === {{ $gIdx }} ? 'text-white' : '{{ $dateGroup['isToday'] ? 'text-[#f55e1d]' : 'text-[#072b54]' }}'"
                                           class="text-[18px] font-extrabold leading-none">
                                         {{ $dateGroup['dayNum'] }}
                                     </span>
@@ -331,7 +331,7 @@
                                         {{ $dateGroup['monthName'] }}
                                     </span>
                                     <span class="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full
-                                                 bg-[#f26522] text-white text-[9px] font-extrabold
+                                                 bg-[#f55e1d] text-white text-[9px] font-extrabold
                                                  flex items-center justify-center border-2"
                                           :class="activeIdx === {{ $gIdx }} ? 'border-[#072b54]' : 'border-white'">
                                         {{ $dateGroup['slotCount'] }}
@@ -393,11 +393,11 @@
                                             ->where('slot_type_id', $slot->id)
                                             ->where('status_id', '!=', 3)
                                             ->count() > 0;
-                                        $barColor   = $pct >= 100 ? '#dc2626' : ($pct >= 80 ? '#d97706' : '#f26522');
-                                        $pctColor   = $pct >= 100 ? 'color:#dc2626' : ($pct >= 80 ? 'color:#d97706' : 'color:#f26522');
+                                        $barColor   = $pct >= 100 ? '#dc2626' : ($pct >= 80 ? '#d97706' : '#f55e1d');
+                                        $pctColor   = $pct >= 100 ? 'color:#dc2626' : ($pct >= 80 ? 'color:#d97706' : 'color:#f55e1d');
                                         $badgeClass = $isFull
                                             ? 'border-red-400 text-red-500'
-                                            : ($pct >= 80 ? 'border-amber-400 text-amber-600' : 'border-[#f26522] text-[#f26522]');
+                                            : ($pct >= 80 ? 'border-amber-400 text-amber-600' : 'border-[#f55e1d] text-[#f55e1d]');
 
                                         // Resolve effective format: slot-level overrides event-level
                                         $resolvedFormat = ($slot->slot_format && $slot->slot_format !== '' && $slot->slot_format !== 'inherit')
@@ -537,8 +537,8 @@
                                                                           file:mr-3 file:py-1.5 file:px-3
                                                                           file:rounded-full file:border-0
                                                                           file:text-[12px] file:font-semibold
-                                                                          file:bg-[#f26522] file:text-white
-                                                                          hover:file:bg-[#d4541a]">
+                                                                          file:bg-[#f55e1d] file:text-white
+                                                                          hover:file:bg-[#d44e14]">
                                                             @error('media')
                                                                 <p class="mt-1 text-[11px] text-red-600">{{ $message }}</p>
                                                             @enderror
@@ -547,7 +547,7 @@
 
                                                     <button type="submit"
                                                             class="w-full flex items-center justify-center gap-1.5
-                                                                   bg-[#f26522] hover:bg-[#d4541a] text-white
+                                                                   bg-[#f55e1d] hover:bg-[#d44e14] text-white
                                                                    rounded-full px-4 py-2.5 text-[12.5px] font-bold
                                                                    shadow-[0_3px_10px_rgba(242,101,34,.28)]
                                                                    transition-colors duration-150">
@@ -608,7 +608,7 @@
                     {{-- Schedule --}}
                     <div class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[#fafbfc] transition-colors">
                         <div class="w-8 h-8 rounded-[9px] bg-[#fff3eb] flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#f26522]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-4 h-4 text-[#f55e1d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/>
                             </svg>
                         </div>
@@ -687,7 +687,7 @@
                     @else
                         <button onclick="document.getElementById('volunteer-section').scrollIntoView({ behavior: 'smooth' });"
                                 class="w-full flex items-center justify-center gap-2
-                                       bg-[#f26522] hover:bg-[#d4541a] text-white
+                                       bg-[#f55e1d] hover:bg-[#d44e14] text-white
                                        rounded-xl px-4 py-3 text-[13px] font-bold
                                        shadow-[0_3px_10px_rgba(242,101,34,.3)]
                                        transition-colors duration-150">
@@ -748,7 +748,7 @@
                             <p class="text-[11px] font-bold text-[#718096] uppercase tracking-[.07em] mb-2">File Attachments</p>
                             @foreach($record->getMedia('event-attachments') as $media)
                                 <a href="{{ $media->getUrl() }}" download
-                                   class="flex items-center gap-2 text-[#0e4f99] hover:text-[#f26522] text-[13px] font-semibold mb-1.5 last:mb-0 transition-colors">
+                                   class="flex items-center gap-2 text-[#0e4f99] hover:text-[#f55e1d] text-[13px] font-semibold mb-1.5 last:mb-0 transition-colors">
                                     <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
                                     </svg>
@@ -784,7 +784,7 @@
                     @if($canManageEvent)
                         <button type="button"
                                 onclick="document.getElementById('bulletin-form').classList.toggle('hidden')"
-                                class="inline-flex items-center gap-1.5 bg-[#f26522] hover:bg-[#d4541a]
+                                class="inline-flex items-center gap-1.5 bg-[#f55e1d] hover:bg-[#d44e14]
                                        text-white text-[12px] font-bold rounded-lg px-3 py-1.5
                                        transition-colors duration-150">
                             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -803,12 +803,12 @@
                             <input type="text" name="title" placeholder="Bulletin title…"
                                    class="w-full border border-[#e2e8f0] rounded-lg px-3 py-2 text-[13px]
                                           placeholder-[#a0aec0] mb-2
-                                          focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 focus:border-[#f26522]
+                                          focus:outline-none focus:ring-2 focus:ring-[#f55e1d]/30 focus:border-[#f55e1d]
                                           transition-all">
                             <textarea name="content" rows="2" placeholder="Write your message…"
                                       class="w-full border border-[#e2e8f0] rounded-lg px-3 py-2 text-[13px]
                                              placeholder-[#a0aec0] resize-none mb-3
-                                             focus:outline-none focus:ring-2 focus:ring-[#f26522]/30 focus:border-[#f26522]
+                                             focus:outline-none focus:ring-2 focus:ring-[#f55e1d]/30 focus:border-[#f55e1d]
                                              transition-all"></textarea>
                             <div class="flex justify-end gap-2">
                                 <button type="button"
@@ -817,7 +817,7 @@
                                     Cancel
                                 </button>
                                 <button type="submit"
-                                        class="px-4 py-1.5 bg-[#f26522] hover:bg-[#d4541a] text-white text-[12px] font-bold rounded-lg transition-colors">
+                                        class="px-4 py-1.5 bg-[#f55e1d] hover:bg-[#d44e14] text-white text-[12px] font-bold rounded-lg transition-colors">
                                     Post
                                 </button>
                             </div>
