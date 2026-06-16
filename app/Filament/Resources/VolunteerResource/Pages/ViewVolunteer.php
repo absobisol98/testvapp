@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\VolunteerResource\Pages;
 
 use App\Filament\Resources\VolunteerResource;
-use App\Filament\Resources\UserResource;
 use App\Models\Event;
 use App\Models\EventAttendee;
 use Filament\Actions;
@@ -34,7 +33,7 @@ class ViewVolunteer extends Page
             Actions\Action::make('edit_profile')
             ->label('Edit Profile')
             ->icon('heroicon-o-pencil')
-            ->url(fn () => UserResource::getUrl('edit', ['record' => $this->record]))
+            ->url(fn () => VolunteerResource::getUrl('edit', ['record' => $this->record]))
             ->visible(fn () => auth()->id() == $this->record || auth()->user()->isAdminRole())
             ->color('warning'),
         ];
@@ -84,7 +83,7 @@ class ViewVolunteer extends Page
             'nextOppGoal' => $nextOppGoal,
             'participationFrequency' => $user->getParticipationFrequency(),
             'canEdit' => auth()->id() == $this->record || auth()->user()->isAdminRole(),
-            'editUrl' => UserResource::getUrl('edit', ['record' => $this->record]),
+            'editUrl' => VolunteerResource::getUrl('edit', ['record' => $this->record]),
         ];
     }
 

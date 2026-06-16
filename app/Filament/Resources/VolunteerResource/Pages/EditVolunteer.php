@@ -13,7 +13,13 @@ class EditVolunteer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->visible(fn () => auth()->user()->isAdminRole()),
         ];
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return VolunteerResource::getUrl('view', ['record' => $this->record]);
     }
 }

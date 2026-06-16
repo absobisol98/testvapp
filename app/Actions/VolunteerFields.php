@@ -20,6 +20,19 @@ final class VolunteerFields
     public function execute()
     {
         return [
+            Select::make('age_range')
+                ->label('Age Range')
+                ->placeholder('Not specified')
+                ->options([
+                    '10-17' => '10-17 years old',
+                    '18-24' => '18-24 years old',
+                    '25-34' => '25-34 years old',
+                    '35-44' => '35-44 years old',
+                    '45-54' => '45-54 years old',
+                    '55-64' => '55-64 years old',
+                    '65+'   => '65 years and above',
+                ]),
+
             ToggleButtons::make('is_company')
                 ->label(''),
             //     ->default(1)

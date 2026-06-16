@@ -24,6 +24,11 @@ class Reports extends Page
         return (bool) auth()->user()?->isAdminRole();
     }
 
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     // Summary stats shown at the top of the page
     public array $summary = [];
 

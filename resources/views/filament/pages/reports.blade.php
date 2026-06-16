@@ -7,7 +7,7 @@
             ['label' => 'Total Volunteers',    'value' => $this->summary['total_volunteers'],    'icon' => 'heroicon-o-users',           'color' => 'text-blue-600',   'bg' => 'bg-blue-50'],
             ['label' => 'Total Hours Logged',  'value' => $this->summary['total_hours'],         'icon' => 'heroicon-o-clock',           'color' => 'text-green-600',  'bg' => 'bg-green-50'],
             ['label' => 'Opportunities Run',   'value' => $this->summary['total_events'],        'icon' => 'heroicon-o-calendar',        'color' => 'text-purple-600', 'bg' => 'bg-purple-50'],
-            ['label' => 'Total Registrations', 'value' => $this->summary['total_registrations'], 'icon' => 'heroicon-o-clipboard-list',  'color' => 'text-orange-600', 'bg' => 'bg-orange-50'],
+            ['label' => 'Total Registrations', 'value' => $this->summary['total_registrations'], 'icon' => 'heroicon-o-clipboard-document-list',  'color' => 'text-orange-600', 'bg' => 'bg-orange-50'],
             ['label' => 'Avg Hrs / Volunteer', 'value' => $this->summary['avg_hours'],           'icon' => 'heroicon-o-chart-bar',       'color' => 'text-indigo-600', 'bg' => 'bg-indigo-50'],
             ['label' => 'Attendance Rate',     'value' => $this->summary['completion_rate'].'%', 'icon' => 'heroicon-o-check-circle',    'color' => 'text-teal-600',   'bg' => 'bg-teal-50'],
         ];

@@ -10,13 +10,13 @@ use App\Filament\Resources\VolunteerResource\RelationManagers\EventsRelationMana
 use App\Imports\VolunteersImport;
 use App\Models\User;
 use App\Models\Volunteer;
-use App\Filament\Resources\UserResource;
 use App\Settings\MailSettings;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -61,7 +61,9 @@ class VolunteerResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Group::make()
-                    ->schema( (new UserCreateField())->execute(false))
+                    ->schema((new UserCreateField())->execute(false, [
+                        TextInput::make('middle_name')->label('Middle Name')->maxLength(255),
+                    ]))
                     ->columnSpan(1),
 
                 Forms\Components\Tabs::make()
@@ -119,10 +121,10 @@ class VolunteerResource extends Resource
                 Tables\Actions\Action::make('edit')
                     ->label('Edit')
                     ->icon('heroicon-o-pencil-square')
-                    ->url(fn (Volunteer $record) => UserResource::getUrl('edit', ['record' => $record->id]))
+                    ->url(fn (Volunteer $record) => static::getUrl('edit', ['record' => $record->id]))
                     ->visible(fn (Volunteer $record) =>
                         auth()->user()->isAdminRole() ||
-                        $record->id === auth()->id()
+                        (auth()->user()->hasActiveRole('Volunteer') && $record->id === auth()->id())
                     ),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn () => auth()->user()->isAdminRole()),
@@ -199,7 +201,11 @@ class VolunteerResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
-        return false;
+        $user = auth()->user();
+        if ($user->isAdminRole()) {
+            return true;
+        }
+        return $user->hasActiveRole('Volunteer') && $record->id === $user->id;
     }
 
     public static function getPages(): array
@@ -208,6 +214,7 @@ class VolunteerResource extends Resource
             'index'  => Pages\ListVolunteers::route('/'),
             'create' => Pages\CreateVolunteer::route('/create'),
             'view'   => Pages\ViewVolunteer::route('/{record}'),
+            'edit'   => Pages\EditVolunteer::route('/{record}/edit'),
         ];
     }
 }
