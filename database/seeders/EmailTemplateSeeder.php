@@ -149,6 +149,45 @@ class EmailTemplateSeeder extends Seeder
                                 <p>Kind Regards,<br>##config.app.name##</p>"
             ],
             [
+                'key'       => 'volunteer-registration-approved',
+                'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
+                'name'      => 'Volunteer Registration Approved',
+                'title'     => 'Registration Approved',
+                'subject'   => 'Your registration for ##event.title## has been approved',
+                'preheader' => 'You\'re all set!',
+                'content'   => "<p>Dear ##user.firstname##,</p>
+                                <p>Good news! Your registration for <strong>##event.title##</strong> has been approved.</p>
+                                <p><strong>Date:</strong> ##event.start_date##<br>
+                                <strong>Location:</strong> ##event.location##</p>
+                                <p>We look forward to seeing you there. Thank you for volunteering with ##config.app.name##!</p>
+                                <p>Kind Regards,<br>##config.app.name##</p>"
+            ],
+            [
+                'key'       => 'volunteer-registration-rejected',
+                'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
+                'name'      => 'Volunteer Registration Rejected',
+                'title'     => 'Registration Update',
+                'subject'   => 'Update on your registration for ##event.title##',
+                'preheader' => 'An update on your registration.',
+                'content'   => "<p>Dear ##user.firstname##,</p>
+                                <p>We're sorry to let you know that your registration for <strong>##event.title##</strong> was not approved.</p>
+                                <p>##message##</p>
+                                <p>We hope you'll consider joining us for a future opportunity.</p>
+                                <p>Kind Regards,<br>##config.app.name##</p>"
+            ],
+            [
+                'key'       => 'volunteer-registration-cancelled',
+                'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
+                'name'      => 'Volunteer Registration Cancelled',
+                'title'     => 'Registration Cancelled',
+                'subject'   => 'Your registration for ##event.title## has been cancelled',
+                'preheader' => 'Your registration has been cancelled.',
+                'content'   => "<p>Dear ##user.firstname##,</p>
+                                <p>This confirms that your registration for <strong>##event.title##</strong> has been cancelled.</p>
+                                <p>If this was a mistake, you're welcome to register again from the opportunity page.</p>
+                                <p>Kind Regards,<br>##config.app.name##</p>"
+            ],
+            [
                 'key'       => 'volunteer-completion-summary',
                 'from'      => ['email'=>config('mail.from.address'),'name'=>config('mail.from.name')],
                 'name'      => 'Volunteer Completion Summary',

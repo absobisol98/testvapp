@@ -20,6 +20,14 @@ class Kernel extends ConsoleKernel
 
         // Re-cache Filament components nightly to prevent discovery timeouts
         $schedule->command('filament:optimize')->dailyAt('03:00');
+
+        // Process queued emails/notifications every minute. Exits as soon as the
+        // queue is empty (no persistent daemon) and is capped at 50s so it never
+        // overlaps the next run or competes with PHP's max_execution_time.
+        $schedule->command('queue:work --stop-when-empty --max-time=50 --tries=3')
+            ->everyMinute()
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     protected function commands(): void

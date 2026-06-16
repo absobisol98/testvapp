@@ -7,6 +7,9 @@ use App\Actions\GenerateEventQRCode;
 use App\Models\Event;
 use App\Models\EventAttendee;
 use App\Models\EventRegistration;
+use App\Notifications\VolunteerRegistrationApproved;
+use App\Notifications\VolunteerRegistrationCancelled;
+use App\Notifications\VolunteerRegistrationRejected;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
@@ -127,6 +130,8 @@ class RegistrationsRelationManager extends RelationManager
                         $record->message = $message;
                         $record->save();
 
+                        $record->volunteer->notify(new VolunteerRegistrationApproved($record->event, $record));
+
                         Notification::make()
                             ->title('Registration Approved')
                             ->success()
@@ -166,6 +171,8 @@ class RegistrationsRelationManager extends RelationManager
                         $record->message = $data['message'];
                         $record->save();
 
+                        $record->volunteer->notify(new VolunteerRegistrationRejected($record->event, $record, $data['message']));
+
                         // Notify the registrant
                         Notification::make()
                             ->title($data['message'])
@@ -196,7 +203,12 @@ class RegistrationsRelationManager extends RelationManager
                     ->requiresConfirmation()
                     ->action(function ($record){
 
+                        $volunteer = $record->volunteer;
+                        $event     = $record->event;
+
                         $record->delete();
+
+                        $volunteer->notify(new VolunteerRegistrationCancelled($event));
 
                         Notification::make()
                             ->title('Registration has been canceled.')
