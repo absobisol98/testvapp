@@ -42,6 +42,11 @@ class UserResource extends Resource
         return (bool) auth()->user()?->isAdminRole();
     }
 
+    public static function canAccess(): bool
+    {
+        return (bool) auth()->user()?->isAdminRole();
+    }
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form

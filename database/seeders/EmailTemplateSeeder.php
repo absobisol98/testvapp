@@ -202,7 +202,8 @@ class EmailTemplateSeeder extends Seeder
             ],
         ];
 
-        EmailTemplate::factory()
-            ->createMany($emailTemplates);
+        foreach ($emailTemplates as $template) {
+            EmailTemplate::updateOrCreate(['key' => $template['key']], $template);
+        }
     }
 }
