@@ -47,10 +47,17 @@ class Reports extends Page
 
     private function computeSummary(): void
     {
-        $totalVolunteers = User::whereHas('roles', fn ($q) => $q->where('name', 'Volunteer'))->count();
+        $totalVolunteers = DB::table('model_has_roles')
+            ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->where('roles.name', 'Volunteer')
+            ->where('model_has_roles.model_type', 'App\Models\User')
+            ->count();
 
-        $allAttendees = EventAttendee::whereNotNull('time_in')->whereNotNull('time_out')->get();
-        $totalHours   = $allAttendees->sum(fn ($a) => $a->get_totalHrs());
+        $totalHours = DB::table('event_attendees')
+            ->whereNotNull('time_in')
+            ->whereNotNull('time_out')
+            ->selectRaw('SUM(TIMESTAMPDIFF(MINUTE, time_in, time_out) / 60) as hours')
+            ->value('hours') ?? 0;
 
         $totalEvents        = Event::where('is_published', true)->count();
         $totalRegistrations = EventRegistration::count();
@@ -73,26 +80,18 @@ class Reports extends Page
 
     private function computeProgramBreakdown(): void
     {
-        $rows = [];
-        foreach (Program::with('events.attendees')->get() as $program) {
-            $hours = 0;
-            foreach ($program->events as $event) {
-                foreach ($event->attendees as $attendee) {
-                    if ($attendee->time_in && $attendee->time_out) {
-                        $hours += $attendee->get_totalHrs();
-                    }
-                }
-            }
-            if ($hours > 0) {
-                $rows[] = [
-                    'name'  => $program->name,
-                    'hours' => round($hours, 1),
-                    'count' => $program->events->count(),
-                ];
-            }
-        }
+        $rows = DB::table('programs')
+            ->join('events', 'events.program_id', '=', 'programs.id')
+            ->join('event_attendees', 'event_attendees.event_id', '=', 'events.id')
+            ->whereNotNull('event_attendees.time_in')
+            ->whereNotNull('event_attendees.time_out')
+            ->groupBy('programs.id', 'programs.name')
+            ->selectRaw('programs.name, ROUND(SUM(TIMESTAMPDIFF(MINUTE, event_attendees.time_in, event_attendees.time_out) / 60), 1) as hours, COUNT(DISTINCT events.id) as count')
+            ->orderByDesc('hours')
+            ->get()
+            ->map(fn ($r) => ['name' => $r->name, 'hours' => $r->hours, 'count' => $r->count])
+            ->toArray();
 
-        usort($rows, fn ($a, $b) => $b['hours'] <=> $a['hours']);
         $this->programBreakdown = $rows;
     }
 
