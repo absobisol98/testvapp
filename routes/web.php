@@ -11,6 +11,7 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\SurveyResponseController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\EventBulletinController;
+use App\Http\Controllers\VolunteerTimeLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +78,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/volunteer/certificate/{event_id}/{attendee_id}', [PDFController::class, 'generateCertificate'])
         ->name('volunteer.certificate');
+
+    Route::post('/volunteer/time-log/{attendee}', [VolunteerTimeLogController::class, 'store'])
+        ->name('volunteer.time-log');
 
     Route::post('/event/{event}/register-slot/{slot}', [EventRegistrationController::class, 'registerSlot'])
         ->name('event.register-slot');

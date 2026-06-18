@@ -283,6 +283,10 @@
                 @php
                     $att_details = $opportunity->attendees->where('attendee_id', $user->id)->first();
                     $isFinished  = \Carbon\Carbon::parse($opportunity->end_date)->isPast();
+                    $hasApprovedAttendance = $opportunity->attendees
+                        ->where('attendee_id', $user->id)
+                        ->filter(fn($a) => $a->is_approve && $a->time_in && $a->time_out)
+                        ->isNotEmpty();
                     $banner      = $opportunity->getMedia('event-banner-attachments')?->first()?->getUrl()
                                    ?? asset('img/ayala-foundation-bg.jpg');
                 @endphp
@@ -314,10 +318,13 @@
                         </div>
                         @foreach($opportunity->slots as $slot)
                         @php
-                            $slotAtt = $opportunity->attendees()
+                            $slotAtt    = $opportunity->attendees()
                                 ->where('attendee_id', $user->id)
                                 ->where('slot_type_id', $slot->id)
                                 ->first();
+                            $slotFormat = $slot->slot_format ?? $opportunity->event_format;
+                            $isSelfLog  = in_array($opportunity->event_format, ['virtual', 'hybrid'])
+                                          || $slotFormat === 'virtual';
                         @endphp
                         @if($slotAtt)
                         <div class="bg-gray-50 rounded-xl px-3 py-2.5 mb-2">
@@ -344,43 +351,98 @@
                                     <span class="vp-status-badge bg-amber-50 text-amber-700">Pending</span>
                                 @endif
                             </div>
+                            {{-- Self-service time log for virtual / hybrid slots --}}
+                            @if($isSelfLog && !$slotAtt->is_approve && !$slotAtt->is_rejected)
+                            @php
+                                $withinWindow = \Carbon\Carbon::now()->between(
+                                    \Carbon\Carbon::parse($opportunity->start_date),
+                                    \Carbon\Carbon::parse($opportunity->end_date)
+                                );
+                            @endphp
+                            <div class="mt-2 pt-2 border-t border-gray-200">
+                                @if(!$slotAtt->time_in)
+                                    @if($withinWindow)
+                                    <button onclick="logTime({{ $slotAtt->id }}, this)"
+                                            class="w-full vp-btn-sm text-white justify-center" style="background:{{ $blue }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                        </svg>
+                                        Time In
+                                    </button>
+                                    @else
+                                    <p class="text-xs text-gray-400 text-center">
+                                        {{ \Carbon\Carbon::now()->lt(\Carbon\Carbon::parse($opportunity->start_date))
+                                            ? 'Available on ' . \Carbon\Carbon::parse($opportunity->start_date)->format('M d, Y h:i A')
+                                            : 'Event window has closed' }}
+                                    </p>
+                                    @endif
+                                @elseif(!$slotAtt->time_out)
+                                    <p class="text-xs text-green-600 mb-1.5 text-center">
+                                        ✓ Timed in at {{ \Carbon\Carbon::parse($slotAtt->time_in)->format('h:i A') }}
+                                    </p>
+                                    @if($withinWindow)
+                                    <button onclick="logTime({{ $slotAtt->id }}, this)"
+                                            class="w-full vp-btn-sm text-white justify-center" style="background:{{ $orange }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                        </svg>
+                                        Time Out
+                                    </button>
+                                    @else
+                                    <p class="text-xs text-gray-400 text-center">Event window has closed</p>
+                                    @endif
+                                @else
+                                    <p class="text-xs text-gray-400 text-center">Attendance submitted — awaiting admin approval</p>
+                                @endif
+                            </div>
+                            @endif
                         </div>
                         @endif
                         @endforeach
+                        {{-- QR code block (in-person only) + Certificate --}}
                         @if($att_details)
-                        @php $qrUrl = url(\Illuminate\Support\Facades\Storage::url($att_details->id . '-qr-code.png')); @endphp
-                        <div class="mt-3 border border-gray-100 rounded-xl p-3 bg-gray-50">
-                            <p class="text-xs font-semibold text-gray-500 text-center mb-2 uppercase tracking-wide">Your Time In/Out QR Code</p>
-                            <div class="flex justify-center mb-2">
-                                <img src="{{ $qrUrl }}"
-                                     alt="Time In/Out QR Code"
-                                     class="w-36 h-36 object-contain rounded-lg border border-gray-200 bg-white p-1"
-                                     onerror="this.closest('.qr-block').style.display='none'">
+                        @php
+                            $isInPerson = !in_array($opportunity->event_format, ['virtual', 'hybrid']);
+                            $qrUrl      = url(\Illuminate\Support\Facades\Storage::url($att_details->id . '-qr-code.png'));
+                        @endphp
+                        <div class="mt-3 flex flex-col gap-2">
+                            @if($isInPerson)
+                            <div class="border border-gray-100 rounded-xl p-3 bg-gray-50">
+                                <p class="text-xs font-semibold text-gray-500 text-center mb-2 uppercase tracking-wide">Your Time In/Out QR Code</p>
+                                <div class="flex justify-center mb-2">
+                                    <img src="{{ $qrUrl }}"
+                                         alt="Time In/Out QR Code"
+                                         class="w-36 h-36 object-contain rounded-lg border border-gray-200 bg-white p-1"
+                                         onerror="this.parentElement.style.display='none'">
+                                </div>
+                                <p class="text-xs text-gray-400 text-center mb-3">Show this to the facilitator to record your time in/out</p>
+                                <div class="flex justify-center">
+                                    <a href="{{ $qrUrl }}"
+                                       onclick="event.preventDefault(); forceDownload(this)"
+                                       data-filename="qr-{{ $opportunity->id }}.png"
+                                       class="vp-btn-sm text-white" style="background:{{ $blue }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        Download QR
+                                    </a>
+                                </div>
                             </div>
-                            <p class="text-xs text-gray-400 text-center mb-3">Show this to the facilitator to record your time in/out</p>
-                            <div class="flex gap-2 justify-center">
-                                <a href="{{ $qrUrl }}"
-                                   onclick="event.preventDefault(); forceDownload(this)"
-                                   data-filename="qr-{{ $opportunity->id }}.png"
-                                   class="vp-btn-sm text-white" style="background:{{ $blue }}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                    Download QR
-                                </a>
-                                @if($isFinished)
-                                <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id]) }}"
-                                   target="_blank"
-                                   class="vp-btn-sm text-white" style="background:{{ $orange }}">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                                    </svg>
-                                    Certificate
-                                </a>
-                                @endif
-                            </div>
+                            @endif
+                            @if($hasApprovedAttendance)
+                            <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id]) }}"
+                               target="_blank"
+                               class="vp-btn-sm text-white justify-center" style="background:{{ $orange }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                </svg>
+                                Certificate
+                            </a>
+                            @endif
                         </div>
                         @endif
                     </div>
@@ -576,6 +638,35 @@ function switchTab(tab) {
     document.getElementById('panel-' + tab).classList.remove('hidden');
     document.getElementById('tab-'   + tab).classList.add('active');
     document.querySelector('.vp-tabs').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function logTime(attendeeId, btn) {
+    btn.disabled = true;
+    var original = btn.innerHTML;
+    btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>';
+    fetch('/volunteer/time-log/' + attendeeId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.status === 'success') {
+            window.location.reload();
+        } else {
+            alert(data.message || 'Something went wrong.');
+            btn.disabled = false;
+            btn.innerHTML = original;
+        }
+    })
+    .catch(function() {
+        alert('Network error. Please try again.');
+        btn.disabled = false;
+        btn.innerHTML = original;
+    });
 }
 
 function forceDownload(link) {
