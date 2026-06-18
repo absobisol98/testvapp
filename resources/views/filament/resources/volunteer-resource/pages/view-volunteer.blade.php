@@ -283,6 +283,7 @@
                 @php
                     $att_details = $opportunity->attendees->where('attendee_id', $user->id)->first();
                     $isFinished  = \Carbon\Carbon::parse($opportunity->end_date)->isPast();
+                    $isOngoing   = !$isFinished && \Carbon\Carbon::now()->gte(\Carbon\Carbon::parse($opportunity->start_date));
                     $hasApprovedAttendance = $opportunity->attendees
                         ->where('attendee_id', $user->id)
                         ->filter(fn($a) => $a->is_approve && $a->time_in && $a->time_out)
@@ -297,6 +298,8 @@
                             <p class="font-bold text-gray-800 leading-snug flex-1">{{ $opportunity->title }}</p>
                             @if($isFinished)
                                 <span class="vp-status-badge bg-gray-100 text-gray-500 flex-none">Completed</span>
+                            @elseif($isOngoing)
+                                <span class="vp-status-badge bg-green-50 text-green-700 flex-none">● Ongoing</span>
                             @else
                                 <span class="vp-status-badge bg-amber-50 text-amber-700 flex-none">Upcoming</span>
                             @endif
