@@ -514,8 +514,7 @@ class AttendeesRelationManager extends RelationManager
                                     ->seconds(false),
                             ])
                     ])
-                    ->visible(fn (EventAttendee $record) => ($record->is_approve)? false : true)
-                    ->action(function (array $data, EventAttendee $record): void {
+                        ->action(function (array $data, EventAttendee $record): void {
                         $data['updated_at'] = now();
                         $data['updated_by'] = auth()->user()->id;
                         $data['is_approve'] = true;
