@@ -28,7 +28,7 @@
             object-fit: contain;
         }
         .certificate {
-            background-image: url('https://phplaravel-970963-4908828.cloudwaysapps.com/img/certificate/placeholder_certificate.png');
+            background-image: url('{{ str_replace('\\', '/', public_path('img/certificate/placeholder_certificate.png')) }}');
             position: relative;
             padding: 50px;
             padding-top:300px;
