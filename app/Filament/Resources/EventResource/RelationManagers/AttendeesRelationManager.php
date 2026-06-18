@@ -435,7 +435,7 @@ class AttendeesRelationManager extends RelationManager
                     ->visible(fn (EventAttendee $record) => ($record->is_approve)? false : true)
                     ->action(function (EventAttendee $record): void {
                         if( $record->time_in){
-                            if(!$record->out){
+                            if(!$record->time_out){
                                 $data['time_out'] = $record->event->end_date;
                             }
                             $data['updated_at'] = now();

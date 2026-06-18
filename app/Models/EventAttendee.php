@@ -16,6 +16,9 @@ class EventAttendee extends Model
         'status_id',
         'time_in',
         'time_out',
+        'is_approve',
+        'is_rejected',
+        'updated_by',
     ];
 
     /*
