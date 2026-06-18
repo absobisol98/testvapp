@@ -151,16 +151,26 @@ class HomepageController extends Controller implements HasMedia
 
     public function ourPartnersView(Request $request)
     {
-
         $partners = BusinessUnit::query()
-        ->when($request->search, function($query, $search) {
-            $query->where('name', 'like', "%{$search}%");
-        })
-        ->latest()
-        ->paginate(10);
+            ->with('admins')
+            ->when($request->search, fn($q, $s) => $q->where('name', 'like', "%{$s}%"))
+            ->latest()
+            ->paginate(10);
 
-    return view('custom.our-partners', compact('partners'));
+        // Attach opportunity count per BU (events created by BU admins)
+        $adminIds = $partners->flatMap(fn($bu) => $bu->admins->pluck('id'));
+        $eventCounts = Event::withoutGlobalScopes()
+            ->whereIn('created_by', $adminIds)
+            ->selectRaw('created_by, count(*) as total')
+            ->groupBy('created_by')
+            ->pluck('total', 'created_by');
 
+        $partners->each(function ($bu) use ($eventCounts) {
+            $bu->opportunity_count = $bu->admins->sum(fn($a) => $eventCounts->get($a->id, 0));
+        });
 
+        $totalEvents = Event::withoutGlobalScopes()->count();
+
+        return view('custom.our-partners', compact('partners', 'totalEvents'));
     }
 }
