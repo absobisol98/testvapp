@@ -113,6 +113,7 @@ class BusinessUnitResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->disabled()
+                    ->dehydrated()
                     ->columnSpan(3)
                     ->maxLength(50),
 
@@ -125,8 +126,9 @@ class BusinessUnitResource extends Resource
 
                         Forms\Components\TextInput::make('slug')
                             ->disabled()
+                            ->dehydrated()
                             ->required()
-                            ->unique(column: 'slug',ignoreRecord: true)
+                            ->unique(column: 'slug', ignoreRecord: true)
                             ->maxLength(100),
                     ]),
 
