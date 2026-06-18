@@ -363,7 +363,7 @@
                                 @if(!$slotAtt->time_in)
                                     @if($withinWindow)
                                     <button onclick="logTime({{ $slotAtt->id }}, this)"
-                                            class="w-full vp-btn-sm text-white justify-center" style="background:{{ $blue }}">
+                                            class="vp-btn-sm text-white" style="background:{{ $blue }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
@@ -383,7 +383,7 @@
                                     </p>
                                     @if($withinWindow)
                                     <button onclick="logTime({{ $slotAtt->id }}, this)"
-                                            class="w-full vp-btn-sm text-white justify-center" style="background:{{ $orange }}">
+                                            class="vp-btn-sm text-white" style="background:{{ $orange }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
@@ -435,7 +435,7 @@
                             @if($hasApprovedAttendance)
                             <a href="{{ route('volunteer.certificate', ['attendee_id' => $user->id, 'event_id' => $opportunity->id]) }}"
                                target="_blank"
-                               class="vp-btn-sm text-white justify-center" style="background:{{ $orange }}">
+                               class="vp-btn-sm text-white" style="background:{{ $orange }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
