@@ -97,7 +97,9 @@ class HomepageController extends Controller implements HasMedia
         $galleries = [];
 
         // Get opportunities if they exist
-        $opportunities = Event::whereIn('created_by', $business_unit->admins->pluck('id'))->with('slots')->get();
+        $opportunities = Event::whereIn('created_by', $business_unit->admins->pluck('id'))
+            ->with(['slots', 'attendees', 'event_type', 'media'])
+            ->get();
 
         if ($opportunities->isNotEmpty()) {
             $total_volunteers = $opportunities->sum(function($opp) {
