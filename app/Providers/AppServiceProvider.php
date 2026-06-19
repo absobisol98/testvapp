@@ -23,6 +23,18 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    private function validateSecurityConfig(): void
+    {
+        if (app()->isProduction()) {
+            if (config('app.debug')) {
+                throw new \RuntimeException('APP_DEBUG must be false in production.');
+            }
+            if (empty(config('app.key'))) {
+                throw new \RuntimeException('APP_KEY is not set.');
+            }
+        }
+    }
+
     public function register(): void
     {
         $this->app->singleton(IcsGeneratorService::class, function ($app) {
@@ -42,6 +54,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->validateSecurityConfig();
+
         Gate::policy(\TomatoPHP\FilamentMediaManager\Models\Folder::class, \App\Policies\MediaPolicy::class);
         Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplate::class, \App\Policies\EmailTemplatePolicy::class);
         Gate::policy(\Visualbuilder\EmailTemplates\Models\EmailTemplateTheme::class, \App\Policies\EmailTemplateThemePolicy::class);

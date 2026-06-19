@@ -14,12 +14,13 @@ class ExportController extends Controller
 {
     //
 
-    public function exportVolunteer($event_id){
-
+    public function exportVolunteer($event_id)
+    {
+        abort_unless(
+            auth()->check() && auth()->user()->can('manage_registrations_event'),
+            403
+        );
 
         return Excel::download(new VolunteerExport($event_id), 'summary.xlsx');
-
-
-
     }
 }

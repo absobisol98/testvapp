@@ -36,18 +36,28 @@ class SurveyResponseController extends Controller
     {
         try {
             $registrationId = Crypt::decrypt($request->token);
-            $answers = [];
 
+            // Prevent duplicate submissions for non-anonymous surveys
+            if (!$survey->is_anonymous) {
+                $exists = SurveyResponse::where('survey_id', $survey->id)
+                    ->where('registration_id', $registrationId)
+                    ->exists();
+
+                if ($exists) {
+                    return view('surveys.already-submitted');
+                }
+            }
+
+            $answers = [];
             foreach ($survey->questions as $index => $question) {
                 $answers[] = $request->input("question_{$index}");
             }
 
-
-
-            $survey_res = SurveyResponse::create([
-                'survey_id' => $survey->id,
+            SurveyResponse::create([
+                'survey_id'             => $survey->id,
+                'registration_id'       => $registrationId,
                 'event_registration_id' => null,
-                'answers' => $answers
+                'answers'               => $answers,
             ]);
 
             return view('surveys.thank-you');

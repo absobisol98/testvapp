@@ -114,7 +114,7 @@
                                     </p>
 
                                     <div class="text-lg font-normal my-4 text-justify">
-                                        {!! $opportunity->description !!}
+                                        {!! strip_tags($opportunity->description, '<b><i><em><strong><br><p><ul><ol><li>') !!}
                                     </div>
 
                                     <div class="w-full flex items-center justify-center gap-4">

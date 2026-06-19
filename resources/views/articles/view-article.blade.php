@@ -58,7 +58,7 @@
             </div>
             <div>
                 <p class="text-base leading-8 my-5 text-justify">
-                    {!! nl2br($article->content ?? 'Content not available') !!}
+                    {!! nl2br(e($article->content ?? 'Content not available')) !!}
                 </p>
             </div>
         </div>

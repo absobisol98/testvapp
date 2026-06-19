@@ -40,13 +40,13 @@ Route::get('/article/{slug}',[ArticleController::class,'viewArticle'])->name('ar
 Route::get('/our-partners', [HomepageController::class, 'ourPartnersView'])->name('ourpartners.view');
 
 Route::get('/volunteer-registration', [VolunteerRegistrationController::class, 'view'])->name('volunteer.form.view');
-Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])->name('volunteer.form.store');
+Route::post('/volunteer-registration-store', [VolunteerRegistrationController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('volunteer.form.store');
 
 Route::get('/qr/{event_id}/{attendee_id}', [QrController::class, 'scan_qr'])->name('qr.scan');
 
 // Route::get('/event-modal/{record}', fn ($record) => view('custom.event-modal', ['record' => $record]))->name('event.modal');
-
-Route::get('/exports/volunteer-list/{event_id}' , [ExportController::class, 'exportVolunteer'])->name('volunteer.export');
 
 Route::get('/registration-confirmation', function () {
     return view('registration-confirmation');
@@ -66,6 +66,7 @@ Route::get('/terms-and-conditions', function () {
 Route::get('/survey/{survey}/{token}', [SurveyResponseController::class, 'show'])
     ->name('survey.respond');
 Route::post('/survey/{survey}', [SurveyResponseController::class, 'store'])
+    ->middleware('throttle:10,1')
     ->name('survey.submit');
 
 Route::middleware(['auth'])->group(function () {
@@ -78,6 +79,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/volunteer/certificate/{event_id}/{attendee_id}', [PDFController::class, 'generateCertificate'])
         ->name('volunteer.certificate');
+
+    Route::get('/exports/volunteer-list/{event_id}', [ExportController::class, 'exportVolunteer'])
+        ->name('volunteer.export');
 
     Route::post('/volunteer/time-log/{attendee}', [VolunteerTimeLogController::class, 'store'])
         ->name('volunteer.time-log');

@@ -136,18 +136,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     }
 
     // Custom method to generate verification token
-    public function generateVerificationToken()
+    public function generateVerificationToken(): string
     {
-        return hash_hmac('sha256', $this->email, config('app.key'));
+        return bin2hex(random_bytes(32));
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // if ($panel->getId() === 'admin') {
-        //     return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
-        // }
-
-        return true;
+        // Require an assigned role — prevents freshly registered unverified accounts
+        // from reaching the panel before an admin has approved/assigned them a role.
+        return $this->roles()->exists();
     }
 
     public function getFilamentAvatarUrl(): ?string

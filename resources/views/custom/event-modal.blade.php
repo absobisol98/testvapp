@@ -12,7 +12,7 @@
     <div class="ml-4">
         <div class="font-bold text-2xl mb-2 truncate event-title"  >{{$record->title}}</div>
         <p class="mt-2 text-indigo-500 text-sm">{{\Carbon\Carbon::parse($record->start_date)->format('h:i A')}} - {{\Carbon\Carbon::parse($record->end_date)->format('h:i A')}}</p>
-        <div class="mt-2 !text-gray-500 no-scrollbar overflow-y-scroll max-h-12 h-12">{!! $record->description !!}</div>
+        <div class="mt-2 !text-gray-500 no-scrollbar overflow-y-scroll max-h-12 h-12">{!! strip_tags($record->description, '<b><i><em><strong><br><p><ul><ol><li>') !!}</div>
 
 {{--        <div class="mt-2 !text-gray-500 truncate event-description">{!! $record->description !!}</div>--}}
     </div>

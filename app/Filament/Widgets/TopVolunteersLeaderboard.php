@@ -112,8 +112,7 @@ class TopVolunteersLeaderboard extends BaseWidget
                                 $q->whereMonth('created_at', now()->month)
                                   ->whereYear('created_at', now()->year)),
                             'quarter' => $query->whereHas('eventAttendees', fn($q) =>
-                                $q->whereRaw('QUARTER(created_at) = ?', [now()->quarter])
-                                  ->whereYear('created_at', now()->year)),
+                                $q->whereBetween('created_at', [now()->startOfQuarter(), now()->endOfQuarter()])),
                             'year' => $query->whereHas('eventAttendees', fn($q) =>
                                 $q->whereYear('created_at', now()->year)),
                             default => $query

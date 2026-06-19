@@ -168,7 +168,12 @@ class SurveyResource extends Resource
                         }
 
                         foreach ($response->answers as $answer) {
-                            $row[] = $answer;
+                            // Prefix cells starting with formula characters to prevent CSV injection
+                            $safe = (string) ($answer ?? '');
+                            if (strlen($safe) > 0 && in_array($safe[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
+                                $safe = "'" . $safe;
+                            }
+                            $row[] = $safe;
                         }
 
                         $csv->insertOne($row);

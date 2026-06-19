@@ -16,6 +16,13 @@ class PDFController extends Controller
 {
     public function generateCertificate($event_id, $attendee_id)
     {
+        $user = auth()->user();
+
+        // Only allow the certificate owner or admins/facilitators to download
+        $isSelf = (int) $attendee_id === $user->id;
+        $isPrivileged = $user->can('manage_attendees_event');
+        abort_unless($isSelf || $isPrivileged, 403);
+
         $event = Event::find($event_id);
         $attendee = User::find($attendee_id);
         $certificates = [];
