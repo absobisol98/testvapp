@@ -8,6 +8,8 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Jeffgreco13\FilamentBreezy\Livewire\MyProfileComponent;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Facades\FilamentView;
@@ -67,6 +69,19 @@ class MyProfileExtended extends MyProfileComponent
                             ->required(),
                         TextInput::make('lastname')
                             ->required()
+                    ]),
+                    Grid::make()->schema([
+                        TagsInput::make('skills')
+                            ->label('Skills')
+                            ->placeholder('Add a skill'),
+                        TextInput::make('work_location')
+                            ->label('Work Location'),
+                    ]),
+                    Grid::make()->schema([
+                        TextInput::make('interests')
+                            ->label('Interests'),
+                        TextInput::make('volunteer_location')
+                            ->label('Volunteer Location'),
                     ]),
             ])
             ->operation('edit')

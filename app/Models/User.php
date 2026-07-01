@@ -63,6 +63,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'age_range',
         'program_interests',
         'skills',
+        'work_location',
+        'interests',
+        'volunteer_location',
         'referral_source',
         'other_program',
         'emergency_contact_name',
@@ -99,6 +102,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         'referral_source' => 'array',
         'program_interests' => 'array',
         'skills' => 'array',
+        'interests' => 'array',
         'birthday' => 'date',
     ];
 

@@ -260,6 +260,42 @@
         </div>
         @endif
 
+        @if(!empty($user->interests))
+        <div>
+            <p class="vp-section-title">Interests</p>
+            <div class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-2xl">
+                @foreach((array)$user->interests as $interest)
+                    <span class="px-3 py-1 text-sm font-semibold text-white rounded-full" style="background:{{ $blue }}">
+                        {{ $interest }}
+                    </span>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        @if(!empty($user->work_location) || !empty($user->volunteer_location))
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            @if(!empty($user->work_location))
+            <div>
+                <p class="info-label">Work Location</p>
+                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($user->work_location) }}"
+                   target="_blank" class="info-value hover:underline text-blue-600">
+                    {{ $user->work_location }}
+                </a>
+            </div>
+            @endif
+            @if(!empty($user->volunteer_location))
+            <div>
+                <p class="info-label">Volunteer Location</p>
+                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($user->volunteer_location) }}"
+                   target="_blank" class="info-value hover:underline text-blue-600">
+                    {{ $user->volunteer_location }}
+                </a>
+            </div>
+            @endif
+        </div>
+        @endif
+
     </div>{{-- end panel-personal --}}
 
     {{-- ══ ACTIVITIES TAB ═══════════════════════════════════════════════════ --}}

@@ -168,6 +168,21 @@ final class VolunteerFields
                 ->label('Skills')
                 ->placeholder('Type a skill and press Enter')
                 ->helperText('Add skills relevant to your volunteer experience (e.g. First Aid, Teaching, Web Development).'),
+
+            \Filament\Forms\Components\TagsInput::make('interests')
+                ->columnSpanFull()
+                ->label('Interests')
+                ->placeholder('Type an interest and press Enter'),
+
+            TextInput::make('work_location')
+                ->columnSpanFull()
+                ->label('Work Location')
+                ->placeholder('Start typing an address...'),
+
+            TextInput::make('volunteer_location')
+                ->columnSpanFull()
+                ->label('Volunteer Location')
+                ->placeholder('Start typing an address...'),
         ];
 
     }
